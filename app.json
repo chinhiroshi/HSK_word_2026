@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "単語マスター",
-    "slug": "tango-master",
+    "name": "中国語マスター",
+    "slug": "chinese-master",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "tangomaster",
+    "scheme": "chinesemaster",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.tangomaster.app"
+      "bundleIdentifier": "com.chinesemaster.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.tangomaster.app"
+      "package": "com.chinesemaster.app"
     },
     "web": {
       "output": "single",

@@ -19,7 +19,7 @@ export default function StudyStackNavigator() {
         name="Study"
         component={StudyScreen}
         options={{
-          headerTitle: () => <HeaderTitle title="単語マスター" />,
+          headerTitle: () => <HeaderTitle title="中国語マスター" />,
         }}
       />
     </Stack.Navigator>

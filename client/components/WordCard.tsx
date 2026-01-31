@@ -10,6 +10,7 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
+import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -30,7 +31,7 @@ const springConfig: WithSpringConfig = {
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function WordCard({ word, onPress, onToggleMemorized }: WordCardProps) {
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
   const scale = useSharedValue(1);
   const checkScale = useSharedValue(1);
 
@@ -95,10 +96,14 @@ export function WordCard({ word, onPress, onToggleMemorized }: WordCardProps) {
       </Pressable>
 
       <View style={styles.content}>
-        <ThemedText style={styles.word}>{word.word}</ThemedText>
-        <ThemedText
-          style={[styles.translation, { color: theme.textSecondary }]}
-        >
+        <View style={styles.wordRow}>
+          <ThemedText style={styles.word}>{word.word}</ThemedText>
+          <SpeakButton text={word.word} size="small" />
+        </View>
+        <ThemedText style={[styles.pinyin, { color: theme.primary }]}>
+          {word.pinyin}
+        </ThemedText>
+        <ThemedText style={[styles.translation, { color: theme.textSecondary }]}>
           {word.translation}
         </ThemedText>
       </View>
@@ -133,10 +138,20 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  wordRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
   word: {
-    fontSize: 20,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
+    fontSize: 22,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  pinyin: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
     marginBottom: Spacing.xs,
   },
   translation: {

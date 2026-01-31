@@ -15,7 +15,7 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { VideoThumbnail } from "@/components/VideoThumbnail";
-import { Button } from "@/components/Button";
+import { SpeakButton } from "@/components/SpeakButton";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
@@ -141,15 +141,16 @@ export default function WordDetailScreen() {
             { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
           ]}
         >
-          <ThemedText style={styles.word}>{word.word}</ThemedText>
+          <View style={styles.wordHeader}>
+            <ThemedText style={styles.word}>{word.word}</ThemedText>
+            <SpeakButton text={word.word} size="large" />
+          </View>
+          <ThemedText style={[styles.pinyin, { color: theme.primary }]}>
+            {word.pinyin}
+          </ThemedText>
           <ThemedText style={[styles.translation, { color: theme.textSecondary }]}>
             {word.translation}
           </ThemedText>
-          {word.pronunciation ? (
-            <ThemedText style={[styles.pronunciation, { color: theme.primary }]}>
-              {word.pronunciation}
-            </ThemedText>
-          ) : null}
 
           <View
             style={[styles.statusBadge, {
@@ -172,6 +173,27 @@ export default function WordDetailScreen() {
               {word.isMemorized ? "暗記済み" : "未暗記"}
             </ThemedText>
           </View>
+        </View>
+
+        <View
+          style={[
+            styles.exampleCard,
+            { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+          ]}
+        >
+          <View style={styles.exampleHeader}>
+            <ThemedText style={styles.sectionTitle}>例文</ThemedText>
+            <SpeakButton text={word.exampleSentence} size="medium" />
+          </View>
+          <ThemedText style={styles.exampleSentence}>
+            {word.exampleSentence}
+          </ThemedText>
+          <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
+            {word.examplePinyin}
+          </ThemedText>
+          <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
+            {word.exampleTranslation}
+          </ThemedText>
         </View>
 
         <View style={styles.section}>
@@ -241,21 +263,26 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     alignItems: "center",
-    marginBottom: Spacing["2xl"],
+    marginBottom: Spacing.lg,
   },
-  word: {
-    fontSize: 36,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
+  wordHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
     marginBottom: Spacing.sm,
   },
-  translation: {
-    fontSize: 20,
+  word: {
+    fontSize: 42,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  pinyin: {
+    fontSize: 18,
     fontFamily: "Nunito_400Regular",
     marginBottom: Spacing.xs,
   },
-  pronunciation: {
-    fontSize: 16,
+  translation: {
+    fontSize: 18,
     fontFamily: "Nunito_400Regular",
     marginBottom: Spacing.lg,
   },
@@ -271,6 +298,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  exampleCard: {
+    padding: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.lg,
+  },
+  exampleHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: Spacing.md,
+  },
+  exampleSentence: {
+    fontSize: 22,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+    marginBottom: Spacing.sm,
+  },
+  examplePinyin: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    marginBottom: Spacing.sm,
+  },
+  exampleTranslation: {
+    fontSize: 16,
+    fontFamily: "Nunito_400Regular",
   },
   section: {
     marginBottom: Spacing.xl,

@@ -1,8 +1,11 @@
 export interface Word {
   id: string;
   word: string;
+  pinyin: string;
   translation: string;
-  pronunciation?: string;
+  exampleSentence: string;
+  examplePinyin: string;
+  exampleTranslation: string;
   isMemorized: boolean;
   videoIds: string[];
 }
@@ -19,4 +22,13 @@ export interface UserProgress {
   totalWords: number;
   memorizedCount: number;
   percentage: number;
+}
+
+export type TestType = "word" | "sentence";
+
+export interface TestQuestion {
+  word: Word;
+  type: TestType;
+  options: string[];
+  correctAnswer: string;
 }

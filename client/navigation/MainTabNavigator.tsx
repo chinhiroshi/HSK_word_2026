@@ -6,6 +6,7 @@ import { Platform, StyleSheet } from "react-native";
 
 import StudyStackNavigator from "@/navigation/StudyStackNavigator";
 import VideosStackNavigator from "@/navigation/VideosStackNavigator";
+import TestStackNavigator from "@/navigation/TestStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { Colors } from "@/constants/theme";
@@ -13,6 +14,7 @@ import { Colors } from "@/constants/theme";
 export type MainTabParamList = {
   StudyTab: undefined;
   VideosTab: undefined;
+  TestTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -58,6 +60,16 @@ export default function MainTabNavigator() {
           title: "学習",
           tabBarIcon: ({ color, size }) => (
             <Feather name="book-open" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="TestTab"
+        component={TestStackNavigator}
+        options={{
+          title: "テスト",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="edit-3" size={size} color={color} />
           ),
         }}
       />
