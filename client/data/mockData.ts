@@ -10,6 +10,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bǐng gān",
     exampleTranslation: "私はクッキーを食べます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -21,6 +22,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiǎozi",
     exampleTranslation: "私は餃子を食べるのが大好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -32,6 +34,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qiǎokèlì",
     exampleTranslation: "私はチョコレートを食べるのが大好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -43,6 +46,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xī hóng shì",
     exampleTranslation: "私はトマトを食べるのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -54,6 +58,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǐnliào",
     exampleTranslation: "私は飲み物を飲むのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -65,6 +70,7 @@ export const mockWords: Word[] = [
     examplePinyin: "Cháng chéng",
     exampleTranslation: "万里の長城はとても雄大です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -76,6 +82,7 @@ export const mockWords: Word[] = [
     examplePinyin: "Chángjiāng",
     exampleTranslation: "長江は中国で一番大きな川です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -87,6 +94,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dà shǐ guǎn",
     exampleTranslation: "大使館はどこですか。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -98,6 +106,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dìqiú",
     exampleTranslation: "地球の環境を守る。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -109,6 +118,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dì zhǐ",
     exampleTranslation: "私の住所はどこですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -120,6 +130,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shěng",
     exampleTranslation: "どこの省出身ですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -131,6 +142,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shī zi",
     exampleTranslation: "獅子は肉を食べます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -142,6 +154,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhū",
     exampleTranslation: "その豚はとても太っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -153,6 +166,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hóu zi",
     exampleTranslation: "猿はバナナを食べるのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -164,6 +178,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chuāng hu",
     exampleTranslation: "窓が開いた。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -175,6 +190,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cídiǎn",
     exampleTranslation: "辞書を買いたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -186,6 +202,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dāo",
     exampleTranslation: "私はナイフを一本持っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -197,6 +214,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kēxué",
     exampleTranslation: "科学はとても役に立ちます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -208,6 +226,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lǐ fà",
     exampleTranslation: "髪を切りたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -219,6 +238,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liǎ",
     exampleTranslation: "私たち二人で行きます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -230,6 +250,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tán gāngqín",
     exampleTranslation: "彼女はピアノを弾くのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -241,6 +262,7 @@ export const mockWords: Word[] = [
     examplePinyin: "Zhōngwén",
     exampleTranslation: "私は中国語を学ぶのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -252,6 +274,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ānpái",
     exampleTranslation: "予定があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -263,6 +286,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bāokuò",
     exampleTranslation: "10章が含まれています",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -274,6 +298,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bǎozhèng",
     exampleTranslation: "約束します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -285,6 +310,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bàodào",
     exampleTranslation: "ニュースの報道は速いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -296,6 +322,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bào míng",
     exampleTranslation: "参加を申し込みたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -307,6 +334,7 @@ export const mockWords: Word[] = [
     examplePinyin: "biǎodá",
     exampleTranslation: "うまく表現できません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -318,6 +346,7 @@ export const mockWords: Word[] = [
     examplePinyin: "biǎo gé",
     exampleTranslation: "フォームに記入してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -329,6 +358,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bùfèn",
     exampleTranslation: "この部分は素晴らしいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -340,6 +370,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cānguān",
     exampleTranslation: "見学したいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -351,6 +382,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chénggōng",
     exampleTranslation: "成功を祈っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -362,6 +394,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chéngshú",
     exampleTranslation: "彼女はとても大人びています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -373,6 +406,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chéngwéi",
     exampleTranslation: "彼女は医者になりたいと思っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -384,6 +418,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chóng xīn",
     exampleTranslation: "またやり直しましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -395,6 +430,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chūchāi",
     exampleTranslation: "私は明日出張に行きます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -406,6 +442,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chūfā",
     exampleTranslation: "私たちは明日出発します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -417,6 +454,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chuán zhēn",
     exampleTranslation: "私にファックスを送ってください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -428,6 +466,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dá'àn",
     exampleTranslation: "彼の答えは間違っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -439,6 +478,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǎyìn",
     exampleTranslation: "ファイルを印刷してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -450,6 +490,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǎzhé",
     exampleTranslation: "店は20パーセントオフです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -461,6 +502,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dài biǎo",
     exampleTranslation: "私は会社を代表しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -472,6 +514,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dài tì",
     exampleTranslation: "彼は私の代わりに行ってくれました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -483,6 +526,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dāng",
     exampleTranslation: "あなたは先生になりたいですか。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -494,6 +538,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dàochù",
     exampleTranslation: "どこもかしこも人だらけです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -505,6 +550,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǐ",
     exampleTranslation: "一体どういうことですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -516,6 +562,7 @@ export const mockWords: Word[] = [
     examplePinyin: "diàochá",
     exampleTranslation: "私たちは調査中です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -527,6 +574,7 @@ export const mockWords: Word[] = [
     examplePinyin: "duìmiàn",
     exampleTranslation: "私は彼の向かいに座っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -538,6 +586,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fā",
     exampleTranslation: "あなたを見つけました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -549,6 +598,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fāshēng",
     exampleTranslation: "どうしましたか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -560,6 +610,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fǎlǜ",
     exampleTranslation: "私たちは法律を遵守します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -571,6 +622,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fānyì",
     exampleTranslation: "翻訳をお願いします。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -582,6 +634,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fǎngwèn",
     exampleTranslation: "私は彼を訪問しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -593,6 +646,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shībài",
     exampleTranslation: "失敗を恐れないで。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -604,6 +658,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fùzé",
     exampleTranslation: "あなたがこのプロジェクトを担当します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -615,6 +670,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gǎi biàn",
     exampleTranslation: "気が変わりました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -626,6 +682,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gān, gàn",
     exampleTranslation: "何してるの？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -637,6 +694,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gōngjù",
     exampleTranslation: "これは良い道具です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -648,6 +706,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gōngzī",
     exampleTranslation: "彼は昇給しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -659,6 +718,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gòngtóng",
     exampleTranslation: "私たちは共に努力します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -670,6 +730,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gūjì",
     exampleTranslation: "彼は来ると思います。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -681,6 +742,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guà",
     exampleTranslation: "私は服をかけました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -692,6 +754,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guǎnlǐ",
     exampleTranslation: "彼女は時間の管理がとても上手です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -703,6 +766,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guǎngbō",
     exampleTranslation: "ラジオニュースを聞く。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -714,6 +778,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guǎnggào",
     exampleTranslation: "私は広告を見ました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -725,6 +790,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guī dìng",
     exampleTranslation: "私たちは規定があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -736,6 +802,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guò chéng",
     exampleTranslation: "このプロセスは難しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -747,6 +814,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hángbān",
     exampleTranslation: "フライトが遅延しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -758,6 +826,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hé shì",
     exampleTranslation: "これはとても合っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -769,6 +838,7 @@ export const mockWords: Word[] = [
     examplePinyin: "huòdé",
     exampleTranslation: "私はチャンスを得ました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -780,6 +850,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīlěi",
     exampleTranslation: "あなたは経験を積む必要があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -791,6 +862,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jì",
     exampleTranslation: "小包を送りたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -802,6 +874,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìhuà",
     exampleTranslation: "私の計画は勉強することです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -813,6 +886,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìshù",
     exampleTranslation: "科学技術の発展はとても速いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -824,6 +898,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìxù",
     exampleTranslation: "私たちは引き続き頑張らなければなりません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -835,6 +910,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiābān",
     exampleTranslation: "私はよく残業します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -846,6 +922,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiǎng jīn",
     exampleTranslation: "ボーナスをもらいました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -857,6 +934,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiàng dī",
     exampleTranslation: "価格を下げました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -868,6 +946,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìnxíng",
     exampleTranslation: "会議が進行中です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -879,6 +958,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīngjì",
     exampleTranslation: "経済発展はとても速いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -890,6 +970,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīnglì",
     exampleTranslation: "これは忘れられない経験です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -901,6 +982,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jǔ bàn",
     exampleTranslation: "彼らはパーティーを開催しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -912,6 +994,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lā",
     exampleTranslation: "引っぱってください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -923,6 +1006,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liú",
     exampleTranslation: "ここに残って食事をしましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -934,6 +1018,7 @@ export const mockWords: Word[] = [
     examplePinyin: "pànduàn",
     exampleTranslation: "私の判断は間違っていました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -945,6 +1030,7 @@ export const mockWords: Word[] = [
     examplePinyin: "pīpíng",
     exampleTranslation: "彼は私を批判した。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -956,6 +1042,7 @@ export const mockWords: Word[] = [
     examplePinyin: "pǔ biàn",
     exampleTranslation: "これは普遍的な現象です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -967,6 +1054,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qǐfēi",
     exampleTranslation: "飛行機はまもなく離陸します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -978,6 +1066,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qīng",
     exampleTranslation: "この本はとても軽いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -989,6 +1078,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qǐng jià",
     exampleTranslation: "休暇を取りたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1000,6 +1090,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qū bié",
     exampleTranslation: "何が違いますか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1011,6 +1102,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qǔ",
     exampleTranslation: "荷物をお取りください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1022,6 +1114,7 @@ export const mockWords: Word[] = [
     examplePinyin: "quēshǎo",
     exampleTranslation: "私たちは人手が足りません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1033,6 +1126,7 @@ export const mockWords: Word[] = [
     examplePinyin: "què shí",
     exampleTranslation: "彼は本当に努力しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1044,6 +1138,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shāng liang",
     exampleTranslation: "話し合いましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1055,6 +1150,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shēnqǐng",
     exampleTranslation: "私はビザを申請します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1066,6 +1162,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shǐ yòng",
     exampleTranslation: "使用してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1077,6 +1174,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shōu",
     exampleTranslation: "プレゼントを受け取りました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1088,6 +1186,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shōushí",
     exampleTranslation: "早く部屋を片付けなさい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1099,6 +1198,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shòudào",
     exampleTranslation: "影響を受けている。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1110,6 +1210,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shú xī",
     exampleTranslation: "私たちは皆、よく知っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1121,6 +1222,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shùnlì",
     exampleTranslation: "すべて順調である。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1132,6 +1234,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tǎolùn",
     exampleTranslation: "話し合いましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1143,6 +1246,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tígōng",
     exampleTranslation: "私がお手伝いできます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1154,6 +1258,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tí qián",
     exampleTranslation: "私は予定より早く終わらせました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1165,6 +1270,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tí xǐng",
     exampleTranslation: "注意しておきますね。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1176,6 +1282,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tíngzhǐ",
     exampleTranslation: "話すのをやめてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1187,6 +1294,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tuī",
     exampleTranslation: "私は彼女をひと押ししました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1198,6 +1306,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tuī chí",
     exampleTranslation: "会議は延期されました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1209,6 +1318,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiàn zhì",
     exampleTranslation: "年齢制限",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1220,6 +1330,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xìn rèn",
     exampleTranslation: "彼を信用している。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1231,6 +1342,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiū",
     exampleTranslation: "彼は腕時計を修理しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1242,6 +1354,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yán gé",
     exampleTranslation: "彼の仕事は非常に厳格です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1253,6 +1366,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yánzhòng",
     exampleTranslation: "問題は深刻です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1264,6 +1378,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǎng chéng",
     exampleTranslation: "良い習慣を身につける。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1275,6 +1390,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yāoqǐng",
     exampleTranslation: "彼女を私の家に招待します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1286,6 +1402,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǐnqǐ",
     exampleTranslation: "注目を集めた",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1297,6 +1414,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yuè dú",
     exampleTranslation: "私は読書が好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1308,6 +1426,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǔnxǔ",
     exampleTranslation: "参加させてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1319,6 +1438,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zēng jiā",
     exampleTranslation: "経験を増やします。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1330,6 +1450,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhāo pìn",
     exampleTranslation: "私たちは採用活動中です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1341,6 +1462,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhèngmíng",
     exampleTranslation: "証明してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1352,6 +1474,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhí de",
     exampleTranslation: "それは価値がある。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1363,6 +1486,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhì zào",
     exampleTranslation: "会社はコンピューターを製造しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1374,6 +1498,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhòngshì",
     exampleTranslation: "私は健康を非常に重視しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1385,6 +1510,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhuānmén",
     exampleTranslation: "彼はこれの専門家です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1396,6 +1522,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhuan",
     exampleTranslation: "私はたくさんお金を稼ぎました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1407,6 +1534,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǔnquè",
     exampleTranslation: "彼は正確に言いました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1418,6 +1546,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǔn shí",
     exampleTranslation: "時間通りに来てください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1429,6 +1558,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zǐ xì",
     exampleTranslation: "よく見てください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1440,6 +1570,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zǒngjié",
     exampleTranslation: "要約をお願いします。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1451,6 +1582,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zǔchéng",
     exampleTranslation: "何で構成されていますか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1462,6 +1594,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bǐ jì běn",
     exampleTranslation: "私は新しいノートを買いました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1473,6 +1606,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gāojí",
     exampleTranslation: "この服はとても高級だ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1484,6 +1618,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiàoyù",
     exampleTranslation: "教育はとても大切です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1495,6 +1630,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhuānyè",
     exampleTranslation: "彼は専門を学んでいます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1506,6 +1642,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liú xué",
     exampleTranslation: "彼は留学に行きたいと思っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1517,6 +1654,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bì yè",
     exampleTranslation: "私は今年卒業します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1528,6 +1666,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yán jiū shēng",
     exampleTranslation: "私は大学院生です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1539,6 +1678,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shuò shì",
     exampleTranslation: "彼女は修士号を取得しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1550,6 +1690,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bó shì",
     exampleTranslation: "彼は博士です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1561,6 +1702,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiàoshòu",
     exampleTranslation: "彼女は大学教授です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1572,6 +1714,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fùqin",
     exampleTranslation: "私は私の父を愛しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1583,6 +1726,7 @@ export const mockWords: Word[] = [
     examplePinyin: "mǔqīn",
     exampleTranslation: "私は私の母を愛しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1594,6 +1738,7 @@ export const mockWords: Word[] = [
     examplePinyin: "sūnzi",
     exampleTranslation: "私には孫がいます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1605,6 +1750,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qīn qi",
     exampleTranslation: "彼女は私の親戚です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1616,6 +1762,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zánmen",
     exampleTranslation: "行きましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1627,6 +1774,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gùkè",
     exampleTranslation: "いらっしゃいませ、お客様！",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1638,6 +1786,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhíyè",
     exampleTranslation: "あなたの職業は何ですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1649,6 +1798,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dàifu",
     exampleTranslation: "彼は医者です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1660,6 +1810,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hùshì",
     exampleTranslation: "彼女は看護師です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1671,6 +1822,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìzhě",
     exampleTranslation: "私はニュース記者です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1682,6 +1834,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǎo yóu",
     exampleTranslation: "彼は私のガイドです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1693,6 +1846,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jǐngchá",
     exampleTranslation: "彼は警察官です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1704,6 +1858,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lǜshī",
     exampleTranslation: "彼は私の弁護士です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1715,6 +1870,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shòuhuòyuán",
     exampleTranslation: "彼は店員です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1726,6 +1882,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zǔzhī",
     exampleTranslation: "活動の組織はとても成功しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1737,6 +1894,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zuòzhě",
     exampleTranslation: "この本の作者は誰ですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1748,6 +1906,7 @@ export const mockWords: Word[] = [
     examplePinyin: "àn",
     exampleTranslation: "空がとても暗い。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1759,6 +1918,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bǎo hù",
     exampleTranslation: "環境を保護してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1770,6 +1930,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bào",
     exampleTranslation: "私をハグして。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1781,6 +1942,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bàoqiàn",
     exampleTranslation: "本当にごめんなさい、遅刻しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1792,6 +1954,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bèi",
     exampleTranslation: "今月の給料は2倍になりました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1803,6 +1966,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bèn",
     exampleTranslation: "馬鹿なことはするな。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1814,6 +1978,7 @@ export const mockWords: Word[] = [
     examplePinyin: "biāozhǔn",
     exampleTranslation: "これは標準です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1825,6 +1990,7 @@ export const mockWords: Word[] = [
     examplePinyin: "biǎoyáng",
     exampleTranslation: "先生は彼を褒めました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1836,6 +2002,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cā",
     exampleTranslation: "私はテーブルを拭きました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1847,6 +2014,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cāi",
     exampleTranslation: "当ててみて。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1858,6 +2026,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cáiliào",
     exampleTranslation: "すべての材料を準備してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1869,6 +2038,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chà bu duō",
     exampleTranslation: "私たちはもうすぐ終わります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1880,6 +2050,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cháng",
     exampleTranslation: "味見してみて。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1891,6 +2062,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chao",
     exampleTranslation: "うるさいよ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1902,6 +2074,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chéngshí",
     exampleTranslation: "彼はとても正直です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1913,6 +2086,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chéng zuò",
     exampleTranslation: "バスに乗る。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1924,6 +2098,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chī jīng",
     exampleTranslation: "驚いた。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1935,6 +2110,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chōuyān",
     exampleTranslation: "私はめったにタバコを吸いません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1946,6 +2122,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chūshēng",
     exampleTranslation: "私は大阪で生まれました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1957,6 +2134,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cūxīn",
     exampleTranslation: "彼は物事をするとき、とても不注意だ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1968,6 +2146,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǎban",
     exampleTranslation: "彼女は今日きれいに着飾っている。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1979,6 +2158,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǎ rǎo",
     exampleTranslation: "申し訳ありません、お邪魔しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -1990,6 +2170,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǎ zhēn",
     exampleTranslation: "注射をしてもらいます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2001,6 +2182,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dài",
     exampleTranslation: "彼女は眼鏡をかけています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2012,6 +2194,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dāngdì",
     exampleTranslation: "私たちは地元の人に聞きます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2023,6 +2206,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dào qiàn",
     exampleTranslation: "私は彼に謝罪すべきです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2034,6 +2218,7 @@ export const mockWords: Word[] = [
     examplePinyin: "déyì",
     exampleTranslation: "彼はとても得意げに見えた。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2045,6 +2230,7 @@ export const mockWords: Word[] = [
     examplePinyin: "děng",
     exampleTranslation: "お待ちください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2056,6 +2242,7 @@ export const mockWords: Word[] = [
     examplePinyin: "diū",
     exampleTranslation: "鍵をなくしました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2067,6 +2254,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dǔ chē",
     exampleTranslation: "私は渋滞が嫌いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2078,6 +2266,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dù zi",
     exampleTranslation: "お腹がすいた。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2089,6 +2278,7 @@ export const mockWords: Word[] = [
     examplePinyin: "duàn",
     exampleTranslation: "私たちは連絡を絶った。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2100,6 +2290,7 @@ export const mockWords: Word[] = [
     examplePinyin: "duì",
     exampleTranslation: "ごめんなさい、私が間違っていました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2111,6 +2302,7 @@ export const mockWords: Word[] = [
     examplePinyin: "duì huà",
     exampleTranslation: "これは会話です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2122,6 +2314,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fánnǎo",
     exampleTranslation: "何か悩みがありますか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2133,6 +2326,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fănduì",
     exampleTranslation: "私はこの計画に反対です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2144,6 +2338,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fǎnyìng",
     exampleTranslation: "彼女の反応は速い。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2155,6 +2350,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fàn wéi",
     exampleTranslation: "この範囲はとても広いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2166,6 +2362,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fàngqì",
     exampleTranslation: "私は諦めません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2177,6 +2374,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shǔjià",
     exampleTranslation: "私の夏休みの計画。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2188,6 +2386,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fúhé",
     exampleTranslation: "彼の話は事実とよく一致している。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2199,6 +2398,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gǎndòng",
     exampleTranslation: "私はとても感動しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2210,6 +2410,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gǎnjué",
     exampleTranslation: "気分がいいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2221,6 +2422,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gǎnqíng",
     exampleTranslation: "彼らはとても仲が良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2232,6 +2434,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gū dān",
     exampleTranslation: "私はとても寂しいと感じています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2243,6 +2446,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gǔlì",
     exampleTranslation: "私はあなたを励まします。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2254,6 +2458,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gǔzhǎng",
     exampleTranslation: "皆が熱烈に拍手した。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2265,6 +2470,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gù yì",
     exampleTranslation: "彼はわざと笑った。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2276,6 +2482,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guàng",
     exampleTranslation: "お店に買い物に行きましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2287,6 +2494,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hàn",
     exampleTranslation: "私はたくさん汗をかきました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2298,6 +2506,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hòu huǐ",
     exampleTranslation: "少し後悔しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2309,6 +2518,7 @@ export const mockWords: Word[] = [
     examplePinyin: "huáiyí",
     exampleTranslation: "私は疑い始めた。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2320,6 +2530,7 @@ export const mockWords: Word[] = [
     examplePinyin: "huódòng",
     exampleTranslation: "私たちはイベントがあります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2331,6 +2542,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīchǔ",
     exampleTranslation: "基礎を築いた。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2342,6 +2554,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīdòng",
     exampleTranslation: "私はとてもわくわくしています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2353,6 +2566,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jí qí",
     exampleTranslation: "彼は非常に賢いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2364,6 +2578,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jí hé",
     exampleTranslation: "私たちは一緒に集まる。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2375,6 +2590,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jí shí",
     exampleTranslation: "すみやかにご返信ください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2386,6 +2602,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiānchí",
     exampleTranslation: "私はやり続けます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2397,6 +2614,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiǎnféi",
     exampleTranslation: "ダイエットしたい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2408,6 +2626,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiǎnshǎo",
     exampleTranslation: "私たちは浪費を減らします。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2419,6 +2638,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiāo",
     exampleTranslation: "私たちは友達になります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2430,6 +2650,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiāo liú",
     exampleTranslation: "私たちはお互いに交流します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2441,6 +2662,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiāo'ào",
     exampleTranslation: "彼はとてもプライドが高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2452,6 +2674,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiē shòu",
     exampleTranslation: "私は受け入れました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2463,6 +2686,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jié yuē",
     exampleTranslation: "私たちは節約すべきです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2474,6 +2698,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiěshì",
     exampleTranslation: "説明してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2485,6 +2710,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīng cǎi",
     exampleTranslation: "パフォーマンスは素晴らしかったです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2496,6 +2722,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīngyàn",
     exampleTranslation: "私にはたくさんの経験があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2507,6 +2734,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jù jué",
     exampleTranslation: "私は招待を断りました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2518,6 +2746,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kāi wán xiào",
     exampleTranslation: "冗談だよ",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2529,6 +2758,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kàn fǎ",
     exampleTranslation: "あなたはこの件について何か意見がありますか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2540,6 +2770,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kǎo lǜ",
     exampleTranslation: "もう一度考えてみましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2551,6 +2782,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kěxī",
     exampleTranslation: "残念ながら、彼は家にいません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2562,6 +2794,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kǔ",
     exampleTranslation: "私はとても苦しいと感じています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2573,6 +2806,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kuān",
     exampleTranslation: "この道は広い。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2584,6 +2818,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kuòdà",
     exampleTranslation: "影響を拡大する。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2595,6 +2830,7 @@ export const mockWords: Word[] = [
     examplePinyin: "là",
     exampleTranslation: "この料理はとても辛いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2606,6 +2842,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lǎn",
     exampleTranslation: "あなたは怠けすぎです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2617,6 +2854,7 @@ export const mockWords: Word[] = [
     examplePinyin: "làng fèi",
     exampleTranslation: "時間を無駄にしないでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2628,6 +2866,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lǐ jiě",
     exampleTranslation: "私はあなたを理解しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2639,6 +2878,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lìhai",
     exampleTranslation: "彼はすごい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2650,6 +2890,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lìqi",
     exampleTranslation: "もう力が出ません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2661,6 +2902,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liánxì",
     exampleTranslation: "私に連絡してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2672,6 +2914,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liáng kuai",
     exampleTranslation: "ここはとても涼しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2683,6 +2926,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liáo tiān",
     exampleTranslation: "おしゃべりしましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2694,6 +2938,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liú lèi",
     exampleTranslation: "彼女は感動して涙を流しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2705,6 +2950,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liúxíng",
     exampleTranslation: "この音楽はとても人気があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2716,6 +2962,7 @@ export const mockWords: Word[] = [
     examplePinyin: "luàn",
     exampleTranslation: "部屋がとても散らかっている。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2727,6 +2974,7 @@ export const mockWords: Word[] = [
     examplePinyin: "máfan",
     exampleTranslation: "お手数をおかけしました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2738,6 +2986,7 @@ export const mockWords: Word[] = [
     examplePinyin: "mǎhu",
     exampleTranslation: "そんなにそそっかしいのはやめて。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2749,6 +2998,7 @@ export const mockWords: Word[] = [
     examplePinyin: "miǎnfèi",
     exampleTranslation: "これは無料です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2760,6 +3010,7 @@ export const mockWords: Word[] = [
     examplePinyin: "nàixīn",
     exampleTranslation: "あなたは忍耐が必要です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2771,6 +3022,7 @@ export const mockWords: Word[] = [
     examplePinyin: "nèi",
     exampleTranslation: "部屋はとても暖かいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2782,6 +3034,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lòng, nòng",
     exampleTranslation: "あなたは間違っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2793,6 +3046,7 @@ export const mockWords: Word[] = [
     examplePinyin: "nuǎnhuo",
     exampleTranslation: "今日はとても暖かいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2804,6 +3058,7 @@ export const mockWords: Word[] = [
     examplePinyin: "páiliè",
     exampleTranslation: "順番に並べてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2815,6 +3070,7 @@ export const mockWords: Word[] = [
     examplePinyin: "péi",
     exampleTranslation: "私がお供します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2826,6 +3082,7 @@ export const mockWords: Word[] = [
     examplePinyin: "piàn",
     exampleTranslation: "私はあなたをだましていない。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2837,6 +3094,7 @@ export const mockWords: Word[] = [
     examplePinyin: "pò",
     exampleTranslation: "彼はコップを割りました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2848,6 +3106,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qǐng kè",
     exampleTranslation: "私がおごります。 (または 私が食事をごちそうします。)",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2859,6 +3118,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qióng",
     exampleTranslation: "私たちは皆貧しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2870,6 +3130,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rènào",
     exampleTranslation: "通りはとても賑やかです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2881,6 +3142,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rēng",
     exampleTranslation: "ゴミを捨てないでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2892,6 +3154,7 @@ export const mockWords: Word[] = [
     examplePinyin: "sànbù",
     exampleTranslation: "私は散歩が好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2903,6 +3166,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shāngxīn",
     exampleTranslation: "あまり気を落とさないで。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2914,6 +3178,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shāowēi",
     exampleTranslation: "少し高いです",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2925,6 +3190,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shèng",
     exampleTranslation: "残り少ないです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2936,6 +3202,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shī wàng",
     exampleTranslation: "私をがっかりさせないで。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2947,6 +3214,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shīrùn",
     exampleTranslation: "空気はとても湿っている。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2958,6 +3226,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shì",
     exampleTranslation: "もう一度試してみてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2969,6 +3238,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shìhé",
     exampleTranslation: "この服はあなたによく似合っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2980,6 +3250,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shìyìng",
     exampleTranslation: "私はここの生活に慣れています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -2991,6 +3262,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shǒu xiān",
     exampleTranslation: "まず、私は賛成です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3002,6 +3274,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shòu bù liǎo",
     exampleTranslation: "もう我慢できません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3013,6 +3286,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shū",
     exampleTranslation: "私たちは負けるわけにはいかない。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3024,6 +3298,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tán",
     exampleTranslation: "話し合いましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3035,6 +3310,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tǎng",
     exampleTranslation: "彼はソファーに横になっています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3046,6 +3322,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tǎo yàn",
     exampleTranslation: "私はあなたが嫌いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3057,6 +3334,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tiánkòng",
     exampleTranslation: "空欄を埋めてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3068,6 +3346,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tǐng...de",
     exampleTranslation: "この映画はとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3079,6 +3358,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tóngqíng",
     exampleTranslation: "彼女にちょっと同情します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3090,6 +3370,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tuō",
     exampleTranslation: "靴を脱ぐ",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3101,6 +3382,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wēixiǎn",
     exampleTranslation: "これは危険です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3112,6 +3394,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wèidao",
     exampleTranslation: "この味は良いですね。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3123,6 +3406,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wòshǒu",
     exampleTranslation: "握手しましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3134,6 +3418,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wú",
     exampleTranslation: "ノーコメント",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3145,6 +3430,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xī yǐn",
     exampleTranslation: "それはとても魅力的です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3156,6 +3442,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiāng",
     exampleTranslation: "この花はとても香りが良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3167,6 +3454,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiǎng",
     exampleTranslation: "うるさすぎます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3178,6 +3466,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xīn kǔ",
     exampleTranslation: "お疲れ様でした。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3189,6 +3478,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xìnxīn",
     exampleTranslation: "私は自信を持つ必要があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3200,6 +3490,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xīngfèn",
     exampleTranslation: "彼は興奮しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3211,6 +3502,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bùxíng",
     exampleTranslation: "あなたはいけません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3222,6 +3514,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xìng fú",
     exampleTranslation: "生活はとても幸せです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3233,6 +3526,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yìng",
     exampleTranslation: "このパンはとても硬いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3244,6 +3538,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǒngyuǎn",
     exampleTranslation: "私は永遠にあなたを愛しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3255,6 +3550,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǒuqù",
     exampleTranslation: "この本はとても面白いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3266,6 +3562,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǒuyì",
     exampleTranslation: "私たちの友情は深いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3277,6 +3574,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yú kuài",
     exampleTranslation: "良い週末を。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3288,6 +3586,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǔfǎ",
     exampleTranslation: "文法は難しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3299,6 +3598,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yùxí",
     exampleTranslation: "私は中国語を予習します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3310,6 +3610,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yuán liàng",
     exampleTranslation: "私を許してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3321,6 +3622,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yuēhuì",
     exampleTranslation: "私はデートの予定があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3332,6 +3634,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zàng",
     exampleTranslation: "これは汚すぎます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3343,6 +3646,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zēng zhǎng",
     exampleTranslation: "経済成長が速い。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3354,6 +3658,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhěng lǐ",
     exampleTranslation: "私は部屋を片付けます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3365,6 +3670,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhěngqí",
     exampleTranslation: "本をきれいに整理してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3376,6 +3682,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhèng cháng",
     exampleTranslation: "全て正常です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3387,6 +3694,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhènghǎo",
     exampleTranslation: "今来たらちょうどいい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3398,6 +3706,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhī chí",
     exampleTranslation: "私たちはあなたを応援します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3409,6 +3718,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhùhè",
     exampleTranslation: "成功おめでとうございます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3420,6 +3730,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhuàng",
     exampleTranslation: "彼は私の車にぶつかりました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3431,6 +3742,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zuǐ",
     exampleTranslation: "彼の口はとても大きいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3442,6 +3754,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zuì hòu",
     exampleTranslation: "最後です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3453,6 +3766,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bìng qiě",
     exampleTranslation: "彼はとても良い上に、かっこいいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3464,6 +3778,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bùdàn",
     exampleTranslation: "彼女はきれいなだけでなく。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3475,6 +3790,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bù guǎn",
     exampleTranslation: "どんなに忙しくても。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3486,6 +3802,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bù jǐn",
     exampleTranslation: "美味しいだけでなく。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3497,6 +3814,7 @@ export const mockWords: Word[] = [
     examplePinyin: "cónglái",
     exampleTranslation: "私は一度も見たことがない。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3508,6 +3826,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dāng shí",
     exampleTranslation: "私は当時とても怒っていました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3519,6 +3838,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guǒ rán",
     exampleTranslation: "やはり彼だ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3530,6 +3850,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hòulái",
     exampleTranslation: "その後、私たちは結婚しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3541,6 +3862,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jí shǐ",
     exampleTranslation: "たとえ雨が降っても、私は行きます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3552,6 +3874,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jì rán",
     exampleTranslation: "そういうことなら、",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3563,6 +3886,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jǐnguǎn",
     exampleTranslation: "困難であるにもかかわらず。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3574,6 +3898,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìng rán",
     exampleTranslation: "彼が来るとは意外だ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3585,6 +3910,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiūjìng",
     exampleTranslation: "あなたはいったい行くのですか、行かないのですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3596,6 +3922,7 @@ export const mockWords: Word[] = [
     examplePinyin: "búguò",
     exampleTranslation: "でも、大丈夫です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3607,6 +3934,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kěshì",
     exampleTranslation: "私は行きましたが、彼は不在でした。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3618,6 +3946,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rán'ér",
     exampleTranslation: "私は彼を愛しているが、彼は私を愛していない。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3629,6 +3958,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lián",
     exampleTranslation: "私は彼のことさえ知りません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3640,6 +3970,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lìngwài",
     exampleTranslation: "それに、少しお腹が空きました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3651,6 +3982,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ǒu'ěr",
     exampleTranslation: "私は時々辛いものを食べます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3662,6 +3994,7 @@ export const mockWords: Word[] = [
     examplePinyin: "què",
     exampleTranslation: "彼は来なかった。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3673,6 +4006,7 @@ export const mockWords: Word[] = [
     examplePinyin: "réngrán",
     exampleTranslation: "彼はやはりかっこいい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3684,6 +4018,7 @@ export const mockWords: Word[] = [
     examplePinyin: "suíbiàn",
     exampleTranslation: "適当に言ってください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3695,6 +4030,7 @@ export const mockWords: Word[] = [
     examplePinyin: "suízhe",
     exampleTranslation: "時が経つにつれて。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3706,6 +4042,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tōng guò",
     exampleTranslation: "試験に合格しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3717,6 +4054,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wúlùn",
     exampleTranslation: "どうしても。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3728,6 +4066,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiāng fǎn",
     exampleTranslation: "彼らの意見は反対です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3739,6 +4078,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǐ",
     exampleTranslation: "あなたのやり方で",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3750,6 +4090,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yīncǐ",
     exampleTranslation: "そのため、遅刻しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3761,6 +4102,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yóu",
     exampleTranslation: "それはあなたが決めることです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3772,6 +4114,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yóu yú",
     exampleTranslation: "雨のため。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3783,6 +4126,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yóuqí",
     exampleTranslation: "私は特にあなたが大好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3794,6 +4138,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yú shì",
     exampleTranslation: "彼は笑ったので、私も笑いました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3805,6 +4150,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǔ",
     exampleTranslation: "私はあなたと協力します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3816,6 +4162,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yuánlái",
     exampleTranslation: "なるほど。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3827,6 +4174,7 @@ export const mockWords: Word[] = [
     examplePinyin: "àn shí",
     exampleTranslation: "時間通りに完成させてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3838,6 +4186,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ànzhào",
     exampleTranslation: "規定通りに。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3849,6 +4198,7 @@ export const mockWords: Word[] = [
     examplePinyin: "běn lái",
     exampleTranslation: "私はもともと知りませんでした。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3860,6 +4210,7 @@ export const mockWords: Word[] = [
     examplePinyin: "bù dé bù",
     exampleTranslation: "私は行かなくてはなりません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3871,6 +4222,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chāoguò",
     exampleTranslation: "8時を過ぎないでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3882,6 +4234,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dàgài",
     exampleTranslation: "彼はたぶん家にいる。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3893,6 +4246,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dàyuē",
     exampleTranslation: "だいたい8時に来ます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3904,6 +4258,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dàodǐ",
     exampleTranslation: "結局、行くの行かないの？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3915,6 +4270,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dé, de, děi",
     exampleTranslation: "彼は速く走ります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3926,6 +4282,7 @@ export const mockWords: Word[] = [
     examplePinyin: "diào",
     exampleTranslation: "鍵をなくした。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3937,6 +4294,7 @@ export const mockWords: Word[] = [
     examplePinyin: "dùn",
     exampleTranslation: "私は少し立ち止まった。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3948,6 +4306,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fèn",
     exampleTranslation: "私は二つ買いました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3959,6 +4318,7 @@ export const mockWords: Word[] = [
     examplePinyin: "chǎng",
     exampleTranslation: "これは試合です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3970,6 +4330,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tàng, tāng",
     exampleTranslation: "行ってきてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3981,6 +4342,7 @@ export const mockWords: Word[] = [
     examplePinyin: "duǒ",
     exampleTranslation: "一輪の雲が漂っていきました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -3992,6 +4354,7 @@ export const mockWords: Word[] = [
     examplePinyin: "biàn",
     exampleTranslation: "一度読んでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4003,6 +4366,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zuò",
     exampleTranslation: "あの山はとても高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4014,6 +4378,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ér",
     exampleTranslation: "彼は背が高くて痩せている。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4025,6 +4390,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gāng gāng",
     exampleTranslation: "私はちょうど家に帰ったところです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4036,6 +4402,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gè",
     exampleTranslation: "誰もがそれぞれの趣味を持っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4047,6 +4414,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gòu",
     exampleTranslation: "お金は足りますか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4058,6 +4426,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guò",
     exampleTranslation: "以前、来たことがあります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4069,6 +4438,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hǎoxiàng",
     exampleTranslation: "彼は病気のようです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4080,6 +4450,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hūrán",
     exampleTranslation: "彼は突然笑った。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4091,6 +4462,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hùxiāng",
     exampleTranslation: "私たちはお互いに学びます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4102,6 +4474,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kěndìng",
     exampleTranslation: "彼はきっと来るでしょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4113,6 +4486,7 @@ export const mockWords: Word[] = [
     examplePinyin: "",
     exampleTranslation: "たぶん間に合わないでしょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4124,6 +4498,7 @@ export const mockWords: Word[] = [
     examplePinyin: "láibùjí",
     exampleTranslation: "間に合わなくて行けません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4135,6 +4510,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lái de jí",
     exampleTranslation: "今から行ってもまだ間に合います。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4146,6 +4522,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lìrú",
     exampleTranslation: "例えば、餃子。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4157,6 +4534,7 @@ export const mockWords: Word[] = [
     examplePinyin: "nándào",
     exampleTranslation: "まさかあなたはいかないのですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4168,6 +4546,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qícì",
     exampleTranslation: "次に、私が紹介します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4179,6 +4558,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qí zhōng",
     exampleTranslation: "その一つ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4190,6 +4570,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qǐlái",
     exampleTranslation: "早く起きて。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4201,6 +4582,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qiānwàn",
     exampleTranslation: "絶対に忘れないでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4212,6 +4594,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shènzhì",
     exampleTranslation: "知ることさえなかった。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4223,6 +4606,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shí fēn",
     exampleTranslation: "彼はとても喜んでいます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4234,6 +4618,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shíjì",
     exampleTranslation: "実際の状況。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4245,6 +4630,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shízài",
     exampleTranslation: "本当に忙しすぎます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4256,6 +4642,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shùnbiàn",
     exampleTranslation: "ついでに野菜を買っていきます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4267,6 +4654,7 @@ export const mockWords: Word[] = [
     examplePinyin: "suàn",
     exampleTranslation: "私を一人に数えてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4278,6 +4666,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wán quán",
     exampleTranslation: "全く同感です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4289,6 +4678,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wǎng",
     exampleTranslation: "右に曲がって。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4300,6 +4690,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wǎngwǎng",
     exampleTranslation: "彼女はたいてい忙しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4311,6 +4702,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xǔ duō",
     exampleTranslation: "私には友達がたくさんいます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4322,6 +4714,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yěxǔ",
     exampleTranslation: "私はたぶん行くでしょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4333,6 +4726,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yī qiè",
     exampleTranslation: "全て順調です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4344,6 +4738,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zàn shí",
     exampleTranslation: "少し休んでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4355,6 +4750,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhēn zhèng",
     exampleTranslation: "彼は本当に彼女を愛している。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4366,6 +4762,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǐ",
     exampleTranslation: "私は猫を一匹飼っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4377,6 +4774,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǐhǎo",
     exampleTranslation: "私は家に帰るしかなかった。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4388,6 +4786,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǐyào",
     exampleTranslation: "努力しさえすれば、成功するでしょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4399,6 +4798,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhì shǎo",
     exampleTranslation: "少なくとも三日間必要です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4410,6 +4810,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhú jiàn",
     exampleTranslation: "だんだん寒くなってきました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4421,6 +4822,7 @@ export const mockWords: Word[] = [
     examplePinyin: "értóng",
     exampleTranslation: "児童節おめでとうございます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4432,6 +4834,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ān quán",
     exampleTranslation: "安全を心掛ける。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4443,6 +4846,7 @@ export const mockWords: Word[] = [
     examplePinyin: "àiqíng",
     exampleTranslation: "愛はとても美しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4454,6 +4858,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zūnzhòng",
     exampleTranslation: "私たちは互いに尊重し合っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4465,6 +4870,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zū",
     exampleTranslation: "一軒家を借りたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4476,6 +4882,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zázhì",
     exampleTranslation: "私は雑誌を読みます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4487,6 +4894,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zuòwèi",
     exampleTranslation: "空いている席はありますか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4498,6 +4906,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zuò shēng yì",
     exampleTranslation: "私は商売をしたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4509,6 +4918,7 @@ export const mockWords: Word[] = [
     examplePinyin: "pīngpāngqiú",
     exampleTranslation: "私はピンポンをするのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4520,6 +4930,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǔmáoqiú",
     exampleTranslation: "バドミントンをする。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4531,6 +4942,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wǎng qiú",
     exampleTranslation: "私はテニスをするのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4542,6 +4954,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tàidu",
     exampleTranslation: "彼の態度はとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4553,6 +4966,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zuìhǎo",
     exampleTranslation: "行かないほうがいいよ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4564,6 +4978,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǔ​yi",
     exampleTranslation: "このアイデアはとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4575,6 +4990,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǔ dòng",
     exampleTranslation: "自分から彼女に挨拶をした。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4586,6 +5002,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhùmíng",
     exampleTranslation: "彼の絵はとても有名です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4597,6 +5014,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhōuwéi",
     exampleTranslation: "周りは静かです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4608,6 +5026,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǔyán",
     exampleTranslation: "言語を学ぶ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4619,6 +5038,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhōngwén",
     exampleTranslation: "私は中国語を学ぶのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4630,6 +5050,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǔ fǎ",
     exampleTranslation: "彼の文法はとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4641,6 +5062,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhòngdiǎn",
     exampleTranslation: "これは重点です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4652,6 +5074,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhī shi",
     exampleTranslation: "新しい知識を学ぶ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4663,6 +5086,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhī",
     exampleTranslation: "一挙両得の計",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4674,6 +5098,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǐ",
     exampleTranslation: "正しい答えを指摘してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4685,6 +5110,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhìliàng",
     exampleTranslation: "品質が非常に良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4696,6 +5122,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhíwù",
     exampleTranslation: "私は植物が好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4707,6 +5134,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kē",
     exampleTranslation: "一本の木が高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4718,6 +5146,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yèzi",
     exampleTranslation: "木にはたくさんの葉があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4729,6 +5158,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhíjiē",
     exampleTranslation: "あなたは直接行くことができます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4740,6 +5170,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhèngshì",
     exampleTranslation: "彼らは正式に結婚しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4751,6 +5182,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhèngquè",
     exampleTranslation: "この答えは正しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4762,6 +5194,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zhǎi",
     exampleTranslation: "この道はとても狭いです",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4773,6 +5206,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yōuxiù",
     exampleTranslation: "彼はとても優秀です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4784,6 +5218,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yōumò",
     exampleTranslation: "彼はユーモアのセンスがある。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4795,6 +5230,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yōudiǎn",
     exampleTranslation: "長所を発揮する",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4806,6 +5242,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǒuyì",
     exampleTranslation: "私たちの友情は永遠に続く。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4817,6 +5254,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǒuhǎo",
     exampleTranslation: "両国の関係は友好的です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4828,6 +5266,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǒnggǎn",
     exampleTranslation: "彼はとても勇敢です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4839,6 +5278,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yì shù",
     exampleTranslation: "これは一つの芸術です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4850,6 +5290,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yìnxiàng",
     exampleTranslation: "私は彼にとても良い印象を持っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4861,6 +5302,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yìjiàn",
     exampleTranslation: "私は異なる意見を持っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4872,6 +5314,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiàn mù",
     exampleTranslation: "あなたが羨ましいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4883,6 +5326,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yì",
     exampleTranslation: "この数字は10億です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4894,6 +5338,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yíng",
     exampleTranslation: "私たちは試合に勝ちました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4905,6 +5350,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yè",
     exampleTranslation: "次のページを開いてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4916,6 +5362,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yālì",
     exampleTranslation: "仕事のプレッシャーが大きいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4927,6 +5374,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǎnyuán",
     exampleTranslation: "彼は良い俳優です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4938,6 +5386,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yǎn chū",
     exampleTranslation: "今回の公演はとても素晴らしかった。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4949,6 +5398,7 @@ export const mockWords: Word[] = [
     examplePinyin: "Yàzhōu",
     exampleTranslation: "アジアはとても広いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4960,6 +5410,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yàoshi",
     exampleTranslation: "鍵を持ってくるのを忘れました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4971,6 +5422,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yàngzi",
     exampleTranslation: "あなたは本当に可愛らしいね。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4982,6 +5434,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yángguāng",
     exampleTranslation: "日差しがとても暖かいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -4993,6 +5446,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yán",
     exampleTranslation: "料理に塩が入っていません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5004,6 +5458,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yá gāo",
     exampleTranslation: "私は歯磨き粉を買いました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5015,6 +5470,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yuányīn",
     exampleTranslation: "原因を見つけ出す。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5026,6 +5482,7 @@ export const mockWords: Word[] = [
     examplePinyin: "yuán",
     exampleTranslation: "月はとても丸いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5037,6 +5494,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ya",
     exampleTranslation: "すごいね！",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5048,6 +5506,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xǐyījī",
     exampleTranslation: "この洗濯機はとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5059,6 +5518,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xìn yòng kǎ",
     exampleTranslation: "クレジットカードを使います。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5070,6 +5530,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xìnggé",
     exampleTranslation: "彼女は性格がとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5081,6 +5542,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xìngbié",
     exampleTranslation: "あなたの性別をお伺いします。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5092,6 +5554,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xuè",
     exampleTranslation: "血液検査の結果はとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5103,6 +5566,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiāoxi",
     exampleTranslation: "ニュースを聞きました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5114,6 +5578,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiǎo shuō",
     exampleTranslation: "私は小説を読むのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5125,6 +5590,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiàohua",
     exampleTranslation: "この冗談はとても面白いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5136,6 +5602,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiàoguǒ",
     exampleTranslation: "効果はとても良い。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5147,6 +5614,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiàndài",
     exampleTranslation: "現代アートはどうですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5158,6 +5626,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xiáng xì",
     exampleTranslation: "詳しく説明してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5169,6 +5638,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xián",
     exampleTranslation: "この料理は少し塩辛いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5180,6 +5650,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wūrǎn",
     exampleTranslation: "空気汚染がひどい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5191,6 +5662,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wù huì",
     exampleTranslation: "誤解ですよ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5202,6 +5674,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wú liáo",
     exampleTranslation: "私はとても退屈です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5213,6 +5686,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wēn dù",
     exampleTranslation: "今日はとても気温が高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5224,6 +5698,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wén zhāng",
     exampleTranslation: "この記事はとても興味深いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5235,6 +5710,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wǎngzhàn",
     exampleTranslation: "私にはウェブサイトがあります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5246,6 +5722,7 @@ export const mockWords: Word[] = [
     examplePinyin: "wà zi",
     exampleTranslation: "私は白い靴下を履いています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5257,6 +5734,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tōngzhī",
     exampleTranslation: "良い知らせがあります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5268,6 +5746,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tè diǎn",
     exampleTranslation: "彼の特徴はたくさんあります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5279,6 +5758,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tāng",
     exampleTranslation: "スープが飲みたい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5290,6 +5770,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tái",
     exampleTranslation: "一台のコンピューターはとても高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5301,6 +5782,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tái",
     exampleTranslation: "テーブルを持ち上げてください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5312,6 +5794,7 @@ export const mockWords: Word[] = [
     examplePinyin: "tiáojiàn",
     exampleTranslation: "全ての条件を満たしています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5323,6 +5806,7 @@ export const mockWords: Word[] = [
     examplePinyin: "sù liào dài",
     exampleTranslation: "私はビニール袋を使いません。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5334,6 +5818,7 @@ export const mockWords: Word[] = [
     examplePinyin: "sùdù",
     exampleTranslation: "速度を上げる。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5345,6 +5830,7 @@ export const mockWords: Word[] = [
     examplePinyin: "zìrán",
     exampleTranslation: "私は自然が好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5356,6 +5842,7 @@ export const mockWords: Word[] = [
     examplePinyin: "sēn lín",
     exampleTranslation: "私はこの森が大好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5367,6 +5854,7 @@ export const mockWords: Word[] = [
     examplePinyin: "suǒyǒu",
     exampleTranslation: "私は全てを持っている。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5378,6 +5866,7 @@ export const mockWords: Word[] = [
     examplePinyin: "suān",
     exampleTranslation: "このりんごはとても酸っぱい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5389,6 +5878,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shù zì",
     exampleTranslation: "この数字はとても大きいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5400,6 +5890,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shùnxù",
     exampleTranslation: "順番に並んでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5411,6 +5902,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shù liàng",
     exampleTranslation: "量が少し少ないです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5422,6 +5914,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shōurù",
     exampleTranslation: "彼の収入はとても高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5433,6 +5926,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shǒudū",
     exampleTranslation: "北京は中国の首都です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5444,6 +5938,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shī fu",
     exampleTranslation: "すみません、お手洗いはどこですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5455,6 +5950,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shìjì",
     exampleTranslation: "21世紀",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5466,6 +5962,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shìchǎng",
     exampleTranslation: "市場はとても大きいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5477,6 +5974,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shí pǐn",
     exampleTranslation: "この食品はとても安全です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5488,6 +5986,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shēngmìng",
     exampleTranslation: "命は美しい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5499,6 +5998,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shēnghuó",
     exampleTranslation: "私はシンプルな生活が好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5510,6 +6010,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shēn",
     exampleTranslation: "この湖の水はとても深い。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5521,6 +6022,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shè huì",
     exampleTranslation: "社会は発展しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5532,6 +6034,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shāfā",
     exampleTranslation: "私はソファーに座っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5543,6 +6046,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shuōmíng",
     exampleTranslation: "説明してください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5554,6 +6058,7 @@ export const mockWords: Word[] = [
     examplePinyin: "shuài",
     exampleTranslation: "彼は格好良く見えます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5565,6 +6070,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rù kǒu",
     exampleTranslation: "入口はどこですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5576,6 +6082,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rìjì",
     exampleTranslation: "私は日記を書きました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5587,6 +6094,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rènwu",
     exampleTranslation: "私には一つの任務があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5598,6 +6106,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rèn hé",
     exampleTranslation: "誰でもいいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5609,6 +6118,7 @@ export const mockWords: Word[] = [
     examplePinyin: "rénmínbì",
     exampleTranslation: "人民元に両替したいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5620,6 +6130,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ruǎn",
     exampleTranslation: "このベッドはとても柔らかいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5631,6 +6142,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qún",
     exampleTranslation: "鳥の群れが飛び去りました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5642,6 +6154,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qìhòu",
     exampleTranslation: "ここの気候はとても良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5653,6 +6166,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qíngkuàng",
     exampleTranslation: "状況はとても複雑です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5664,6 +6178,7 @@ export const mockWords: Word[] = [
     examplePinyin: "quēdiǎn",
     exampleTranslation: "彼には欠点が多いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5675,6 +6190,7 @@ export const mockWords: Word[] = [
     examplePinyin: "quánbù",
     exampleTranslation: "私たちは全員同意します。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5686,6 +6202,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qiāo",
     exampleTranslation: "ドアをノックする音がとても大きいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5697,6 +6214,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qiānzhèng",
     exampleTranslation: "私のビザは手続きが終わりました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5708,6 +6226,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qiáo",
     exampleTranslation: "橋を渡りましょう。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5719,6 +6238,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qiáng",
     exampleTranslation: "壁に絵があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5730,6 +6250,7 @@ export const mockWords: Word[] = [
     examplePinyin: "pí qi",
     exampleTranslation: "彼は気立てがいい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5741,6 +6262,7 @@ export const mockWords: Word[] = [
     examplePinyin: "píngzi",
     exampleTranslation: "この瓶は空です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5752,6 +6274,7 @@ export const mockWords: Word[] = [
     examplePinyin: "píng shí",
     exampleTranslation: "私は普段とても忙しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5763,6 +6286,7 @@ export const mockWords: Word[] = [
     examplePinyin: "pífū",
     exampleTranslation: "私の肌はとても乾燥しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5774,6 +6298,7 @@ export const mockWords: Word[] = [
     examplePinyin: "piān",
     exampleTranslation: "ニュース記事一つ",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5785,6 +6310,7 @@ export const mockWords: Word[] = [
     examplePinyin: "nóng cūn",
     exampleTranslation: "私は田舎に住んでいます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5796,6 +6322,7 @@ export const mockWords: Word[] = [
     examplePinyin: "nèiróng",
     exampleTranslation: "内容はとても豊富です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5807,6 +6334,7 @@ export const mockWords: Word[] = [
     examplePinyin: "néng lì",
     exampleTranslation: "彼の学習能力はとても高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5818,6 +6346,7 @@ export const mockWords: Word[] = [
     examplePinyin: "niánlíng",
     exampleTranslation: "おいくつですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5829,6 +6358,7 @@ export const mockWords: Word[] = [
     examplePinyin: "mù dì",
     exampleTranslation: "彼の目的は勉強することです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5840,6 +6370,7 @@ export const mockWords: Word[] = [
     examplePinyin: "mìmǎ",
     exampleTranslation: "私のパスワードは6桁です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5851,6 +6382,7 @@ export const mockWords: Word[] = [
     examplePinyin: "mín zú",
     exampleTranslation: "全ての国にはそれぞれの民族があります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5862,6 +6394,7 @@ export const mockWords: Word[] = [
     examplePinyin: "měilì",
     exampleTranslation: "彼女はとても美しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5873,6 +6406,7 @@ export const mockWords: Word[] = [
     examplePinyin: "mèng",
     exampleTranslation: "夢を見ました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5884,6 +6418,7 @@ export const mockWords: Word[] = [
     examplePinyin: "máo jīn",
     exampleTranslation: "私はタオルを一枚買いました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5895,6 +6430,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lǐ xiǎng",
     exampleTranslation: "あなたは理想を持っていますか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5906,6 +6442,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lǐ mào",
     exampleTranslation: "彼はとても礼儀正しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5917,6 +6454,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lěng jìng",
     exampleTranslation: "落ち着いていなさい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5928,6 +6466,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lājītǒng",
     exampleTranslation: "ごみをゴミ箱に捨ててください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5939,6 +6478,7 @@ export const mockWords: Word[] = [
     examplePinyin: "lǎohǔ",
     exampleTranslation: "私は虎がとても怖いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5950,6 +6490,7 @@ export const mockWords: Word[] = [
     examplePinyin: "làngmàn",
     exampleTranslation: "私はロマンチックなものが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5961,6 +6502,7 @@ export const mockWords: Word[] = [
     examplePinyin: "làngfèi",
     exampleTranslation: "時間を無駄にしないでください。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5972,6 +6514,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liúlì",
     exampleTranslation: "とても流暢に話しました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5983,6 +6526,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liàng",
     exampleTranslation: "明かりがとても明るいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -5994,6 +6538,7 @@ export const mockWords: Word[] = [
     examplePinyin: "liángkuai",
     exampleTranslation: "今日はとても涼しい。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6005,6 +6550,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kùnnan",
     exampleTranslation: "この問題は難しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6016,6 +6562,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kōngqì",
     exampleTranslation: "空気がとても新鮮です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6027,6 +6574,7 @@ export const mockWords: Word[] = [
     examplePinyin: "ké sou",
     exampleTranslation: "彼女はずっと咳をしています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6038,6 +6586,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jù lí",
     exampleTranslation: "私たちはとても近いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6049,6 +6598,7 @@ export const mockWords: Word[] = [
     examplePinyin: "Jīngjù",
     exampleTranslation: "私は京劇を見るのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6060,6 +6610,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jījí",
     exampleTranslation: "彼はとても積極的です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6071,6 +6622,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jǐnzhāng",
     exampleTranslation: "少し緊張しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6082,6 +6634,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìn zhǐ",
     exampleTranslation: "禁煙",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6093,6 +6646,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìng zi",
     exampleTranslation: "鏡を見たの？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6104,6 +6658,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jìngzhēng",
     exampleTranslation: "私たちは互いに競争し合っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6115,6 +6670,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiē guǒ",
     exampleTranslation: "結果は良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6126,6 +6682,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiā yóu zhàn",
     exampleTranslation: "私はガソリンスタンドにいます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6137,6 +6694,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiāotōng",
     exampleTranslation: "交通はとても便利です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6148,6 +6706,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiānglái",
     exampleTranslation: "私は将来を願っています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6159,6 +6718,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiā・jù",
     exampleTranslation: "私たちは家具を買いました。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6170,6 +6730,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jiǎ",
     exampleTranslation: "偽装しないで。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6181,6 +6742,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jià gé",
     exampleTranslation: "価格はとても安いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6192,6 +6754,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hòu",
     exampleTranslation: "この服はとても厚いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6203,6 +6766,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hé zi",
     exampleTranslation: "この箱はきれいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6214,6 +6778,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hégé",
     exampleTranslation: "試験に合格しましたか。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6225,6 +6790,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hǎochù",
     exampleTranslation: "野菜をたくさん食べると良いことがあります。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6236,6 +6802,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hǎiyáng",
     exampleTranslation: "私は海を見るのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6247,6 +6814,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hàomǎ",
     exampleTranslation: "あなたの番号は何ですか？",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6258,6 +6826,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hàixiū",
     exampleTranslation: "彼女は少し恥ずかしがり屋です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6269,6 +6838,7 @@ export const mockWords: Word[] = [
     examplePinyin: "hánjià",
     exampleTranslation: "冬休みがもうすぐです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6280,6 +6850,7 @@ export const mockWords: Word[] = [
     examplePinyin: "huǒ",
     exampleTranslation: "火事だ、早く逃げろ！",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6291,6 +6862,7 @@ export const mockWords: Word[] = [
     examplePinyin: "huópō",
     exampleTranslation: "彼女はとても活発です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6302,6 +6874,7 @@ export const mockWords: Word[] = [
     examplePinyin: "huí yì",
     exampleTranslation: "私は過去を振り返るのが好きです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6313,6 +6886,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gōnglǐ",
     exampleTranslation: "私の家は会社から5キロメートル離れています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6324,6 +6898,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gòuwù",
     exampleTranslation: "私は買い物に行きたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6335,6 +6910,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gèzi",
     exampleTranslation: "彼女は背が高いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6346,6 +6922,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gān zào",
     exampleTranslation: "天気がとても乾燥しています。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6357,6 +6934,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gān",
     exampleTranslation: "私たちの友情に乾杯！",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6368,6 +6946,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guójì",
     exampleTranslation: "これは国際的な問題です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6379,6 +6958,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guān zhòng",
     exampleTranslation: "観客はとても興奮している。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6390,6 +6970,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guānjiàn",
     exampleTranslation: "これは鍵です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6401,6 +6982,7 @@ export const mockWords: Word[] = [
     examplePinyin: "guāng",
     exampleTranslation: "部屋に光がある。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6412,6 +6994,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fùzá",
     exampleTranslation: "これは複雑すぎます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6423,6 +7006,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fùyìn",
     exampleTranslation: "コピーしたいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6434,6 +7018,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fù",
     exampleTranslation: "彼はとても裕福です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6445,6 +7030,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fǒu zé",
     exampleTranslation: "早く行って、さもないと間に合わないよ。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6456,6 +7042,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fēng jǐng",
     exampleTranslation: "ここの景色はとても美しいです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6467,6 +7054,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fēng fù",
     exampleTranslation: "経験が豊富です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6478,6 +7066,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fāngxiàng",
     exampleTranslation: "方向が違います。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6489,6 +7078,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fāngmiàn",
     exampleTranslation: "この方面の問題。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6500,6 +7090,7 @@ export const mockWords: Word[] = [
     examplePinyin: "fāngfǎ",
     exampleTranslation: "これは良い方法です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6511,6 +7102,7 @@ export const mockWords: Word[] = [
     examplePinyin: "xīnqíng",
     exampleTranslation: "今日は気分が良いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6522,6 +7114,7 @@ export const mockWords: Word[] = [
     examplePinyin: "gǎnxiè",
     exampleTranslation: "どうもありがとうございます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6533,6 +7126,7 @@ export const mockWords: Word[] = [
     examplePinyin: "jīng shén",
     exampleTranslation: "彼は元気です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6544,6 +7138,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kělián",
     exampleTranslation: "彼はとてもかわいそうに見えます。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6555,6 +7150,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kěxī",
     exampleTranslation: "それは残念です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6566,6 +7162,7 @@ export const mockWords: Word[] = [
     examplePinyin: "kùn",
     exampleTranslation: "少し眠いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6577,6 +7174,7 @@ export const mockWords: Word[] = [
     examplePinyin: "nánshòu",
     exampleTranslation: "気分がとても悪いです。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   },
   {
@@ -6588,6 +7186,7 @@ export const mockWords: Word[] = [
     examplePinyin: "qīngsōng",
     exampleTranslation: "勉強はとても楽です。",
     isMemorized: false,
+    unmemorizedCount: 0,
     videoIds: [],
   }
 ];

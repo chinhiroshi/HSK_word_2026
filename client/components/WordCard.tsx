@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -18,9 +18,9 @@ import { Word } from "@/types";
 interface WordCardProps {
   word: Word;
   index?: number;
-  compact?: boolean;
   onPress: () => void;
-  onToggleMemorized: () => void;
+  onMarkUnmemorized: () => void;
+  onClearMark: () => void;
 }
 
 const springConfig: WithSpringConfig = {
@@ -32,18 +32,17 @@ const springConfig: WithSpringConfig = {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export function WordCard({ word, index, compact = false, onPress, onToggleMemorized }: WordCardProps) {
+export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark }: WordCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
-  const checkScale = useSharedValue(1);
-  const [showMeaning, setShowMeaning] = useState(false);
+  const markScale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
 
-  const checkAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: checkScale.value }],
+  const markAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: markScale.value }],
   }));
 
   const handlePressIn = () => {
@@ -54,100 +53,30 @@ export function WordCard({ word, index, compact = false, onPress, onToggleMemori
     scale.value = withSpring(1, springConfig);
   };
 
-  const handleToggle = () => {
-    checkScale.value = withSpring(1.3, springConfig, () => {
-      checkScale.value = withSpring(1, springConfig);
+  const handleMarkUnmemorized = () => {
+    markScale.value = withSpring(1.3, springConfig, () => {
+      markScale.value = withSpring(1, springConfig);
     });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onToggleMemorized();
+    onMarkUnmemorized();
   };
 
-  const handlePeek = () => {
+  const handleClearMark = () => {
+    markScale.value = withSpring(1.3, springConfig, () => {
+      markScale.value = withSpring(1, springConfig);
+    });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setShowMeaning(!showMeaning);
+    onClearMark();
   };
 
-  const borderLeftColor = word.isMemorized
+  const unmemorizedCount = word.unmemorizedCount || 0;
+  const isMarked = unmemorizedCount > 0;
+
+  const borderLeftColor = isMarked
+    ? Colors.light.secondary
+    : word.isMemorized
     ? Colors.light.success
     : "transparent";
-
-  if (compact) {
-    return (
-      <AnimatedPressable
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={[
-          styles.compactCard,
-          {
-            backgroundColor: theme.backgroundDefault,
-            borderColor: theme.border,
-            borderLeftColor: borderLeftColor,
-            borderLeftWidth: word.isMemorized ? 3 : 1,
-          },
-          animatedStyle,
-        ]}
-        testID={`word-card-${word.id}`}
-      >
-        {index !== undefined ? (
-          <View style={[styles.compactIndexContainer, { backgroundColor: theme.backgroundSecondary }]}>
-            <ThemedText style={[styles.compactIndexText, { color: theme.textSecondary }]}>
-              {index}
-            </ThemedText>
-          </View>
-        ) : null}
-
-        <Pressable
-          onPress={handleToggle}
-          style={styles.compactCheckContainer}
-          hitSlop={8}
-          testID={`toggle-memorized-${word.id}`}
-        >
-          <Animated.View style={checkAnimatedStyle}>
-            <Feather
-              name={word.isMemorized ? "check-circle" : "circle"}
-              size={20}
-              color={word.isMemorized ? Colors.light.success : theme.textSecondary}
-            />
-          </Animated.View>
-        </Pressable>
-
-        <View style={styles.compactContent}>
-          <ThemedText style={styles.compactWord}>{word.word}</ThemedText>
-        </View>
-
-        <View style={styles.rightActions}>
-          <SpeakButton text={word.word} size="small" />
-          <Pressable
-            onPress={handlePeek}
-            style={[
-              styles.peekButton,
-              {
-                backgroundColor: showMeaning ? theme.primary : theme.backgroundSecondary,
-              },
-            ]}
-            hitSlop={8}
-            testID={`peek-meaning-${word.id}`}
-          >
-            <Feather
-              name={showMeaning ? "eye" : "eye-off"}
-              size={16}
-              color={showMeaning ? "#FFFFFF" : theme.textSecondary}
-            />
-          </Pressable>
-          <Feather name="chevron-right" size={18} color={theme.textSecondary} />
-        </View>
-
-        {showMeaning ? (
-          <View style={[styles.meaningOverlay, { backgroundColor: theme.backgroundDefault }]}>
-            <ThemedText style={[styles.meaningText, { color: theme.primary }]}>
-              {word.translation}
-            </ThemedText>
-          </View>
-        ) : null}
-      </AnimatedPressable>
-    );
-  }
 
   return (
     <AnimatedPressable
@@ -160,162 +89,148 @@ export function WordCard({ word, index, compact = false, onPress, onToggleMemori
           backgroundColor: theme.backgroundDefault,
           borderColor: theme.border,
           borderLeftColor: borderLeftColor,
-          borderLeftWidth: word.isMemorized ? 4 : 1,
+          borderLeftWidth: isMarked || word.isMemorized ? 3 : 1,
         },
         animatedStyle,
       ]}
       testID={`word-card-${word.id}`}
     >
-      {index !== undefined ? (
-        <View style={[styles.indexContainer, { backgroundColor: theme.backgroundSecondary }]}>
-          <ThemedText style={[styles.indexText, { color: theme.textSecondary }]}>
-            {index}
-          </ThemedText>
-        </View>
-      ) : null}
+      <View style={styles.topRow}>
+        {index !== undefined ? (
+          <View style={[styles.indexContainer, { backgroundColor: theme.backgroundSecondary }]}>
+            <ThemedText style={[styles.indexText, { color: theme.textSecondary }]}>
+              {index}
+            </ThemedText>
+          </View>
+        ) : null}
 
-      <Pressable
-        onPress={handleToggle}
-        style={styles.checkContainer}
-        hitSlop={12}
-        testID={`toggle-memorized-${word.id}`}
-      >
-        <Animated.View style={checkAnimatedStyle}>
-          <Feather
-            name={word.isMemorized ? "check-circle" : "circle"}
-            size={24}
-            color={word.isMemorized ? Colors.light.success : theme.textSecondary}
-          />
-        </Animated.View>
-      </Pressable>
-
-      <View style={styles.content}>
-        <View style={styles.wordRow}>
+        <View style={styles.wordContainer}>
           <ThemedText style={styles.word}>{word.word}</ThemedText>
           <SpeakButton text={word.word} size="small" />
         </View>
-        <ThemedText style={[styles.pinyin, { color: theme.primary }]}>
-          {word.pinyin}
-        </ThemedText>
-        <ThemedText style={[styles.translation, { color: theme.textSecondary }]}>
-          {word.translation}
-        </ThemedText>
+
+        <View style={styles.markActions}>
+          {isMarked ? (
+            <Pressable
+              onPress={handleClearMark}
+              style={[styles.markBadge, { backgroundColor: Colors.light.secondary }]}
+              hitSlop={8}
+              testID={`clear-mark-${word.id}`}
+            >
+              <Animated.View style={markAnimatedStyle}>
+                <View style={styles.markBadgeContent}>
+                  <Feather name="x" size={12} color="#FFFFFF" />
+                  <ThemedText style={styles.markCountText}>{unmemorizedCount}</ThemedText>
+                </View>
+              </Animated.View>
+            </Pressable>
+          ) : (
+            <Pressable
+              onPress={handleMarkUnmemorized}
+              style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+              hitSlop={8}
+              testID={`mark-unmemorized-${word.id}`}
+            >
+              <Animated.View style={markAnimatedStyle}>
+                <Feather name="flag" size={16} color={theme.textSecondary} />
+              </Animated.View>
+            </Pressable>
+          )}
+          <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+        </View>
       </View>
 
-      <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+      <View style={styles.exampleRow}>
+        <View style={styles.exampleContainer}>
+          <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
+            {word.exampleSentence}
+          </ThemedText>
+        </View>
+        <SpeakButton text={word.exampleSentence} size="small" />
+      </View>
     </AnimatedPressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: Spacing.xs,
   },
   indexContainer: {
-    width: 32,
-    height: 32,
+    width: 28,
+    height: 28,
     borderRadius: BorderRadius.full,
     justifyContent: "center",
     alignItems: "center",
     marginRight: Spacing.sm,
   },
   indexText: {
-    fontSize: 12,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-  },
-  checkContainer: {
-    marginRight: Spacing.md,
-  },
-  content: {
-    flex: 1,
-  },
-  wordRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.xs,
-  },
-  word: {
-    fontSize: 22,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-  },
-  pinyin: {
-    fontSize: 13,
-    fontFamily: "Nunito_400Regular",
-    marginBottom: Spacing.xs,
-  },
-  translation: {
-    fontSize: 14,
-    fontFamily: "Nunito_400Regular",
-  },
-  compactCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    marginBottom: Spacing.sm,
-    position: "relative",
-  },
-  compactIndexContainer: {
-    width: 26,
-    height: 26,
-    borderRadius: BorderRadius.full,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: Spacing.xs,
-  },
-  compactIndexText: {
     fontSize: 11,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
   },
-  compactCheckContainer: {
-    marginRight: Spacing.sm,
-  },
-  compactContent: {
+  wordContainer: {
     flex: 1,
-  },
-  compactWord: {
-    fontSize: 18,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-  },
-  rightActions: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
   },
-  peekButton: {
-    width: 28,
-    height: 28,
+  word: {
+    fontSize: 20,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  markActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  markButton: {
+    width: 32,
+    height: 32,
     borderRadius: BorderRadius.full,
     justifyContent: "center",
     alignItems: "center",
   },
-  meaningOverlay: {
-    position: "absolute",
-    right: 50,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  markBadge: {
+    minWidth: 40,
+    height: 28,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: Spacing.sm,
   },
-  meaningText: {
+  markBadgeContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  markCountText: {
+    fontSize: 12,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    color: "#FFFFFF",
+  },
+  exampleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: 40,
+  },
+  exampleContainer: {
+    flex: 1,
+    marginRight: Spacing.sm,
+  },
+  exampleSentence: {
     fontSize: 14,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_400Regular",
   },
 });
