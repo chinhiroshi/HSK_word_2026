@@ -190,6 +190,7 @@ export default function StudyScreen() {
       <WordCard
         word={item}
         index={globalIndex}
+        compact={true}
         onPress={() => handleWordPress(item)}
         onToggleMemorized={() => handleToggleMemorized(item.id)}
       />
