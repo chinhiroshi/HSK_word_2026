@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View, Pressable } from "react-native";
+import { StyleSheet, View, Pressable, GestureResponderEvent } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -30,8 +30,6 @@ const springConfig: WithSpringConfig = {
   overshootClamping: true,
 };
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark }: WordCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
@@ -53,7 +51,8 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
     scale.value = withSpring(1, springConfig);
   };
 
-  const handleMarkUnmemorized = () => {
+  const handleMarkUnmemorized = (e: GestureResponderEvent) => {
+    e.stopPropagation();
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -61,7 +60,8 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
     onMarkUnmemorized();
   };
 
-  const handleClearMark = () => {
+  const handleClearMark = (e: GestureResponderEvent) => {
+    e.stopPropagation();
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -79,10 +79,7 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
     : "transparent";
 
   return (
-    <AnimatedPressable
-      onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
+    <Animated.View
       style={[
         styles.card,
         {
@@ -93,72 +90,82 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
         },
         animatedStyle,
       ]}
-      testID={`word-card-${word.id}`}
     >
-      <View style={styles.topRow}>
-        {index !== undefined ? (
-          <View style={[styles.indexContainer, { backgroundColor: theme.backgroundSecondary }]}>
-            <ThemedText style={[styles.indexText, { color: theme.textSecondary }]}>
-              {index}
+      <Pressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={styles.cardContent}
+        testID={`word-card-${word.id}`}
+      >
+        <View style={styles.topRow}>
+          {index !== undefined ? (
+            <View style={[styles.indexContainer, { backgroundColor: theme.backgroundSecondary }]}>
+              <ThemedText style={[styles.indexText, { color: theme.textSecondary }]}>
+                {index}
+              </ThemedText>
+            </View>
+          ) : null}
+
+          <View style={styles.wordContainer}>
+            <ThemedText style={styles.word}>{word.word}</ThemedText>
+            <SpeakButton text={word.word} size="small" />
+          </View>
+
+          <View style={styles.markActions}>
+            {isMarked ? (
+              <Pressable
+                onPress={handleClearMark}
+                style={[styles.markBadge, { backgroundColor: Colors.light.secondary }]}
+                hitSlop={12}
+                testID={`clear-mark-${word.id}`}
+              >
+                <Animated.View style={markAnimatedStyle}>
+                  <View style={styles.markBadgeContent}>
+                    <Feather name="x" size={12} color="#FFFFFF" />
+                    <ThemedText style={styles.markCountText}>{unmemorizedCount}</ThemedText>
+                  </View>
+                </Animated.View>
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={handleMarkUnmemorized}
+                style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                hitSlop={12}
+                testID={`mark-unmemorized-${word.id}`}
+              >
+                <Animated.View style={markAnimatedStyle}>
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
+                </Animated.View>
+              </Pressable>
+            )}
+            <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+          </View>
+        </View>
+
+        <View style={styles.exampleRow}>
+          <View style={styles.exampleContainer}>
+            <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
+              {word.exampleSentence}
             </ThemedText>
           </View>
-        ) : null}
-
-        <View style={styles.wordContainer}>
-          <ThemedText style={styles.word}>{word.word}</ThemedText>
-          <SpeakButton text={word.word} size="small" />
+          <SpeakButton text={word.exampleSentence} size="small" />
         </View>
-
-        <View style={styles.markActions}>
-          {isMarked ? (
-            <Pressable
-              onPress={handleClearMark}
-              style={[styles.markBadge, { backgroundColor: Colors.light.secondary }]}
-              hitSlop={8}
-              testID={`clear-mark-${word.id}`}
-            >
-              <Animated.View style={markAnimatedStyle}>
-                <View style={styles.markBadgeContent}>
-                  <Feather name="x" size={12} color="#FFFFFF" />
-                  <ThemedText style={styles.markCountText}>{unmemorizedCount}</ThemedText>
-                </View>
-              </Animated.View>
-            </Pressable>
-          ) : (
-            <Pressable
-              onPress={handleMarkUnmemorized}
-              style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
-              hitSlop={8}
-              testID={`mark-unmemorized-${word.id}`}
-            >
-              <Animated.View style={markAnimatedStyle}>
-                <Feather name="flag" size={16} color={theme.textSecondary} />
-              </Animated.View>
-            </Pressable>
-          )}
-          <Feather name="chevron-right" size={18} color={theme.textSecondary} />
-        </View>
-      </View>
-
-      <View style={styles.exampleRow}>
-        <View style={styles.exampleContainer}>
-          <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
-            {word.exampleSentence}
-          </ThemedText>
-        </View>
-        <SpeakButton text={word.exampleSentence} size="small" />
-      </View>
-    </AnimatedPressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     marginBottom: Spacing.sm,
+    overflow: "hidden",
+  },
+  cardContent: {
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
   },
   topRow: {
     flexDirection: "row",
