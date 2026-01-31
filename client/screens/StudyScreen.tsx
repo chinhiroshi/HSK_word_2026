@@ -1,36 +1,26 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { FlatList, View, StyleSheet, RefreshControl, Pressable } from "react-native";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { FlatList, View, StyleSheet, RefreshControl, Pressable, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
 import { WordCard } from "@/components/WordCard";
-import { EmptyState } from "@/components/EmptyState";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWords, toggleMemorized, initializeData } from "@/lib/storage";
+import { getWords, markAsUnmemorized, clearUnmemorizedMark, initializeData } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const GROUP_SIZE = 20;
+type FilterType = "all" | "memorized" | "unmemorized";
 
-interface WordGroup {
-  id: string;
-  groupNumber: number;
-  startIndex: number;
-  endIndex: number;
-  words: Word[];
-  memorizedCount: number;
-  totalCount: number;
-}
+const JUMP_INTERVAL = 50;
 
 export default function StudyScreen() {
   const insets = useSafeAreaInsets();
@@ -38,11 +28,12 @@ export default function StudyScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const flatListRef = useRef<FlatList<Word>>(null);
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<FilterType>("all");
 
   const loadWords = useCallback(async () => {
     await initializeData();
@@ -61,8 +52,17 @@ export default function StudyScreen() {
     setRefreshing(false);
   };
 
-  const handleToggleMemorized = async (wordId: string) => {
-    const updatedWord = await toggleMemorized(wordId);
+  const handleMarkUnmemorized = async (wordId: string) => {
+    const updatedWord = await markAsUnmemorized(wordId);
+    if (updatedWord) {
+      setWords((prev) =>
+        prev.map((w) => (w.id === wordId ? updatedWord : w))
+      );
+    }
+  };
+
+  const handleClearMark = async (wordId: string) => {
+    const updatedWord = await clearUnmemorizedMark(wordId);
     if (updatedWord) {
       setWords((prev) =>
         prev.map((w) => (w.id === wordId ? updatedWord : w))
@@ -74,209 +74,213 @@ export default function StudyScreen() {
     navigation.navigate("WordDetail", { wordId: word.id });
   };
 
-  const wordGroups = useMemo((): WordGroup[] => {
-    const groups: WordGroup[] = [];
-    for (let i = 0; i < words.length; i += GROUP_SIZE) {
-      const groupWords = words.slice(i, i + GROUP_SIZE);
-      const memorizedCount = groupWords.filter((w) => w.isMemorized).length;
-      const groupNumber = Math.floor(i / GROUP_SIZE) + 1;
-      groups.push({
-        id: `group-${groupNumber}`,
-        groupNumber,
-        startIndex: i + 1,
-        endIndex: Math.min(i + GROUP_SIZE, words.length),
-        words: groupWords,
-        memorizedCount,
-        totalCount: groupWords.length,
+  const filteredWords = useMemo(() => {
+    switch (filter) {
+      case "memorized":
+        return words.filter((w) => w.isMemorized && (w.unmemorizedCount || 0) === 0);
+      case "unmemorized":
+        return words.filter((w) => (w.unmemorizedCount || 0) > 0);
+      default:
+        return words;
+    }
+  }, [words, filter]);
+
+  const jumpTargets = useMemo(() => {
+    const targets: number[] = [];
+    for (let i = JUMP_INTERVAL; i <= words.length; i += JUMP_INTERVAL) {
+      targets.push(i);
+    }
+    return targets;
+  }, [words.length]);
+
+  const handleJumpTo = (targetIndex: number) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (filter !== "all") {
+      setFilter("all");
+      setTimeout(() => {
+        flatListRef.current?.scrollToIndex({
+          index: targetIndex - 1,
+          animated: true,
+          viewPosition: 0,
+        });
+      }, 100);
+    } else {
+      flatListRef.current?.scrollToIndex({
+        index: targetIndex - 1,
+        animated: true,
+        viewPosition: 0,
       });
     }
-    return groups;
+  };
+
+  const handleFilterChange = (newFilter: FilterType) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setFilter(newFilter);
+  };
+
+  const stats = useMemo(() => {
+    const memorized = words.filter((w) => w.isMemorized && (w.unmemorizedCount || 0) === 0).length;
+    const unmemorized = words.filter((w) => (w.unmemorizedCount || 0) > 0).length;
+    return { total: words.length, memorized, unmemorized };
   }, [words]);
 
-  const selectedGroup = useMemo(() => {
-    if (!selectedGroupId) return null;
-    return wordGroups.find((g) => g.id === selectedGroupId) || null;
-  }, [wordGroups, selectedGroupId]);
-
-  const handleGroupPress = (group: WordGroup) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedGroupId(group.id);
-  };
-
-  const handleBackToGroups = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedGroupId(null);
-  };
-
-  const renderGroupItem = ({ item }: { item: WordGroup }) => {
-    const progress = item.totalCount > 0 ? item.memorizedCount / item.totalCount : 0;
-    const isComplete = item.memorizedCount === item.totalCount;
-
-    return (
-      <Pressable
-        onPress={() => handleGroupPress(item)}
-        style={[
-          styles.groupCard,
-          {
-            backgroundColor: theme.backgroundDefault,
-            borderColor: isComplete ? Colors.light.success : theme.border,
-            borderWidth: isComplete ? 2 : 1,
-          },
-        ]}
-        testID={`group-card-${item.groupNumber}`}
-      >
-        <View style={styles.groupHeader}>
-          <View style={[styles.groupBadge, { backgroundColor: theme.primary }]}>
-            <ThemedText style={styles.groupBadgeText} lightColor="#FFFFFF" darkColor="#FFFFFF">
-              {item.groupNumber}
-            </ThemedText>
-          </View>
-          <View style={styles.groupInfo}>
-            <ThemedText style={styles.groupTitle}>
-              単語 {item.startIndex} - {item.endIndex}
-            </ThemedText>
-            <ThemedText style={[styles.groupSubtitle, { color: theme.textSecondary }]}>
-              {item.totalCount}語
-            </ThemedText>
-          </View>
-          <Feather name="chevron-right" size={24} color={theme.textSecondary} />
-        </View>
-
-        <View style={styles.progressSection}>
-          <View style={[styles.progressBar, { backgroundColor: theme.backgroundSecondary }]}>
-            <View
-              style={[
-                styles.progressFill,
-                {
-                  backgroundColor: isComplete ? Colors.light.success : theme.primary,
-                  width: `${progress * 100}%`,
-                },
-              ]}
-            />
-          </View>
-          <View style={styles.progressStats}>
-            <View style={styles.statItem}>
-              <Feather
-                name="check-circle"
-                size={14}
-                color={Colors.light.success}
-              />
-              <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
-                {item.memorizedCount}
-              </ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <Feather
-                name="clock"
-                size={14}
-                color={Colors.light.alert}
-              />
-              <ThemedText style={[styles.statText, { color: Colors.light.alert }]}>
-                {item.totalCount - item.memorizedCount}
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-      </Pressable>
-    );
-  };
-
   const renderWordItem = ({ item, index }: { item: Word; index: number }) => {
-    const globalIndex = selectedGroup
-      ? selectedGroup.startIndex + index
-      : index + 1;
+    const originalIndex = filter === "all" ? index + 1 : words.indexOf(item) + 1;
 
     return (
       <WordCard
         word={item}
-        index={globalIndex}
-        compact={true}
+        index={originalIndex}
         onPress={() => handleWordPress(item)}
-        onToggleMemorized={() => handleToggleMemorized(item.id)}
+        onMarkUnmemorized={() => handleMarkUnmemorized(item.id)}
+        onClearMark={() => handleClearMark(item.id)}
       />
     );
   };
 
   const renderEmpty = () => {
     if (loading) {
-      return <SkeletonLoader count={6} />;
+      return <SkeletonLoader count={8} />;
+    }
+    if (filter === "memorized") {
+      return (
+        <View style={styles.emptyFilterState}>
+          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+            まだ覚えた単語がありません
+          </ThemedText>
+        </View>
+      );
+    }
+    if (filter === "unmemorized") {
+      return (
+        <View style={styles.emptyFilterState}>
+          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+            マークした単語がありません
+          </ThemedText>
+        </View>
+      );
     }
     return null;
   };
 
-  if (selectedGroup) {
-    return (
-      <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
-        <View
-          style={[
-            styles.groupDetailHeader,
-            {
-              paddingTop: headerHeight + Spacing.lg,
-              backgroundColor: theme.backgroundRoot,
-            },
-          ]}
-        >
-          <Pressable
-            onPress={handleBackToGroups}
-            style={styles.backButton}
-            testID="back-to-groups"
-          >
-            <Feather name="arrow-left" size={24} color={theme.primary} />
-            <ThemedText style={[styles.backText, { color: theme.primary }]}>
-              グループ一覧
-            </ThemedText>
-          </Pressable>
-          <ThemedText style={styles.groupDetailTitle}>
-            単語 {selectedGroup.startIndex} - {selectedGroup.endIndex}
-          </ThemedText>
-          <View style={styles.groupDetailStats}>
-            <View style={[styles.detailStatBadge, { backgroundColor: `${Colors.light.success}20` }]}>
-              <Feather name="check-circle" size={14} color={Colors.light.success} />
-              <ThemedText style={[styles.detailStatText, { color: Colors.light.success }]}>
-                暗記: {selectedGroup.memorizedCount}
-              </ThemedText>
-            </View>
-            <View style={[styles.detailStatBadge, { backgroundColor: `${Colors.light.alert}20` }]}>
-              <Feather name="clock" size={14} color={Colors.light.alert} />
-              <ThemedText style={[styles.detailStatText, { color: Colors.light.alert }]}>
-                未暗記: {selectedGroup.totalCount - selectedGroup.memorizedCount}
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-        <FlatList
-          style={styles.list}
-          contentContainerStyle={[
-            styles.content,
-            {
-              paddingBottom: tabBarHeight + Spacing.xl,
-            },
-          ]}
-          scrollIndicatorInsets={{ bottom: insets.bottom }}
-          data={selectedGroup.words}
-          renderItem={renderWordItem}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-    );
-  }
+  const onScrollToIndexFailed = (info: { index: number; averageItemLength: number }) => {
+    setTimeout(() => {
+      flatListRef.current?.scrollToIndex({
+        index: info.index,
+        animated: true,
+        viewPosition: 0,
+      });
+    }, 100);
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: headerHeight + Spacing.md,
+            backgroundColor: theme.backgroundRoot,
+          },
+        ]}
+      >
+        {filter === "all" && jumpTargets.length > 0 ? (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.jumpContainer}
+          >
+            <ThemedText style={[styles.jumpLabel, { color: theme.textSecondary }]}>
+              移動:
+            </ThemedText>
+            {jumpTargets.map((target) => (
+              <Pressable
+                key={target}
+                onPress={() => handleJumpTo(target)}
+                style={[styles.jumpButton, { backgroundColor: theme.backgroundSecondary }]}
+                testID={`jump-to-${target}`}
+              >
+                <ThemedText style={[styles.jumpButtonText, { color: theme.primary }]}>
+                  {target}
+                </ThemedText>
+              </Pressable>
+            ))}
+          </ScrollView>
+        ) : null}
+
+        <View style={styles.filterContainer}>
+          <Pressable
+            onPress={() => handleFilterChange("all")}
+            style={[
+              styles.filterButton,
+              filter === "all" && { backgroundColor: theme.primary },
+              filter !== "all" && { backgroundColor: theme.backgroundSecondary },
+            ]}
+            testID="filter-all"
+          >
+            <ThemedText
+              style={[
+                styles.filterButtonText,
+                { color: filter === "all" ? "#FFFFFF" : theme.text },
+              ]}
+            >
+              全部 ({stats.total})
+            </ThemedText>
+          </Pressable>
+
+          <Pressable
+            onPress={() => handleFilterChange("memorized")}
+            style={[
+              styles.filterButton,
+              filter === "memorized" && { backgroundColor: Colors.light.success },
+              filter !== "memorized" && { backgroundColor: theme.backgroundSecondary },
+            ]}
+            testID="filter-memorized"
+          >
+            <ThemedText
+              style={[
+                styles.filterButtonText,
+                { color: filter === "memorized" ? "#FFFFFF" : Colors.light.success },
+              ]}
+            >
+              覚えた ({stats.memorized})
+            </ThemedText>
+          </Pressable>
+
+          <Pressable
+            onPress={() => handleFilterChange("unmemorized")}
+            style={[
+              styles.filterButton,
+              filter === "unmemorized" && { backgroundColor: Colors.light.secondary },
+              filter !== "unmemorized" && { backgroundColor: theme.backgroundSecondary },
+            ]}
+            testID="filter-unmemorized"
+          >
+            <ThemedText
+              style={[
+                styles.filterButtonText,
+                { color: filter === "unmemorized" ? "#FFFFFF" : Colors.light.secondary },
+              ]}
+            >
+              まだ ({stats.unmemorized})
+            </ThemedText>
+          </Pressable>
+        </View>
+      </View>
+
       <FlatList
+        ref={flatListRef}
         style={styles.list}
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.xl,
             paddingBottom: tabBarHeight + Spacing.xl,
           },
-          wordGroups.length === 0 && loading === false && styles.emptyContainer,
+          filteredWords.length === 0 && !loading && styles.emptyContainer,
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
-        data={loading ? [] : wordGroups}
-        renderItem={renderGroupItem}
+        data={loading ? [] : filteredWords}
+        renderItem={renderWordItem}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={renderEmpty}
         refreshControl={
@@ -287,6 +291,12 @@ export default function StudyScreen() {
           />
         }
         showsVerticalScrollIndicator={false}
+        onScrollToIndexFailed={onScrollToIndexFailed}
+        getItemLayout={(data, index) => ({
+          length: 80,
+          offset: 80 * index,
+          index,
+        })}
       />
     </View>
   );
@@ -295,6 +305,47 @@ export default function StudyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+  },
+  jumpContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+    paddingRight: Spacing.lg,
+  },
+  jumpLabel: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    marginRight: Spacing.xs,
+  },
+  jumpButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+  },
+  jumpButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+  },
+  filterContainer: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  filterButton: {
+    flex: 1,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    alignItems: "center",
+  },
+  filterButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
   list: {
     flex: 1,
@@ -305,102 +356,15 @@ const styles = StyleSheet.create({
   emptyContainer: {
     flexGrow: 1,
   },
-  groupCard: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.md,
-  },
-  groupHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  groupBadge: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.full,
+  emptyFilterState: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: Spacing.md,
+    paddingVertical: Spacing["4xl"],
   },
-  groupBadgeText: {
-    fontSize: 16,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-  },
-  groupInfo: {
-    flex: 1,
-  },
-  groupTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-  },
-  groupSubtitle: {
-    fontSize: 13,
+  emptyText: {
+    fontSize: 15,
     fontFamily: "Nunito_400Regular",
-  },
-  progressSection: {
-    gap: Spacing.sm,
-  },
-  progressBar: {
-    height: 8,
-    borderRadius: BorderRadius.full,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    borderRadius: BorderRadius.full,
-  },
-  progressStats: {
-    flexDirection: "row",
-    gap: Spacing.lg,
-  },
-  statItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-  },
-  statText: {
-    fontSize: 13,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-  },
-  groupDetailHeader: {
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
-  },
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-    marginBottom: Spacing.md,
-  },
-  backText: {
-    fontSize: 16,
-    fontFamily: "Nunito_600SemiBold",
-  },
-  groupDetailTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-    marginBottom: Spacing.sm,
-  },
-  groupDetailStats: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-  },
-  detailStatBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
-    gap: Spacing.xs,
-  },
-  detailStatText: {
-    fontSize: 13,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
+    textAlign: "center",
   },
 });
