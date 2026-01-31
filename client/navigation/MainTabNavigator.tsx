@@ -3,12 +3,16 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Platform, StyleSheet } from "react-native";
-import HomeStackNavigator from "@/navigation/HomeStackNavigator";
+
+import StudyStackNavigator from "@/navigation/StudyStackNavigator";
+import VideosStackNavigator from "@/navigation/VideosStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
+import { Colors } from "@/constants/theme";
 
 export type MainTabParamList = {
-  HomeTab: undefined;
+  StudyTab: undefined;
+  VideosTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -19,9 +23,9 @@ export default function MainTabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="HomeTab"
+      initialRouteName="StudyTab"
       screenOptions={{
-        tabBarActiveTintColor: theme.tabIconSelected,
+        tabBarActiveTintColor: Colors.light.primary,
         tabBarInactiveTintColor: theme.tabIconDefault,
         tabBarStyle: {
           position: "absolute",
@@ -41,15 +45,29 @@ export default function MainTabNavigator() {
             />
           ) : null,
         headerShown: false,
+        tabBarLabelStyle: {
+          fontFamily: "Nunito_600SemiBold",
+          fontSize: 11,
+        },
       }}
     >
       <Tab.Screen
-        name="HomeTab"
-        component={HomeStackNavigator}
+        name="StudyTab"
+        component={StudyStackNavigator}
         options={{
-          title: "Home",
+          title: "学習",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
+            <Feather name="book-open" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="VideosTab"
+        component={VideosStackNavigator}
+        options={{
+          title: "動画",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="play-circle" size={size} color={color} />
           ),
         }}
       />
@@ -57,7 +75,7 @@ export default function MainTabNavigator() {
         name="ProfileTab"
         component={ProfileStackNavigator}
         options={{
-          title: "Profile",
+          title: "プロフィール",
           tabBarIcon: ({ color, size }) => (
             <Feather name="user" size={size} color={color} />
           ),

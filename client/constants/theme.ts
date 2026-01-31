@@ -1,30 +1,44 @@
 import { Platform } from "react-native";
 
-const tintColorLight = "#007AFF";
-const tintColorDark = "#0A84FF";
+const primaryColor = "#5B8C85";
+const secondaryColor = "#E8956F";
+const successColor = "#10B981";
+const alertColor = "#F59E0B";
 
 export const Colors = {
   light: {
-    text: "#11181C",
+    text: "#1F2937",
+    textSecondary: "#6B7280",
     buttonText: "#FFFFFF",
-    tabIconDefault: "#687076",
-    tabIconSelected: tintColorLight,
-    link: "#007AFF",
-    backgroundRoot: "#FFFFFF", // Elevation 0
-    backgroundDefault: "#F2F2F2", // Elevation 1
-    backgroundSecondary: "#E6E6E6", // Elevation 2
-    backgroundTertiary: "#D9D9D9", // Elevation 3
+    tabIconDefault: "#6B7280",
+    tabIconSelected: primaryColor,
+    link: primaryColor,
+    primary: primaryColor,
+    secondary: secondaryColor,
+    success: successColor,
+    alert: alertColor,
+    border: "#E5E7EB",
+    backgroundRoot: "#FAFAF9",
+    backgroundDefault: "#FFFFFF",
+    backgroundSecondary: "#F3F4F6",
+    backgroundTertiary: "#E5E7EB",
   },
   dark: {
-    text: "#ECEDEE",
+    text: "#F9FAFB",
+    textSecondary: "#9CA3AF",
     buttonText: "#FFFFFF",
-    tabIconDefault: "#9BA1A6",
-    tabIconSelected: tintColorDark,
-    link: "#0A84FF",
-    backgroundRoot: "#1F2123", // Elevation 0
-    backgroundDefault: "#2A2C2E", // Elevation 1
-    backgroundSecondary: "#353739", // Elevation 2
-    backgroundTertiary: "#404244", // Elevation 3
+    tabIconDefault: "#9CA3AF",
+    tabIconSelected: primaryColor,
+    link: primaryColor,
+    primary: primaryColor,
+    secondary: secondaryColor,
+    success: successColor,
+    alert: alertColor,
+    border: "#374151",
+    backgroundRoot: "#111827",
+    backgroundDefault: "#1F2937",
+    backgroundSecondary: "#374151",
+    backgroundTertiary: "#4B5563",
   },
 };
 
@@ -54,65 +68,73 @@ export const BorderRadius = {
 };
 
 export const Typography = {
+  display: {
+    fontSize: 32,
+    lineHeight: 40,
+    fontWeight: "700" as const,
+    fontFamily: "Nunito_700Bold",
+  },
   h1: {
     fontSize: 32,
     lineHeight: 40,
     fontWeight: "700" as const,
+    fontFamily: "Nunito_700Bold",
   },
   h2: {
     fontSize: 28,
     lineHeight: 36,
     fontWeight: "700" as const,
+    fontFamily: "Nunito_700Bold",
   },
   h3: {
     fontSize: 24,
     lineHeight: 32,
     fontWeight: "600" as const,
+    fontFamily: "Nunito_600SemiBold",
   },
   h4: {
     fontSize: 20,
     lineHeight: 28,
     fontWeight: "600" as const,
+    fontFamily: "Nunito_600SemiBold",
   },
   body: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: "400" as const,
+    fontFamily: "Nunito_400Regular",
   },
   small: {
     fontSize: 14,
     lineHeight: 20,
     fontWeight: "400" as const,
+    fontFamily: "Nunito_400Regular",
   },
   link: {
     fontSize: 16,
     lineHeight: 24,
     fontWeight: "400" as const,
+    fontFamily: "Nunito_400Regular",
   },
 };
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
-    sans: "system-ui",
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
+    sans: "Nunito_400Regular",
     serif: "ui-serif",
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: "ui-rounded",
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: "ui-monospace",
   },
   default: {
-    sans: "normal",
+    sans: "Nunito_400Regular",
     serif: "serif",
     rounded: "normal",
     mono: "monospace",
   },
   web: {
-    sans: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
+    sans: "Nunito_400Regular, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
     serif: "Georgia, 'Times New Roman', serif",
-    rounded:
-      "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
+    rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });

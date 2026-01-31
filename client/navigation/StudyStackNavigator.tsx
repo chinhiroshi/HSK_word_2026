@@ -1,25 +1,25 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "@/screens/HomeScreen";
+import StudyScreen from "@/screens/StudyScreen";
 import { HeaderTitle } from "@/components/HeaderTitle";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 
-export type HomeStackParamList = {
-  Home: undefined;
+export type StudyStackParamList = {
+  Study: undefined;
 };
 
-const Stack = createNativeStackNavigator<HomeStackParamList>();
+const Stack = createNativeStackNavigator<StudyStackParamList>();
 
-export default function HomeStackNavigator() {
+export default function StudyStackNavigator() {
   const screenOptions = useScreenOptions();
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Study"
+        component={StudyScreen}
         options={{
-          headerTitle: () => <HeaderTitle title="My App" />,
+          headerTitle: () => <HeaderTitle title="単語マスター" />,
         }}
       />
     </Stack.Navigator>
