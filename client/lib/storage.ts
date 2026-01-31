@@ -2,14 +2,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Word } from "@/types";
 import { mockWords } from "@/data/mockData";
 
-const WORDS_KEY = "@tango_master_words";
-const INITIALIZED_KEY = "@tango_master_initialized";
+const WORDS_KEY = "@chinese_master_words";
+const DATA_VERSION_KEY = "@chinese_master_data_version";
+const CURRENT_DATA_VERSION = "2";
 
 export async function initializeData(): Promise<void> {
-  const initialized = await AsyncStorage.getItem(INITIALIZED_KEY);
-  if (!initialized) {
+  const dataVersion = await AsyncStorage.getItem(DATA_VERSION_KEY);
+  if (dataVersion !== CURRENT_DATA_VERSION) {
     await AsyncStorage.setItem(WORDS_KEY, JSON.stringify(mockWords));
-    await AsyncStorage.setItem(INITIALIZED_KEY, "true");
+    await AsyncStorage.setItem(DATA_VERSION_KEY, CURRENT_DATA_VERSION);
   }
 }
 
