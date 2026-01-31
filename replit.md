@@ -4,7 +4,11 @@
 A mobile vocabulary learning app for Chinese language study. Users can browse Chinese words, listen to pronunciations, track memorization progress, and take shuffle tests to reinforce learning.
 
 ## Features
-- **Study Screen**: Browse Chinese vocabulary cards with pinyin, Japanese translations, and text-to-speech
+- **Study Screen**: Browse all 599 Chinese vocabulary in a single scrollable list
+  - Each word card shows: Chinese word, example sentence, TTS buttons
+  - Quick jump navigation to 50th, 100th, 150th... word positions
+  - Filter by: All / Memorized / Unmemorized (marked)
+  - Mark words as "not yet memorized" with count tracking
 - **Word Detail**: View word details with example sentences and related videos
 - **Test Mode**: Two types of quizzes for unmemorized words
   - Word Test: See Chinese characters, select the correct meaning
@@ -80,6 +84,7 @@ interface Word {
   examplePinyin: string;
   exampleTranslation: string;
   isMemorized: boolean;
+  unmemorizedCount: number;  // Track how many times marked as unmemorized
   videoIds: string[];
 }
 ```
@@ -90,6 +95,8 @@ interface Word {
 
 ## Development Notes
 - Text-to-speech uses `zh-CN` locale for Mandarin Chinese
-- Data persisted in AsyncStorage with `@chinese_master_` prefix
+- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "3"
 - Test questions generated from unmemorized words only
 - Haptic feedback on key interactions
+- Mark logic: Flag button marks word as "not memorized" (increments count)
+- Clearing mark sets isMemorized=true and unmemorizedCount=0
