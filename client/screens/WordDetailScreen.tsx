@@ -98,7 +98,7 @@ export default function WordDetailScreen() {
           styles.container,
           {
             backgroundColor: theme.backgroundRoot,
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: headerHeight + Spacing.xxl,
             paddingHorizontal: Spacing.lg,
           },
         ]}
@@ -129,7 +129,7 @@ export default function WordDetailScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: headerHeight + Spacing.xxl + Spacing.lg,
             paddingBottom: insets.bottom + Spacing.xl,
           },
         ]}

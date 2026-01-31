@@ -17,6 +17,7 @@ import { Word } from "@/types";
 
 interface WordCardProps {
   word: Word;
+  index?: number;
   onPress: () => void;
   onToggleMemorized: () => void;
 }
@@ -30,7 +31,7 @@ const springConfig: WithSpringConfig = {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export function WordCard({ word, onPress, onToggleMemorized }: WordCardProps) {
+export function WordCard({ word, index, onPress, onToggleMemorized }: WordCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
   const checkScale = useSharedValue(1);
@@ -80,6 +81,14 @@ export function WordCard({ word, onPress, onToggleMemorized }: WordCardProps) {
       ]}
       testID={`word-card-${word.id}`}
     >
+      {index !== undefined ? (
+        <View style={[styles.indexContainer, { backgroundColor: theme.backgroundSecondary }]}>
+          <ThemedText style={[styles.indexText, { color: theme.textSecondary }]}>
+            {index}
+          </ThemedText>
+        </View>
+      ) : null}
+
       <Pressable
         onPress={handleToggle}
         style={styles.checkContainer}
@@ -108,17 +117,7 @@ export function WordCard({ word, onPress, onToggleMemorized }: WordCardProps) {
         </ThemedText>
       </View>
 
-      <View style={styles.rightSection}>
-        <View
-          style={[styles.videoBadge, { backgroundColor: theme.backgroundSecondary }]}
-        >
-          <Feather name="play-circle" size={14} color={theme.primary} />
-          <ThemedText style={[styles.videoCount, { color: theme.primary }]}>
-            {word.videoIds.length}
-          </ThemedText>
-        </View>
-        <Feather name="chevron-right" size={20} color={theme.textSecondary} />
-      </View>
+      <Feather name="chevron-right" size={20} color={theme.textSecondary} />
     </AnimatedPressable>
   );
 }
@@ -131,6 +130,19 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     marginBottom: Spacing.md,
+  },
+  indexContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.sm,
+  },
+  indexText: {
+    fontSize: 12,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
   checkContainer: {
     marginRight: Spacing.md,
@@ -157,23 +169,5 @@ const styles = StyleSheet.create({
   translation: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
-  },
-  rightSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  videoBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-    gap: Spacing.xs,
-  },
-  videoCount: {
-    fontSize: 12,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
   },
 });
