@@ -7,6 +7,7 @@ export interface Word {
   examplePinyin: string;
   exampleTranslation: string;
   isMemorized: boolean;
+  unmemorizedCount: number;
   videoIds: string[];
 }
 

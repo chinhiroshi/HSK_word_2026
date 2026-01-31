@@ -4,7 +4,7 @@ import { mockWords } from "@/data/mockData";
 
 const WORDS_KEY = "@chinese_master_words";
 const DATA_VERSION_KEY = "@chinese_master_data_version";
-const CURRENT_DATA_VERSION = "2";
+const CURRENT_DATA_VERSION = "3";
 
 export async function initializeData(): Promise<void> {
   const dataVersion = await AsyncStorage.getItem(DATA_VERSION_KEY);
@@ -45,6 +45,33 @@ export async function toggleMemorized(wordId: string): Promise<Word | undefined>
   const index = words.findIndex((w) => w.id === wordId);
   if (index !== -1) {
     words[index].isMemorized = !words[index].isMemorized;
+    if (words[index].isMemorized) {
+      words[index].unmemorizedCount = 0;
+    }
+    await AsyncStorage.setItem(WORDS_KEY, JSON.stringify(words));
+    return words[index];
+  }
+  return undefined;
+}
+
+export async function markAsUnmemorized(wordId: string): Promise<Word | undefined> {
+  const words = await getWords();
+  const index = words.findIndex((w) => w.id === wordId);
+  if (index !== -1) {
+    words[index].unmemorizedCount = (words[index].unmemorizedCount || 0) + 1;
+    words[index].isMemorized = false;
+    await AsyncStorage.setItem(WORDS_KEY, JSON.stringify(words));
+    return words[index];
+  }
+  return undefined;
+}
+
+export async function clearUnmemorizedMark(wordId: string): Promise<Word | undefined> {
+  const words = await getWords();
+  const index = words.findIndex((w) => w.id === wordId);
+  if (index !== -1) {
+    words[index].unmemorizedCount = 0;
+    words[index].isMemorized = true;
     await AsyncStorage.setItem(WORDS_KEY, JSON.stringify(words));
     return words[index];
   }
@@ -53,6 +80,6 @@ export async function toggleMemorized(wordId: string): Promise<Word | undefined>
 
 export async function resetProgress(): Promise<void> {
   const words = await getWords();
-  const resetWords = words.map((w) => ({ ...w, isMemorized: false }));
+  const resetWords = words.map((w) => ({ ...w, isMemorized: false, unmemorizedCount: 0 }));
   await AsyncStorage.setItem(WORDS_KEY, JSON.stringify(resetWords));
 }
