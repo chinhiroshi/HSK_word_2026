@@ -1,0 +1,615 @@
+c_word,j_word,c_sentence,j_sentence,english sentence,pinyin
+饼干,ビスケット,我喜欢吃饼干。,私はクッキーを食べます。,I eat cookies.,bǐng gān
+饺子,餃子,我爱吃饺子。,私は餃子を食べるのが大好きです。,I love eating dumplings.,jiǎozi
+巧克力,チョコレート,我爱吃巧克力。,私はチョコレートを食べるのが大好きです。,I love eating chocolate.,qiǎokèlì
+西红柿,トマト,我喜欢吃西红柿。,私はトマトを食べるのが好きです。,I like to eat tomatoes.,xī hóng shì
+饮料,飲み物,我喜欢喝饮料。,私は飲み物を飲むのが好きです。,I like drinking drinks.,yǐnliào
+长城,万里の長城,长城非常雄伟。,万里の長城はとても雄大です。,The Great Wall of China is very magnificent.,Cháng chéng
+长江,長江,长江是中国第一大河。,長江は中国で一番大きな川です。,The Yangtze River is the largest river in China.,Chángjiāng
+大使馆,大使館,大使馆在哪儿?,大使館はどこですか。,Where is the embassy?,dà shǐ guǎn
+地球,地球,保护地球环境。,地球の環境を守る。,Protect the global environment.,dìqiú
+地址,住所,我的地址是哪儿？,私の住所はどこですか？,What is my address?,dì zhǐ
+省,省,你来自哪个省？,どこの省出身ですか？,Which province are you from?,shěng
+狮子,ライオン,狮子吃肉。,獅子は肉を食べます。,The lion eats meat.,shī zi
+猪,ぶた,那只猪很胖。,その豚はとても太っています。,That pig is very fat.,zhū (zhu1)
+猴子,さる,猴子喜欢吃香蕉。,猿はバナナを食べるのが好きです。,Monkeys like to eat bananas.,hóu zi
+窗户,まど,窗户打开了。,窓が開いた。,The window opened.,chuāng hu
+词典,辞書,我要买词典。,辞書を買いたいです。,I want to buy a dictionary.,cídiǎn
+刀,ナイフ,我有一把刀。,私はナイフを一本持っています。,I have one knife.,dāo
+科学,科学,科学很有用。,科学はとても役に立ちます。,Science is very useful.,kēxué
+理发,髪を切る,我想去理发。,髪を切りたいです。,I want to get a haircut.,lǐ fà
+俩,2つ,我们俩去。,私たち二人で行きます。,The two of us will go.,liǎ
+弹钢琴,ピアノを弾く,她喜欢弹钢琴。,彼女はピアノを弾くのが好きです。,She likes playing the piano.,tán gāngqín
+中文,中国語,我喜欢学中文。,私は中国語を学ぶのが好きです。,I like learning Chinese.,Zhōngwén
+安排,スケジュール,我有安排了。,予定があります。,I have plans.,ānpái
+包括,含む,包括十个章节,10章が含まれています,10 chapters are included.,bāokuò
+保证,保証する,我保证做到。,約束します。,I promise.,bǎozhèng
+报道,報道する,新闻报道很快。,ニュースの報道は速いです。,The news report is fast.,bàodào
+报名,登録する,我想报名参加。,参加を申し込みたいです。,I would like to apply to participate.,bào míng
+表达,表現する,我不太会表达。,うまく表現できません。,I can't express myself properly.,biǎodá
+表格,表,请填写表格。,フォームに記入してください。,Please fill out the form.,biǎo gé
+部分,部分,这一部分很棒。,この部分は素晴らしいです。,This part is wonderful.,bùfèn
+参观,見学する,我想参观。,見学したいです。,I want to visit.,cānguān
+成功,成功する,希望你成功。,成功を祈っています。,I wish you success.,chénggōng
+成熟,成熟する,她很成熟。,彼女はとても大人びています。,She is very mature for her age.,chéngshú
+成为,〜になる,她想成为医生。,彼女は医者になりたいと思っています。,She wants to be a doctor.,chéngwéi
+重新,やり直す,我们重新开始吧。,またやり直しましょう。,Let's start over.,chóng xīn
+出差,出張する,我明天要出差。,私は明日出張に行きます。,I will go on a business trip tomorrow.,chūchāi
+出发,出発する,我们明天出发。,私たちは明日出発します。,We will depart tomorrow.,chūfā
+传真,ファックス,请给我传真。,私にファックスを送ってください。,Please send a fax to me.,chuán zhēn
+答案,答え,他的答案是错的。,彼の答えは間違っています。,His answer is wrong.,dá'àn
+打印,印刷する,请把文件打印出来。,ファイルを印刷してください。,Please print the file.,dǎyìn
+打折,割引する,商店打八折。,店は20パーセントオフです。,The store is 20 percent off.,dǎzhé
+代表,代表する,我代表公司。,私は会社を代表しています。,I represent the company.,dài biǎo
+代替,替わる,他代替我去了。,彼は私の代わりに行ってくれました。,He went instead of me.,dài tì
+当,〜になる,你想当老师吗?,あなたは先生になりたいですか。,Do you want to be a teacher?,dāng
+到处,至るところに,到处都是人。,どこもかしこも人だらけです。,Everywhere is full of people.,dàochù
+底,土台となる物,到底怎么回事？,一体どういうことですか？,What on earth is going on?,"dǐ (di3), de (de5)"
+调查,調査する,我们正在调查。,私たちは調査中です。,We are investigating.,diàochá
+对面,向かいの,我坐在他对面。,私は彼の向かいに座っています。,I am sitting across from him.,duìmiàn
+发,送る,我发现你了。,あなたを見つけました。,I found you.,fā / fà / fa
+发生,起こる,发生什么事了？,どうしましたか？,"What happened?, Are you okay?, Is everything alright?, What's the matter?",fāshēng
+发展,発展する,"发展经济。
+(Fāzhǎn jīngjì.)",経済を発展させる。 (Keizai o hatten saseru.),Develop the economy.,fāzhǎn
+法律,法律,我们遵守法律。,私たちは法律を遵守します。,We comply with the law.,fǎlǜ
+翻译,翻訳する,请帮我翻译一下。,翻訳をお願いします。,Please translate.,fānyì
+访问,訪問する,我访问了他。,私は彼を訪問しました。,I visited him.,fǎngwèn
+失败,失敗する,别害怕失败。,失敗を恐れないで。,Don't be afraid to fail.,shībài
+负责,担当する,你负责这个项目。,あなたがこのプロジェクトを担当します。,You will be in charge of this project.,fùzé
+改变,変える,我改变主意了。,気が変わりました。,I've changed my mind.,gǎi biàn
+干,する,你干什么呢？,何してるの？,What are you doing?,"gān, gàn"
+工具,道具,这是个好工具。,これは良い道具です。,This is a good tool.,gōngjù
+工资,給料,他涨工资了。,彼は昇給しました。,He got a raise.,gōngzī
+共同,共同で,我们共同努力。,私たちは共に努力します。,We will work hard together.,gòngtóng
+估计,見積もる,我估计他会来。,彼は来ると思います。,I think he will come.,gūjì
+挂,かける,我把衣服挂起来了。,私は服をかけました。,I hung up the clothes.,guà
+管理,管理する,她很会管理时间。,彼女は時間の管理がとても上手です。,She is very good at time management.,guǎnlǐ
+广播,放送する,听广播新闻。,ラジオニュースを聞く。,Listen to the radio news.,guǎngbō
+广告,広告,我看到一个广告。,私は広告を見ました。,I saw an advertisement.,guǎnggào
+规定,規定,我们有规定。 (Wǒmen yǒu guīdìng.),私たちは規定があります。,We have rules.,guī dìng
+过程,過程,这个过程很难。,このプロセスは難しいです。,This process is difficult.,guò chéng
+航班,フライト,航班延误了。,フライトが遅延しました。,The flight was delayed.,hángbān
+合适,合う,这个很合适。,これはとても合っています。,This is very correct.,hé shì
+获得,獲得する,我获得了一个机会。,私はチャンスを得ました。,I got a chance.,huòdé
+积累,積み重なる,你需要积累经验。,あなたは経験を積む必要があります。,You need to gain experience.,jīlěi
+寄,郵送する,我要寄包裹。,小包を送りたいです。,I want to send a package.,jì
+计划,計画する,我的计划是学习。,私の計画は勉強することです。,My plan is to study.,jìhuà
+技术,技術,科学技术发展很快。,科学技術の発展はとても速いです。,The development of science and technology is very fast.,jìshù
+继续,継続する,我们要继续努力。,私たちは引き続き頑張らなければなりません。,We must continue to work hard.,jìxù
+加班,残業する,我经常加班。,私はよく残業します。,I often work overtime.,jiābān
+奖金,ボーナス,我得到了奖金。,ボーナスをもらいました。,I received a bonus.,jiǎng jīn
+降低,下げる,降低了价格。,価格を下げました。,I lowered the price.,jiàng dī
+进行,進行する,会议正在进行。,会議が進行中です。,The meeting is in progress.,jìnxíng
+经济,経済,经济发展很快。,経済発展はとても速いです。,Economic development is very fast.,jīngjì
+经历,経歴,这是一个难忘的经历。,これは忘れられない経験です。,This is an unforgettable experience.,jīnglì
+举办,行う,他们举办了晚会。,彼らはパーティーを開催しました。,They held a party.,jǔ bàn
+拉,引っ張る,请拉一下。,引っぱってください。,Please pull it.,lā
+留,留める,留下来吃饭吧。,ここに残って食事をしましょう。,Let's stay here and eat.,liú
+判断,判断する,我判断错了。,私の判断は間違っていました。,My judgment was wrong.,pànduàn
+批评,批判する/しかる,他批评了我。,彼は私を批判した。,He criticized me.,pīpíng
+普遍,普遍的な,这是一个普遍现象。,これは普遍的な現象です。,This is a universal phenomenon.,pǔ biàn
+起飞,離陸する,飞机马上起飞了。,飛行機はまもなく離陸します。,The airplane will be taking off shortly.,qǐfēi
+轻,軽い,这本书很轻。,この本はとても軽いです。,This book is very light.,qīng
+请假,休みをもらう,我想请假。,休暇を取りたいです。,I want to take a vacation.,qǐng jià
+区别,区別する,有什么区别？,何が違いますか？,What is the difference?,qū bié
+取,取る,请取你的行李。,荷物をお取りください。,Please collect your luggage.,qǔ
+缺少,不足している,我们缺少人手。,私たちは人手が足りません。,We are short-handed.,quēshǎo
+确实,確実である,他确实很努力。,彼は本当に努力しています。,He is really working hard.,què shí
+商量,相談する,我们商量商量。,話し合いましょう。,Let's discuss.,shāng liang
+申请,申請する,我申请签证。,私はビザを申請します。,I will apply for a visa.,shēnqǐng
+使用,使用する,请使用。,使用してください。,Please use it.,shǐ yòng
+收,受け取る,收到了礼物。,プレゼントを受け取りました。,I received the present.,shōu
+收拾,片付ける,快去收拾房间。,早く部屋を片付けなさい。,Clean your room quickly.,shōushí
+受到,受ける,受到影响。,影響を受けている。,It is affected.,shòudào
+熟悉,熟知している,我们都很熟悉。,私たちは皆、よく知っています。,We all know well.,shú xī
+顺利,順調,一切都很顺利。,すべて順調である。,Everything is fine.,shùnlì
+讨论,討論する,我们讨论一下。,話し合いましょう。,Let's talk.,tǎolùn
+提供,提供する,我可以提供帮助。,私がお手伝いできます。,I can help you.,tígōng
+提前,繰り上げる,我提前完成了。,私は予定より早く終わらせました。,I finished earlier than planned.,tí qián
+提醒,気づかせる,我提醒你一下。,注意しておきますね。,I will keep that in mind.,tí xǐng
+停止,停止する,请停止说话。,話すのをやめてください。,Please stop talking.,tíngzhǐ
+推,押す,我推了她一把。,私は彼女をひと押ししました。,I gave her a push.,tuī
+推迟,延期する,会议推迟了。,会議は延期されました。,The meeting was postponed.,tuī chí
+限制,制限する,年龄限制,年齢制限,Age limit,xiàn zhì
+信任,信頼する,我信任他。,彼を信用している。,I trust him.,xìn rèn
+修,修理する,他修好了手表。,彼は腕時計を修理しました。,He fixed his watch.,xiū
+严格,厳しい,他工作很严格。,彼の仕事は非常に厳格です。,His work is very strict.,yán gé
+严重,深刻な,问题很严重。,問題は深刻です。,The problem is serious.,yánzhòng
+养成,育成する,养成一个好习惯。,良い習慣を身につける。,Get into a good habit.,yǎng chéng
+邀请,招待する,邀请她来我家。,彼女を私の家に招待します。,I will invite her to my house.,yāoqǐng
+引起,引き起こす,引起了注意,注目を集めた,"attracted attention, gained attention, drew attention",yǐnqǐ
+阅读,読む,我喜欢阅读。,私は読書が好きです。,I like reading books.,yuè dú
+允许,許す,请允许我参加。,参加させてください。,Let me join.,yǔnxǔ
+增加,増加する,增加经验。,経験を増やします。,I will increase my experience.,zēng jiā
+招聘,募集する,我们正在招聘。,私たちは採用活動中です。,We are recruiting.,zhāo pìn
+证明,証明する,请你证明一下。,証明してください。,Please prove it.,zhèngmíng
+值得,〜する価値がある,这很值得。,それは価値がある。,It's worth it.,zhí de
+制造,製造する,公司制造电脑。,会社はコンピューターを製造しています。,The company manufactures computers.,zhì zào
+重视,重視する,我非常重视健康。,私は健康を非常に重視しています。,I attach great importance to my health.,zhòngshì
+专门,専門,他是专门做这个的。,彼はこれの専門家です。,He is an expert on this.,zhuānmén
+赚,稼ぐ,我賺了很多钱。,私はたくさんお金を稼ぎました。,I earned a lot of money.,zhuan4
+准确,正しい,他说得很准确。,彼は正確に言いました。,He said it accurately.,zhǔnquè
+准时,時間通り,请准时到。,時間通りに来てください。,Please come on time.,zhǔn shí
+仔细,隅々まで,请你仔细看。,よく見てください。,Please look carefully.,zǐ xì
+总结,まとめる,请作个总结。,要約をお願いします。,Please summarize.,zǒngjié
+组成,構成する,由什么组成？,何で構成されていますか？,What is it composed of?,zǔchéng
+笔记 本,ノート,我买了一个新笔记 本。,私は新しいノートを買いました。,I bought a new notebook.,bǐ jì běn
+高级,ハイレベルな,这件衣服很高级。,この服はとても高級だ。,This clothing is very high-class.,gāojí
+教育,教育,教育很重要。,教育はとても大切です。,Education is very important.,jiàoyù
+专业,専攻,他是学专业的。,彼は専門を学んでいます。,He is studying his major.,zhuānyè
+留学,留学,他想去留学。,彼は留学に行きたいと思っています。,He wants to go study abroad.,liú xué
+毕业,卒業する,我今年毕业。,私は今年卒業します。,I will graduate this year.,bì yè
+研究生,大学院生,我是研究生。,私は大学院生です。,I am a graduate student.,yán jiū shēng
+硕士,修士,她取得了硕士学位。,彼女は修士号を取得しました。,She obtained a master's degree.,shuò shì
+博士,博士,他是一位博士。,彼は博士です。,He is a doctor.,bó shì
+教授,教授,她是大学教授。,彼女は大学教授です。,She is a university professor.,jiàoshòu
+父亲,父親,我爱我父亲。,私は私の父を愛しています。,I love my father.,fùqin
+母亲,母親,我爱我的母亲。,私は私の母を愛しています。,I love my mother.,mǔqīn
+孙子,孫,我有一个孙子。,私には孫がいます。,I have grandchildren.,sūnzi
+亲戚,親戚,她是我的亲戚。,彼女は私の親戚です。,She is my relative.,qīn qi
+咱们,私たち,咱们走吧。,行きましょう。,Let's go.,"zánmen
+or
+zá men"
+顾客,お客さま,欢迎光临，顾客！,いらっしゃいませ、お客様！,"Welcome, customer!",gùkè
+职业,職業,你的职业是什么?,あなたの職業は何ですか？,What is your occupation?,zhíyè
+大夫,お医者さん,他是大夫。,彼は医者です。,He is a doctor.,dàifu / dàfū
+护士,看護師,她是一位护士。,彼女は看護師です。,She is a nurse.,hùshì
+记者,記者,我是新闻记者。,私はニュース記者です。,I am a news reporter.,jìzhě
+导游,ガイド,他是我的导游。,彼は私のガイドです。,He is my guide.,dǎo yóu
+警察,警察,他是警察。,彼は警察官です。,He is a police officer.,jǐngchá
+律师,弁護士,他是我的律师。,彼は私の弁護士です。,He is my lawyer.,lǜshī
+售货员,販売員,他是售货员。,彼は店員です。,He is a shop assistant.,shòuhuòyuán
+组织,組織,组织活动很成功。,活動の組織はとても成功しました。,The organization of the event was a great success.,zǔzhī
+作者,作者,这部书的作者是谁？,この本の作者は誰ですか？,Who is the author of this book?,zuòzhě
+暗,暗い,天色很暗。,空がとても暗い。,The sky is very dark.,àn
+保护,保護する,请保护环境。,環境を保護してください。,Please protect the environment.,bǎo hù
+抱,抱える,抱抱我,私をハグして。,Hug me.,bào
+抱歉,ごめんなさい,真抱歉，我迟到了。,本当にごめんなさい、遅刻しました。,"I am so sorry, I am late.",bàoqiàn
+倍,倍,这个月的工资翻了一倍。,今月の給料は2倍になりました。,This month's salary has doubled.,bèi
+笨,間抜けだ,别做笨事。,馬鹿なことはするな。,Don't do anything stupid.,bèn
+标准,標準,这是标准。,これは標準です。,This is standard.,biāozhǔn
+表扬,褒める,老师表扬了他。,先生は彼を褒めました。,The teacher praised him.,biǎoyáng
+擦,ぬぐう,我擦了一下桌子。,私はテーブルを拭きました。,I wiped the table.,cā
+猜,推測する,你猜猜看。,当ててみて。,Take a guess.,cāi
+材料,材料,准备好所有材料。,すべての材料を準備してください。,Please prepare all the ingredients.,cáiliào
+差不多,大差ない,我们差不多了。,私たちはもうすぐ終わります。,We're almost done.,chà bu duō
+尝,味見する,你尝尝味道。,味見してみて。,Try a taste.,cháng
+吵,騒ぐ,别吵了。,うるさいよ。,Noisy.,chao3
+诚实,誠実である,他很诚实。,彼はとても正直です。,He is very honest.,chéngshí
+乘坐,乗る,乘坐公共汽车。,バスに乗る。,Get on the bus.,chéng zuò
+吃惊,驚く,我很吃惊。,驚いた。,I was surprised.,chī jīng
+抽烟,タバコを吸う,我很少抽烟。,私はめったにタバコを吸いません。,I rarely smoke.,chōuyān
+出生,生まれる,我出生在大阪。,私は大阪で生まれました。,I was born in Osaka.,chūshēng
+粗心,そそっかしい,他做事很粗心。,彼は物事をするとき、とても不注意だ。,He is very careless when he does things.,cūxīn
+打扮,おしゃれする,她打扮得很漂亮。,彼女は今日きれいに着飾っている。,She is dressed up beautifully today.,dǎban
+打扰,邪魔する,不好意思，打扰了。,申し訳ありません、お邪魔しました。,I'm sorry for disturbing you.,dǎ rǎo
+打针,注射する,我要去打针。,注射をしてもらいます。,I will get an injection/shot.,dǎ zhēn
+戴,かぶる,她戴着一副眼镜。,彼女は眼鏡をかけています。,She is wearing glasses.,dài
+当地,その土地,我们问当地人。,私たちは地元の人に聞きます。,We ask the locals.,dāngdì
+道歉,謝る,我应该向他道歉。,私は彼に謝罪すべきです。,I should apologize to him.,dào qiàn
+得意,得意げ,他显得很得意。,彼はとても得意げに見えた。,He looked very proud.,déyì
+等,待つ,请等一下。,お待ちください。,Please wait.,děng
+丢,なくす,我把钥匙丢了。,鍵をなくしました。,I lost my key.,diū
+动作,動作,"这个动作很简单。 (Zhège dòngzuò hěn jiǎndān.)
+この動作はとても簡単です。",この動作はとても簡単です。,This movement is very simple.,dòng zuò
+堵车,渋滞,我讨厌堵车。,私は渋滞が嫌いです。,I hate traffic jams.,dǔ chē
+肚子,お腹,我肚子饿了。,お腹がすいた。,I am hungry.,dù zi
+断,中断する,我们断了联系。,私たちは連絡を絶った。,We broke off contact.,duàn
+对,その通り,对不起，我错了。,ごめんなさい、私が間違っていました。,"I'm sorry, I was wrong.",duì
+对话,対話する,这是一个对话。,これは会話です。,This is a conversation.,duì huà
+烦恼,悩む,你有什么烦恼？,何か悩みがありますか？,Do you have any worries?,fánnǎo
+反对,反対する,我反对这个计划。,私はこの計画に反対です。,I am against this plan.,fănduì
+反应,反応する,她的反应很快。,彼女の反応は速い。,Her reaction is quick.,fǎnyìng
+范围,範囲,这个范围很广。,この範囲はとても広いです。,This range is very wide.,fàn wéi
+放弃,放棄する,我不会放弃。,私は諦めません。,I won't give up.,fàngqì
+暑假,夏休み,我的暑假计划。,私の夏休みの計画。,My summer vacation plan.,shǔjià
+符合,合う,他的话很符合事实。,彼の話は事実とよく一致している。,His story is consistent with the facts.,fúhé
+感动,感動する,我非常感动。,私はとても感動しました。,I was very moved.,gǎndòng
+感觉,感じる,我感觉很好。,気分がいいです。,I'm feeling good.,gǎnjué
+感情,気持ち,他们的感情很好。,彼らはとても仲が良いです。,They get along very well.,gǎnqíng
+孤单,孤独,我感到很孤单。,私はとても寂しいと感じています。,I feel very lonely.,gū dān
+鼓励,励ます,我鼓励你。,私はあなたを励まします。,I will encourage you.,gǔlì
+鼓掌,拍手する,大家热烈鼓掌。,皆が熱烈に拍手した。,Everyone applauded enthusiastically.,gǔzhǎng
+故意,わざと,他是故意笑的。,彼はわざと笑った。,He laughed intentionally.,gù yì
+逛,ぶらぶらする,我们去逛商店吧。,お店に買い物に行きましょう。,Let's go shopping at the store.,guàng
+汗,汗,我流了很多汗。,私はたくさん汗をかきました。,I sweated a lot.,hàn
+后悔,後悔する,我有点儿后悔。,少し後悔しています。,I regret it a little.,hòu huǐ
+怀疑,疑う,我开始怀疑。,私は疑い始めた。,I started to doubt.,huáiyí
+活动,活動,我们有活动。,私たちはイベントがあります。,We have an event.,huódòng
+基础,基礎,打下基础。,基礎を築いた。,Built a foundation.,jīchǔ
+激动,感動する,我感到很激动。,私はとてもわくわくしています。,I am very excited.,jīdòng
+极其,極めて,他极其聪明。,彼は非常に賢いです。,He is very clever.,jí qí
+集合,集まる,我们集合在一起。,私たちは一緒に集まる。,We gather together.,jí hé
+及时,ちょうどその時,请及时回复。,すみやかにご返信ください。,Please respond soon.,jí shí
+坚持,やり通す,我会坚持下去。,私はやり続けます。,I will keep doing it.,jiānchí
+减肥,ダイエットする,我要减肥。,ダイエットしたい。,I want to diet.,jiǎnféi
+减少,減少する,我们减少浪费。,私たちは浪費を減らします。,We will reduce our wastefulness.,jiǎnshǎo
+交,渡す/友達になる,我们交朋友。,私たちは友達になります。,We will become friends.,jiāo
+交流,交流する,我们互相交流。,私たちはお互いに交流します。,We interact with each other.,jiāo liú
+骄傲,傲慢/誇る,他很骄傲。,彼はとてもプライドが高いです。,He is very proud.,jiāo'ào
+接受,受け入れる,我接受了。,私は受け入れました。,I accepted it.,jiē shòu
+节约,節約する,我们应该节约。,私たちは節約すべきです。,We should save money.,jié yuē
+解释,説明する,请你解释一下。,説明してください。,Please explain.,jiěshì
+精彩,素晴らしい,表演很精彩。,パフォーマンスは素晴らしかったです。,The performance was excellent.,jīng cǎi
+经验,経験,我有很多经验。,私にはたくさんの経験があります。,I have a lot of experience.,jīngyàn
+拒绝,拒む,我拒绝了邀请。,私は招待を断りました。,I declined the invitation.,jù jué
+开玩笑,冗談を言う,我开玩笑呢。,冗談だよ,I'm joking.,kāi wán xiào
+看法,見解,你对这件事有什么看法?,あなたはこの件について何か意見がありますか？,Do you have any opinion on this matter?,kàn fǎ
+考虑,考える,我们再考虑考虑。,もう一度考えてみましょう。,Let's think about it one more time.,kǎo lǜ
+可惜,惜しい,可惜他不在家。,残念ながら、彼は家にいません。,"Unfortunately, he is not at home.",kěxī
+苦,苦い/つらい,我感到很苦。,私はとても苦しいと感じています。,I feel very distressed.,kǔ
+宽,広い,路很宽。,この道は広い。,This road is wide.,kuān
+扩大,拡大する,扩大影响。,影響を拡大する。,To expand the influence.,kuòdà
+辣,からい,这个菜很辣。,この料理はとても辛いです。,This dish is very spicy.,là
+懒,怠ける,你太懒了。,あなたは怠けすぎです。,You are too lazy.,lǎn
+浪费,浪費する,不要浪费时间。,時間を無駄にしないでください。,Don't waste time.,làng fèi
+理解,理解する,我理解你。,私はあなたを理解しています。,I understand you.,lǐ jiě
+厉害,すごい,他很厉害。,彼はすごい。,He's amazing.,lìhai
+力气,気力,我没力气了。,もう力が出ません。,I have no strength left.,lìqi
+联系,連絡する,请联系我。,私に連絡してください。,Please contact me.,liánxì
+凉快,涼しい,这儿很凉快。,ここはとても涼しいです。,It is very cool here.,liáng kuai
+聊天,おしゃべり,我们聊天吧。,おしゃべりしましょう。,Let's chat.,liáo tiān
+流泪,涙する,她感动得流泪了。,彼女は感動して涙を流しました。,She was moved to tears.,liú lèi
+流行,流行する,这种音乐很流行。,この音楽はとても人気があります。,This music is very popular.,liúxíng
+乱,乱れている,房间里很乱。,部屋がとても散らかっている。,The room is very messy.,luàn
+麻烦,めんどくさい,麻烦您了。,お手数をおかけしました。,I apologize for the trouble/inconvenience.,máfan
+马虎,いい加減である,别这么马虎。,そんなにそそっかしいのはやめて。,Stop being so careless.,mǎhu
+免费,無料,这个是免费的。,これは無料です。,This is free.,miǎnfèi
+耐心,辛抱強い,你需要有耐心。,あなたは忍耐が必要です。,You need patience.,nàixīn
+内,内,房间里很暖和。,部屋はとても暖かいです。,The room is very warm.,nèi
+弄,いじる,你弄错了。,あなたは間違っています。,You are wrong.,"lòng, nòng"
+暖和,暖かい,今天很暖和。,今日はとても暖かいです。,It is very warm today.,nuǎnhuo
+排列,配列する,请按顺序排列。,順番に並べてください。,"Arrange in order, please.",páiliè
+陪,付き添う,我陪你去。,私がお供します。,I will accompany you.,péi
+骗,騙す,我没骗你。,私はあなたをだましていない。,I am not deceiving you.,piàn
+破,壊す/破る,他打破了杯子。,彼はコップを割りました。,He broke the glass.,pò
+请客,ご飯を奢る,我请客吃饭。,私がおごります。 (または 私が食事をごちそうします。),I'll treat you. (or I'll buy you a meal.),qǐng kè
+穷,貧乏である,我们都很穷。,私たちは皆貧しいです。,We are all poor.,qióng
+热闹,賑やかである,街上很热闹。,通りはとても賑やかです。,The street is very lively.,rènào
+扔,捨てる,请不要扔垃圾。,ゴミを捨てないでください。,Please do not litter.,rēng
+散步,散歩する,我喜欢散步。,私は散歩が好きです。,I like walking.,sànbù
+伤心,悲しむ,你别太伤心了。,あまり気を落とさないで。,Don't let it get you down.,shāngxīn
+稍微,少し,稍微有点儿贵,少し高いです,It's a little expensive.,shāowēi
+剩,残す,剩下不多了。,残り少ないです。,There are only a few left.,shèng
+失望,失望する,别让我失望。,私をがっかりさせないで。,Don't let me down.,shī wàng
+湿润,しっとりしている,空气很湿润。,空気はとても湿っている。,The air is quite damp in here.,shīrùn
+试,試す,你再试一下。,もう一度試してみてください。,Please try again.,shì
+适合,ぴったり合う,这件衣服很适合你。,この服はあなたによく似合っています。,This outfit really suits you.,shìhé
+适应,適応する,我适应这里的生活。,私はここの生活に慣れています。,I am used to the life here.,shìyìng
+首先,まずはじめに,首先，我同意。,まず、私は賛成です。,"First, I agree.",shǒu xiān
+受不了,耐えられない,我受不了了。,もう我慢できません。,I can't stand it anymore.,shòu bù liǎo
+输,負ける,我们不能输。,私たちは負けるわけにはいかない。,We cannot afford to lose.,shū (shu1)
+谈,話す,我们谈一谈。 (Wǒmen tán yī tán.),話し合いましょう。,Let's talk about it.,tán (tan2)
+躺,横になる,他躺在沙发上。,彼はソファーに横になっています。,He is lying on the sofa.,tǎng
+讨厌,嫌う,我讨厌你。,私はあなたが嫌いです。,I hate you.,tǎo yàn
+填空,埋める,请完成填空。,空欄を埋めてください。,Please fill in the blanks.,tiánkòng
+挺〜的,とても〜,这个电影挺好的。,この映画はとても良いです。,This movie is very good.,tǐng...de
+同情,同情する,我有点儿同情她。,彼女にちょっと同情します。,I feel a little sorry for her.,tóngqíng
+脱,脱ぐ,脱掉鞋子,靴を脱ぐ,Take off one's shoes.,tuō
+危险,危険である,这很危险。,これは危険です。,This is dangerous.,wēixiǎn
+味道,味,这个味道不错。,この味は良いですね。,This taste is good.,wèidao
+握手,握手する,我们握手吧。,握手しましょう。,Let's shake hands.,wòshǒu
+无,ない,无可奉告。,ノーコメント,No comment.,wú
+吸引,ひきつける,它很吸引人。,それはとても魅力的です。,That is very attractive.,xī yǐn
+香,香りが良い,这个花很香。,この花はとても香りが良いです。,This flower smells very good.,"xiāng
+(Note: The search results also mention other pronunciations like bì, but xiāng is the primary and most common one for the meaning 'fragrant' or 'delicious'.)"
+响,音が鳴る,声音太响了。,うるさすぎます。,It's too loud.,xiǎng (xiang3)
+辛苦,大変,你辛苦了。,お疲れ様でした。,Thank you for your hard work.,xīn kǔ
+信心,信念,我要有信心。,私は自信を持つ必要があります。,I need to have confidence.,xìnxīn
+兴奋,興奮している,他很兴奋。,彼は興奮しています。,He is excited.,xīngfèn
+不行,よくない,你不能去。,あなたはいけません。,You may not go.,bùxíng
+醒,目を覚ます,"你醒了吗？
+(Nǐ xǐng le ma?)",起きましたか。,Did you wake up?,xǐng
+幸福,幸福,生活很幸福。,生活はとても幸せです。,Life is very happy.,xìng fú
+硬,硬い,这面包很硬。,このパンはとても硬いです。,This bread is very hard.,yìng
+永远,永遠に,我永远爱你。,私は永遠にあなたを愛しています。,I love you forever.,yǒngyuǎn
+有趣,面白い,这本书很有趣。,この本はとても面白いです。,This book is very interesting.,yǒuqù
+友谊,友情,我们的友谊很深。,私たちの友情は深いです。,Our friendship is deep.,yǒuyì
+愉快,楽しい,祝你周末愉快。,良い週末を。,Have a good weekend.,yú kuài
+语法,文法,语法很难。,文法は難しいです。,Grammar is difficult.,yǔfǎ
+预习,予習する,我预习中文。,私は中国語を予習します。,I will prepare for my Chinese class.,yùxí
+原谅,許す,请你原谅我。,私を許してください。,Please forgive me.,yuán liàng
+约会,デート,我有一个约会。,私はデートの予定があります。,I have a date planned.,yuēhuì
+脏,汚い,这太脏了。,これは汚すぎます。,This is too dirty.,zàng
+增长,増加する,经济增长很快。,経済成長が速い。,The economic growth is fast.,zēng zhǎng
+整理,整理する,我整理房间。,私は部屋を片付けます。,I will clean up the room.,zhěng lǐ
+整齐,きちんとしている,请把书整理整齐。,本をきれいに整理してください。,Please organize the books neatly.,zhěngqí
+正常,正常である,一切正常。,全て正常です。,Everything is normal.,zhèng cháng
+正好,ちょうど良い,现在来正好。,今来たらちょうどいい。,It's just right if you come now.,zhènghǎo
+支持,支持する,我们支持你。,私たちはあなたを応援します。,We are cheering for you.,zhī chí
+祝贺,祝う,祝贺你成功了。,成功おめでとうございます。,Congratulations on your success.,zhùhè
+撞,ぶつかる,他撞了我的车。,彼は私の車にぶつかりました。,He hit my car.,zhuàng
+嘴,口,他的嘴很大。,彼の口はとても大きいです。,His mouth is very big.,zuǐ
+最后,最後の,最后一次。,最後です。,This is the last one.,zuì hòu
+并且,さらに,他很好并且很帅。,彼はとても良い上に、かっこいいです。,"He is not only very nice, but also handsome.",bìng qiě
+不但,〜だけでなく,她不但漂亮。,彼女はきれいなだけでなく。,She's not just beautiful.,bùdàn
+不管,〜にかかわらず,不管多忙。,どんなに忙しくても。,No matter how busy.,bù guǎn
+不仅,〜だけでない,不仅好吃。,美味しいだけでなく。,Not only delicious.,bù jǐn
+从来,これまでずっと,我从来没见过。,私は一度も見たことがない。,I have never seen it.,cónglái
+当时,当時,我当时很生气。,私は当時とても怒っていました。,I was very angry at the time.,dāng shí
+果然,やはり,果然是他。,やはり彼だ。,It is him after all.,guǒ rán
+后来,その後,后来我们结婚了。,その後、私たちは結婚しました。,"After that, we got married.",hòulái
+即使,たとえ〜でも,即使下雨，我也去。,たとえ雨が降っても、私は行きます。,"Even if it rains, I will go.",jí shǐ
+既然,〜するからには,既然这样，,そういうことなら、,"If that's the case,",jì rán
+尽管,〜にもかかわらず,尽管很困难。,困難であるにもかかわらず。,Despite the difficulty.,jǐnguǎn / jìnguǎn
+竟然,意外にも,他竟然来了。,彼が来るとは意外だ。,It is surprising that he came.,jìng rán
+究竟,結局のところ,你究竟去不去？,あなたはいったい行くのですか、行かないのですか？,Are you going or not going?,jiūjìng
+不过,しかし,不过没关系。,でも、大丈夫です。,But it's okay.,búguò
+可是,しかし,我去了，可是他不在。,私は行きましたが、彼は不在でした。,"I went, but he wasn't there.",kěshì
+然而,しかし,我爱他，然而他却不爱我。,私は彼を愛しているが、彼は私を愛していない。,"I love him, but he doesn't love me.",rán'ér
+连,続けて,我连他都不认识。,私は彼のことさえ知りません。,I don't even know him.,lián / Lián
+另外,別の,另外，我有点饿。,それに、少しお腹が空きました。,"Besides, I'm a little hungry.",lìngwài
+偶尔,たまたま,我偶尔吃辣。,私は時々辛いものを食べます。,I sometimes eat spicy food.,ǒu'ěr
+却,むしろ,他却没来。,彼は来なかった。,He didn't come.,què
+仍然,相変わらず,他仍然很帅。,彼はやはりかっこいい。,He is still cool.,réngrán
+随便,かまわない,你随便说吧。,適当に言ってください。,Please say whatever comes to mind.,suíbiàn
+随着,〜につれて,随着时间的推移。,時が経つにつれて。,As time goes by.,suízhe
+通过,〜を通して,我通过考试了。,試験に合格しました。,I passed the exam.,tōng guò
+无论,どんなに〜でも,无论如何。,どうしても。,No matter what.,wúlùn
+相反,反対に,他们的意见相反。,彼らの意見は反対です。,Their opinions are opposite.,xiāng fǎn
+以,〜によって,以你的方式,あなたのやり方で,In your own way,yǐ
+因此,そのため,因此，我迟到了。,そのため、遅刻しました。,"Therefore, I was late.",yīncǐ
+由,〜に任せる,这由你决定。,それはあなたが決めることです。,It's your decision.,yóu
+由于,〜の理由で,由于下雨。,雨のため。,Because of the rain.,yóu yú
+尤其,特に,我尤其喜欢你。,私は特にあなたが大好きです。,I especially love you.,yóuqí
+于是,そこで,他笑了，于是我也笑了。,彼は笑ったので、私も笑いました。,"He laughed, so I laughed too.",yú shì
+与,〜と,我与你合作。,私はあなたと協力します。,I will cooperate with you.,"yǔ (yú, yù)"
+原来,もともと,原来如此。,なるほど。,I see.,yuánlái
+按时,時間通り,请按时完成。,時間通りに完成させてください。,Please finish it on time.,àn shí
+按照,〜に従って,按照规定。,規定通りに。,According to the regulations.,ànzhào
+本来,本来は,我本来不知道。,私はもともと知りませんでした。,I didn't know originally.,běn lái
+不得不,止むを得ず,我不得不走了。,私は行かなくてはなりません。,I have to go.,bù dé bù
+超过,超える,不要超过八点。,8時を過ぎないでください。,Please do not be later than 8 o'clock.,chāoguò
+大概,だいたい,他大概在家。,彼はたぶん家にいる。,He is probably home.,dàgài
+大约,おおよそ,大约八点来。,だいたい8時に来ます。,I usually come at 8 o'clock.,dàyuē
+到底,一体,你到底去不去?,結局、行くの行かないの？,"Are you going or not, in the end?",dàodǐ
+得,しなければいけない,他跑得很快。,彼は速く走ります。,He runs fast.,"dé, de, děi"
+掉,なくなる,钥匙掉了。,鍵をなくした。,I lost my key.,diào
+顿,〜回（食事の回数）,我顿了一下。,私は少し立ち止まった。,I stopped for a moment.,"dùn (dun4), zhūn (zhun1), dú (du2)"
+份,部（書類を数える）,我买了两份。,私は二つ買いました。,I bought two.,fèn (fen4)
+场,〜回（現象を数える）,这是一场比赛。,これは試合です。,This is a match.,chǎng
+趟,回（往復するものを数える）,你跑一趟吧,行ってきてください。,Please go and come back.,"tàng, tāng"
+朵,輪（花を数える）,一朵云飘走了。,一輪の雲が漂っていきました。,A cloud drifted by.,duǒ
+遍,回(動作の回数を数える),你读一遍。,一度読んでください。,Please read it once.,biàn
+座,棟(建物を数える),那座山很高。,あの山はとても高いです。,That mountain is very high.,zuò
+而,その上,他高而瘦。,彼は背が高くて痩せている。,He is tall and thin.,ér
+刚刚,〜したばかりである,我刚刚到家。,私はちょうど家に帰ったところです。,I just got home.,gāng gāng
+各,それぞれ,每个人都有各自的爱好。,誰もがそれぞれの趣味を持っています。,Everyone has their own hobbies.,gè
+够,足りる,钱够了吗？,お金は足りますか？,Do you have enough money?,gòu
+过,通過する,我以前来过。,以前、来たことがあります。,I have been here before.,guò
+好像,〜のようだ,他好像病了。,彼は病気のようです。,He seems ill.,hǎoxiàng
+忽然,急に,他忽然笑了。,彼は突然笑った。,He suddenly laughed.,hūrán
+互相,お互いに,我们互相学习。,私たちはお互いに学びます。,We learn from each other.,hùxiāng
+肯定,きっと,我肯定他会来。,彼はきっと来るでしょう。,He will come all right.,kěndìng
+恐怕,おそらく,恐怕来不及了。 (kǒngpà lái bù jí le.),"たぶん間に合わないでしょう。
+または
+間に合わない恐れがあります。","We probably won't make it. Or, there is a risk that we won't make it.",kǒngpà
+来不及,間に合わない,来不及走了。,間に合わなくて行けません。,"I couldn't make it in time, so I can't go.",láibùjí
+来得及,間に合う,现在去还来得及。,今から行ってもまだ間に合います。,We can still make it even if we leave now.,lái de jí
+例如,例えば,例如，饺子。,例えば、餃子。,"For example, gyoza.",lìrú
+满,満ちている,"我很满意。
+(Wǒ hěn mǎnyì.)",満足しています。,I am satisfied.,mǎn
+难道,まさか〜ではあるまい,难道你不去吗？,まさかあなたはいかないのですか？,"You're not going, are you?",nándào
+其次,その次,其次，我来介绍。,次に、私が紹介します。,"Next, I will introduce myself/it.",qícì
+其中,その中で,其中一个。,その一つ。,One of them.,qí zhōng
+起来,上がる,快点起来。,早く起きて。,Wake up early.,qǐlái
+千万,絶対に,你千万别忘了。,絶対に忘れないでください。,Please do not forget this under any circumstances.,qiānwàn
+甚至,〜でさえ,甚至不知道。,知ることさえなかった。,I didn't even know.,shènzhì
+十分,十分に,他十分高兴。,彼はとても喜んでいます。,He is very happy.,shí fēn
+实际,実際の,实际情况。,実際の状況。,The actual situation.,shíjì
+实在,本当に,我实在太忙了。,本当に忙しすぎます。,I am truly too busy.,shízài
+顺便,ついでに,我顺便买点菜。,ついでに野菜を買っていきます。,I'll pick up some vegetables while I'm at it.,shùnbiàn
+算,〜と見なす,算我一个吧。,私を一人に数えてください。,Count me in.,suàn
+完全,完全に,我完全同意。,全く同感です。,I completely agree.,wán quán
+往,〜へ向かって,往右拐。,右に曲がって。,Turn right.,wǎng
+往往,しばしば,她往往很忙。,彼女はたいてい忙しいです。,She is usually busy.,wǎngwǎng
+许多,たくさん,我有很多朋友。,私には友達がたくさんいます。,I have many friends.,xǔ duō
+也许,〜かもしれない,我也许会去。,私はたぶん行くでしょう。,I will probably go.,yěxǔ
+一切,全て,一切都好。,全て順調です。,Everything is fine.,yī qiè
+暂时,しばらく,暂时休息一下。,少し休んでください。,Please rest for a while.,zàn shí
+真正,本当の,他真正爱她。,彼は本当に彼女を愛している。,He truly loves her.,zhēn zhèng
+只,ただ〜だけだ,我有一只猫。,私は猫を一匹飼っています。,I have one cat.,zhǐ
+只好,やむを得ず〜する,我只好回家。,私は家に帰るしかなかった。,I had no choice but to go home.,zhǐhǎo
+只要,〜さえすれば,只要努力，就会成功。,努力しさえすれば、成功するでしょう。,"If you just try hard, you will succeed.",zhǐyào
+至少,少なくとも,至少需要三天。,少なくとも三日間必要です。,It will take at least three days.,zhì shǎo
+逐渐,だんだん,天气逐渐变冷了。,だんだん寒くなってきました。,It's gotten cold gradually.,zhú jiàn
+儿童,子供,儿童节快乐！,児童節おめでとうございます。,Happy Children's Day.,értóng
+安全,安全,注意安全。,安全を心掛ける。,Be careful about safety.,ān quán
+爱情,愛,爱情是很美好的。,愛はとても美しいです。,Love is very beautiful.,àiqíng
+尊重,尊敬,我们互相尊重。,私たちは互いに尊重し合っています。,We respect each other.,zūnzhòng
+租,賃貸する,我想租一套房。,一軒家を借りたいです。,I want to rent a detached house.,zū (zu1)
+责任,責任,"这是我的责任。
+(Zhè shì wǒ de zérèn.)",私の責任です。,It's my responsibility.,zérèn
+杂志,雑誌,我看杂志。,私は雑誌を読みます。,I read magazines.,zázhì
+座位,座席,请问有空座位吗？,空いている席はありますか？,Are there any seats available?,zuòwèi
+做生意,商売をする,我想做生意。,私は商売をしたいです。,I want to do business.,zuò shēng yì
+乒乓球,卓球,我喜欢打乒乓球。,私はピンポンをするのが好きです。,I like playing ping-pong.,pīngpāngqiú
+羽毛球,バドミントン,打羽毛球。,バドミントンをする。,Play badminton.,yǔmáoqiú
+网球,テニス,我喜欢打网球。,私はテニスをするのが好きです。,I like playing tennis.,wǎng qiú
+态度,態度,他的态度很好。,彼の態度はとても良いです。,His attitude is very good.,tàidu
+最好,〜するのが最も良い,你最好别去。,行かないほうがいいよ。,You shouldn't go.,zuìhǎo
+主意,しっかりした考え,这个主意很好。,このアイデアはとても良いです。,This idea is very good.,zhǔ​yi
+主动,主体的である,主动跟她打招呼。,自分から彼女に挨拶をした。,I greeted her myself.,zhǔ dòng
+著名,有名である,他的画很著名。,彼の絵はとても有名です。,His painting is very famous.,zhùmíng
+周围,周りに,周围很安静。,周りは静かです。,The surroundings are quiet.,zhōuwéi
+语言,言語,学习一门语言。,言語を学ぶ。,Learn a language.,yǔyán
+中文,中国語,我喜欢学中文。,私は中国語を学ぶのが好きです。,I like learning Chinese.,zhōngwén
+语法,文法、語法,他的语法很好。,彼の文法はとても良いです。,His grammar is very good.,yǔ fǎ
+重点,重要な、重点的な,这是重点。,これは重点です。,This is the key point.,zhòngdiǎn
+知识,知識,学习新知识。,新しい知識を学ぶ。,Learn new knowledge.,zhī shi
+之,〜の,一举两得之计,一挙両得の計,The plan to kill two birds with one stone.,zhī
+指,示す,请指出正确答案。,正しい答えを指摘してください。,Please point out the correct answer.,zhǐ
+质量,品質,质量非常好。,品質が非常に良いです。,The quality is very good.,zhìliàng
+植物,植物,我喜欢植物。,私は植物が好きです。,I like plants.,zhíwù
+棵,木,一棵树很高。,一本の木が高いです。,A tree is tall.,kē
+叶子,葉,树上有很多叶子。,木にはたくさんの葉があります。,There are many leaves on the tree.,yèzi
+直接,直接的である,你可以直接去。,あなたは直接行くことができます。,You can go directly.,zhíjiē
+正式,正式の、公式の,他们正式结婚了。,彼らは正式に結婚しました。,They formally got married.,zhèngshì
+正确,正確,这个答案是正确的。,この答えは正しいです。,This answer is correct.,zhèngquè
+窄,狭い,这条街很窄,この道はとても狭いです,This road is very narrow.,zhǎi
+优秀,優秀,他非常优秀。,彼はとても優秀です。,He is very excellent.,yōuxiù
+幽默,ユーモアある,他很有幽默感。,彼はユーモアのセンスがある。,He has a sense of humor.,yōumò
+优点,長所、メリット,发扬优点,長所を発揮する,Utilize one's strengths.,yōudiǎn
+友谊,友情,我们的友谊地久天长。,私たちの友情は永遠に続く。,Our friendship will last forever.,yǒuyì
+友好,友好的である,两国关系友好。,両国の関係は友好的です。,The relationship between the two countries is friendly.,yǒuhǎo
+勇敢,勇敢である,他非常勇敢。,彼はとても勇敢です。,He is very brave.,yǒnggǎn
+艺术,芸術,这是一种艺术。,これは一つの芸術です。,This is an art.,yì shù
+印象,印象,我对他的印象很好。,私は彼にとても良い印象を持っています。,I have a very good impression of him.,yìnxiàng
+意见,意見,我有不同意见。,私は異なる意見を持っています。,I have a different opinion.,yìjiàn
+羡慕,羨ましくおもう,我很羡慕你。,あなたが羨ましいです。,I'm jealous of you.,xiàn mù
+亿,億,这个数字有十亿。,この数字は10億です。,This number is one billion.,yì
+赢,勝つ,我们赢了比赛。,私たちは試合に勝ちました。,We won the game.,yíng
+页,ページ,请翻到下一页。,次のページを開いてください。,Please open the next page.,yè
+压力,圧力,工作压力很大。,仕事のプレッシャーが大きいです。,The pressure of work is great.,yālì
+演员,出演者,他是一位好演员。,彼は良い俳優です。,He is a good actor.,yǎnyuán
+演出,演出,这次演出很精彩。,今回の公演はとても素晴らしかった。,This performance was wonderful.,yǎn chū
+亚洲,アジア,亚洲很大。,アジアはとても広いです。,Asia is very wide/large.,Yàzhōu
+钥匙,鍵,我忘了带钥匙。,鍵を持ってくるのを忘れました。,I forgot to bring the key.,yàoshi
+样子,様子,你真可爱的样子。,あなたは本当に可愛らしいね。,You really are cute.,yàngzi
+阳光,日光,阳光很温暖。,日差しがとても暖かいです。,The sunlight is very warm.,yángguāng
+盐,塩,菜里没有盐。,料理に塩が入っていません。,There is no salt in the dish.,yán
+牙膏,歯磨き粉,我买了牙膏。,私は歯磨き粉を買いました。,I bought toothpaste.,yá gāo
+原因,原因、理由,找出原因。 (6文字),原因を見つけ出す。,Find out the cause.,yuányīn
+圆,円い、円形である,月亮很圆。,月はとても丸いです。,The moon is very round.,yuán
+呀,ね,好棒呀!,すごいね！,Amazing!,ya
+洗衣机,洗濯機,这台洗衣机很好。,この洗濯機はとても良いです。,This washing machine is very good.,xǐyījī
+信用卡,クレジットカード,我用信用卡。,クレジットカードを使います。,I will use a credit card.,xìn yòng kǎ
+性格,性格,她的性格很好。,彼女は性格がとても良いです。,She has a very good personality.,xìnggé
+性别,性別,请问你的性别。,あなたの性別をお伺いします。,May I ask your gender?,xìngbié
+血,血液,验血结果很好。,血液検査の結果はとても良いです。,The results of the blood test are very good.,xuè / xiě
+消息,ニュース、報道,我听到消息了。,ニュースを聞きました。,I listened to the news.,xiāoxi
+小说,小説,我喜欢看小说。,私は小説を読むのが好きです。,I like reading novels.,xiǎo shuō
+笑话,冗談、笑い話,这个笑话很好笑。,この冗談はとても面白いです。,This joke is very interesting.,xiàohua
+效果,効果、結果,效果很好。,効果はとても良い。,The effect is very good.,xiàoguǒ
+现代,近代的、現代,现代艺术怎么样？,現代アートはどうですか？,What about modern art?,xiàndài
+详细,詳細,请详细说明。,詳しく説明してください。,Please explain in detail.,xiáng xì
+咸,しょっぱい,这个菜有点咸。,この料理は少し塩辛いです。,This dish is a little salty.,xián
+污染,汚染する,空气污染严重。,空気汚染がひどい。,The air pollution is terrible.,wūrǎn
+误会,誤解,你误会了。,誤解ですよ。,It's a misunderstanding.,wù huì
+无聊,退屈である、つまらない,我感到很无聊。,私はとても退屈です。,I am very bored.,wú liáo
+温度,温度,今天温度很高。,今日はとても気温が高いです。,The temperature is very high today.,wēn dù
+文章,記事、文章,这篇文章很有意思。,この記事はとても興味深いです。,This article is very interesting.,wén zhāng
+网站,ウェブサイト,我有一个网站。,私にはウェブサイトがあります。,I have a website.,wǎngzhàn
+袜子,靴下,我穿白袜子。,私は白い靴下を履いています。,I am wearing white socks.,wà zi
+通知,お知らせ、通知,通知你一个好消息。,良い知らせがあります。,I have good news.,tōngzhī
+特点,特色、特徴,他的特点很多。,彼の特徴はたくさんあります。,He has many characteristics.,tè diǎn
+汤,スープ,我想喝点汤。,スープが飲みたい。,I want soup.,tāng
+台,台（乗り物を数える）,一台电脑很贵。,一台のコンピューターはとても高いです。,One computer is very expensive.,tái
+抬,顔を上げる/持ち上げる,把桌子抬起来。,テーブルを持ち上げてください。,Please lift the table.,tái
+条件,条件,符合所有条件。,全ての条件を満たしています。,All conditions have been met.,tiáojiàn
+塑料袋,ポリ袋/レジ袋,我不用塑料袋。,私はビニール袋を使いません。,I don't use plastic bags.,sù liào dài
+速度,速度、スピード,提高速度。,速度を上げる。,Increase speed.,sùdù
+自然,自然に,我喜欢大自然。,私は自然が好きです。,I like nature.,zìrán
+森林,森,我爱这片森林。,私はこの森が大好きです。,I love this forest very much.,sēn lín
+所有,全ての,我拥有所有。,私は全てを持っている。,I have everything.,suǒyǒu
+酸,酸っぱい,这个苹果很酸。,このりんごはとても酸っぱい。,This apple is very sour.,suān
+数字,数字,这个数字很大。,この数字はとても大きいです。,This number is very large.,shù zì
+顺序,順序、順番．,请按顺序排队。,順番に並んでください。,Please line up in order.,shùnxù
+数量,数量,数量有点少。,量が少し少ないです。,The amount is a little small.,shù liàng
+收入,収入,他的收入很高。,彼の収入はとても高いです。,His income is very high.,shōurù
+首都,首都,北京是中国的首都。,北京は中国の首都です。,Beijing is the capital of China.,shǒudū
+师傅,運転手さん/職人さん,师傅，请问厕所在哪儿？,すみません、お手洗いはどこですか？,"Excuse me, where is the restroom?",shī fu
+世纪,世紀,二十一世纪,21世紀,21st century,shìjì
+市场,市場,市场很大。,市場はとても大きいです。,The market is very big.,shìchǎng
+食品,食品,这种食品很安全。,この食品はとても安全です。,This food is very safe.,shí pǐn
+生命,生命,生命是美好的。,命は美しい。,Life is beautiful.,shēngmìng
+生活,生活,我喜欢简单的生活。,私はシンプルな生活が好きです。,"I prefer a simple living, without too much luxury.",shēnghuó
+深,深い,这湖水很深。,この湖の水はとても深い。,The water in this lake is very deep.,shēn
+社会,社会,社会在发展。,社会は発展しています。,Society is developing.,shè huì
+沙发,ソファ,我坐在沙发上。,私はソファーに座っています。,I am sitting on the sofa.,shāfā
+说明,説明,请说明一下。,説明してください。,Please explain.,shuōmíng
+帅,カッコいい,他看起来很帅。,彼は格好良く見えます。,He looks cool.,shuài
+入口,入口,入口在哪儿？,入口はどこですか？,"Excuse me, where is the entrance?",rù kǒu
+日记,日記,我写了一篇日记。,私は日記を書きました。,I wrote a diary.,rìjì
+任务,任務,我有一个任务。,私には一つの任務があります。,I have one mission.,rènwu
+任何,いかなる、どのような,任何人都可以。,誰でもいいです。,Anyone is fine.,rèn hé
+人民币,人民元,我要换人民币。,人民元に両替したいです。,I would like to exchange money for Chinese Yuan.,rénmínbì
+软,軟らかい,这床很软。,このベッドはとても柔らかいです。,This bed is very soft.,ruǎn
+群,群れ、群,一群鸟飞走了。,鳥の群れが飛び去りました。,A flock of birds flew away.,qún
+气候,気候,这里的气候很好。,ここの気候はとても良いです。,The climate here is very good.,qìhòu
+情况,状況、事態,情况很复杂。,状況はとても複雑です。,The situation is very complicated.,qíngkuàng
+缺点,欠点、短所,他的缺点很多。,彼には欠点が多いです。,He has many faults.,quēdiǎn
+全部,完成、全部,我们全部同意。,私たちは全員同意します。,We all agree.,quánbù
+敲,たたく,敲门声很响。,ドアをノックする音がとても大きいです。,The sound of knocking on the door is very loud.,qiāo
+签证,査証、ビザ．,我的签证办好了。,私のビザは手続きが終わりました。,My visa procedures are complete.,qiānzhèng
+桥,橋,我们过桥吧。,橋を渡りましょう。,Let's cross the bridge.,qiáo
+墙,壁,墙上有画。,壁に絵があります。,There is a picture on the wall.,qiáng
+脾气,気性、性質,脾气很好。,彼は気立てがいい。,He has a good disposition.,pí qi
+瓶子,ボトル,这个瓶子是空的。,この瓶は空です。,This bottle is empty.,píngzi
+平时,いつも,我平时很忙。,私は普段とても忙しいです。,I'm usually very busy.,píng shí
+皮肤,皮膚,我的皮肤很干。,私の肌はとても乾燥しています。,My skin is very dry.,pífū
+篇,本(文章を数える),一篇新闻报道,ニュース記事一つ,one news article,piān
+农村,農村、田舎,我住在农村。,私は田舎に住んでいます。,I live in the countryside.,nóng cūn
+内容,内容,内容很丰富。,内容はとても豊富です。,The content is very rich.,nèiróng
+能力,能力,他的学习能力很强。,彼の学習能力はとても高いです。,His learning ability is very high.,néng lì
+年龄,年齢,请问你的年龄？,おいくつですか？,How old are you?,niánlíng
+目的,目的,他的目的是学习。,彼の目的は勉強することです。,His goal is to study.,mù dì
+密码,パスワード,我的密码是六位。,私のパスワードは6桁です。,My password is 6 digits.,mìmǎ
+民族,国家、民族,每个国家都有自己的民族。,全ての国にはそれぞれの民族があります。,Every country has its own ethnic group.,mín zú
+美丽,美しい,她很美丽。,彼女はとても美しいです。,She is very beautiful.,měilì
+梦,夢,我做了一个梦。,夢を見ました。,I had a dream.,mèng
+毛巾,タオル,我买了一条毛巾。,私はタオルを一枚買いました。,I bought one towel.,máo jīn
+理想,理想的,你有理想吗？,あなたは理想を持っていますか？,Do you have ideals?,lǐ xiǎng
+礼貌,礼儀,他很有礼貌。,彼はとても礼儀正しいです。,He is very polite.,lǐ mào
+冷静,冷静だ,你需要保持冷静。,落ち着いていなさい。,Stay calm.,lěng jìng
+垃圾桶,ゴミ箱,把垃圾扔进垃圾桶。,ごみをゴミ箱に捨ててください。,Please throw your trash in the trash can.,lājītǒng
+老虎,虎,我很怕老虎。,私は虎がとても怖いです。,I am very afraid of tigers.,lǎohǔ
+浪漫,ロマンチック,我喜欢浪漫。,私はロマンチックなものが好きです。,I like romantic things.,làngmàn
+浪费,浪費する,不要浪费时间。,時間を無駄にしないでください。,Don't waste time.,làngfèi
+流利,流暢だ,说得很流利。,とても流暢に話しました。,Spoke very fluently.,liúlì
+亮,明るい,灯光很亮。,明かりがとても明るいです。,The light is very bright.,liàng (liang4)
+凉快,涼しい,今天很凉快。,今日はとても涼しい。,It is very cool today.,liángkuai
+困难,困難,这个问题很困难。,この問題は難しいです。,This problem is difficult.,kùnnan
+空气,空気,空气很新鲜。,空気がとても新鮮です。,The air is very fresh.,kōngqì
+咳嗽,咳,她一直在咳嗽。,彼女はずっと咳をしています。,She has been coughing for a long time.,ké sou
+距离,距離,我们距离很近。,私たちはとても近いです。,We are very close.,jù lí
+京剧,京劇,我喜欢看京剧。,私は京劇を見るのが好きです。,I like watching Peking Opera.,Jīngjù
+积极,積極的な、ポジティブな,他态度很积极。,彼はとても積極的です。,He is very positive.,jījí
+紧张,緊張,我有点紧张。,少し緊張しています。,I am a little nervous.,jǐnzhāng
+禁止,禁止,禁止吸烟。,禁煙,No Smoking!,jìn zhǐ
+镜子,鏡,你照镜子了吗？,鏡を見たの？,Did you look in the mirror?,jìng zi
+竞争,競争,我们互相竞争。,私たちは互いに競争し合っています。,We are competing with each other.,jìngzhēng
+结果,結果,结果很好。,結果は良いです。,The result is good.,jiē guǒ
+加油站,ガソリンスタンド,我在加油站。,私はガソリンスタンドにいます。,I am at the gas station.,jiā yóu zhàn
+交通,交通,交通很方便。,交通はとても便利です。,エラーが発生しました。もう一度お試しください。,jiāotōng
+将来,将来,我希望将来。,私は将来を願っています。,I wish for the future.,jiānglái
+家具,家具,我们买家具了。,私たちは家具を買いました。,We bought furniture.,jiā・jù
+假,偽物,别装假。,偽装しないで。,Don't disguise it.,jiǎ
+价格,価格,价格很便宜。,価格はとても安いです。,The price is very cheap.,jià gé
+厚,厚い,这件衣服很厚。,この服はとても厚いです。,This clothing is very thick.,hòu
+盒子,箱,这个盒子很漂亮。,この箱はきれいです。,This box is clean.,hé zi
+合格,合格する,考试合格了吗?,試験に合格しましたか。,Did you pass the exam?,hégé
+好处,メリット,多吃蔬菜有好处。,野菜をたくさん食べると良いことがあります。,It is good to eat a lot of vegetables.,hǎochù
+海洋,海洋,我喜欢看海洋。,私は海を見るのが好きです。,I like to look at the sea.,hǎiyáng
+号码,番号,你的号码是多少？,あなたの番号は何ですか？,What is your number?,hàomǎ
+害羞,恥ずかしがる,她有点害羞。,彼女は少し恥ずかしがり屋です。,She is a little shy.,hàixiū
+寒假,冬休み,寒假快到了。,冬休みがもうすぐです。,Winter vacation is coming soon.,hánjià
+火,火災,着火了，快跑！,火事だ、早く逃げろ！,"There's a fire, run quickly!",huǒ
+活泼,活発,她很活泼。,彼女はとても活発です。,She is very active.,huópō
+回忆,記憶,我喜欢回忆过去。,私は過去を振り返るのが好きです。,I like looking back on the past.,huí yì
+公里,キロ、km,我家离公司五公里。,私の家は会社から5キロメートル離れています。,My house is 5 kilometers away from the company.,gōnglǐ
+购物,買い物,我想去购物。,私は買い物に行きたいです。,I want to go shopping.,gòuwù
+个子,身長、背格好,她的个子很高。,彼女は背が高いです。,She is tall.,gèzi
+干燥,乾燥している,天气非常干燥。,天気がとても乾燥しています。,The weather is very dry.,gān zào
+干杯,乾杯,为我们的友谊干杯！,私たちの友情に乾杯！,A toast to our friendship!,gān//bēi
+国际,国際,这是一个国际问题。,これは国際的な問題です。,This is an international issue.,guójì
+观众,聴衆,观众很激动。,観客はとても興奮している。,The audience is very excited.,guān zhòng
+关键,要、鍵,这是关键。,これは鍵です。,This is a key.,guānjiàn
+光,明かり/〜し尽くす,房间里有光。,部屋に光がある。,There is light in the room.,guāng
+复杂,複雑,这太复杂了。,これは複雑すぎます。,This is too complicated.,fùzá
+复印,コピーする,我想复印一下。,コピーしたいです。,I would like to make a copy.,fùyìn
+富,豊か,他很富有。,彼はとても裕福です。,He is very wealthy.,fù
+否则,さもなければ,快走，否则来不及了。,早く行って、さもないと間に合わないよ。,"Hurry up, or you won't make it.",fǒu zé
+风景,風景,这儿的风景很美。,ここの景色はとても美しいです。,The scenery here is very beautiful.,fēng jǐng
+丰富,豊富,经验很丰富。,経験が豊富です。,I have rich experience.,fēng fù
+方向,方向,方向错了。,方向が違います。,That's the wrong direction.,fāngxiàng
+方面,方面、領域,这方面的问题。,この方面の問題。,Problems in this area.,fāngmiàn
+方法,方法,这是一个好方法。,これは良い方法です。,This is a good method.,fāngfǎ
+心情,気持ち、気分,我今天心情很好。,今日は気分が良いです。,I feel good today.,xīnqíng
+感谢,感謝,非常感谢你。,どうもありがとうございます。,Thank you very much.,gǎnxiè
+精神,精神/元気がある,他的精神很好。,彼は元気です。,He is fine.,jīng shén
+可怜,かわいそう,他看起来很可怜。,彼はとてもかわいそうに見えます。,He looks very pitiful.,kělián
+可惜,惜しい、残念である,那太可惜了。,それは残念です。,That's too bad.,kěxī
+困,眠い,我有点困了。,少し眠いです。,I am a little sleepy.,kùn
+难受,苦しい、つらい,我感觉很难受。,気分がとても悪いです。,I feel very unwell.,nánshòu
+轻松,リラックス,学习很轻松。,勉強はとても楽です。,Studying is very easy.,qīngsōng
