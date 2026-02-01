@@ -169,13 +169,7 @@ function AudioWordCard({
               {word.exampleSentence}
             </ThemedText>
           </View>
-        ) : (
-          <View style={styles.hiddenContent}>
-            <ThemedText style={[styles.tapToReveal, { color: theme.textSecondary }]}>
-              ・・・・・
-            </ThemedText>
-          </View>
-        )}
+        ) : null}
       </View>
     </View>
   );
@@ -549,16 +543,6 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
-  },
-  hiddenContent: {
-    marginTop: Spacing.md,
-    paddingVertical: Spacing.sm,
-    alignItems: "center",
-  },
-  tapToReveal: {
-    fontSize: 16,
-    fontFamily: "Nunito_400Regular",
-    letterSpacing: 4,
   },
   revealedContent: {
     marginTop: Spacing.md,
