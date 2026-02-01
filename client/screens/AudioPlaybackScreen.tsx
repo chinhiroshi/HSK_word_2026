@@ -268,20 +268,6 @@ export default function AudioPlaybackScreen() {
           </View>
         </View>
 
-        <View style={[styles.youtubeCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
-          <ThemedText style={styles.sectionTitle}>YouTube動画</ThemedText>
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Linking.openURL(YOUTUBE_URL);
-            }}
-            style={[styles.youtubeButton, { backgroundColor: "#FF0000" }]}
-          >
-            <Feather name="youtube" size={20} color="#FFFFFF" />
-            <ThemedText style={styles.youtubeButtonText}>YouTubeで視聴</ThemedText>
-          </Pressable>
-        </View>
-
         <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
           <ThemedText style={styles.sectionTitle}>再生</ThemedText>
 
@@ -336,6 +322,20 @@ export default function AudioPlaybackScreen() {
               </Pressable>
             )}
           </View>
+        </View>
+
+        <View style={[styles.youtubeCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+          <ThemedText style={styles.sectionTitle}>YouTube動画</ThemedText>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Linking.openURL(YOUTUBE_URL);
+            }}
+            style={[styles.youtubeButton, { backgroundColor: "#FF0000" }]}
+          >
+            <Feather name="youtube" size={20} color="#FFFFFF" />
+            <ThemedText style={styles.youtubeButtonText}>YouTubeで視聴</ThemedText>
+          </Pressable>
         </View>
       </ScrollView>
     </View>
