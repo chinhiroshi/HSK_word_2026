@@ -39,8 +39,21 @@ export default function ProfileScreen() {
   }, [loadData]);
 
   const totalWords = words.length;
-  const memorizedCount = words.filter((w) => w.isMemorized).length;
-  const percentage = totalWords > 0 ? Math.round((memorizedCount / totalWords) * 100) : 0;
+  
+  const textStats = {
+    memorized: words.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0).length,
+    needsWork: words.filter((w) => (w.textUnmemorizedCount || 0) > 0).length,
+    notStarted: words.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) === 0).length,
+  };
+  
+  const audioStats = {
+    memorized: words.filter((w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0).length,
+    needsWork: words.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length,
+    notStarted: words.filter((w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0).length,
+  };
+
+  const textPercentage = totalWords > 0 ? Math.round((textStats.memorized / totalWords) * 100) : 0;
+  const audioPercentage = totalWords > 0 ? Math.round((audioStats.memorized / totalWords) * 100) : 0;
 
   const handleResetProgress = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -96,30 +109,22 @@ export default function ProfileScreen() {
           { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
         ]}
       >
-        <ThemedText style={styles.statsTitle}>学習進捗</ThemedText>
+        <View style={styles.statsTitleRow}>
+          <Feather name="book-open" size={18} color={theme.primary} />
+          <ThemedText style={styles.statsTitle}>文字暗記</ThemedText>
+        </View>
 
         <View style={styles.progressContainer}>
-          <ProgressBar progress={percentage} height={10} />
+          <ProgressBar progress={textPercentage} height={8} />
           <ThemedText style={[styles.progressText, { color: theme.primary }]}>
-            {percentage}%
+            {textPercentage}%
           </ThemedText>
         </View>
 
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: theme.primary }]}>
-              {totalWords}
-            </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-              総単語数
-            </ThemedText>
-          </View>
-
-          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-          <View style={styles.statItem}>
             <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
-              {memorizedCount}
+              {textStats.memorized}
             </ThemedText>
             <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
               暗記済み
@@ -129,8 +134,19 @@ export default function ProfileScreen() {
           <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
 
           <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: Colors.light.alert }]}>
-              {totalWords - memorizedCount}
+            <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
+              {textStats.needsWork}
+            </ThemedText>
+            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+              暗記必要
+            </ThemedText>
+          </View>
+
+          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+          <View style={styles.statItem}>
+            <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
+              {textStats.notStarted}
             </ThemedText>
             <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
               未暗記
@@ -141,47 +157,66 @@ export default function ProfileScreen() {
 
       <View
         style={[
-          styles.featuresCard,
+          styles.statsCard,
           { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
         ]}
       >
-        <ThemedText style={styles.featuresTitle}>今後の機能</ThemedText>
+        <View style={styles.statsTitleRow}>
+          <Feather name="headphones" size={18} color={theme.primary} />
+          <ThemedText style={styles.statsTitle}>音声暗記</ThemedText>
+        </View>
 
-        <View style={styles.featureItem}>
-          <View style={[styles.featureIcon, { backgroundColor: theme.backgroundSecondary }]}>
-            <Feather name="refresh-cw" size={18} color={theme.primary} />
+        <View style={styles.progressContainer}>
+          <ProgressBar progress={audioPercentage} height={8} />
+          <ThemedText style={[styles.progressText, { color: theme.primary }]}>
+            {audioPercentage}%
+          </ThemedText>
+        </View>
+
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
+              {audioStats.memorized}
+            </ThemedText>
+            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+              暗記済み
+            </ThemedText>
           </View>
-          <View style={styles.featureText}>
-            <ThemedText style={styles.featureName}>間隔反復</ThemedText>
-            <ThemedText style={[styles.featureDesc, { color: theme.textSecondary }]}>
-              復習タイミングを最適化
+
+          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+          <View style={styles.statItem}>
+            <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
+              {audioStats.needsWork}
+            </ThemedText>
+            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+              暗記必要
+            </ThemedText>
+          </View>
+
+          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+          <View style={styles.statItem}>
+            <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
+              {audioStats.notStarted}
+            </ThemedText>
+            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+              未暗記
             </ThemedText>
           </View>
         </View>
+      </View>
 
-        <View style={styles.featureItem}>
-          <View style={[styles.featureIcon, { backgroundColor: theme.backgroundSecondary }]}>
-            <Feather name="target" size={18} color={theme.primary} />
-          </View>
-          <View style={styles.featureText}>
-            <ThemedText style={styles.featureName}>毎日の目標</ThemedText>
-            <ThemedText style={[styles.featureDesc, { color: theme.textSecondary }]}>
-              1日の暗記目標を設定
-            </ThemedText>
-          </View>
-        </View>
-
-        <View style={styles.featureItem}>
-          <View style={[styles.featureIcon, { backgroundColor: theme.backgroundSecondary }]}>
-            <Feather name="zap" size={18} color={theme.primary} />
-          </View>
-          <View style={styles.featureText}>
-            <ThemedText style={styles.featureName}>連続学習記録</ThemedText>
-            <ThemedText style={[styles.featureDesc, { color: theme.textSecondary }]}>
-              毎日の学習を継続
-            </ThemedText>
-          </View>
-        </View>
+      <View
+        style={[
+          styles.totalCard,
+          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+        ]}
+      >
+        <ThemedText style={styles.totalLabel}>総単語数</ThemedText>
+        <ThemedText style={[styles.totalValue, { color: theme.primary }]}>
+          {totalWords}
+        </ThemedText>
       </View>
 
       <Button onPress={handleResetProgress} style={styles.resetButton}>
@@ -219,28 +254,33 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
   },
   statsCard: {
-    padding: Spacing.xl,
+    padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+  statsTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
   },
   statsTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
-    marginBottom: Spacing.lg,
   },
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.md,
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   progressText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
-    minWidth: 45,
+    minWidth: 40,
   },
   statsRow: {
     flexDirection: "row",
@@ -251,56 +291,37 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   statValue: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     marginBottom: Spacing.xs,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "Nunito_400Regular",
   },
   statDivider: {
     width: 1,
-    height: 40,
+    height: 36,
   },
-  featuresCard: {
-    padding: Spacing.xl,
+  totalCard: {
+    padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     marginBottom: Spacing.xl,
-  },
-  featuresTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-    marginBottom: Spacing.lg,
-  },
-  featureItem: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: Spacing.lg,
   },
-  featureIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: Spacing.md,
-  },
-  featureText: {
-    flex: 1,
-  },
-  featureName: {
+  totalLabel: {
     fontSize: 16,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
-    marginBottom: Spacing.xs,
   },
-  featureDesc: {
-    fontSize: 13,
-    fontFamily: "Nunito_400Regular",
+  totalValue: {
+    fontSize: 24,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   resetButton: {
     marginBottom: Spacing.xl,
