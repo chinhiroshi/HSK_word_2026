@@ -29,8 +29,11 @@ export default function AudioPlaybackScreen() {
   const [filterUnmemorized, setFilterUnmemorized] = useState(false);
   const [startPosition, setStartPosition] = useState("1");
   const [endPosition, setEndPosition] = useState("");
+  const [playbackRate, setPlaybackRate] = useState(1.0);
   
   const isCancelledRef = useRef(false);
+
+  const SPEED_OPTIONS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
 
   const loadWords = useCallback(async () => {
     await initializeData();
@@ -60,6 +63,7 @@ export default function AudioPlaybackScreen() {
     return new Promise((resolve) => {
       Speech.speak(text, {
         language,
+        rate: playbackRate,
         onDone: resolve,
         onError: () => resolve(),
         onStopped: resolve,
@@ -260,6 +264,46 @@ export default function AudioPlaybackScreen() {
             </View>
           </View>
 
+          <View style={styles.settingRow}>
+            <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
+              再生速度
+            </ThemedText>
+            <View style={styles.speedContainer}>
+              {SPEED_OPTIONS.map((speed) => (
+                <Pressable
+                  key={speed}
+                  onPress={() => {
+                    if (!isPlaying) {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setPlaybackRate(speed);
+                    }
+                  }}
+                  style={[
+                    styles.speedButton,
+                    {
+                      backgroundColor: playbackRate === speed 
+                        ? Colors.light.primary 
+                        : theme.backgroundSecondary,
+                      borderColor: playbackRate === speed 
+                        ? Colors.light.primary 
+                        : theme.border,
+                    },
+                  ]}
+                  disabled={isPlaying}
+                >
+                  <ThemedText
+                    style={[
+                      styles.speedButtonText,
+                      { color: playbackRate === speed ? "#FFFFFF" : theme.text },
+                    ]}
+                  >
+                    {speed}x
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
           <View style={styles.infoRow}>
             <Feather name="info" size={14} color={theme.textSecondary} />
             <ThemedText style={[styles.infoText, { color: theme.textSecondary }]}>
@@ -400,6 +444,24 @@ const styles = StyleSheet.create({
   positionSuffix: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
+  },
+  speedContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.xs,
+  },
+  speedButton: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    minWidth: 44,
+    alignItems: "center",
+  },
+  speedButtonText: {
+    fontSize: 12,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
   infoRow: {
     flexDirection: "row",
