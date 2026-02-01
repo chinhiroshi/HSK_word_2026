@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { View, StyleSheet, Pressable, ScrollView, TextInput } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, TextInput, Linking } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as Speech from "expo-speech";
+
+const YOUTUBE_URL = "https://youtu.be/tW5tqaYRYm8?si=d2W2jqRre9F84A1T";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
@@ -266,6 +268,20 @@ export default function AudioPlaybackScreen() {
           </View>
         </View>
 
+        <View style={[styles.youtubeCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+          <ThemedText style={styles.sectionTitle}>YouTube動画</ThemedText>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Linking.openURL(YOUTUBE_URL);
+            }}
+            style={[styles.youtubeButton, { backgroundColor: "#FF0000" }]}
+          >
+            <Feather name="youtube" size={20} color="#FFFFFF" />
+            <ThemedText style={styles.youtubeButtonText}>YouTubeで視聴</ThemedText>
+          </Pressable>
+        </View>
+
         <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
           <ThemedText style={styles.sectionTitle}>再生</ThemedText>
 
@@ -399,6 +415,26 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
     flex: 1,
     lineHeight: 16,
+  },
+  youtubeCard: {
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+  youtubeButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  youtubeButtonText: {
+    fontSize: 15,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+    color: "#FFFFFF",
   },
   playerCard: {
     borderRadius: BorderRadius.lg,
