@@ -4,13 +4,14 @@ import { mockWords } from "@/data/mockData";
 
 const WORDS_KEY = "@chinese_master_words";
 const DATA_VERSION_KEY = "@chinese_master_data_version";
-const CURRENT_DATA_VERSION = "4";
+const CURRENT_DATA_VERSION = "5";
 
 export async function initializeData(): Promise<void> {
   const dataVersion = await AsyncStorage.getItem(DATA_VERSION_KEY);
   if (dataVersion !== CURRENT_DATA_VERSION) {
     const initializedWords = mockWords.map(w => ({
       ...w,
+      exampleEnglish: w.exampleEnglish ?? '',
       textMemorized: w.textMemorized ?? false,
       audioMemorized: w.audioMemorized ?? false,
       textUnmemorizedCount: w.textUnmemorizedCount ?? 0,
