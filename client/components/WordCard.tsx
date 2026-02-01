@@ -78,6 +78,8 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
     ? Colors.light.success
     : "transparent";
 
+  const speakText = `${word.word}。${word.exampleSentence}`;
+
   return (
     <Animated.View
       style={[
@@ -109,29 +111,39 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
 
           <View style={styles.wordContainer}>
             <ThemedText style={styles.word}>{word.word}</ThemedText>
-            <SpeakButton text={word.word} size="small" />
+            <SpeakButton text={speakText} size="small" />
           </View>
 
           <View style={styles.markActions}>
             {isMarked ? (
-              <Pressable
-                onPress={handleClearMark}
-                style={[styles.markBadge, { backgroundColor: Colors.light.secondary }]}
-                hitSlop={12}
-                testID={`clear-mark-${word.id}`}
-              >
-                <Animated.View style={markAnimatedStyle}>
-                  <View style={styles.markBadgeContent}>
-                    <Feather name="x" size={12} color="#FFFFFF" />
-                    <ThemedText style={styles.markCountText}>{unmemorizedCount}</ThemedText>
-                  </View>
-                </Animated.View>
-              </Pressable>
+              <>
+                <View style={[styles.countBadge, { backgroundColor: Colors.light.secondary }]}>
+                  <ThemedText style={styles.countText}>{unmemorizedCount}</ThemedText>
+                </View>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                  testID={`mark-unmemorized-${word.id}`}
+                >
+                  <Animated.View style={markAnimatedStyle}>
+                    <Feather name="flag" size={16} color={Colors.light.secondary} />
+                  </Animated.View>
+                </Pressable>
+                <Pressable
+                  onPress={handleClearMark}
+                  style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
+                  hitSlop={8}
+                  testID={`clear-mark-${word.id}`}
+                >
+                  <Feather name="check" size={16} color={Colors.light.success} />
+                </Pressable>
+              </>
             ) : (
               <Pressable
                 onPress={handleMarkUnmemorized}
                 style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
-                hitSlop={12}
+                hitSlop={8}
                 testID={`mark-unmemorized-${word.id}`}
               >
                 <Animated.View style={markAnimatedStyle}>
@@ -144,12 +156,9 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
         </View>
 
         <View style={styles.exampleRow}>
-          <View style={styles.exampleContainer}>
-            <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
-              {word.exampleSentence}
-            </ThemedText>
-          </View>
-          <SpeakButton text={word.exampleSentence} size="small" />
+          <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
+            {word.exampleSentence}
+          </ThemedText>
         </View>
       </Pressable>
     </Animated.View>
@@ -199,42 +208,31 @@ const styles = StyleSheet.create({
   markActions: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    gap: Spacing.xs,
   },
   markButton: {
-    width: 32,
-    height: 32,
-    borderRadius: BorderRadius.full,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  markBadge: {
-    minWidth: 40,
+    width: 28,
     height: 28,
     borderRadius: BorderRadius.full,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: Spacing.sm,
   },
-  markBadgeContent: {
-    flexDirection: "row",
+  countBadge: {
+    minWidth: 20,
+    height: 20,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
     alignItems: "center",
-    gap: 4,
+    paddingHorizontal: 6,
   },
-  markCountText: {
-    fontSize: 12,
+  countText: {
+    fontSize: 11,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
   },
   exampleRow: {
-    flexDirection: "row",
-    alignItems: "center",
     paddingLeft: 40,
-  },
-  exampleContainer: {
-    flex: 1,
-    marginRight: Spacing.sm,
   },
   exampleSentence: {
     fontSize: 14,
