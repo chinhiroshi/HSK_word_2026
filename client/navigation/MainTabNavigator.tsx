@@ -57,7 +57,7 @@ export default function MainTabNavigator() {
         name="StudyTab"
         component={StudyStackNavigator}
         options={{
-          title: "学習",
+          title: "文字学習",
           tabBarIcon: ({ color, size }) => (
             <Feather name="book-open" size={size} color={color} />
           ),

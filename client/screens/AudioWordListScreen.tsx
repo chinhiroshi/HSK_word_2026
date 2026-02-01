@@ -24,19 +24,23 @@ type FilterType = "all" | "memorized" | "unmemorized";
 interface AudioWordCardProps {
   word: Word;
   index: number;
-  revealed: boolean;
+  isRevealed: boolean;
+  onToggleReveal: () => void;
   onMarkUnmemorized: () => void;
   onClearMark: () => void;
   onMarkMemorized: () => void;
+  onNavigateToDetail: () => void;
 }
 
 function AudioWordCard({ 
   word, 
   index, 
-  revealed,
+  isRevealed,
+  onToggleReveal,
   onMarkUnmemorized, 
   onClearMark, 
-  onMarkMemorized 
+  onMarkMemorized,
+  onNavigateToDetail,
 }: AudioWordCardProps) {
   const { theme } = useTheme();
 
@@ -67,6 +71,11 @@ function AudioWordCard({
     onMarkMemorized();
   };
 
+  const handleToggleReveal = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onToggleReveal();
+  };
+
   return (
     <View
       style={[
@@ -90,6 +99,21 @@ function AudioWordCard({
           <View style={styles.speakContainer}>
             <SpeakButton text={speakText} size="medium" />
           </View>
+
+          <Pressable
+            onPress={handleToggleReveal}
+            style={[
+              styles.revealButton, 
+              { backgroundColor: isRevealed ? `${theme.primary}20` : theme.backgroundSecondary }
+            ]}
+            hitSlop={8}
+          >
+            <Feather 
+              name={isRevealed ? "eye" : "eye-off"} 
+              size={16} 
+              color={isRevealed ? theme.primary : theme.textSecondary} 
+            />
+          </Pressable>
 
           <View style={styles.markActions}>
             {isMarked ? (
@@ -132,10 +156,13 @@ function AudioWordCard({
                 ) : null}
               </>
             )}
+            <Pressable onPress={onNavigateToDetail} hitSlop={8}>
+              <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+            </Pressable>
           </View>
         </View>
 
-        {revealed ? (
+        {isRevealed ? (
           <View style={styles.revealedContent}>
             <ThemedText style={styles.word}>{word.word}</ThemedText>
             <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
@@ -168,6 +195,7 @@ export default function AudioWordListScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
   const [revealAll, setRevealAll] = useState(false);
+  const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
 
   const loadWords = useCallback(async () => {
     const data = await getWords();
@@ -256,19 +284,40 @@ export default function AudioWordListScreen() {
     setFilter(newFilter);
   };
 
+  const handleNavigateToDetail = (wordId: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.navigate("WordDetail", { wordId });
+  };
+
+  const handleToggleReveal = (wordId: string) => {
+    setRevealedIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(wordId)) {
+        newSet.delete(wordId);
+      } else {
+        newSet.add(wordId);
+      }
+      return newSet;
+    });
+  };
+
   const renderWordItem = ({ item, index }: { item: Word; index: number }) => {
     const originalIndex = filter === "all" 
       ? startIndex + index
       : allWords.indexOf(item) + 1;
 
+    const isRevealed = revealAll || revealedIds.has(item.id);
+
     return (
       <AudioWordCard
         word={item}
         index={originalIndex}
-        revealed={revealAll}
+        isRevealed={isRevealed}
+        onToggleReveal={() => handleToggleReveal(item.id)}
         onMarkUnmemorized={() => handleMarkUnmemorized(item.id)}
         onClearMark={() => handleClearMark(item.id)}
         onMarkMemorized={() => handleMarkMemorized(item.id)}
+        onNavigateToDetail={() => handleNavigateToDetail(item.id)}
       />
     );
   };
@@ -466,6 +515,14 @@ const styles = StyleSheet.create({
   },
   speakContainer: {
     flex: 1,
+  },
+  revealButton: {
+    width: 28,
+    height: 28,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.xs,
   },
   markActions: {
     flexDirection: "row",
