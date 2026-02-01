@@ -6,8 +6,13 @@ export interface Word {
   exampleSentence: string;
   examplePinyin: string;
   exampleTranslation: string;
+  exampleEnglish?: string;
   isMemorized: boolean;
   unmemorizedCount: number;
+  textMemorized: boolean;
+  audioMemorized: boolean;
+  textUnmemorizedCount: number;
+  audioUnmemorizedCount: number;
   videoIds: string[];
 }
 
