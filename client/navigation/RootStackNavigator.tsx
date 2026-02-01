@@ -2,14 +2,13 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import WordDetailScreen from "@/screens/WordDetailScreen";
-import TestScreen from "@/screens/TestScreen";
+import WordListScreen from "@/screens/WordListScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
-import { TestType } from "@/types";
 
 export type RootStackParamList = {
   Main: undefined;
   WordDetail: { wordId: string };
-  Test: { testType: TestType };
+  WordList: { startIndex: number; endIndex: number };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -33,11 +32,10 @@ export default function RootStackNavigator() {
         }}
       />
       <Stack.Screen
-        name="Test"
-        component={TestScreen}
+        name="WordList"
+        component={WordListScreen}
         options={{
           presentation: "card",
-          headerTitle: "テスト",
         }}
       />
     </Stack.Navigator>

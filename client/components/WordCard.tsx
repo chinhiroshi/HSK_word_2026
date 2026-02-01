@@ -21,6 +21,7 @@ interface WordCardProps {
   onPress: () => void;
   onMarkUnmemorized: () => void;
   onClearMark: () => void;
+  onMarkMemorized?: () => void;
 }
 
 const springConfig: WithSpringConfig = {
@@ -30,7 +31,14 @@ const springConfig: WithSpringConfig = {
   overshootClamping: true,
 };
 
-export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark }: WordCardProps) {
+export function WordCard({ 
+  word, 
+  index, 
+  onPress, 
+  onMarkUnmemorized, 
+  onClearMark,
+  onMarkMemorized,
+}: WordCardProps) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
   const markScale = useSharedValue(1);
@@ -69,12 +77,22 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
     onClearMark();
   };
 
+  const handleMarkMemorized = (e: GestureResponderEvent) => {
+    e.stopPropagation();
+    markScale.value = withSpring(1.3, springConfig, () => {
+      markScale.value = withSpring(1, springConfig);
+    });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onMarkMemorized?.();
+  };
+
   const unmemorizedCount = word.unmemorizedCount || 0;
   const isMarked = unmemorizedCount > 0;
+  const isMemorized = word.isMemorized && !isMarked;
 
   const borderLeftColor = isMarked
     ? Colors.light.secondary
-    : word.isMemorized
+    : isMemorized
     ? Colors.light.success
     : "transparent";
 
@@ -88,7 +106,7 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
           backgroundColor: theme.backgroundDefault,
           borderColor: theme.border,
           borderLeftColor: borderLeftColor,
-          borderLeftWidth: isMarked || word.isMemorized ? 3 : 1,
+          borderLeftWidth: isMarked || isMemorized ? 3 : 1,
         },
         animatedStyle,
       ]}
@@ -122,7 +140,7 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
                 </View>
                 <Pressable
                   onPress={handleMarkUnmemorized}
-                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  style={[styles.markButton, { backgroundColor: `${Colors.light.secondary}20` }]}
                   hitSlop={8}
                   testID={`mark-unmemorized-${word.id}`}
                 >
@@ -140,16 +158,28 @@ export function WordCard({ word, index, onPress, onMarkUnmemorized, onClearMark 
                 </Pressable>
               </>
             ) : (
-              <Pressable
-                onPress={handleMarkUnmemorized}
-                style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
-                hitSlop={8}
-                testID={`mark-unmemorized-${word.id}`}
-              >
-                <Animated.View style={markAnimatedStyle}>
-                  <Feather name="flag" size={16} color={theme.textSecondary} />
-                </Animated.View>
-              </Pressable>
+              <>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                  testID={`mark-unmemorized-${word.id}`}
+                >
+                  <Animated.View style={markAnimatedStyle}>
+                    <Feather name="flag" size={16} color={theme.textSecondary} />
+                  </Animated.View>
+                </Pressable>
+                {!isMemorized && onMarkMemorized ? (
+                  <Pressable
+                    onPress={handleMarkMemorized}
+                    style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
+                    hitSlop={8}
+                    testID={`mark-memorized-${word.id}`}
+                  >
+                    <Feather name="check" size={16} color={Colors.light.success} />
+                  </Pressable>
+                ) : null}
+              </>
             )}
             <Feather name="chevron-right" size={18} color={theme.textSecondary} />
           </View>

@@ -5,16 +5,16 @@ import { BlurView } from "expo-blur";
 import { Platform, StyleSheet } from "react-native";
 
 import StudyStackNavigator from "@/navigation/StudyStackNavigator";
-import VideosStackNavigator from "@/navigation/VideosStackNavigator";
-import TestStackNavigator from "@/navigation/TestStackNavigator";
+import AudioLearningStackNavigator from "@/navigation/AudioLearningStackNavigator";
+import AudioPlaybackStackNavigator from "@/navigation/AudioPlaybackStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { Colors } from "@/constants/theme";
 
 export type MainTabParamList = {
   StudyTab: undefined;
-  VideosTab: undefined;
-  TestTab: undefined;
+  AudioLearningTab: undefined;
+  AudioPlaybackTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -64,20 +64,20 @@ export default function MainTabNavigator() {
         }}
       />
       <Tab.Screen
-        name="TestTab"
-        component={TestStackNavigator}
+        name="AudioLearningTab"
+        component={AudioLearningStackNavigator}
         options={{
-          title: "テスト",
+          title: "音声学習",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="edit-3" size={size} color={color} />
+            <Feather name="headphones" size={size} color={color} />
           ),
         }}
       />
       <Tab.Screen
-        name="VideosTab"
-        component={VideosStackNavigator}
+        name="AudioPlaybackTab"
+        component={AudioPlaybackStackNavigator}
         options={{
-          title: "動画",
+          title: "音声再生",
           tabBarIcon: ({ color, size }) => (
             <Feather name="play-circle" size={size} color={color} />
           ),

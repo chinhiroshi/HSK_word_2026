@@ -78,6 +78,18 @@ export async function clearUnmemorizedMark(wordId: string): Promise<Word | undef
   return undefined;
 }
 
+export async function markAsMemorized(wordId: string): Promise<Word | undefined> {
+  const words = await getWords();
+  const index = words.findIndex((w) => w.id === wordId);
+  if (index !== -1) {
+    words[index].isMemorized = true;
+    words[index].unmemorizedCount = 0;
+    await AsyncStorage.setItem(WORDS_KEY, JSON.stringify(words));
+    return words[index];
+  }
+  return undefined;
+}
+
 export async function resetProgress(): Promise<void> {
   const words = await getWords();
   const resetWords = words.map((w) => ({ ...w, isMemorized: false, unmemorizedCount: 0 }));
