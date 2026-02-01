@@ -4,15 +4,20 @@
 A mobile vocabulary learning app for Chinese language study. Users can browse Chinese words, listen to pronunciations, track memorization progress, and take shuffle tests to reinforce learning.
 
 ## Features
-- **Study Screen**: Browse all 599 Chinese vocabulary in a single scrollable list
-  - Each word card shows: Chinese word, example sentence, TTS buttons
-  - Quick jump navigation to 50th, 100th, 150th... word positions
+- **Study Screen**: Browse Chinese vocabulary in 50-word groups
+  - Group cards show memorized/unmemorized counts
+  - Click group to view word list
+  - Each word card shows: Chinese word, example sentence, TTS button
   - Filter by: All / Memorized / Unmemorized (marked)
-  - Mark words as "not yet memorized" with count tracking
-- **Word Detail**: View word details with example sentences and related videos
-- **Test Mode**: Two types of quizzes for unmemorized words
-  - Word Test: See Chinese characters, select the correct meaning
-  - Sentence Listening Test: Listen to sentences, select the correct meaning
+  - Mark words with flag (unmemorized) or check (memorized) buttons
+- **Audio Learning**: Same as Study but Chinese characters hidden
+  - Tap card to reveal Chinese word and example sentence
+  - Audio-first learning approach
+- **Audio Playback**: Continuous vocabulary audio playback
+  - Sequence: Chinese 1x → Japanese 1x → Chinese 3x → English 1x
+  - Filter for unmemorized words only
+  - Set starting position for playback
+- **Word Detail**: View word details with example sentences
 - **Profile**: Track learning progress with statistics and reset functionality
 - **Text-to-Speech**: Native Chinese pronunciation for all words and sentences
 
@@ -63,8 +68,8 @@ server/
 ```
 
 ## Navigation Structure
-- **4 Bottom Tabs**: 学習, テスト, 動画, プロフィール
-- **Stack Screens**: WordDetail, Test (pushed from tabs)
+- **4 Bottom Tabs**: 学習, 音声学習, 音声再生, プロフィール
+- **Stack Screens**: WordDetail, WordList (pushed from Study tab)
 
 ## Color Palette
 - Primary: #5B8C85 (Calming teal)
