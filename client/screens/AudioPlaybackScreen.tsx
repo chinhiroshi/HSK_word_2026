@@ -26,6 +26,7 @@ export default function AudioPlaybackScreen() {
   const [currentPhase, setCurrentPhase] = useState<string>("");
   const [filterUnmemorized, setFilterUnmemorized] = useState(false);
   const [startPosition, setStartPosition] = useState("1");
+  const [endPosition, setEndPosition] = useState("");
   
   const isCancelledRef = useRef(false);
 
@@ -42,10 +43,16 @@ export default function AudioPlaybackScreen() {
 
   const playableWords = useMemo(() => {
     if (filterUnmemorized) {
-      return words.filter((w) => (w.unmemorizedCount || 0) > 0);
+      return words.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
     }
     return words;
   }, [words, filterUnmemorized]);
+
+  useEffect(() => {
+    if (playableWords.length > 0 && !endPosition) {
+      setEndPosition(String(playableWords.length));
+    }
+  }, [playableWords.length, endPosition]);
 
   const speak = (text: string, language: string): Promise<void> => {
     return new Promise((resolve) => {
@@ -65,24 +72,24 @@ export default function AudioPlaybackScreen() {
   const playWordSequence = async (word: Word) => {
     if (isCancelledRef.current) return;
 
-    setCurrentPhase("中国語 (1回目)");
+    setCurrentPhase("中国語単語 (1回)");
     await speak(word.word, "zh-CN");
     if (isCancelledRef.current) return;
 
     await delay(500);
     if (isCancelledRef.current) return;
 
-    setCurrentPhase("日本語");
+    setCurrentPhase("日本語訳");
     await speak(word.translation, "ja-JP");
     if (isCancelledRef.current) return;
 
     await delay(500);
     if (isCancelledRef.current) return;
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
       if (isCancelledRef.current) return;
-      setCurrentPhase(`中国語 (${i + 2}回目)`);
-      await speak(word.word, "zh-CN");
+      setCurrentPhase(`中国語例文 (${i + 1}/2回目)`);
+      await speak(word.exampleSentence, "zh-CN");
       if (isCancelledRef.current) return;
       await delay(300);
     }
@@ -90,8 +97,30 @@ export default function AudioPlaybackScreen() {
     if (isCancelledRef.current) return;
     await delay(500);
 
-    setCurrentPhase("英語");
-    await speak(word.exampleTranslation || word.translation, "en-US");
+    setCurrentPhase("日本語例文訳");
+    await speak(word.exampleTranslation, "ja-JP");
+    if (isCancelledRef.current) return;
+
+    await delay(500);
+
+    for (let i = 0; i < 2; i++) {
+      if (isCancelledRef.current) return;
+      setCurrentPhase(`中国語例文 (${i + 3}/4回目)`);
+      await speak(word.exampleSentence, "zh-CN");
+      if (isCancelledRef.current) return;
+      await delay(300);
+    }
+
+    if (isCancelledRef.current) return;
+    await delay(500);
+
+    if (word.exampleEnglish) {
+      setCurrentPhase("英語例文");
+      await speak(word.exampleEnglish, "en-US");
+    } else {
+      setCurrentPhase("英語訳");
+      await speak(word.translation, "en-US");
+    }
     
     await delay(800);
   };
@@ -104,8 +133,12 @@ export default function AudioPlaybackScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     const startIdx = Math.max(0, parseInt(startPosition, 10) - 1) || 0;
+    const endIdx = Math.min(
+      playableWords.length,
+      parseInt(endPosition, 10) || playableWords.length
+    );
     
-    for (let i = startIdx; i < playableWords.length; i++) {
+    for (let i = startIdx; i < endIdx; i++) {
       if (isCancelledRef.current) break;
       
       setCurrentWordIndex(i);
@@ -128,10 +161,11 @@ export default function AudioPlaybackScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setFilterUnmemorized(!filterUnmemorized);
     setStartPosition("1");
+    setEndPosition("");
   };
 
   const currentWord = playableWords[currentWordIndex];
-  const unmemorizedCount = words.filter((w) => (w.unmemorizedCount || 0) > 0).length;
+  const unmemorizedCount = words.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length;
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
@@ -198,10 +232,36 @@ export default function AudioPlaybackScreen() {
             </View>
           </View>
 
+          <View style={styles.settingRow}>
+            <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
+              終了位置
+            </ThemedText>
+            <View style={styles.positionInputContainer}>
+              <TextInput
+                value={endPosition}
+                onChangeText={setEndPosition}
+                keyboardType="number-pad"
+                placeholder={String(playableWords.length)}
+                placeholderTextColor={theme.textSecondary}
+                style={[
+                  styles.positionInput,
+                  { 
+                    backgroundColor: theme.backgroundSecondary,
+                    color: theme.text,
+                  },
+                ]}
+                editable={!isPlaying}
+              />
+              <ThemedText style={[styles.positionSuffix, { color: theme.textSecondary }]}>
+                / {playableWords.length}
+              </ThemedText>
+            </View>
+          </View>
+
           <View style={styles.infoRow}>
             <Feather name="info" size={14} color={theme.textSecondary} />
             <ThemedText style={[styles.infoText, { color: theme.textSecondary }]}>
-              順序: 中国語1回 → 日本語1回 → 中国語3回 → 英語1回
+              順序: 中国語1回 → 日本語1回 → 中国語例文2回 → 日本語例文訳1回 → 中国語例文2回 → 英語1回
             </ThemedText>
           </View>
         </View>
@@ -327,7 +387,7 @@ const styles = StyleSheet.create({
   },
   infoRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-start",
     gap: Spacing.sm,
     marginTop: Spacing.sm,
     paddingTop: Spacing.md,
@@ -335,9 +395,10 @@ const styles = StyleSheet.create({
     borderTopColor: "rgba(0,0,0,0.1)",
   },
   infoText: {
-    fontSize: 12,
+    fontSize: 11,
     fontFamily: "Nunito_400Regular",
     flex: 1,
+    lineHeight: 16,
   },
   playerCard: {
     borderRadius: BorderRadius.lg,

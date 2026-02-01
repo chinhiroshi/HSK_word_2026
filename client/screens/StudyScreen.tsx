@@ -69,10 +69,10 @@ export default function StudyScreen() {
     for (let i = 0; i < words.length; i += GROUP_SIZE) {
       const groupWords = words.slice(i, Math.min(i + GROUP_SIZE, words.length));
       const memorizedCount = groupWords.filter(
-        (w) => w.isMemorized && (w.unmemorizedCount || 0) === 0
+        (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
       ).length;
       const unmemorizedCount = groupWords.filter(
-        (w) => (w.unmemorizedCount || 0) > 0
+        (w) => (w.textUnmemorizedCount || 0) > 0
       ).length;
 
       result.push({

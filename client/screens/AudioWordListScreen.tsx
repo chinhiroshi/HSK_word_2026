@@ -4,11 +4,12 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
-import { WordCard } from "@/components/WordCard";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ThemedText } from "@/components/ThemedText";
+import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -16,16 +17,149 @@ import { getWords, markAsUnmemorized, clearUnmemorizedMark, markAsMemorized } fr
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-type WordListRouteProp = RouteProp<RootStackParamList, "WordList">;
+type AudioWordListRouteProp = RouteProp<RootStackParamList, "AudioWordList">;
 
 type FilterType = "all" | "memorized" | "unmemorized";
 
-export default function WordListScreen() {
+interface AudioWordCardProps {
+  word: Word;
+  index: number;
+  revealed: boolean;
+  onMarkUnmemorized: () => void;
+  onClearMark: () => void;
+  onMarkMemorized: () => void;
+}
+
+function AudioWordCard({ 
+  word, 
+  index, 
+  revealed,
+  onMarkUnmemorized, 
+  onClearMark, 
+  onMarkMemorized 
+}: AudioWordCardProps) {
+  const { theme } = useTheme();
+
+  const unmemorizedCount = word.audioUnmemorizedCount || 0;
+  const isMarked = unmemorizedCount > 0;
+  const isMemorized = word.audioMemorized && !isMarked;
+
+  const borderLeftColor = isMarked
+    ? Colors.light.secondary
+    : isMemorized
+    ? Colors.light.success
+    : "transparent";
+
+  const speakText = `${word.word}。${word.exampleSentence}`;
+
+  const handleMarkUnmemorized = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onMarkUnmemorized();
+  };
+
+  const handleClearMark = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onClearMark();
+  };
+
+  const handleMarkMemorized = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onMarkMemorized();
+  };
+
+  return (
+    <View
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.backgroundDefault,
+          borderColor: theme.border,
+          borderLeftColor: borderLeftColor,
+          borderLeftWidth: isMarked || isMemorized ? 3 : 1,
+        },
+      ]}
+    >
+      <View style={styles.cardContent}>
+        <View style={styles.topRow}>
+          <View style={[styles.indexContainer, { backgroundColor: theme.backgroundSecondary }]}>
+            <ThemedText style={[styles.indexText, { color: theme.textSecondary }]}>
+              {index}
+            </ThemedText>
+          </View>
+
+          <View style={styles.speakContainer}>
+            <SpeakButton text={speakText} size="medium" />
+          </View>
+
+          <View style={styles.markActions}>
+            {isMarked ? (
+              <>
+                <View style={[styles.countBadge, { backgroundColor: Colors.light.secondary }]}>
+                  <ThemedText style={styles.countText}>{unmemorizedCount}</ThemedText>
+                </View>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: `${Colors.light.secondary}20` }]}
+                  hitSlop={8}
+                >
+                  <Feather name="flag" size={16} color={Colors.light.secondary} />
+                </Pressable>
+                <Pressable
+                  onPress={handleClearMark}
+                  style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
+                  hitSlop={8}
+                >
+                  <Feather name="check" size={16} color={Colors.light.success} />
+                </Pressable>
+              </>
+            ) : (
+              <>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                >
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
+                </Pressable>
+                {!isMemorized ? (
+                  <Pressable
+                    onPress={handleMarkMemorized}
+                    style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
+                    hitSlop={8}
+                  >
+                    <Feather name="check" size={16} color={Colors.light.success} />
+                  </Pressable>
+                ) : null}
+              </>
+            )}
+          </View>
+        </View>
+
+        {revealed ? (
+          <View style={styles.revealedContent}>
+            <ThemedText style={styles.word}>{word.word}</ThemedText>
+            <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
+              {word.exampleSentence}
+            </ThemedText>
+          </View>
+        ) : (
+          <View style={styles.hiddenContent}>
+            <ThemedText style={[styles.tapToReveal, { color: theme.textSecondary }]}>
+              ・・・・・
+            </ThemedText>
+          </View>
+        )}
+      </View>
+    </View>
+  );
+}
+
+export default function AudioWordListScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const route = useRoute<WordListRouteProp>();
+  const route = useRoute<AudioWordListRouteProp>();
 
   const { startIndex, endIndex } = route.params;
 
@@ -33,6 +167,7 @@ export default function WordListScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [revealAll, setRevealAll] = useState(false);
 
   const loadWords = useCallback(async () => {
     const data = await getWords();
@@ -47,8 +182,26 @@ export default function WordListScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerTitle: `${startIndex}-${endIndex}`,
+      headerRight: () => (
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            setRevealAll(prev => !prev);
+          }}
+          style={[
+            styles.eyeButton,
+            { backgroundColor: revealAll ? `${theme.primary}20` : theme.backgroundSecondary },
+          ]}
+        >
+          <Feather 
+            name={revealAll ? "eye" : "eye-off"} 
+            size={20} 
+            color={revealAll ? theme.primary : theme.textSecondary} 
+          />
+        </Pressable>
+      ),
     });
-  }, [navigation, startIndex, endIndex]);
+  }, [navigation, startIndex, endIndex, revealAll, theme]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -63,43 +216,39 @@ export default function WordListScreen() {
   const filteredWords = useMemo(() => {
     switch (filter) {
       case "memorized":
-        return groupWords.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0);
+        return groupWords.filter((w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0);
       case "unmemorized":
-        return groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0);
+        return groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
       default:
         return groupWords;
     }
   }, [groupWords, filter]);
 
   const stats = useMemo(() => {
-    const memorized = groupWords.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0).length;
-    const unmemorized = groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0).length;
+    const memorized = groupWords.filter((w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0).length;
+    const unmemorized = groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length;
     return { total: groupWords.length, memorized, unmemorized };
   }, [groupWords]);
 
   const handleMarkUnmemorized = async (wordId: string) => {
-    const updatedWord = await markAsUnmemorized(wordId, "text");
+    const updatedWord = await markAsUnmemorized(wordId, "audio");
     if (updatedWord) {
       setAllWords((prev) => prev.map((w) => (w.id === wordId ? updatedWord : w)));
     }
   };
 
   const handleClearMark = async (wordId: string) => {
-    const updatedWord = await clearUnmemorizedMark(wordId, "text");
+    const updatedWord = await clearUnmemorizedMark(wordId, "audio");
     if (updatedWord) {
       setAllWords((prev) => prev.map((w) => (w.id === wordId ? updatedWord : w)));
     }
   };
 
   const handleMarkMemorized = async (wordId: string) => {
-    const updatedWord = await markAsMemorized(wordId, "text");
+    const updatedWord = await markAsMemorized(wordId, "audio");
     if (updatedWord) {
       setAllWords((prev) => prev.map((w) => (w.id === wordId ? updatedWord : w)));
     }
-  };
-
-  const handleWordPress = (word: Word) => {
-    navigation.navigate("WordDetail", { wordId: word.id });
   };
 
   const handleFilterChange = (newFilter: FilterType) => {
@@ -113,10 +262,10 @@ export default function WordListScreen() {
       : allWords.indexOf(item) + 1;
 
     return (
-      <WordCard
+      <AudioWordCard
         word={item}
         index={originalIndex}
-        onPress={() => handleWordPress(item)}
+        revealed={revealAll}
         onMarkUnmemorized={() => handleMarkUnmemorized(item.id)}
         onClearMark={() => handleClearMark(item.id)}
         onMarkMemorized={() => handleMarkMemorized(item.id)}
@@ -164,7 +313,6 @@ export default function WordListScreen() {
               filter === "all" && { backgroundColor: theme.primary },
               filter !== "all" && { backgroundColor: theme.backgroundSecondary },
             ]}
-            testID="filter-all"
           >
             <ThemedText
               style={[
@@ -183,7 +331,6 @@ export default function WordListScreen() {
               filter === "memorized" && { backgroundColor: Colors.light.success },
               filter !== "memorized" && { backgroundColor: theme.backgroundSecondary },
             ]}
-            testID="filter-memorized"
           >
             <ThemedText
               style={[
@@ -202,7 +349,6 @@ export default function WordListScreen() {
               filter === "unmemorized" && { backgroundColor: Colors.light.secondary },
               filter !== "unmemorized" && { backgroundColor: theme.backgroundSecondary },
             ]}
-            testID="filter-unmemorized"
           >
             <ThemedText
               style={[
@@ -263,6 +409,14 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
   },
+  eyeButton: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.sm,
+  },
   list: {
     flex: 1,
   },
@@ -282,5 +436,85 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
+  },
+  card: {
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    marginBottom: Spacing.sm,
+    overflow: "hidden",
+  },
+  cardContent: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+  },
+  topRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  indexContainer: {
+    width: 28,
+    height: 28,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  indexText: {
+    fontSize: 11,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+  },
+  speakContainer: {
+    flex: 1,
+  },
+  markActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  markButton: {
+    width: 28,
+    height: 28,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  countBadge: {
+    minWidth: 20,
+    height: 20,
+    borderRadius: BorderRadius.full,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 6,
+  },
+  countText: {
+    fontSize: 11,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    color: "#FFFFFF",
+  },
+  hiddenContent: {
+    marginTop: Spacing.md,
+    paddingVertical: Spacing.sm,
+    alignItems: "center",
+  },
+  tapToReveal: {
+    fontSize: 16,
+    fontFamily: "Nunito_400Regular",
+    letterSpacing: 4,
+  },
+  revealedContent: {
+    marginTop: Spacing.md,
+    paddingLeft: 40,
+  },
+  word: {
+    fontSize: 22,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    marginBottom: Spacing.xs,
+  },
+  exampleSentence: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
   },
 });

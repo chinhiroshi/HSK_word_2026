@@ -86,9 +86,9 @@ export function WordCard({
     onMarkMemorized?.();
   };
 
-  const unmemorizedCount = word.unmemorizedCount || 0;
+  const unmemorizedCount = word.textUnmemorizedCount || 0;
   const isMarked = unmemorizedCount > 0;
-  const isMemorized = word.isMemorized && !isMarked;
+  const isMemorized = word.textMemorized && !isMarked;
 
   const borderLeftColor = isMarked
     ? Colors.light.secondary
