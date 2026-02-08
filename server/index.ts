@@ -177,13 +177,25 @@ function configureExpoAndLanding(app: express.Application) {
       return next();
     }
 
-    if (req.path !== "/" && req.path !== "/manifest") {
+    if (req.path !== "/" && req.path !== "/manifest" && req.path !== "/support" && req.path !== "/privacy") {
       return next();
     }
 
     const platform = req.header("expo-platform");
     if (platform && (platform === "ios" || platform === "android")) {
       return serveExpoManifest(platform, res);
+    }
+
+    if (req.path === "/support" || req.path === "/privacy") {
+      const supportPath = path.resolve(
+        process.cwd(),
+        "server",
+        "templates",
+        "support.html",
+      );
+      const supportHtml = fs.readFileSync(supportPath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(supportHtml);
     }
 
     if (req.path === "/") {
