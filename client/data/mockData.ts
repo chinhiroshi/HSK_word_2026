@@ -10170,3 +10170,7 @@ export const mockWords: Word[] = [
 ];
 
 export const mockVideos: Video[] = [];
+
+export function getVideosForWord(wordId: string): Video[] {
+  return mockVideos.filter((v) => v.wordId === wordId);
+}
