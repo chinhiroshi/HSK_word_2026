@@ -14,14 +14,12 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
-import { VideoThumbnail } from "@/components/VideoThumbnail";
 import { SpeakButton } from "@/components/SpeakButton";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
-import { Word, Video } from "@/types";
+import { Word } from "@/types";
 import { getWord, toggleMemorized } from "@/lib/storage";
-import { getVideosForWord } from "@/data/mockData";
 import { getPinyin } from "@/lib/pinyin";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -43,7 +41,6 @@ export default function WordDetailScreen() {
   const { wordId } = route.params;
 
   const [word, setWord] = useState<Word | null>(null);
-  const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
 
   const checkScale = useSharedValue(1);
@@ -56,7 +53,6 @@ export default function WordDetailScreen() {
     const wordData = await getWord(wordId);
     if (wordData) {
       setWord(wordData);
-      setVideos(getVideosForWord(wordId));
     }
     setLoading(false);
   }, [wordId]);
@@ -86,10 +82,6 @@ export default function WordDetailScreen() {
     if (updatedWord) {
       setWord(updatedWord);
     }
-  };
-
-  const handleVideoPress = (video: Video) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   if (loading) {
@@ -195,26 +187,6 @@ export default function WordDetailScreen() {
           <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
             {word.exampleTranslation}
           </ThemedText>
-        </View>
-
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>関連動画</ThemedText>
-          <View style={styles.videosGrid}>
-            {videos.map((video) => (
-              <View key={video.id} style={styles.videoItem}>
-                <VideoThumbnail
-                  video={video}
-                  onPress={() => handleVideoPress(video)}
-                  size="large"
-                />
-              </View>
-            ))}
-          </View>
-          {videos.length === 0 ? (
-            <ThemedText style={[styles.noVideos, { color: theme.textSecondary }]}>
-              この単語に関連する動画はまだありません
-            </ThemedText>
-          ) : null}
         </View>
 
         <Pressable
@@ -333,26 +305,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: "Nunito_400Regular",
   },
-  section: {
-    marginBottom: Spacing.xl,
-  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
     marginBottom: Spacing.md,
-  },
-  videosGrid: {
-    gap: Spacing.sm,
-  },
-  videoItem: {
-    marginBottom: Spacing.xs,
-  },
-  noVideos: {
-    fontSize: 14,
-    fontFamily: "Nunito_400Regular",
-    textAlign: "center",
-    paddingVertical: Spacing.xl,
   },
   toggleButton: {
     height: Spacing.buttonHeight,
