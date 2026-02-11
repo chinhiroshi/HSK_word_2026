@@ -4,6 +4,7 @@ import MainTabNavigator from "@/navigation/MainTabNavigator";
 import WordDetailScreen from "@/screens/WordDetailScreen";
 import WordListScreen from "@/screens/WordListScreen";
 import AudioWordListScreen from "@/screens/AudioWordListScreen";
+import UnmemorizedListScreen from "@/screens/UnmemorizedListScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 
 export type RootStackParamList = {
@@ -11,6 +12,7 @@ export type RootStackParamList = {
   WordDetail: { wordId: string };
   WordList: { startIndex: number; endIndex: number };
   AudioWordList: { startIndex: number; endIndex: number };
+  UnmemorizedList: { type: "text" | "audio" };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -43,6 +45,13 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="AudioWordList"
         component={AudioWordListScreen}
+        options={{
+          presentation: "card",
+        }}
+      />
+      <Stack.Screen
+        name="UnmemorizedList"
+        component={UnmemorizedListScreen}
         options={{
           presentation: "card",
         }}

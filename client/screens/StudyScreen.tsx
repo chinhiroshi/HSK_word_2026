@@ -64,6 +64,16 @@ export default function StudyScreen() {
     setRefreshing(false);
   };
 
+  const totalStats = useMemo(() => {
+    const memorized = words.filter(
+      (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
+    ).length;
+    const needsWork = words.filter(
+      (w) => (w.textUnmemorizedCount || 0) > 0
+    ).length;
+    return { total: words.length, memorized, needsWork };
+  }, [words]);
+
   const groups = useMemo(() => {
     const result: WordGroup[] = [];
     for (let i = 0; i < words.length; i += GROUP_SIZE) {
@@ -93,6 +103,13 @@ export default function StudyScreen() {
       startIndex: group.startIndex,
       endIndex: group.endIndex,
     });
+  };
+
+  const handleNeedsWorkPress = () => {
+    if (totalStats.needsWork > 0) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      navigation.navigate("UnmemorizedList", { type: "text" });
+    }
   };
 
   const renderGroupItem = ({ item }: { item: WordGroup }) => {
@@ -156,14 +173,60 @@ export default function StudyScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
+      <View
+        style={[
+          styles.summaryCard,
+          {
+            marginTop: headerHeight + Spacing.md,
+            backgroundColor: theme.backgroundDefault,
+            borderColor: theme.border,
+          },
+        ]}
+      >
+        <View style={styles.summaryRow}>
+          <View style={styles.summaryItem}>
+            <ThemedText style={[styles.summaryValue, { color: theme.primary }]}>
+              {totalStats.total}
+            </ThemedText>
+            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+              総単語
+            </ThemedText>
+          </View>
+          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
+          <View style={styles.summaryItem}>
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.success }]}>
+              {totalStats.memorized}
+            </ThemedText>
+            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+              暗記済み
+            </ThemedText>
+          </View>
+          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
+          <Pressable
+            style={styles.summaryItem}
+            onPress={handleNeedsWorkPress}
+            testID="needs-work-button"
+          >
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.secondary }]}>
+              {totalStats.needsWork}
+            </ThemedText>
+            <View style={styles.summaryLabelRow}>
+              <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+                暗記必要
+              </ThemedText>
+              {totalStats.needsWork > 0 ? (
+                <Feather name="chevron-right" size={14} color={Colors.light.secondary} />
+              ) : null}
+            </View>
+          </Pressable>
+        </View>
+      </View>
+
       <FlatList
         style={styles.list}
         contentContainerStyle={[
           styles.content,
-          {
-            paddingTop: headerHeight + Spacing.md,
-            paddingBottom: tabBarHeight + Spacing.xl,
-          },
+          { paddingBottom: tabBarHeight + Spacing.xl },
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
         data={loading ? [] : groups}
@@ -186,6 +249,40 @@ export default function StudyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  summaryCard: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  summaryItem: {
+    alignItems: "center",
+    flex: 1,
+  },
+  summaryValue: {
+    fontSize: 24,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    marginBottom: Spacing.xs,
+  },
+  summaryLabel: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+  },
+  summaryLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+  },
+  summaryDivider: {
+    width: 1,
+    height: 40,
   },
   list: {
     flex: 1,
