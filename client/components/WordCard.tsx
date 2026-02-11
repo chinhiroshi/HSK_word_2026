@@ -14,6 +14,7 @@ import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
+import { getPinyin } from "@/lib/pinyin";
 
 interface WordCardProps {
   word: Word;
@@ -97,6 +98,7 @@ export function WordCard({
     : "transparent";
 
   const speakText = `${word.word}。${word.exampleSentence}`;
+  const wordPinyin = word.pinyin || getPinyin(word.word);
 
   return (
     <Animated.View
@@ -128,7 +130,14 @@ export function WordCard({
           ) : null}
 
           <View style={styles.wordContainer}>
-            <ThemedText style={styles.word}>{word.word}</ThemedText>
+            <View style={styles.wordWithPinyin}>
+              <ThemedText style={styles.word}>{word.word}</ThemedText>
+              {wordPinyin ? (
+                <ThemedText style={[styles.pinyinText, { color: theme.textSecondary }]}>
+                  {wordPinyin}
+                </ThemedText>
+              ) : null}
+            </View>
             <SpeakButton text={speakText} size="small" />
           </View>
 
@@ -230,10 +239,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: Spacing.sm,
   },
+  wordWithPinyin: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    gap: Spacing.sm,
+  },
   word: {
     fontSize: 20,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
+  },
+  pinyinText: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
   },
   markActions: {
     flexDirection: "row",

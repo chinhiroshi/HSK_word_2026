@@ -22,6 +22,7 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, Video } from "@/types";
 import { getWord, toggleMemorized } from "@/lib/storage";
 import { getVideosForWord } from "@/data/mockData";
+import { getPinyin } from "@/lib/pinyin";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type RouteProps = RouteProp<RootStackParamList, "WordDetail">;
@@ -146,7 +147,7 @@ export default function WordDetailScreen() {
             <SpeakButton text={word.word} size="large" />
           </View>
           <ThemedText style={[styles.pinyin, { color: theme.primary }]}>
-            {word.pinyin}
+            {word.pinyin || getPinyin(word.word)}
           </ThemedText>
           <ThemedText style={[styles.translation, { color: theme.textSecondary }]}>
             {word.translation}
@@ -189,7 +190,7 @@ export default function WordDetailScreen() {
             {word.exampleSentence}
           </ThemedText>
           <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
-            {word.examplePinyin}
+            {word.examplePinyin || getPinyin(word.exampleSentence)}
           </ThemedText>
           <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
             {word.exampleTranslation}
