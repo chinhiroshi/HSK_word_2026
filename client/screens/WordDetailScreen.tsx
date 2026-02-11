@@ -259,7 +259,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   wordCard: {
-    padding: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xl,
+    paddingTop: Spacing["2xl"],
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     alignItems: "center",
@@ -275,6 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
+    lineHeight: 56,
   },
   pinyin: {
     fontSize: 18,
@@ -300,7 +303,9 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_600SemiBold",
   },
   exampleCard: {
-    padding: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xl,
+    paddingTop: Spacing["2xl"],
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     marginBottom: Spacing.lg,
@@ -315,6 +320,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+    lineHeight: 32,
     marginBottom: Spacing.sm,
   },
   examplePinyin: {
