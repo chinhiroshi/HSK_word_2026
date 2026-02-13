@@ -1,5 +1,8 @@
+export type HskLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
 export interface Word {
   id: string;
+  hskLevel: HskLevel;
   word: string;
   pinyin: string;
   translation: string;
