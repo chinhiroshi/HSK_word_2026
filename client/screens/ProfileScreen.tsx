@@ -6,6 +6,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useFocusEffect } from "@react-navigation/native";
 
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { ThemedText } from "@/components/ThemedText";
@@ -13,10 +14,21 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
-import { Word } from "@/types";
-import { getWords, resetProgress, initializeData } from "@/lib/storage";
+import { Word, HskLevel } from "@/types";
+import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel } from "@/lib/storage";
 
 const avatarDefault = require("../../assets/images/avatar-default.png");
+
+const HSK_LEVELS: HskLevel[] = [1, 2, 3, 4, 5, 6];
+
+const HSK_WORD_COUNTS: Record<HskLevel, number> = {
+  1: 150,
+  2: 150,
+  3: 300,
+  4: 600,
+  5: 1300,
+  6: 2500,
+};
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
@@ -26,17 +38,32 @@ export default function ProfileScreen() {
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
 
   const loadData = useCallback(async () => {
-    await initializeData();
+    const level = await getSelectedHskLevel();
+    setSelectedLevel(level);
+    await initializeData(level);
     const data = await getWords();
     setWords(data);
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
+
+  const handleLevelChange = async (level: HskLevel) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setSelectedLevel(level);
+    setLoading(true);
+    await setSelectedHskLevel(level);
+    const data = await getWords();
+    setWords(data);
+    setLoading(false);
+  };
 
   const totalWords = words.length;
   
@@ -83,6 +110,8 @@ export default function ProfileScreen() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
+  const hasWordsForLevel = totalWords > 0;
+
   return (
     <KeyboardAwareScrollViewCompat
       style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
@@ -105,125 +134,202 @@ export default function ProfileScreen() {
 
       <View
         style={[
-          styles.statsCard,
+          styles.levelCard,
           { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
         ]}
       >
         <View style={styles.statsTitleRow}>
-          <Feather name="book-open" size={18} color={theme.primary} />
-          <ThemedText style={styles.statsTitle}>文字暗記</ThemedText>
+          <Feather name="layers" size={18} color={theme.primary} />
+          <ThemedText style={styles.statsTitle}>HSK 級を選択</ThemedText>
         </View>
 
-        <View style={styles.progressContainer}>
-          <ProgressBar progress={textPercentage} height={8} />
-          <ThemedText style={[styles.progressText, { color: theme.primary }]}>
-            {textPercentage}%
+        <View style={styles.levelGrid}>
+          {HSK_LEVELS.map((level) => {
+            const isSelected = level === selectedLevel;
+            const hasData = mockWordsHasLevel(level);
+            return (
+              <Pressable
+                key={level}
+                testID={`button-hsk-level-${level}`}
+                style={[
+                  styles.levelButton,
+                  {
+                    backgroundColor: isSelected ? theme.primary : theme.backgroundRoot,
+                    borderColor: isSelected ? theme.primary : theme.border,
+                    opacity: hasData ? 1 : 0.5,
+                  },
+                ]}
+                onPress={() => handleLevelChange(level)}
+              >
+                <ThemedText
+                  style={[
+                    styles.levelButtonText,
+                    { color: isSelected ? "#FFFFFF" : theme.text },
+                  ]}
+                >
+                  {level}級
+                </ThemedText>
+                <ThemedText
+                  style={[
+                    styles.levelWordCount,
+                    { color: isSelected ? "rgba(255,255,255,0.8)" : theme.textSecondary },
+                  ]}
+                >
+                  {hasData ? `${getWordCountForLevel(level)}語` : "準備中"}
+                </ThemedText>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
+      {hasWordsForLevel ? (
+        <>
+          <View
+            style={[
+              styles.statsCard,
+              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+            ]}
+          >
+            <View style={styles.statsTitleRow}>
+              <Feather name="book-open" size={18} color={theme.primary} />
+              <ThemedText style={styles.statsTitle}>文字暗記</ThemedText>
+            </View>
+
+            <View style={styles.progressContainer}>
+              <ProgressBar progress={textPercentage} height={8} />
+              <ThemedText style={[styles.progressText, { color: theme.primary }]}>
+                {textPercentage}%
+              </ThemedText>
+            </View>
+
+            <View style={styles.statsRow}>
+              <View style={styles.statItem}>
+                <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
+                  {textStats.memorized}
+                </ThemedText>
+                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                  暗記済み
+                </ThemedText>
+              </View>
+
+              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+              <View style={styles.statItem}>
+                <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
+                  {textStats.needsWork}
+                </ThemedText>
+                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                  暗記必要
+                </ThemedText>
+              </View>
+
+              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+              <View style={styles.statItem}>
+                <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
+                  {textStats.notStarted}
+                </ThemedText>
+                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                  未暗記
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
+          <View
+            style={[
+              styles.statsCard,
+              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+            ]}
+          >
+            <View style={styles.statsTitleRow}>
+              <Feather name="headphones" size={18} color={theme.primary} />
+              <ThemedText style={styles.statsTitle}>音声暗記</ThemedText>
+            </View>
+
+            <View style={styles.progressContainer}>
+              <ProgressBar progress={audioPercentage} height={8} />
+              <ThemedText style={[styles.progressText, { color: theme.primary }]}>
+                {audioPercentage}%
+              </ThemedText>
+            </View>
+
+            <View style={styles.statsRow}>
+              <View style={styles.statItem}>
+                <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
+                  {audioStats.memorized}
+                </ThemedText>
+                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                  暗記済み
+                </ThemedText>
+              </View>
+
+              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+              <View style={styles.statItem}>
+                <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
+                  {audioStats.needsWork}
+                </ThemedText>
+                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                  暗記必要
+                </ThemedText>
+              </View>
+
+              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+              <View style={styles.statItem}>
+                <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
+                  {audioStats.notStarted}
+                </ThemedText>
+                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                  未暗記
+                </ThemedText>
+              </View>
+            </View>
+          </View>
+
+          <View
+            style={[
+              styles.totalCard,
+              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+            ]}
+          >
+            <ThemedText style={styles.totalLabel}>総単語数</ThemedText>
+            <ThemedText style={[styles.totalValue, { color: theme.primary }]}>
+              {totalWords}
+            </ThemedText>
+          </View>
+
+          <Button onPress={handleResetProgress} style={styles.resetButton}>
+            進捗をリセット
+          </Button>
+        </>
+      ) : (
+        <View
+          style={[
+            styles.emptyCard,
+            { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+          ]}
+        >
+          <Feather name="info" size={24} color={theme.textSecondary} />
+          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+            HSK {selectedLevel}級の単語データは準備中です
           </ThemedText>
         </View>
-
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
-              {textStats.memorized}
-            </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-              暗記済み
-            </ThemedText>
-          </View>
-
-          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-          <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
-              {textStats.needsWork}
-            </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-              暗記必要
-            </ThemedText>
-          </View>
-
-          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-          <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
-              {textStats.notStarted}
-            </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-              未暗記
-            </ThemedText>
-          </View>
-        </View>
-      </View>
-
-      <View
-        style={[
-          styles.statsCard,
-          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-        ]}
-      >
-        <View style={styles.statsTitleRow}>
-          <Feather name="headphones" size={18} color={theme.primary} />
-          <ThemedText style={styles.statsTitle}>音声暗記</ThemedText>
-        </View>
-
-        <View style={styles.progressContainer}>
-          <ProgressBar progress={audioPercentage} height={8} />
-          <ThemedText style={[styles.progressText, { color: theme.primary }]}>
-            {audioPercentage}%
-          </ThemedText>
-        </View>
-
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
-              {audioStats.memorized}
-            </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-              暗記済み
-            </ThemedText>
-          </View>
-
-          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-          <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
-              {audioStats.needsWork}
-            </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-              暗記必要
-            </ThemedText>
-          </View>
-
-          <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-          <View style={styles.statItem}>
-            <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
-              {audioStats.notStarted}
-            </ThemedText>
-            <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-              未暗記
-            </ThemedText>
-          </View>
-        </View>
-      </View>
-
-      <View
-        style={[
-          styles.totalCard,
-          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-        ]}
-      >
-        <ThemedText style={styles.totalLabel}>総単語数</ThemedText>
-        <ThemedText style={[styles.totalValue, { color: theme.primary }]}>
-          {totalWords}
-        </ThemedText>
-      </View>
-
-      <Button onPress={handleResetProgress} style={styles.resetButton}>
-        進捗をリセット
-      </Button>
+      )}
     </KeyboardAwareScrollViewCompat>
   );
+}
+
+import { mockWords as allMockWords } from "@/data/mockData";
+
+function mockWordsHasLevel(level: HskLevel): boolean {
+  return allMockWords.some(w => w.hskLevel === level);
+}
+
+function getWordCountForLevel(level: HskLevel): number {
+  return allMockWords.filter(w => w.hskLevel === level).length;
 }
 
 const styles = StyleSheet.create({
@@ -252,6 +358,36 @@ const styles = StyleSheet.create({
   userSubtitle: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
+  },
+  levelCard: {
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.md,
+  },
+  levelGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  levelButton: {
+    width: "30%",
+    flexGrow: 1,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  levelButtonText: {
+    fontSize: 16,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  levelWordCount: {
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
   },
   statsCard: {
     padding: Spacing.lg,
@@ -325,5 +461,18 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     marginBottom: Spacing.xl,
+  },
+  emptyCard: {
+    padding: Spacing["2xl"],
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.xl,
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  emptyText: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
   },
 });
