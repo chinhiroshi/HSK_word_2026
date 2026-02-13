@@ -132,55 +132,36 @@ export default function ProfileScreen() {
         </ThemedText>
       </View>
 
-      <View
-        style={[
-          styles.levelCard,
-          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-        ]}
-      >
-        <View style={styles.statsTitleRow}>
-          <Feather name="layers" size={18} color={theme.primary} />
-          <ThemedText style={styles.statsTitle}>HSK 級を選択</ThemedText>
-        </View>
-
-        <View style={styles.levelGrid}>
-          {HSK_LEVELS.map((level) => {
-            const isSelected = level === selectedLevel;
-            const hasData = mockWordsHasLevel(level);
-            return (
-              <Pressable
-                key={level}
-                testID={`button-hsk-level-${level}`}
+      <View style={styles.levelRow}>
+        <ThemedText style={[styles.levelLabel, { color: theme.textSecondary }]}>HSK</ThemedText>
+        {HSK_LEVELS.map((level) => {
+          const isSelected = level === selectedLevel;
+          const hasData = mockWordsHasLevel(level);
+          return (
+            <Pressable
+              key={level}
+              testID={`button-hsk-level-${level}`}
+              style={[
+                styles.levelPill,
+                {
+                  backgroundColor: isSelected ? theme.primary : theme.backgroundDefault,
+                  borderColor: isSelected ? theme.primary : theme.border,
+                  opacity: hasData ? 1 : 0.45,
+                },
+              ]}
+              onPress={() => handleLevelChange(level)}
+            >
+              <ThemedText
                 style={[
-                  styles.levelButton,
-                  {
-                    backgroundColor: isSelected ? theme.primary : theme.backgroundRoot,
-                    borderColor: isSelected ? theme.primary : theme.border,
-                    opacity: hasData ? 1 : 0.5,
-                  },
+                  styles.levelPillText,
+                  { color: isSelected ? "#FFFFFF" : theme.text },
                 ]}
-                onPress={() => handleLevelChange(level)}
               >
-                <ThemedText
-                  style={[
-                    styles.levelButtonText,
-                    { color: isSelected ? "#FFFFFF" : theme.text },
-                  ]}
-                >
-                  {level}級
-                </ThemedText>
-                <ThemedText
-                  style={[
-                    styles.levelWordCount,
-                    { color: isSelected ? "rgba(255,255,255,0.8)" : theme.textSecondary },
-                  ]}
-                >
-                  {hasData ? `${getWordCountForLevel(level)}語` : "準備中"}
-                </ThemedText>
-              </Pressable>
-            );
-          })}
-        </View>
+                {level}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
       </View>
 
       {hasWordsForLevel ? (
@@ -359,35 +340,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
   },
-  levelCard: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    marginBottom: Spacing.md,
-  },
-  levelGrid: {
+  levelRow: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    alignItems: "center",
     gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+    justifyContent: "center",
   },
-  levelButton: {
-    width: "30%",
-    flexGrow: 1,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.md,
+  levelLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+    marginRight: 2,
+  },
+  levelPill: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
   },
-  levelButtonText: {
-    fontSize: 16,
+  levelPillText: {
+    fontSize: 14,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
-  },
-  levelWordCount: {
-    fontSize: 11,
-    fontFamily: "Nunito_400Regular",
-    marginTop: 2,
   },
   statsCard: {
     padding: Spacing.lg,
