@@ -23,6 +23,8 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Set start AND end position for playback range
 - **Word Detail**: View word details with example sentences
 - **Profile**: Track learning progress with separate statistics
+  - HSK級セレクター (1〜6級): 学習する単語レベルを切り替え
+  - 各級の進捗は独立して管理される
   - 文字暗記 section: 暗記済み / 暗記必要 / 未暗記 counts
   - 音声暗記 section: 暗記済み / 暗記必要 / 未暗記 counts
   - Reset functionality for all data
@@ -87,8 +89,11 @@ server/
 
 ## Data Model
 ```typescript
+type HskLevel = 1 | 2 | 3 | 4 | 5 | 6;
+
 interface Word {
   id: string;
+  hskLevel: HskLevel;       // HSK level (1-6)
   word: string;              // Chinese characters
   pinyin: string;            // Romanization
   translation: string;       // Japanese meaning
@@ -114,7 +119,9 @@ interface Word {
 
 ## Development Notes
 - Text-to-speech uses `zh-CN` locale for Mandarin Chinese
-- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "4"
+- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "6"
+- Per-level storage: `@chinese_master_words_hsk{N}` for each level, `@chinese_master_hsk_level` for selected level
+- Currently only HSK4 data available; other levels show "準備中" (coming soon)
 - Dual memorization system: text (文字暗記) and audio (音声暗記) tracked separately
 - Three states per type: 暗記済み (memorized), 暗記必要 (needs work), 未暗記 (not started)
 - Mark logic accepts "text" or "audio" type parameter for storage functions

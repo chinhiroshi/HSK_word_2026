@@ -121,6 +121,13 @@ export default function AudioLearningScreen() {
     loadWords();
   }, [loadWords]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadWords();
+    });
+    return unsubscribe;
+  }, [navigation, loadWords]);
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await loadWords();

@@ -6,6 +6,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as Speech from "expo-speech";
+import { useNavigation } from "@react-navigation/native";
 
 const YOUTUBE_URL = "https://youtu.be/tW5tqaYRYm8?si=d2W2jqRre9F84A1T";
 
@@ -16,6 +17,7 @@ import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
 
 export default function AudioPlaybackScreen() {
+  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
@@ -46,6 +48,13 @@ export default function AudioPlaybackScreen() {
     loadWords();
   }, [loadWords]);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      loadWords();
+    });
+    return unsubscribe;
+  }, [navigation, loadWords]);
+
   const playableWords = useMemo(() => {
     if (filterUnmemorized) {
       return words.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
@@ -53,11 +62,15 @@ export default function AudioPlaybackScreen() {
     return words;
   }, [words, filterUnmemorized]);
 
+  const prevWordsLenRef = useRef(0);
   useEffect(() => {
-    if (playableWords.length > 0 && !endPosition) {
-      setEndPosition(String(playableWords.length));
+    if (playableWords.length > 0) {
+      if (!endPosition || prevWordsLenRef.current !== playableWords.length) {
+        setEndPosition(String(playableWords.length));
+      }
+      prevWordsLenRef.current = playableWords.length;
     }
-  }, [playableWords.length, endPosition]);
+  }, [playableWords.length]);
 
   const speak = (text: string, language: string): Promise<void> => {
     return new Promise((resolve) => {
