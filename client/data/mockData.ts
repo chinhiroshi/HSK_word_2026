@@ -3,6 +3,7 @@ import { Word, Video } from "@/types";
 export const mockWords: Word[] = [
   {
     id: "1",
+    hskLevel: 4 as const,
     word: "饼干",
     pinyin: "",
     translation: "ビスケット",
@@ -20,6 +21,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "2",
+    hskLevel: 4 as const,
     word: "饺子",
     pinyin: "",
     translation: "餃子",
@@ -37,6 +39,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "3",
+    hskLevel: 4 as const,
     word: "巧克力",
     pinyin: "",
     translation: "チョコレート",
@@ -54,6 +57,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "4",
+    hskLevel: 4 as const,
     word: "西红柿",
     pinyin: "",
     translation: "トマト",
@@ -71,6 +75,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "5",
+    hskLevel: 4 as const,
     word: "饮料",
     pinyin: "",
     translation: "飲み物",
@@ -88,6 +93,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "6",
+    hskLevel: 4 as const,
     word: "长城",
     pinyin: "",
     translation: "万里の長城",
@@ -105,6 +111,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "7",
+    hskLevel: 4 as const,
     word: "长江",
     pinyin: "",
     translation: "長江",
@@ -122,6 +129,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "8",
+    hskLevel: 4 as const,
     word: "大使馆",
     pinyin: "",
     translation: "大使館",
@@ -139,6 +147,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "9",
+    hskLevel: 4 as const,
     word: "地球",
     pinyin: "",
     translation: "地球",
@@ -156,6 +165,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "10",
+    hskLevel: 4 as const,
     word: "地址",
     pinyin: "",
     translation: "住所",
@@ -173,6 +183,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "11",
+    hskLevel: 4 as const,
     word: "省",
     pinyin: "",
     translation: "省",
@@ -190,6 +201,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "12",
+    hskLevel: 4 as const,
     word: "狮子",
     pinyin: "",
     translation: "ライオン",
@@ -207,6 +219,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "13",
+    hskLevel: 4 as const,
     word: "猪",
     pinyin: "",
     translation: "ぶた",
@@ -224,6 +237,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "14",
+    hskLevel: 4 as const,
     word: "猴子",
     pinyin: "",
     translation: "さる",
@@ -241,6 +255,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "15",
+    hskLevel: 4 as const,
     word: "窗户",
     pinyin: "",
     translation: "まど",
@@ -258,6 +273,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "16",
+    hskLevel: 4 as const,
     word: "词典",
     pinyin: "",
     translation: "辞書",
@@ -275,6 +291,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "17",
+    hskLevel: 4 as const,
     word: "刀",
     pinyin: "",
     translation: "ナイフ",
@@ -292,6 +309,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "18",
+    hskLevel: 4 as const,
     word: "科学",
     pinyin: "",
     translation: "科学",
@@ -309,6 +327,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "19",
+    hskLevel: 4 as const,
     word: "理发",
     pinyin: "",
     translation: "髪を切る",
@@ -326,6 +345,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "20",
+    hskLevel: 4 as const,
     word: "俩",
     pinyin: "",
     translation: "2つ",
@@ -343,6 +363,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "21",
+    hskLevel: 4 as const,
     word: "弹钢琴",
     pinyin: "",
     translation: "ピアノを弾く",
@@ -360,6 +381,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "22",
+    hskLevel: 4 as const,
     word: "中文",
     pinyin: "",
     translation: "中国語",
@@ -377,6 +399,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "23",
+    hskLevel: 4 as const,
     word: "安排",
     pinyin: "",
     translation: "スケジュール",
@@ -394,6 +417,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "24",
+    hskLevel: 4 as const,
     word: "包括",
     pinyin: "",
     translation: "含む",
@@ -411,6 +435,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "25",
+    hskLevel: 4 as const,
     word: "保证",
     pinyin: "",
     translation: "保証する",
@@ -428,6 +453,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "26",
+    hskLevel: 4 as const,
     word: "报道",
     pinyin: "",
     translation: "報道する",
@@ -445,6 +471,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "27",
+    hskLevel: 4 as const,
     word: "报名",
     pinyin: "",
     translation: "登録する",
@@ -462,6 +489,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "28",
+    hskLevel: 4 as const,
     word: "表达",
     pinyin: "",
     translation: "表現する",
@@ -479,6 +507,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "29",
+    hskLevel: 4 as const,
     word: "表格",
     pinyin: "",
     translation: "表",
@@ -496,6 +525,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "30",
+    hskLevel: 4 as const,
     word: "部分",
     pinyin: "",
     translation: "部分",
@@ -513,6 +543,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "31",
+    hskLevel: 4 as const,
     word: "参观",
     pinyin: "",
     translation: "見学する",
@@ -530,6 +561,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "32",
+    hskLevel: 4 as const,
     word: "成功",
     pinyin: "",
     translation: "成功する",
@@ -547,6 +579,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "33",
+    hskLevel: 4 as const,
     word: "成熟",
     pinyin: "",
     translation: "成熟する",
@@ -564,6 +597,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "34",
+    hskLevel: 4 as const,
     word: "成为",
     pinyin: "",
     translation: "〜になる",
@@ -581,6 +615,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "35",
+    hskLevel: 4 as const,
     word: "重新",
     pinyin: "",
     translation: "やり直す",
@@ -598,6 +633,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "36",
+    hskLevel: 4 as const,
     word: "出差",
     pinyin: "",
     translation: "出張する",
@@ -615,6 +651,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "37",
+    hskLevel: 4 as const,
     word: "出发",
     pinyin: "",
     translation: "出発する",
@@ -632,6 +669,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "38",
+    hskLevel: 4 as const,
     word: "传真",
     pinyin: "",
     translation: "ファックス",
@@ -649,6 +687,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "39",
+    hskLevel: 4 as const,
     word: "答案",
     pinyin: "",
     translation: "答え",
@@ -666,6 +705,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "40",
+    hskLevel: 4 as const,
     word: "打印",
     pinyin: "",
     translation: "印刷する",
@@ -683,6 +723,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "41",
+    hskLevel: 4 as const,
     word: "打折",
     pinyin: "",
     translation: "割引する",
@@ -700,6 +741,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "42",
+    hskLevel: 4 as const,
     word: "代表",
     pinyin: "",
     translation: "代表する",
@@ -717,6 +759,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "43",
+    hskLevel: 4 as const,
     word: "代替",
     pinyin: "",
     translation: "替わる",
@@ -734,6 +777,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "44",
+    hskLevel: 4 as const,
     word: "当",
     pinyin: "",
     translation: "〜になる",
@@ -751,6 +795,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "45",
+    hskLevel: 4 as const,
     word: "到处",
     pinyin: "",
     translation: "至るところに",
@@ -768,6 +813,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "46",
+    hskLevel: 4 as const,
     word: "底",
     pinyin: "",
     translation: "土台となる物",
@@ -785,6 +831,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "47",
+    hskLevel: 4 as const,
     word: "调查",
     pinyin: "",
     translation: "調査する",
@@ -802,6 +849,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "48",
+    hskLevel: 4 as const,
     word: "对面",
     pinyin: "",
     translation: "向かいの",
@@ -819,6 +867,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "49",
+    hskLevel: 4 as const,
     word: "发",
     pinyin: "",
     translation: "送る",
@@ -836,6 +885,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "50",
+    hskLevel: 4 as const,
     word: "发生",
     pinyin: "",
     translation: "起こる",
@@ -853,6 +903,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "53",
+    hskLevel: 4 as const,
     word: "法律",
     pinyin: "",
     translation: "法律",
@@ -870,6 +921,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "54",
+    hskLevel: 4 as const,
     word: "翻译",
     pinyin: "",
     translation: "翻訳する",
@@ -887,6 +939,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "55",
+    hskLevel: 4 as const,
     word: "访问",
     pinyin: "",
     translation: "訪問する",
@@ -904,6 +957,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "56",
+    hskLevel: 4 as const,
     word: "失败",
     pinyin: "",
     translation: "失敗する",
@@ -921,6 +975,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "57",
+    hskLevel: 4 as const,
     word: "负责",
     pinyin: "",
     translation: "担当する",
@@ -938,6 +993,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "58",
+    hskLevel: 4 as const,
     word: "改变",
     pinyin: "",
     translation: "変える",
@@ -955,6 +1011,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "59",
+    hskLevel: 4 as const,
     word: "干",
     pinyin: "",
     translation: "する",
@@ -972,6 +1029,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "60",
+    hskLevel: 4 as const,
     word: "工具",
     pinyin: "",
     translation: "道具",
@@ -989,6 +1047,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "61",
+    hskLevel: 4 as const,
     word: "工资",
     pinyin: "",
     translation: "給料",
@@ -1006,6 +1065,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "62",
+    hskLevel: 4 as const,
     word: "共同",
     pinyin: "",
     translation: "共同で",
@@ -1023,6 +1083,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "63",
+    hskLevel: 4 as const,
     word: "估计",
     pinyin: "",
     translation: "見積もる",
@@ -1040,6 +1101,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "64",
+    hskLevel: 4 as const,
     word: "挂",
     pinyin: "",
     translation: "かける",
@@ -1057,6 +1119,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "65",
+    hskLevel: 4 as const,
     word: "管理",
     pinyin: "",
     translation: "管理する",
@@ -1074,6 +1137,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "66",
+    hskLevel: 4 as const,
     word: "广播",
     pinyin: "",
     translation: "放送する",
@@ -1091,6 +1155,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "67",
+    hskLevel: 4 as const,
     word: "广告",
     pinyin: "",
     translation: "広告",
@@ -1108,6 +1173,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "68",
+    hskLevel: 4 as const,
     word: "规定",
     pinyin: "",
     translation: "規定",
@@ -1125,6 +1191,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "69",
+    hskLevel: 4 as const,
     word: "过程",
     pinyin: "",
     translation: "過程",
@@ -1142,6 +1209,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "70",
+    hskLevel: 4 as const,
     word: "航班",
     pinyin: "",
     translation: "フライト",
@@ -1159,6 +1227,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "71",
+    hskLevel: 4 as const,
     word: "合适",
     pinyin: "",
     translation: "合う",
@@ -1176,6 +1245,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "72",
+    hskLevel: 4 as const,
     word: "获得",
     pinyin: "",
     translation: "獲得する",
@@ -1193,6 +1263,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "73",
+    hskLevel: 4 as const,
     word: "积累",
     pinyin: "",
     translation: "積み重なる",
@@ -1210,6 +1281,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "74",
+    hskLevel: 4 as const,
     word: "寄",
     pinyin: "",
     translation: "郵送する",
@@ -1227,6 +1299,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "75",
+    hskLevel: 4 as const,
     word: "计划",
     pinyin: "",
     translation: "計画する",
@@ -1244,6 +1317,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "76",
+    hskLevel: 4 as const,
     word: "技术",
     pinyin: "",
     translation: "技術",
@@ -1261,6 +1335,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "77",
+    hskLevel: 4 as const,
     word: "继续",
     pinyin: "",
     translation: "継続する",
@@ -1278,6 +1353,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "78",
+    hskLevel: 4 as const,
     word: "加班",
     pinyin: "",
     translation: "残業する",
@@ -1295,6 +1371,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "79",
+    hskLevel: 4 as const,
     word: "奖金",
     pinyin: "",
     translation: "ボーナス",
@@ -1312,6 +1389,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "80",
+    hskLevel: 4 as const,
     word: "降低",
     pinyin: "",
     translation: "下げる",
@@ -1329,6 +1407,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "81",
+    hskLevel: 4 as const,
     word: "进行",
     pinyin: "",
     translation: "進行する",
@@ -1346,6 +1425,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "82",
+    hskLevel: 4 as const,
     word: "经济",
     pinyin: "",
     translation: "経済",
@@ -1363,6 +1443,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "83",
+    hskLevel: 4 as const,
     word: "经历",
     pinyin: "",
     translation: "経歴",
@@ -1380,6 +1461,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "84",
+    hskLevel: 4 as const,
     word: "举办",
     pinyin: "",
     translation: "行う",
@@ -1397,6 +1479,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "85",
+    hskLevel: 4 as const,
     word: "拉",
     pinyin: "",
     translation: "引っ張る",
@@ -1414,6 +1497,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "86",
+    hskLevel: 4 as const,
     word: "留",
     pinyin: "",
     translation: "留める",
@@ -1431,6 +1515,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "87",
+    hskLevel: 4 as const,
     word: "判断",
     pinyin: "",
     translation: "判断する",
@@ -1448,6 +1533,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "88",
+    hskLevel: 4 as const,
     word: "批评",
     pinyin: "",
     translation: "批判する/しかる",
@@ -1465,6 +1551,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "89",
+    hskLevel: 4 as const,
     word: "普遍",
     pinyin: "",
     translation: "普遍的な",
@@ -1482,6 +1569,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "90",
+    hskLevel: 4 as const,
     word: "起飞",
     pinyin: "",
     translation: "離陸する",
@@ -1499,6 +1587,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "91",
+    hskLevel: 4 as const,
     word: "轻",
     pinyin: "",
     translation: "軽い",
@@ -1516,6 +1605,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "92",
+    hskLevel: 4 as const,
     word: "请假",
     pinyin: "",
     translation: "休みをもらう",
@@ -1533,6 +1623,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "93",
+    hskLevel: 4 as const,
     word: "区别",
     pinyin: "",
     translation: "区別する",
@@ -1550,6 +1641,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "94",
+    hskLevel: 4 as const,
     word: "取",
     pinyin: "",
     translation: "取る",
@@ -1567,6 +1659,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "95",
+    hskLevel: 4 as const,
     word: "缺少",
     pinyin: "",
     translation: "不足している",
@@ -1584,6 +1677,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "96",
+    hskLevel: 4 as const,
     word: "确实",
     pinyin: "",
     translation: "確実である",
@@ -1601,6 +1695,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "97",
+    hskLevel: 4 as const,
     word: "商量",
     pinyin: "",
     translation: "相談する",
@@ -1618,6 +1713,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "98",
+    hskLevel: 4 as const,
     word: "申请",
     pinyin: "",
     translation: "申請する",
@@ -1635,6 +1731,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "99",
+    hskLevel: 4 as const,
     word: "使用",
     pinyin: "",
     translation: "使用する",
@@ -1652,6 +1749,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "100",
+    hskLevel: 4 as const,
     word: "收",
     pinyin: "",
     translation: "受け取る",
@@ -1669,6 +1767,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "101",
+    hskLevel: 4 as const,
     word: "收拾",
     pinyin: "",
     translation: "片付ける",
@@ -1686,6 +1785,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "102",
+    hskLevel: 4 as const,
     word: "受到",
     pinyin: "",
     translation: "受ける",
@@ -1703,6 +1803,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "103",
+    hskLevel: 4 as const,
     word: "熟悉",
     pinyin: "",
     translation: "熟知している",
@@ -1720,6 +1821,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "104",
+    hskLevel: 4 as const,
     word: "顺利",
     pinyin: "",
     translation: "順調",
@@ -1737,6 +1839,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "105",
+    hskLevel: 4 as const,
     word: "讨论",
     pinyin: "",
     translation: "討論する",
@@ -1754,6 +1857,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "106",
+    hskLevel: 4 as const,
     word: "提供",
     pinyin: "",
     translation: "提供する",
@@ -1771,6 +1875,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "107",
+    hskLevel: 4 as const,
     word: "提前",
     pinyin: "",
     translation: "繰り上げる",
@@ -1788,6 +1893,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "108",
+    hskLevel: 4 as const,
     word: "提醒",
     pinyin: "",
     translation: "気づかせる",
@@ -1805,6 +1911,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "109",
+    hskLevel: 4 as const,
     word: "停止",
     pinyin: "",
     translation: "停止する",
@@ -1822,6 +1929,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "110",
+    hskLevel: 4 as const,
     word: "推",
     pinyin: "",
     translation: "押す",
@@ -1839,6 +1947,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "111",
+    hskLevel: 4 as const,
     word: "推迟",
     pinyin: "",
     translation: "延期する",
@@ -1856,6 +1965,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "112",
+    hskLevel: 4 as const,
     word: "限制",
     pinyin: "",
     translation: "制限する",
@@ -1873,6 +1983,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "113",
+    hskLevel: 4 as const,
     word: "信任",
     pinyin: "",
     translation: "信頼する",
@@ -1890,6 +2001,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "114",
+    hskLevel: 4 as const,
     word: "修",
     pinyin: "",
     translation: "修理する",
@@ -1907,6 +2019,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "115",
+    hskLevel: 4 as const,
     word: "严格",
     pinyin: "",
     translation: "厳しい",
@@ -1924,6 +2037,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "116",
+    hskLevel: 4 as const,
     word: "严重",
     pinyin: "",
     translation: "深刻な",
@@ -1941,6 +2055,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "117",
+    hskLevel: 4 as const,
     word: "养成",
     pinyin: "",
     translation: "育成する",
@@ -1958,6 +2073,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "118",
+    hskLevel: 4 as const,
     word: "邀请",
     pinyin: "",
     translation: "招待する",
@@ -1975,6 +2091,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "119",
+    hskLevel: 4 as const,
     word: "引起",
     pinyin: "",
     translation: "引き起こす",
@@ -1992,6 +2109,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "120",
+    hskLevel: 4 as const,
     word: "阅读",
     pinyin: "",
     translation: "読む",
@@ -2009,6 +2127,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "121",
+    hskLevel: 4 as const,
     word: "允许",
     pinyin: "",
     translation: "許す",
@@ -2026,6 +2145,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "122",
+    hskLevel: 4 as const,
     word: "增加",
     pinyin: "",
     translation: "増加する",
@@ -2043,6 +2163,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "123",
+    hskLevel: 4 as const,
     word: "招聘",
     pinyin: "",
     translation: "募集する",
@@ -2060,6 +2181,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "124",
+    hskLevel: 4 as const,
     word: "证明",
     pinyin: "",
     translation: "証明する",
@@ -2077,6 +2199,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "125",
+    hskLevel: 4 as const,
     word: "值得",
     pinyin: "",
     translation: "〜する価値がある",
@@ -2094,6 +2217,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "126",
+    hskLevel: 4 as const,
     word: "制造",
     pinyin: "",
     translation: "製造する",
@@ -2111,6 +2235,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "127",
+    hskLevel: 4 as const,
     word: "重视",
     pinyin: "",
     translation: "重視する",
@@ -2128,6 +2253,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "128",
+    hskLevel: 4 as const,
     word: "专门",
     pinyin: "",
     translation: "専門",
@@ -2145,6 +2271,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "129",
+    hskLevel: 4 as const,
     word: "赚",
     pinyin: "",
     translation: "稼ぐ",
@@ -2162,6 +2289,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "130",
+    hskLevel: 4 as const,
     word: "准确",
     pinyin: "",
     translation: "正しい",
@@ -2179,6 +2307,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "131",
+    hskLevel: 4 as const,
     word: "准时",
     pinyin: "",
     translation: "時間通り",
@@ -2196,6 +2325,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "132",
+    hskLevel: 4 as const,
     word: "仔细",
     pinyin: "",
     translation: "隅々まで",
@@ -2213,6 +2343,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "133",
+    hskLevel: 4 as const,
     word: "总结",
     pinyin: "",
     translation: "まとめる",
@@ -2230,6 +2361,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "134",
+    hskLevel: 4 as const,
     word: "组成",
     pinyin: "",
     translation: "構成する",
@@ -2247,6 +2379,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "135",
+    hskLevel: 4 as const,
     word: "笔记 本",
     pinyin: "",
     translation: "ノート",
@@ -2264,6 +2397,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "136",
+    hskLevel: 4 as const,
     word: "高级",
     pinyin: "",
     translation: "ハイレベルな",
@@ -2281,6 +2415,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "137",
+    hskLevel: 4 as const,
     word: "教育",
     pinyin: "",
     translation: "教育",
@@ -2298,6 +2433,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "138",
+    hskLevel: 4 as const,
     word: "专业",
     pinyin: "",
     translation: "専攻",
@@ -2315,6 +2451,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "139",
+    hskLevel: 4 as const,
     word: "留学",
     pinyin: "",
     translation: "留学",
@@ -2332,6 +2469,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "140",
+    hskLevel: 4 as const,
     word: "毕业",
     pinyin: "",
     translation: "卒業する",
@@ -2349,6 +2487,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "141",
+    hskLevel: 4 as const,
     word: "研究生",
     pinyin: "",
     translation: "大学院生",
@@ -2366,6 +2505,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "142",
+    hskLevel: 4 as const,
     word: "硕士",
     pinyin: "",
     translation: "修士",
@@ -2383,6 +2523,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "143",
+    hskLevel: 4 as const,
     word: "博士",
     pinyin: "",
     translation: "博士",
@@ -2400,6 +2541,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "144",
+    hskLevel: 4 as const,
     word: "教授",
     pinyin: "",
     translation: "教授",
@@ -2417,6 +2559,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "145",
+    hskLevel: 4 as const,
     word: "父亲",
     pinyin: "",
     translation: "父親",
@@ -2434,6 +2577,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "146",
+    hskLevel: 4 as const,
     word: "母亲",
     pinyin: "",
     translation: "母親",
@@ -2451,6 +2595,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "147",
+    hskLevel: 4 as const,
     word: "孙子",
     pinyin: "",
     translation: "孫",
@@ -2468,6 +2613,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "148",
+    hskLevel: 4 as const,
     word: "亲戚",
     pinyin: "",
     translation: "親戚",
@@ -2485,6 +2631,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "149",
+    hskLevel: 4 as const,
     word: "咱们",
     pinyin: "",
     translation: "私たち",
@@ -2502,6 +2649,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "152",
+    hskLevel: 4 as const,
     word: "顾客",
     pinyin: "",
     translation: "お客さま",
@@ -2519,6 +2667,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "153",
+    hskLevel: 4 as const,
     word: "职业",
     pinyin: "",
     translation: "職業",
@@ -2536,6 +2685,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "154",
+    hskLevel: 4 as const,
     word: "大夫",
     pinyin: "",
     translation: "お医者さん",
@@ -2553,6 +2703,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "155",
+    hskLevel: 4 as const,
     word: "护士",
     pinyin: "",
     translation: "看護師",
@@ -2570,6 +2721,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "156",
+    hskLevel: 4 as const,
     word: "记者",
     pinyin: "",
     translation: "記者",
@@ -2587,6 +2739,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "157",
+    hskLevel: 4 as const,
     word: "导游",
     pinyin: "",
     translation: "ガイド",
@@ -2604,6 +2757,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "158",
+    hskLevel: 4 as const,
     word: "警察",
     pinyin: "",
     translation: "警察",
@@ -2621,6 +2775,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "159",
+    hskLevel: 4 as const,
     word: "律师",
     pinyin: "",
     translation: "弁護士",
@@ -2638,6 +2793,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "160",
+    hskLevel: 4 as const,
     word: "售货员",
     pinyin: "",
     translation: "販売員",
@@ -2655,6 +2811,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "161",
+    hskLevel: 4 as const,
     word: "组织",
     pinyin: "",
     translation: "組織",
@@ -2672,6 +2829,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "162",
+    hskLevel: 4 as const,
     word: "作者",
     pinyin: "",
     translation: "作者",
@@ -2689,6 +2847,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "163",
+    hskLevel: 4 as const,
     word: "暗",
     pinyin: "",
     translation: "暗い",
@@ -2706,6 +2865,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "164",
+    hskLevel: 4 as const,
     word: "保护",
     pinyin: "",
     translation: "保護する",
@@ -2723,6 +2883,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "165",
+    hskLevel: 4 as const,
     word: "抱",
     pinyin: "",
     translation: "抱える",
@@ -2740,6 +2901,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "166",
+    hskLevel: 4 as const,
     word: "抱歉",
     pinyin: "",
     translation: "ごめんなさい",
@@ -2757,6 +2919,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "167",
+    hskLevel: 4 as const,
     word: "倍",
     pinyin: "",
     translation: "倍",
@@ -2774,6 +2937,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "168",
+    hskLevel: 4 as const,
     word: "笨",
     pinyin: "",
     translation: "間抜けだ",
@@ -2791,6 +2955,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "169",
+    hskLevel: 4 as const,
     word: "标准",
     pinyin: "",
     translation: "標準",
@@ -2808,6 +2973,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "170",
+    hskLevel: 4 as const,
     word: "表扬",
     pinyin: "",
     translation: "褒める",
@@ -2825,6 +2991,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "171",
+    hskLevel: 4 as const,
     word: "擦",
     pinyin: "",
     translation: "ぬぐう",
@@ -2842,6 +3009,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "172",
+    hskLevel: 4 as const,
     word: "猜",
     pinyin: "",
     translation: "推測する",
@@ -2859,6 +3027,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "173",
+    hskLevel: 4 as const,
     word: "材料",
     pinyin: "",
     translation: "材料",
@@ -2876,6 +3045,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "174",
+    hskLevel: 4 as const,
     word: "差不多",
     pinyin: "",
     translation: "大差ない",
@@ -2893,6 +3063,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "175",
+    hskLevel: 4 as const,
     word: "尝",
     pinyin: "",
     translation: "味見する",
@@ -2910,6 +3081,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "176",
+    hskLevel: 4 as const,
     word: "吵",
     pinyin: "",
     translation: "騒ぐ",
@@ -2927,6 +3099,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "177",
+    hskLevel: 4 as const,
     word: "诚实",
     pinyin: "",
     translation: "誠実である",
@@ -2944,6 +3117,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "178",
+    hskLevel: 4 as const,
     word: "乘坐",
     pinyin: "",
     translation: "乗る",
@@ -2961,6 +3135,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "179",
+    hskLevel: 4 as const,
     word: "吃惊",
     pinyin: "",
     translation: "驚く",
@@ -2978,6 +3153,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "180",
+    hskLevel: 4 as const,
     word: "抽烟",
     pinyin: "",
     translation: "タバコを吸う",
@@ -2995,6 +3171,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "181",
+    hskLevel: 4 as const,
     word: "出生",
     pinyin: "",
     translation: "生まれる",
@@ -3012,6 +3189,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "182",
+    hskLevel: 4 as const,
     word: "粗心",
     pinyin: "",
     translation: "そそっかしい",
@@ -3029,6 +3207,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "183",
+    hskLevel: 4 as const,
     word: "打扮",
     pinyin: "",
     translation: "おしゃれする",
@@ -3046,6 +3225,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "184",
+    hskLevel: 4 as const,
     word: "打扰",
     pinyin: "",
     translation: "邪魔する",
@@ -3063,6 +3243,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "185",
+    hskLevel: 4 as const,
     word: "打针",
     pinyin: "",
     translation: "注射する",
@@ -3080,6 +3261,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "186",
+    hskLevel: 4 as const,
     word: "戴",
     pinyin: "",
     translation: "かぶる",
@@ -3097,6 +3279,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "187",
+    hskLevel: 4 as const,
     word: "当地",
     pinyin: "",
     translation: "その土地",
@@ -3114,6 +3297,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "188",
+    hskLevel: 4 as const,
     word: "道歉",
     pinyin: "",
     translation: "謝る",
@@ -3131,6 +3315,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "189",
+    hskLevel: 4 as const,
     word: "得意",
     pinyin: "",
     translation: "得意げ",
@@ -3148,6 +3333,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "190",
+    hskLevel: 4 as const,
     word: "等",
     pinyin: "",
     translation: "待つ",
@@ -3165,6 +3351,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "191",
+    hskLevel: 4 as const,
     word: "丢",
     pinyin: "",
     translation: "なくす",
@@ -3182,6 +3369,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "194",
+    hskLevel: 4 as const,
     word: "堵车",
     pinyin: "",
     translation: "渋滞",
@@ -3199,6 +3387,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "195",
+    hskLevel: 4 as const,
     word: "肚子",
     pinyin: "",
     translation: "お腹",
@@ -3216,6 +3405,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "196",
+    hskLevel: 4 as const,
     word: "断",
     pinyin: "",
     translation: "中断する",
@@ -3233,6 +3423,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "197",
+    hskLevel: 4 as const,
     word: "对",
     pinyin: "",
     translation: "その通り",
@@ -3250,6 +3441,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "198",
+    hskLevel: 4 as const,
     word: "对话",
     pinyin: "",
     translation: "対話する",
@@ -3267,6 +3459,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "199",
+    hskLevel: 4 as const,
     word: "烦恼",
     pinyin: "",
     translation: "悩む",
@@ -3284,6 +3477,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "200",
+    hskLevel: 4 as const,
     word: "反对",
     pinyin: "",
     translation: "反対する",
@@ -3301,6 +3495,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "201",
+    hskLevel: 4 as const,
     word: "反应",
     pinyin: "",
     translation: "反応する",
@@ -3318,6 +3513,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "202",
+    hskLevel: 4 as const,
     word: "范围",
     pinyin: "",
     translation: "範囲",
@@ -3335,6 +3531,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "203",
+    hskLevel: 4 as const,
     word: "放弃",
     pinyin: "",
     translation: "放棄する",
@@ -3352,6 +3549,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "204",
+    hskLevel: 4 as const,
     word: "暑假",
     pinyin: "",
     translation: "夏休み",
@@ -3369,6 +3567,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "205",
+    hskLevel: 4 as const,
     word: "符合",
     pinyin: "",
     translation: "合う",
@@ -3386,6 +3585,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "206",
+    hskLevel: 4 as const,
     word: "感动",
     pinyin: "",
     translation: "感動する",
@@ -3403,6 +3603,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "207",
+    hskLevel: 4 as const,
     word: "感觉",
     pinyin: "",
     translation: "感じる",
@@ -3420,6 +3621,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "208",
+    hskLevel: 4 as const,
     word: "感情",
     pinyin: "",
     translation: "気持ち",
@@ -3437,6 +3639,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "209",
+    hskLevel: 4 as const,
     word: "孤单",
     pinyin: "",
     translation: "孤独",
@@ -3454,6 +3657,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "210",
+    hskLevel: 4 as const,
     word: "鼓励",
     pinyin: "",
     translation: "励ます",
@@ -3471,6 +3675,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "211",
+    hskLevel: 4 as const,
     word: "鼓掌",
     pinyin: "",
     translation: "拍手する",
@@ -3488,6 +3693,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "212",
+    hskLevel: 4 as const,
     word: "故意",
     pinyin: "",
     translation: "わざと",
@@ -3505,6 +3711,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "213",
+    hskLevel: 4 as const,
     word: "逛",
     pinyin: "",
     translation: "ぶらぶらする",
@@ -3522,6 +3729,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "214",
+    hskLevel: 4 as const,
     word: "汗",
     pinyin: "",
     translation: "汗",
@@ -3539,6 +3747,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "215",
+    hskLevel: 4 as const,
     word: "后悔",
     pinyin: "",
     translation: "後悔する",
@@ -3556,6 +3765,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "216",
+    hskLevel: 4 as const,
     word: "怀疑",
     pinyin: "",
     translation: "疑う",
@@ -3573,6 +3783,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "217",
+    hskLevel: 4 as const,
     word: "活动",
     pinyin: "",
     translation: "活動",
@@ -3590,6 +3801,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "218",
+    hskLevel: 4 as const,
     word: "基础",
     pinyin: "",
     translation: "基礎",
@@ -3607,6 +3819,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "219",
+    hskLevel: 4 as const,
     word: "激动",
     pinyin: "",
     translation: "感動する",
@@ -3624,6 +3837,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "220",
+    hskLevel: 4 as const,
     word: "极其",
     pinyin: "",
     translation: "極めて",
@@ -3641,6 +3855,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "221",
+    hskLevel: 4 as const,
     word: "集合",
     pinyin: "",
     translation: "集まる",
@@ -3658,6 +3873,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "222",
+    hskLevel: 4 as const,
     word: "及时",
     pinyin: "",
     translation: "ちょうどその時",
@@ -3675,6 +3891,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "223",
+    hskLevel: 4 as const,
     word: "坚持",
     pinyin: "",
     translation: "やり通す",
@@ -3692,6 +3909,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "224",
+    hskLevel: 4 as const,
     word: "减肥",
     pinyin: "",
     translation: "ダイエットする",
@@ -3709,6 +3927,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "225",
+    hskLevel: 4 as const,
     word: "减少",
     pinyin: "",
     translation: "減少する",
@@ -3726,6 +3945,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "226",
+    hskLevel: 4 as const,
     word: "交",
     pinyin: "",
     translation: "渡す/友達になる",
@@ -3743,6 +3963,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "227",
+    hskLevel: 4 as const,
     word: "交流",
     pinyin: "",
     translation: "交流する",
@@ -3760,6 +3981,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "228",
+    hskLevel: 4 as const,
     word: "骄傲",
     pinyin: "",
     translation: "傲慢/誇る",
@@ -3777,6 +3999,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "229",
+    hskLevel: 4 as const,
     word: "接受",
     pinyin: "",
     translation: "受け入れる",
@@ -3794,6 +4017,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "230",
+    hskLevel: 4 as const,
     word: "节约",
     pinyin: "",
     translation: "節約する",
@@ -3811,6 +4035,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "231",
+    hskLevel: 4 as const,
     word: "解释",
     pinyin: "",
     translation: "説明する",
@@ -3828,6 +4053,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "232",
+    hskLevel: 4 as const,
     word: "精彩",
     pinyin: "",
     translation: "素晴らしい",
@@ -3845,6 +4071,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "233",
+    hskLevel: 4 as const,
     word: "经验",
     pinyin: "",
     translation: "経験",
@@ -3862,6 +4089,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "234",
+    hskLevel: 4 as const,
     word: "拒绝",
     pinyin: "",
     translation: "拒む",
@@ -3879,6 +4107,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "235",
+    hskLevel: 4 as const,
     word: "开玩笑",
     pinyin: "",
     translation: "冗談を言う",
@@ -3896,6 +4125,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "236",
+    hskLevel: 4 as const,
     word: "看法",
     pinyin: "",
     translation: "見解",
@@ -3913,6 +4143,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "237",
+    hskLevel: 4 as const,
     word: "考虑",
     pinyin: "",
     translation: "考える",
@@ -3930,6 +4161,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "238",
+    hskLevel: 4 as const,
     word: "可惜",
     pinyin: "",
     translation: "惜しい",
@@ -3947,6 +4179,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "239",
+    hskLevel: 4 as const,
     word: "苦",
     pinyin: "",
     translation: "苦い/つらい",
@@ -3964,6 +4197,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "240",
+    hskLevel: 4 as const,
     word: "宽",
     pinyin: "",
     translation: "広い",
@@ -3981,6 +4215,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "241",
+    hskLevel: 4 as const,
     word: "扩大",
     pinyin: "",
     translation: "拡大する",
@@ -3998,6 +4233,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "242",
+    hskLevel: 4 as const,
     word: "辣",
     pinyin: "",
     translation: "からい",
@@ -4015,6 +4251,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "243",
+    hskLevel: 4 as const,
     word: "懒",
     pinyin: "",
     translation: "怠ける",
@@ -4032,6 +4269,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "244",
+    hskLevel: 4 as const,
     word: "浪费",
     pinyin: "",
     translation: "浪費する",
@@ -4049,6 +4287,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "245",
+    hskLevel: 4 as const,
     word: "理解",
     pinyin: "",
     translation: "理解する",
@@ -4066,6 +4305,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "246",
+    hskLevel: 4 as const,
     word: "厉害",
     pinyin: "",
     translation: "すごい",
@@ -4083,6 +4323,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "247",
+    hskLevel: 4 as const,
     word: "力气",
     pinyin: "",
     translation: "気力",
@@ -4100,6 +4341,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "248",
+    hskLevel: 4 as const,
     word: "联系",
     pinyin: "",
     translation: "連絡する",
@@ -4117,6 +4359,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "249",
+    hskLevel: 4 as const,
     word: "凉快",
     pinyin: "",
     translation: "涼しい",
@@ -4134,6 +4377,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "250",
+    hskLevel: 4 as const,
     word: "聊天",
     pinyin: "",
     translation: "おしゃべり",
@@ -4151,6 +4395,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "251",
+    hskLevel: 4 as const,
     word: "流泪",
     pinyin: "",
     translation: "涙する",
@@ -4168,6 +4413,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "252",
+    hskLevel: 4 as const,
     word: "流行",
     pinyin: "",
     translation: "流行する",
@@ -4185,6 +4431,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "253",
+    hskLevel: 4 as const,
     word: "乱",
     pinyin: "",
     translation: "乱れている",
@@ -4202,6 +4449,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "254",
+    hskLevel: 4 as const,
     word: "麻烦",
     pinyin: "",
     translation: "めんどくさい",
@@ -4219,6 +4467,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "255",
+    hskLevel: 4 as const,
     word: "马虎",
     pinyin: "",
     translation: "いい加減である",
@@ -4236,6 +4485,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "256",
+    hskLevel: 4 as const,
     word: "免费",
     pinyin: "",
     translation: "無料",
@@ -4253,6 +4503,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "257",
+    hskLevel: 4 as const,
     word: "耐心",
     pinyin: "",
     translation: "辛抱強い",
@@ -4270,6 +4521,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "258",
+    hskLevel: 4 as const,
     word: "内",
     pinyin: "",
     translation: "内",
@@ -4287,6 +4539,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "259",
+    hskLevel: 4 as const,
     word: "弄",
     pinyin: "",
     translation: "いじる",
@@ -4304,6 +4557,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "260",
+    hskLevel: 4 as const,
     word: "暖和",
     pinyin: "",
     translation: "暖かい",
@@ -4321,6 +4575,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "261",
+    hskLevel: 4 as const,
     word: "排列",
     pinyin: "",
     translation: "配列する",
@@ -4338,6 +4593,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "262",
+    hskLevel: 4 as const,
     word: "陪",
     pinyin: "",
     translation: "付き添う",
@@ -4355,6 +4611,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "263",
+    hskLevel: 4 as const,
     word: "骗",
     pinyin: "",
     translation: "騙す",
@@ -4372,6 +4629,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "264",
+    hskLevel: 4 as const,
     word: "破",
     pinyin: "",
     translation: "壊す/破る",
@@ -4389,6 +4647,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "265",
+    hskLevel: 4 as const,
     word: "请客",
     pinyin: "",
     translation: "ご飯を奢る",
@@ -4406,6 +4665,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "266",
+    hskLevel: 4 as const,
     word: "穷",
     pinyin: "",
     translation: "貧乏である",
@@ -4423,6 +4683,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "267",
+    hskLevel: 4 as const,
     word: "热闹",
     pinyin: "",
     translation: "賑やかである",
@@ -4440,6 +4701,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "268",
+    hskLevel: 4 as const,
     word: "扔",
     pinyin: "",
     translation: "捨てる",
@@ -4457,6 +4719,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "269",
+    hskLevel: 4 as const,
     word: "散步",
     pinyin: "",
     translation: "散歩する",
@@ -4474,6 +4737,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "270",
+    hskLevel: 4 as const,
     word: "伤心",
     pinyin: "",
     translation: "悲しむ",
@@ -4491,6 +4755,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "271",
+    hskLevel: 4 as const,
     word: "稍微",
     pinyin: "",
     translation: "少し",
@@ -4508,6 +4773,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "272",
+    hskLevel: 4 as const,
     word: "剩",
     pinyin: "",
     translation: "残す",
@@ -4525,6 +4791,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "273",
+    hskLevel: 4 as const,
     word: "失望",
     pinyin: "",
     translation: "失望する",
@@ -4542,6 +4809,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "274",
+    hskLevel: 4 as const,
     word: "湿润",
     pinyin: "",
     translation: "しっとりしている",
@@ -4559,6 +4827,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "275",
+    hskLevel: 4 as const,
     word: "试",
     pinyin: "",
     translation: "試す",
@@ -4576,6 +4845,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "276",
+    hskLevel: 4 as const,
     word: "适合",
     pinyin: "",
     translation: "ぴったり合う",
@@ -4593,6 +4863,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "277",
+    hskLevel: 4 as const,
     word: "适应",
     pinyin: "",
     translation: "適応する",
@@ -4610,6 +4881,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "278",
+    hskLevel: 4 as const,
     word: "首先",
     pinyin: "",
     translation: "まずはじめに",
@@ -4627,6 +4899,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "279",
+    hskLevel: 4 as const,
     word: "受不了",
     pinyin: "",
     translation: "耐えられない",
@@ -4644,6 +4917,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "280",
+    hskLevel: 4 as const,
     word: "输",
     pinyin: "",
     translation: "負ける",
@@ -4661,6 +4935,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "281",
+    hskLevel: 4 as const,
     word: "谈",
     pinyin: "",
     translation: "話す",
@@ -4678,6 +4953,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "282",
+    hskLevel: 4 as const,
     word: "躺",
     pinyin: "",
     translation: "横になる",
@@ -4695,6 +4971,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "283",
+    hskLevel: 4 as const,
     word: "讨厌",
     pinyin: "",
     translation: "嫌う",
@@ -4712,6 +4989,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "284",
+    hskLevel: 4 as const,
     word: "填空",
     pinyin: "",
     translation: "埋める",
@@ -4729,6 +5007,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "285",
+    hskLevel: 4 as const,
     word: "挺〜的",
     pinyin: "",
     translation: "とても〜",
@@ -4746,6 +5025,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "286",
+    hskLevel: 4 as const,
     word: "同情",
     pinyin: "",
     translation: "同情する",
@@ -4763,6 +5043,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "287",
+    hskLevel: 4 as const,
     word: "脱",
     pinyin: "",
     translation: "脱ぐ",
@@ -4780,6 +5061,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "288",
+    hskLevel: 4 as const,
     word: "危险",
     pinyin: "",
     translation: "危険である",
@@ -4797,6 +5079,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "289",
+    hskLevel: 4 as const,
     word: "味道",
     pinyin: "",
     translation: "味",
@@ -4814,6 +5097,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "290",
+    hskLevel: 4 as const,
     word: "握手",
     pinyin: "",
     translation: "握手する",
@@ -4831,6 +5115,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "291",
+    hskLevel: 4 as const,
     word: "无",
     pinyin: "",
     translation: "ない",
@@ -4848,6 +5133,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "292",
+    hskLevel: 4 as const,
     word: "吸引",
     pinyin: "",
     translation: "ひきつける",
@@ -4865,6 +5151,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "293",
+    hskLevel: 4 as const,
     word: "香",
     pinyin: "",
     translation: "香りが良い",
@@ -4882,6 +5169,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "295",
+    hskLevel: 4 as const,
     word: "响",
     pinyin: "",
     translation: "音が鳴る",
@@ -4899,6 +5187,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "296",
+    hskLevel: 4 as const,
     word: "辛苦",
     pinyin: "",
     translation: "大変",
@@ -4916,6 +5205,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "297",
+    hskLevel: 4 as const,
     word: "信心",
     pinyin: "",
     translation: "信念",
@@ -4933,6 +5223,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "298",
+    hskLevel: 4 as const,
     word: "兴奋",
     pinyin: "",
     translation: "興奮している",
@@ -4950,6 +5241,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "299",
+    hskLevel: 4 as const,
     word: "不行",
     pinyin: "",
     translation: "よくない",
@@ -4967,6 +5259,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "302",
+    hskLevel: 4 as const,
     word: "幸福",
     pinyin: "",
     translation: "幸福",
@@ -4984,6 +5277,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "303",
+    hskLevel: 4 as const,
     word: "硬",
     pinyin: "",
     translation: "硬い",
@@ -5001,6 +5295,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "304",
+    hskLevel: 4 as const,
     word: "永远",
     pinyin: "",
     translation: "永遠に",
@@ -5018,6 +5313,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "305",
+    hskLevel: 4 as const,
     word: "有趣",
     pinyin: "",
     translation: "面白い",
@@ -5035,6 +5331,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "306",
+    hskLevel: 4 as const,
     word: "友谊",
     pinyin: "",
     translation: "友情",
@@ -5052,6 +5349,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "307",
+    hskLevel: 4 as const,
     word: "愉快",
     pinyin: "",
     translation: "楽しい",
@@ -5069,6 +5367,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "308",
+    hskLevel: 4 as const,
     word: "语法",
     pinyin: "",
     translation: "文法",
@@ -5086,6 +5385,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "309",
+    hskLevel: 4 as const,
     word: "预习",
     pinyin: "",
     translation: "予習する",
@@ -5103,6 +5403,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "310",
+    hskLevel: 4 as const,
     word: "原谅",
     pinyin: "",
     translation: "許す",
@@ -5120,6 +5421,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "311",
+    hskLevel: 4 as const,
     word: "约会",
     pinyin: "",
     translation: "デート",
@@ -5137,6 +5439,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "312",
+    hskLevel: 4 as const,
     word: "脏",
     pinyin: "",
     translation: "汚い",
@@ -5154,6 +5457,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "313",
+    hskLevel: 4 as const,
     word: "增长",
     pinyin: "",
     translation: "増加する",
@@ -5171,6 +5475,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "314",
+    hskLevel: 4 as const,
     word: "整理",
     pinyin: "",
     translation: "整理する",
@@ -5188,6 +5493,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "315",
+    hskLevel: 4 as const,
     word: "整齐",
     pinyin: "",
     translation: "きちんとしている",
@@ -5205,6 +5511,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "316",
+    hskLevel: 4 as const,
     word: "正常",
     pinyin: "",
     translation: "正常である",
@@ -5222,6 +5529,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "317",
+    hskLevel: 4 as const,
     word: "正好",
     pinyin: "",
     translation: "ちょうど良い",
@@ -5239,6 +5547,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "318",
+    hskLevel: 4 as const,
     word: "支持",
     pinyin: "",
     translation: "支持する",
@@ -5256,6 +5565,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "319",
+    hskLevel: 4 as const,
     word: "祝贺",
     pinyin: "",
     translation: "祝う",
@@ -5273,6 +5583,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "320",
+    hskLevel: 4 as const,
     word: "撞",
     pinyin: "",
     translation: "ぶつかる",
@@ -5290,6 +5601,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "321",
+    hskLevel: 4 as const,
     word: "嘴",
     pinyin: "",
     translation: "口",
@@ -5307,6 +5619,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "322",
+    hskLevel: 4 as const,
     word: "最后",
     pinyin: "",
     translation: "最後の",
@@ -5324,6 +5637,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "323",
+    hskLevel: 4 as const,
     word: "并且",
     pinyin: "",
     translation: "さらに",
@@ -5341,6 +5655,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "324",
+    hskLevel: 4 as const,
     word: "不但",
     pinyin: "",
     translation: "〜だけでなく",
@@ -5358,6 +5673,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "325",
+    hskLevel: 4 as const,
     word: "不管",
     pinyin: "",
     translation: "〜にかかわらず",
@@ -5375,6 +5691,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "326",
+    hskLevel: 4 as const,
     word: "不仅",
     pinyin: "",
     translation: "〜だけでない",
@@ -5392,6 +5709,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "327",
+    hskLevel: 4 as const,
     word: "从来",
     pinyin: "",
     translation: "これまでずっと",
@@ -5409,6 +5727,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "328",
+    hskLevel: 4 as const,
     word: "当时",
     pinyin: "",
     translation: "当時",
@@ -5426,6 +5745,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "329",
+    hskLevel: 4 as const,
     word: "果然",
     pinyin: "",
     translation: "やはり",
@@ -5443,6 +5763,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "330",
+    hskLevel: 4 as const,
     word: "后来",
     pinyin: "",
     translation: "その後",
@@ -5460,6 +5781,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "331",
+    hskLevel: 4 as const,
     word: "即使",
     pinyin: "",
     translation: "たとえ〜でも",
@@ -5477,6 +5799,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "332",
+    hskLevel: 4 as const,
     word: "既然",
     pinyin: "",
     translation: "〜するからには",
@@ -5494,6 +5817,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "333",
+    hskLevel: 4 as const,
     word: "尽管",
     pinyin: "",
     translation: "〜にもかかわらず",
@@ -5511,6 +5835,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "334",
+    hskLevel: 4 as const,
     word: "竟然",
     pinyin: "",
     translation: "意外にも",
@@ -5528,6 +5853,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "335",
+    hskLevel: 4 as const,
     word: "究竟",
     pinyin: "",
     translation: "結局のところ",
@@ -5545,6 +5871,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "336",
+    hskLevel: 4 as const,
     word: "不过",
     pinyin: "",
     translation: "しかし",
@@ -5562,6 +5889,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "337",
+    hskLevel: 4 as const,
     word: "可是",
     pinyin: "",
     translation: "しかし",
@@ -5579,6 +5907,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "338",
+    hskLevel: 4 as const,
     word: "然而",
     pinyin: "",
     translation: "しかし",
@@ -5596,6 +5925,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "339",
+    hskLevel: 4 as const,
     word: "连",
     pinyin: "",
     translation: "続けて",
@@ -5613,6 +5943,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "340",
+    hskLevel: 4 as const,
     word: "另外",
     pinyin: "",
     translation: "別の",
@@ -5630,6 +5961,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "341",
+    hskLevel: 4 as const,
     word: "偶尔",
     pinyin: "",
     translation: "たまたま",
@@ -5647,6 +5979,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "342",
+    hskLevel: 4 as const,
     word: "却",
     pinyin: "",
     translation: "むしろ",
@@ -5664,6 +5997,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "343",
+    hskLevel: 4 as const,
     word: "仍然",
     pinyin: "",
     translation: "相変わらず",
@@ -5681,6 +6015,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "344",
+    hskLevel: 4 as const,
     word: "随便",
     pinyin: "",
     translation: "かまわない",
@@ -5698,6 +6033,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "345",
+    hskLevel: 4 as const,
     word: "随着",
     pinyin: "",
     translation: "〜につれて",
@@ -5715,6 +6051,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "346",
+    hskLevel: 4 as const,
     word: "通过",
     pinyin: "",
     translation: "〜を通して",
@@ -5732,6 +6069,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "347",
+    hskLevel: 4 as const,
     word: "无论",
     pinyin: "",
     translation: "どんなに〜でも",
@@ -5749,6 +6087,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "348",
+    hskLevel: 4 as const,
     word: "相反",
     pinyin: "",
     translation: "反対に",
@@ -5766,6 +6105,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "349",
+    hskLevel: 4 as const,
     word: "以",
     pinyin: "",
     translation: "〜によって",
@@ -5783,6 +6123,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "350",
+    hskLevel: 4 as const,
     word: "因此",
     pinyin: "",
     translation: "そのため",
@@ -5800,6 +6141,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "351",
+    hskLevel: 4 as const,
     word: "由",
     pinyin: "",
     translation: "〜に任せる",
@@ -5817,6 +6159,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "352",
+    hskLevel: 4 as const,
     word: "由于",
     pinyin: "",
     translation: "〜の理由で",
@@ -5834,6 +6177,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "353",
+    hskLevel: 4 as const,
     word: "尤其",
     pinyin: "",
     translation: "特に",
@@ -5851,6 +6195,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "354",
+    hskLevel: 4 as const,
     word: "于是",
     pinyin: "",
     translation: "そこで",
@@ -5868,6 +6213,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "355",
+    hskLevel: 4 as const,
     word: "与",
     pinyin: "",
     translation: "〜と",
@@ -5885,6 +6231,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "356",
+    hskLevel: 4 as const,
     word: "原来",
     pinyin: "",
     translation: "もともと",
@@ -5902,6 +6249,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "357",
+    hskLevel: 4 as const,
     word: "按时",
     pinyin: "",
     translation: "時間通り",
@@ -5919,6 +6267,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "358",
+    hskLevel: 4 as const,
     word: "按照",
     pinyin: "",
     translation: "〜に従って",
@@ -5936,6 +6285,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "359",
+    hskLevel: 4 as const,
     word: "本来",
     pinyin: "",
     translation: "本来は",
@@ -5953,6 +6303,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "360",
+    hskLevel: 4 as const,
     word: "不得不",
     pinyin: "",
     translation: "止むを得ず",
@@ -5970,6 +6321,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "361",
+    hskLevel: 4 as const,
     word: "超过",
     pinyin: "",
     translation: "超える",
@@ -5987,6 +6339,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "362",
+    hskLevel: 4 as const,
     word: "大概",
     pinyin: "",
     translation: "だいたい",
@@ -6004,6 +6357,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "363",
+    hskLevel: 4 as const,
     word: "大约",
     pinyin: "",
     translation: "おおよそ",
@@ -6021,6 +6375,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "364",
+    hskLevel: 4 as const,
     word: "到底",
     pinyin: "",
     translation: "一体",
@@ -6038,6 +6393,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "365",
+    hskLevel: 4 as const,
     word: "得",
     pinyin: "",
     translation: "しなければいけない",
@@ -6055,6 +6411,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "366",
+    hskLevel: 4 as const,
     word: "掉",
     pinyin: "",
     translation: "なくなる",
@@ -6072,6 +6429,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "367",
+    hskLevel: 4 as const,
     word: "顿",
     pinyin: "",
     translation: "〜回（食事の回数）",
@@ -6089,6 +6447,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "368",
+    hskLevel: 4 as const,
     word: "份",
     pinyin: "",
     translation: "部（書類を数える）",
@@ -6106,6 +6465,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "369",
+    hskLevel: 4 as const,
     word: "场",
     pinyin: "",
     translation: "〜回（現象を数える）",
@@ -6123,6 +6483,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "370",
+    hskLevel: 4 as const,
     word: "趟",
     pinyin: "",
     translation: "回（往復するものを数える）",
@@ -6140,6 +6501,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "371",
+    hskLevel: 4 as const,
     word: "朵",
     pinyin: "",
     translation: "輪（花を数える）",
@@ -6157,6 +6519,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "372",
+    hskLevel: 4 as const,
     word: "遍",
     pinyin: "",
     translation: "回(動作の回数を数える)",
@@ -6174,6 +6537,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "373",
+    hskLevel: 4 as const,
     word: "座",
     pinyin: "",
     translation: "棟(建物を数える)",
@@ -6191,6 +6555,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "374",
+    hskLevel: 4 as const,
     word: "而",
     pinyin: "",
     translation: "その上",
@@ -6208,6 +6573,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "375",
+    hskLevel: 4 as const,
     word: "刚刚",
     pinyin: "",
     translation: "〜したばかりである",
@@ -6225,6 +6591,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "376",
+    hskLevel: 4 as const,
     word: "各",
     pinyin: "",
     translation: "それぞれ",
@@ -6242,6 +6609,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "377",
+    hskLevel: 4 as const,
     word: "够",
     pinyin: "",
     translation: "足りる",
@@ -6259,6 +6627,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "378",
+    hskLevel: 4 as const,
     word: "过",
     pinyin: "",
     translation: "通過する",
@@ -6276,6 +6645,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "379",
+    hskLevel: 4 as const,
     word: "好像",
     pinyin: "",
     translation: "〜のようだ",
@@ -6293,6 +6663,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "380",
+    hskLevel: 4 as const,
     word: "忽然",
     pinyin: "",
     translation: "急に",
@@ -6310,6 +6681,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "381",
+    hskLevel: 4 as const,
     word: "互相",
     pinyin: "",
     translation: "お互いに",
@@ -6327,6 +6699,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "382",
+    hskLevel: 4 as const,
     word: "肯定",
     pinyin: "",
     translation: "きっと",
@@ -6344,6 +6717,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "386",
+    hskLevel: 4 as const,
     word: "来不及",
     pinyin: "",
     translation: "間に合わない",
@@ -6361,6 +6735,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "387",
+    hskLevel: 4 as const,
     word: "来得及",
     pinyin: "",
     translation: "間に合う",
@@ -6378,6 +6753,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "388",
+    hskLevel: 4 as const,
     word: "例如",
     pinyin: "",
     translation: "例えば",
@@ -6395,6 +6771,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "391",
+    hskLevel: 4 as const,
     word: "难道",
     pinyin: "",
     translation: "まさか〜ではあるまい",
@@ -6412,6 +6789,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "392",
+    hskLevel: 4 as const,
     word: "其次",
     pinyin: "",
     translation: "その次",
@@ -6429,6 +6807,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "393",
+    hskLevel: 4 as const,
     word: "其中",
     pinyin: "",
     translation: "その中で",
@@ -6446,6 +6825,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "394",
+    hskLevel: 4 as const,
     word: "起来",
     pinyin: "",
     translation: "上がる",
@@ -6463,6 +6843,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "395",
+    hskLevel: 4 as const,
     word: "千万",
     pinyin: "",
     translation: "絶対に",
@@ -6480,6 +6861,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "396",
+    hskLevel: 4 as const,
     word: "甚至",
     pinyin: "",
     translation: "〜でさえ",
@@ -6497,6 +6879,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "397",
+    hskLevel: 4 as const,
     word: "十分",
     pinyin: "",
     translation: "十分に",
@@ -6514,6 +6897,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "398",
+    hskLevel: 4 as const,
     word: "实际",
     pinyin: "",
     translation: "実際の",
@@ -6531,6 +6915,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "399",
+    hskLevel: 4 as const,
     word: "实在",
     pinyin: "",
     translation: "本当に",
@@ -6548,6 +6933,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "400",
+    hskLevel: 4 as const,
     word: "顺便",
     pinyin: "",
     translation: "ついでに",
@@ -6565,6 +6951,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "401",
+    hskLevel: 4 as const,
     word: "算",
     pinyin: "",
     translation: "〜と見なす",
@@ -6582,6 +6969,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "402",
+    hskLevel: 4 as const,
     word: "完全",
     pinyin: "",
     translation: "完全に",
@@ -6599,6 +6987,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "403",
+    hskLevel: 4 as const,
     word: "往",
     pinyin: "",
     translation: "〜へ向かって",
@@ -6616,6 +7005,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "404",
+    hskLevel: 4 as const,
     word: "往往",
     pinyin: "",
     translation: "しばしば",
@@ -6633,6 +7023,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "405",
+    hskLevel: 4 as const,
     word: "许多",
     pinyin: "",
     translation: "たくさん",
@@ -6650,6 +7041,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "406",
+    hskLevel: 4 as const,
     word: "也许",
     pinyin: "",
     translation: "〜かもしれない",
@@ -6667,6 +7059,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "407",
+    hskLevel: 4 as const,
     word: "一切",
     pinyin: "",
     translation: "全て",
@@ -6684,6 +7077,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "408",
+    hskLevel: 4 as const,
     word: "暂时",
     pinyin: "",
     translation: "しばらく",
@@ -6701,6 +7095,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "409",
+    hskLevel: 4 as const,
     word: "真正",
     pinyin: "",
     translation: "本当の",
@@ -6718,6 +7113,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "410",
+    hskLevel: 4 as const,
     word: "只",
     pinyin: "",
     translation: "ただ〜だけだ",
@@ -6735,6 +7131,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "411",
+    hskLevel: 4 as const,
     word: "只好",
     pinyin: "",
     translation: "やむを得ず〜する",
@@ -6752,6 +7149,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "412",
+    hskLevel: 4 as const,
     word: "只要",
     pinyin: "",
     translation: "〜さえすれば",
@@ -6769,6 +7167,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "413",
+    hskLevel: 4 as const,
     word: "至少",
     pinyin: "",
     translation: "少なくとも",
@@ -6786,6 +7185,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "414",
+    hskLevel: 4 as const,
     word: "逐渐",
     pinyin: "",
     translation: "だんだん",
@@ -6803,6 +7203,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "415",
+    hskLevel: 4 as const,
     word: "儿童",
     pinyin: "",
     translation: "子供",
@@ -6820,6 +7221,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "416",
+    hskLevel: 4 as const,
     word: "安全",
     pinyin: "",
     translation: "安全",
@@ -6837,6 +7239,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "417",
+    hskLevel: 4 as const,
     word: "爱情",
     pinyin: "",
     translation: "愛",
@@ -6854,6 +7257,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "418",
+    hskLevel: 4 as const,
     word: "尊重",
     pinyin: "",
     translation: "尊敬",
@@ -6871,6 +7275,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "419",
+    hskLevel: 4 as const,
     word: "租",
     pinyin: "",
     translation: "賃貸する",
@@ -6888,6 +7293,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "422",
+    hskLevel: 4 as const,
     word: "杂志",
     pinyin: "",
     translation: "雑誌",
@@ -6905,6 +7311,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "423",
+    hskLevel: 4 as const,
     word: "座位",
     pinyin: "",
     translation: "座席",
@@ -6922,6 +7329,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "424",
+    hskLevel: 4 as const,
     word: "做生意",
     pinyin: "",
     translation: "商売をする",
@@ -6939,6 +7347,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "425",
+    hskLevel: 4 as const,
     word: "乒乓球",
     pinyin: "",
     translation: "卓球",
@@ -6956,6 +7365,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "426",
+    hskLevel: 4 as const,
     word: "羽毛球",
     pinyin: "",
     translation: "バドミントン",
@@ -6973,6 +7383,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "427",
+    hskLevel: 4 as const,
     word: "网球",
     pinyin: "",
     translation: "テニス",
@@ -6990,6 +7401,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "428",
+    hskLevel: 4 as const,
     word: "态度",
     pinyin: "",
     translation: "態度",
@@ -7007,6 +7419,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "429",
+    hskLevel: 4 as const,
     word: "最好",
     pinyin: "",
     translation: "〜するのが最も良い",
@@ -7024,6 +7437,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "430",
+    hskLevel: 4 as const,
     word: "主意",
     pinyin: "",
     translation: "しっかりした考え",
@@ -7041,6 +7455,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "431",
+    hskLevel: 4 as const,
     word: "主动",
     pinyin: "",
     translation: "主体的である",
@@ -7058,6 +7473,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "432",
+    hskLevel: 4 as const,
     word: "著名",
     pinyin: "",
     translation: "有名である",
@@ -7075,6 +7491,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "433",
+    hskLevel: 4 as const,
     word: "周围",
     pinyin: "",
     translation: "周りに",
@@ -7092,6 +7509,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "434",
+    hskLevel: 4 as const,
     word: "语言",
     pinyin: "",
     translation: "言語",
@@ -7109,6 +7527,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "435",
+    hskLevel: 4 as const,
     word: "中文",
     pinyin: "",
     translation: "中国語",
@@ -7126,6 +7545,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "436",
+    hskLevel: 4 as const,
     word: "语法",
     pinyin: "",
     translation: "文法、語法",
@@ -7143,6 +7563,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "437",
+    hskLevel: 4 as const,
     word: "重点",
     pinyin: "",
     translation: "重要な、重点的な",
@@ -7160,6 +7581,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "438",
+    hskLevel: 4 as const,
     word: "知识",
     pinyin: "",
     translation: "知識",
@@ -7177,6 +7599,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "439",
+    hskLevel: 4 as const,
     word: "之",
     pinyin: "",
     translation: "〜の",
@@ -7194,6 +7617,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "440",
+    hskLevel: 4 as const,
     word: "指",
     pinyin: "",
     translation: "示す",
@@ -7211,6 +7635,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "441",
+    hskLevel: 4 as const,
     word: "质量",
     pinyin: "",
     translation: "品質",
@@ -7228,6 +7653,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "442",
+    hskLevel: 4 as const,
     word: "植物",
     pinyin: "",
     translation: "植物",
@@ -7245,6 +7671,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "443",
+    hskLevel: 4 as const,
     word: "棵",
     pinyin: "",
     translation: "木",
@@ -7262,6 +7689,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "444",
+    hskLevel: 4 as const,
     word: "叶子",
     pinyin: "",
     translation: "葉",
@@ -7279,6 +7707,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "445",
+    hskLevel: 4 as const,
     word: "直接",
     pinyin: "",
     translation: "直接的である",
@@ -7296,6 +7725,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "446",
+    hskLevel: 4 as const,
     word: "正式",
     pinyin: "",
     translation: "正式の、公式の",
@@ -7313,6 +7743,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "447",
+    hskLevel: 4 as const,
     word: "正确",
     pinyin: "",
     translation: "正確",
@@ -7330,6 +7761,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "448",
+    hskLevel: 4 as const,
     word: "窄",
     pinyin: "",
     translation: "狭い",
@@ -7347,6 +7779,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "449",
+    hskLevel: 4 as const,
     word: "优秀",
     pinyin: "",
     translation: "優秀",
@@ -7364,6 +7797,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "450",
+    hskLevel: 4 as const,
     word: "幽默",
     pinyin: "",
     translation: "ユーモアある",
@@ -7381,6 +7815,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "451",
+    hskLevel: 4 as const,
     word: "优点",
     pinyin: "",
     translation: "長所、メリット",
@@ -7398,6 +7833,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "452",
+    hskLevel: 4 as const,
     word: "友谊",
     pinyin: "",
     translation: "友情",
@@ -7415,6 +7851,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "453",
+    hskLevel: 4 as const,
     word: "友好",
     pinyin: "",
     translation: "友好的である",
@@ -7432,6 +7869,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "454",
+    hskLevel: 4 as const,
     word: "勇敢",
     pinyin: "",
     translation: "勇敢である",
@@ -7449,6 +7887,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "455",
+    hskLevel: 4 as const,
     word: "艺术",
     pinyin: "",
     translation: "芸術",
@@ -7466,6 +7905,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "456",
+    hskLevel: 4 as const,
     word: "印象",
     pinyin: "",
     translation: "印象",
@@ -7483,6 +7923,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "457",
+    hskLevel: 4 as const,
     word: "意见",
     pinyin: "",
     translation: "意見",
@@ -7500,6 +7941,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "458",
+    hskLevel: 4 as const,
     word: "羡慕",
     pinyin: "",
     translation: "羨ましくおもう",
@@ -7517,6 +7959,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "459",
+    hskLevel: 4 as const,
     word: "亿",
     pinyin: "",
     translation: "億",
@@ -7534,6 +7977,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "460",
+    hskLevel: 4 as const,
     word: "赢",
     pinyin: "",
     translation: "勝つ",
@@ -7551,6 +7995,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "461",
+    hskLevel: 4 as const,
     word: "页",
     pinyin: "",
     translation: "ページ",
@@ -7568,6 +8013,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "462",
+    hskLevel: 4 as const,
     word: "压力",
     pinyin: "",
     translation: "圧力",
@@ -7585,6 +8031,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "463",
+    hskLevel: 4 as const,
     word: "演员",
     pinyin: "",
     translation: "出演者",
@@ -7602,6 +8049,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "464",
+    hskLevel: 4 as const,
     word: "演出",
     pinyin: "",
     translation: "演出",
@@ -7619,6 +8067,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "465",
+    hskLevel: 4 as const,
     word: "亚洲",
     pinyin: "",
     translation: "アジア",
@@ -7636,6 +8085,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "466",
+    hskLevel: 4 as const,
     word: "钥匙",
     pinyin: "",
     translation: "鍵",
@@ -7653,6 +8103,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "467",
+    hskLevel: 4 as const,
     word: "样子",
     pinyin: "",
     translation: "様子",
@@ -7670,6 +8121,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "468",
+    hskLevel: 4 as const,
     word: "阳光",
     pinyin: "",
     translation: "日光",
@@ -7687,6 +8139,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "469",
+    hskLevel: 4 as const,
     word: "盐",
     pinyin: "",
     translation: "塩",
@@ -7704,6 +8157,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "470",
+    hskLevel: 4 as const,
     word: "牙膏",
     pinyin: "",
     translation: "歯磨き粉",
@@ -7721,6 +8175,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "471",
+    hskLevel: 4 as const,
     word: "原因",
     pinyin: "",
     translation: "原因、理由",
@@ -7738,6 +8193,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "472",
+    hskLevel: 4 as const,
     word: "圆",
     pinyin: "",
     translation: "円い、円形である",
@@ -7755,6 +8211,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "473",
+    hskLevel: 4 as const,
     word: "呀",
     pinyin: "",
     translation: "ね",
@@ -7772,6 +8229,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "474",
+    hskLevel: 4 as const,
     word: "洗衣机",
     pinyin: "",
     translation: "洗濯機",
@@ -7789,6 +8247,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "475",
+    hskLevel: 4 as const,
     word: "信用卡",
     pinyin: "",
     translation: "クレジットカード",
@@ -7806,6 +8265,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "476",
+    hskLevel: 4 as const,
     word: "性格",
     pinyin: "",
     translation: "性格",
@@ -7823,6 +8283,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "477",
+    hskLevel: 4 as const,
     word: "性别",
     pinyin: "",
     translation: "性別",
@@ -7840,6 +8301,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "478",
+    hskLevel: 4 as const,
     word: "血",
     pinyin: "",
     translation: "血液",
@@ -7857,6 +8319,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "479",
+    hskLevel: 4 as const,
     word: "消息",
     pinyin: "",
     translation: "ニュース、報道",
@@ -7874,6 +8337,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "480",
+    hskLevel: 4 as const,
     word: "小说",
     pinyin: "",
     translation: "小説",
@@ -7891,6 +8355,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "481",
+    hskLevel: 4 as const,
     word: "笑话",
     pinyin: "",
     translation: "冗談、笑い話",
@@ -7908,6 +8373,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "482",
+    hskLevel: 4 as const,
     word: "效果",
     pinyin: "",
     translation: "効果、結果",
@@ -7925,6 +8391,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "483",
+    hskLevel: 4 as const,
     word: "现代",
     pinyin: "",
     translation: "近代的、現代",
@@ -7942,6 +8409,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "484",
+    hskLevel: 4 as const,
     word: "详细",
     pinyin: "",
     translation: "詳細",
@@ -7959,6 +8427,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "485",
+    hskLevel: 4 as const,
     word: "咸",
     pinyin: "",
     translation: "しょっぱい",
@@ -7976,6 +8445,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "486",
+    hskLevel: 4 as const,
     word: "污染",
     pinyin: "",
     translation: "汚染する",
@@ -7993,6 +8463,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "487",
+    hskLevel: 4 as const,
     word: "误会",
     pinyin: "",
     translation: "誤解",
@@ -8010,6 +8481,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "488",
+    hskLevel: 4 as const,
     word: "无聊",
     pinyin: "",
     translation: "退屈である、つまらない",
@@ -8027,6 +8499,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "489",
+    hskLevel: 4 as const,
     word: "温度",
     pinyin: "",
     translation: "温度",
@@ -8044,6 +8517,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "490",
+    hskLevel: 4 as const,
     word: "文章",
     pinyin: "",
     translation: "記事、文章",
@@ -8061,6 +8535,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "491",
+    hskLevel: 4 as const,
     word: "网站",
     pinyin: "",
     translation: "ウェブサイト",
@@ -8078,6 +8553,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "492",
+    hskLevel: 4 as const,
     word: "袜子",
     pinyin: "",
     translation: "靴下",
@@ -8095,6 +8571,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "493",
+    hskLevel: 4 as const,
     word: "通知",
     pinyin: "",
     translation: "お知らせ、通知",
@@ -8112,6 +8589,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "494",
+    hskLevel: 4 as const,
     word: "特点",
     pinyin: "",
     translation: "特色、特徴",
@@ -8129,6 +8607,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "495",
+    hskLevel: 4 as const,
     word: "汤",
     pinyin: "",
     translation: "スープ",
@@ -8146,6 +8625,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "496",
+    hskLevel: 4 as const,
     word: "台",
     pinyin: "",
     translation: "台（乗り物を数える）",
@@ -8163,6 +8643,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "497",
+    hskLevel: 4 as const,
     word: "抬",
     pinyin: "",
     translation: "顔を上げる/持ち上げる",
@@ -8180,6 +8661,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "498",
+    hskLevel: 4 as const,
     word: "条件",
     pinyin: "",
     translation: "条件",
@@ -8197,6 +8679,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "499",
+    hskLevel: 4 as const,
     word: "塑料袋",
     pinyin: "",
     translation: "ポリ袋/レジ袋",
@@ -8214,6 +8697,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "500",
+    hskLevel: 4 as const,
     word: "速度",
     pinyin: "",
     translation: "速度、スピード",
@@ -8231,6 +8715,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "501",
+    hskLevel: 4 as const,
     word: "自然",
     pinyin: "",
     translation: "自然に",
@@ -8248,6 +8733,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "502",
+    hskLevel: 4 as const,
     word: "森林",
     pinyin: "",
     translation: "森",
@@ -8265,6 +8751,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "503",
+    hskLevel: 4 as const,
     word: "所有",
     pinyin: "",
     translation: "全ての",
@@ -8282,6 +8769,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "504",
+    hskLevel: 4 as const,
     word: "酸",
     pinyin: "",
     translation: "酸っぱい",
@@ -8299,6 +8787,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "505",
+    hskLevel: 4 as const,
     word: "数字",
     pinyin: "",
     translation: "数字",
@@ -8316,6 +8805,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "506",
+    hskLevel: 4 as const,
     word: "顺序",
     pinyin: "",
     translation: "順序、順番．",
@@ -8333,6 +8823,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "507",
+    hskLevel: 4 as const,
     word: "数量",
     pinyin: "",
     translation: "数量",
@@ -8350,6 +8841,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "508",
+    hskLevel: 4 as const,
     word: "收入",
     pinyin: "",
     translation: "収入",
@@ -8367,6 +8859,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "509",
+    hskLevel: 4 as const,
     word: "首都",
     pinyin: "",
     translation: "首都",
@@ -8384,6 +8877,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "510",
+    hskLevel: 4 as const,
     word: "师傅",
     pinyin: "",
     translation: "運転手さん/職人さん",
@@ -8401,6 +8895,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "511",
+    hskLevel: 4 as const,
     word: "世纪",
     pinyin: "",
     translation: "世紀",
@@ -8418,6 +8913,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "512",
+    hskLevel: 4 as const,
     word: "市场",
     pinyin: "",
     translation: "市場",
@@ -8435,6 +8931,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "513",
+    hskLevel: 4 as const,
     word: "食品",
     pinyin: "",
     translation: "食品",
@@ -8452,6 +8949,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "514",
+    hskLevel: 4 as const,
     word: "生命",
     pinyin: "",
     translation: "生命",
@@ -8469,6 +8967,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "515",
+    hskLevel: 4 as const,
     word: "生活",
     pinyin: "",
     translation: "生活",
@@ -8486,6 +8985,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "516",
+    hskLevel: 4 as const,
     word: "深",
     pinyin: "",
     translation: "深い",
@@ -8503,6 +9003,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "517",
+    hskLevel: 4 as const,
     word: "社会",
     pinyin: "",
     translation: "社会",
@@ -8520,6 +9021,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "518",
+    hskLevel: 4 as const,
     word: "沙发",
     pinyin: "",
     translation: "ソファ",
@@ -8537,6 +9039,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "519",
+    hskLevel: 4 as const,
     word: "说明",
     pinyin: "",
     translation: "説明",
@@ -8554,6 +9057,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "520",
+    hskLevel: 4 as const,
     word: "帅",
     pinyin: "",
     translation: "カッコいい",
@@ -8571,6 +9075,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "521",
+    hskLevel: 4 as const,
     word: "入口",
     pinyin: "",
     translation: "入口",
@@ -8588,6 +9093,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "522",
+    hskLevel: 4 as const,
     word: "日记",
     pinyin: "",
     translation: "日記",
@@ -8605,6 +9111,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "523",
+    hskLevel: 4 as const,
     word: "任务",
     pinyin: "",
     translation: "任務",
@@ -8622,6 +9129,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "524",
+    hskLevel: 4 as const,
     word: "任何",
     pinyin: "",
     translation: "いかなる、どのような",
@@ -8639,6 +9147,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "525",
+    hskLevel: 4 as const,
     word: "人民币",
     pinyin: "",
     translation: "人民元",
@@ -8656,6 +9165,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "526",
+    hskLevel: 4 as const,
     word: "软",
     pinyin: "",
     translation: "軟らかい",
@@ -8673,6 +9183,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "527",
+    hskLevel: 4 as const,
     word: "群",
     pinyin: "",
     translation: "群れ、群",
@@ -8690,6 +9201,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "528",
+    hskLevel: 4 as const,
     word: "气候",
     pinyin: "",
     translation: "気候",
@@ -8707,6 +9219,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "529",
+    hskLevel: 4 as const,
     word: "情况",
     pinyin: "",
     translation: "状況、事態",
@@ -8724,6 +9237,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "530",
+    hskLevel: 4 as const,
     word: "缺点",
     pinyin: "",
     translation: "欠点、短所",
@@ -8741,6 +9255,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "531",
+    hskLevel: 4 as const,
     word: "全部",
     pinyin: "",
     translation: "完成、全部",
@@ -8758,6 +9273,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "532",
+    hskLevel: 4 as const,
     word: "敲",
     pinyin: "",
     translation: "たたく",
@@ -8775,6 +9291,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "533",
+    hskLevel: 4 as const,
     word: "签证",
     pinyin: "",
     translation: "査証、ビザ．",
@@ -8792,6 +9309,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "534",
+    hskLevel: 4 as const,
     word: "桥",
     pinyin: "",
     translation: "橋",
@@ -8809,6 +9327,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "535",
+    hskLevel: 4 as const,
     word: "墙",
     pinyin: "",
     translation: "壁",
@@ -8826,6 +9345,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "536",
+    hskLevel: 4 as const,
     word: "脾气",
     pinyin: "",
     translation: "気性、性質",
@@ -8843,6 +9363,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "537",
+    hskLevel: 4 as const,
     word: "瓶子",
     pinyin: "",
     translation: "ボトル",
@@ -8860,6 +9381,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "538",
+    hskLevel: 4 as const,
     word: "平时",
     pinyin: "",
     translation: "いつも",
@@ -8877,6 +9399,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "539",
+    hskLevel: 4 as const,
     word: "皮肤",
     pinyin: "",
     translation: "皮膚",
@@ -8894,6 +9417,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "540",
+    hskLevel: 4 as const,
     word: "篇",
     pinyin: "",
     translation: "本(文章を数える)",
@@ -8911,6 +9435,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "541",
+    hskLevel: 4 as const,
     word: "农村",
     pinyin: "",
     translation: "農村、田舎",
@@ -8928,6 +9453,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "542",
+    hskLevel: 4 as const,
     word: "内容",
     pinyin: "",
     translation: "内容",
@@ -8945,6 +9471,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "543",
+    hskLevel: 4 as const,
     word: "能力",
     pinyin: "",
     translation: "能力",
@@ -8962,6 +9489,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "544",
+    hskLevel: 4 as const,
     word: "年龄",
     pinyin: "",
     translation: "年齢",
@@ -8979,6 +9507,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "545",
+    hskLevel: 4 as const,
     word: "目的",
     pinyin: "",
     translation: "目的",
@@ -8996,6 +9525,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "546",
+    hskLevel: 4 as const,
     word: "密码",
     pinyin: "",
     translation: "パスワード",
@@ -9013,6 +9543,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "547",
+    hskLevel: 4 as const,
     word: "民族",
     pinyin: "",
     translation: "国家、民族",
@@ -9030,6 +9561,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "548",
+    hskLevel: 4 as const,
     word: "美丽",
     pinyin: "",
     translation: "美しい",
@@ -9047,6 +9579,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "549",
+    hskLevel: 4 as const,
     word: "梦",
     pinyin: "",
     translation: "夢",
@@ -9064,6 +9597,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "550",
+    hskLevel: 4 as const,
     word: "毛巾",
     pinyin: "",
     translation: "タオル",
@@ -9081,6 +9615,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "551",
+    hskLevel: 4 as const,
     word: "理想",
     pinyin: "",
     translation: "理想的",
@@ -9098,6 +9633,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "552",
+    hskLevel: 4 as const,
     word: "礼貌",
     pinyin: "",
     translation: "礼儀",
@@ -9115,6 +9651,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "553",
+    hskLevel: 4 as const,
     word: "冷静",
     pinyin: "",
     translation: "冷静だ",
@@ -9132,6 +9669,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "554",
+    hskLevel: 4 as const,
     word: "垃圾桶",
     pinyin: "",
     translation: "ゴミ箱",
@@ -9149,6 +9687,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "555",
+    hskLevel: 4 as const,
     word: "老虎",
     pinyin: "",
     translation: "虎",
@@ -9166,6 +9705,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "556",
+    hskLevel: 4 as const,
     word: "浪漫",
     pinyin: "",
     translation: "ロマンチック",
@@ -9183,6 +9723,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "557",
+    hskLevel: 4 as const,
     word: "浪费",
     pinyin: "",
     translation: "浪費する",
@@ -9200,6 +9741,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "558",
+    hskLevel: 4 as const,
     word: "流利",
     pinyin: "",
     translation: "流暢だ",
@@ -9217,6 +9759,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "559",
+    hskLevel: 4 as const,
     word: "亮",
     pinyin: "",
     translation: "明るい",
@@ -9234,6 +9777,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "560",
+    hskLevel: 4 as const,
     word: "凉快",
     pinyin: "",
     translation: "涼しい",
@@ -9251,6 +9795,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "561",
+    hskLevel: 4 as const,
     word: "困难",
     pinyin: "",
     translation: "困難",
@@ -9268,6 +9813,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "562",
+    hskLevel: 4 as const,
     word: "空气",
     pinyin: "",
     translation: "空気",
@@ -9285,6 +9831,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "563",
+    hskLevel: 4 as const,
     word: "咳嗽",
     pinyin: "",
     translation: "咳",
@@ -9302,6 +9849,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "564",
+    hskLevel: 4 as const,
     word: "距离",
     pinyin: "",
     translation: "距離",
@@ -9319,6 +9867,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "565",
+    hskLevel: 4 as const,
     word: "京剧",
     pinyin: "",
     translation: "京劇",
@@ -9336,6 +9885,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "566",
+    hskLevel: 4 as const,
     word: "积极",
     pinyin: "",
     translation: "積極的な、ポジティブな",
@@ -9353,6 +9903,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "567",
+    hskLevel: 4 as const,
     word: "紧张",
     pinyin: "",
     translation: "緊張",
@@ -9370,6 +9921,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "568",
+    hskLevel: 4 as const,
     word: "禁止",
     pinyin: "",
     translation: "禁止",
@@ -9387,6 +9939,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "569",
+    hskLevel: 4 as const,
     word: "镜子",
     pinyin: "",
     translation: "鏡",
@@ -9404,6 +9957,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "570",
+    hskLevel: 4 as const,
     word: "竞争",
     pinyin: "",
     translation: "競争",
@@ -9421,6 +9975,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "571",
+    hskLevel: 4 as const,
     word: "结果",
     pinyin: "",
     translation: "結果",
@@ -9438,6 +9993,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "572",
+    hskLevel: 4 as const,
     word: "加油站",
     pinyin: "",
     translation: "ガソリンスタンド",
@@ -9455,6 +10011,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "573",
+    hskLevel: 4 as const,
     word: "交通",
     pinyin: "",
     translation: "交通",
@@ -9472,6 +10029,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "574",
+    hskLevel: 4 as const,
     word: "将来",
     pinyin: "",
     translation: "将来",
@@ -9489,6 +10047,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "575",
+    hskLevel: 4 as const,
     word: "家具",
     pinyin: "",
     translation: "家具",
@@ -9506,6 +10065,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "576",
+    hskLevel: 4 as const,
     word: "假",
     pinyin: "",
     translation: "偽物",
@@ -9523,6 +10083,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "577",
+    hskLevel: 4 as const,
     word: "价格",
     pinyin: "",
     translation: "価格",
@@ -9540,6 +10101,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "578",
+    hskLevel: 4 as const,
     word: "厚",
     pinyin: "",
     translation: "厚い",
@@ -9557,6 +10119,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "579",
+    hskLevel: 4 as const,
     word: "盒子",
     pinyin: "",
     translation: "箱",
@@ -9574,6 +10137,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "580",
+    hskLevel: 4 as const,
     word: "合格",
     pinyin: "",
     translation: "合格する",
@@ -9591,6 +10155,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "581",
+    hskLevel: 4 as const,
     word: "好处",
     pinyin: "",
     translation: "メリット",
@@ -9608,6 +10173,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "582",
+    hskLevel: 4 as const,
     word: "海洋",
     pinyin: "",
     translation: "海洋",
@@ -9625,6 +10191,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "583",
+    hskLevel: 4 as const,
     word: "号码",
     pinyin: "",
     translation: "番号",
@@ -9642,6 +10209,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "584",
+    hskLevel: 4 as const,
     word: "害羞",
     pinyin: "",
     translation: "恥ずかしがる",
@@ -9659,6 +10227,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "585",
+    hskLevel: 4 as const,
     word: "寒假",
     pinyin: "",
     translation: "冬休み",
@@ -9676,6 +10245,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "586",
+    hskLevel: 4 as const,
     word: "火",
     pinyin: "",
     translation: "火災",
@@ -9693,6 +10263,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "587",
+    hskLevel: 4 as const,
     word: "活泼",
     pinyin: "",
     translation: "活発",
@@ -9710,6 +10281,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "588",
+    hskLevel: 4 as const,
     word: "回忆",
     pinyin: "",
     translation: "記憶",
@@ -9727,6 +10299,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "589",
+    hskLevel: 4 as const,
     word: "公里",
     pinyin: "",
     translation: "キロ、km",
@@ -9744,6 +10317,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "590",
+    hskLevel: 4 as const,
     word: "购物",
     pinyin: "",
     translation: "買い物",
@@ -9761,6 +10335,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "591",
+    hskLevel: 4 as const,
     word: "个子",
     pinyin: "",
     translation: "身長、背格好",
@@ -9778,6 +10353,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "592",
+    hskLevel: 4 as const,
     word: "干燥",
     pinyin: "",
     translation: "乾燥している",
@@ -9795,6 +10371,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "593",
+    hskLevel: 4 as const,
     word: "干杯",
     pinyin: "",
     translation: "乾杯",
@@ -9812,6 +10389,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "594",
+    hskLevel: 4 as const,
     word: "国际",
     pinyin: "",
     translation: "国際",
@@ -9829,6 +10407,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "595",
+    hskLevel: 4 as const,
     word: "观众",
     pinyin: "",
     translation: "聴衆",
@@ -9846,6 +10425,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "596",
+    hskLevel: 4 as const,
     word: "关键",
     pinyin: "",
     translation: "要、鍵",
@@ -9863,6 +10443,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "597",
+    hskLevel: 4 as const,
     word: "光",
     pinyin: "",
     translation: "明かり/〜し尽くす",
@@ -9880,6 +10461,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "598",
+    hskLevel: 4 as const,
     word: "复杂",
     pinyin: "",
     translation: "複雑",
@@ -9897,6 +10479,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "599",
+    hskLevel: 4 as const,
     word: "复印",
     pinyin: "",
     translation: "コピーする",
@@ -9914,6 +10497,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "600",
+    hskLevel: 4 as const,
     word: "富",
     pinyin: "",
     translation: "豊か",
@@ -9931,6 +10515,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "601",
+    hskLevel: 4 as const,
     word: "否则",
     pinyin: "",
     translation: "さもなければ",
@@ -9948,6 +10533,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "602",
+    hskLevel: 4 as const,
     word: "风景",
     pinyin: "",
     translation: "風景",
@@ -9965,6 +10551,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "603",
+    hskLevel: 4 as const,
     word: "丰富",
     pinyin: "",
     translation: "豊富",
@@ -9982,6 +10569,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "604",
+    hskLevel: 4 as const,
     word: "方向",
     pinyin: "",
     translation: "方向",
@@ -9999,6 +10587,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "605",
+    hskLevel: 4 as const,
     word: "方面",
     pinyin: "",
     translation: "方面、領域",
@@ -10016,6 +10605,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "606",
+    hskLevel: 4 as const,
     word: "方法",
     pinyin: "",
     translation: "方法",
@@ -10033,6 +10623,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "607",
+    hskLevel: 4 as const,
     word: "心情",
     pinyin: "",
     translation: "気持ち、気分",
@@ -10050,6 +10641,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "608",
+    hskLevel: 4 as const,
     word: "感谢",
     pinyin: "",
     translation: "感謝",
@@ -10067,6 +10659,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "609",
+    hskLevel: 4 as const,
     word: "精神",
     pinyin: "",
     translation: "精神/元気がある",
@@ -10084,6 +10677,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "610",
+    hskLevel: 4 as const,
     word: "可怜",
     pinyin: "",
     translation: "かわいそう",
@@ -10101,6 +10695,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "611",
+    hskLevel: 4 as const,
     word: "可惜",
     pinyin: "",
     translation: "惜しい、残念である",
@@ -10118,6 +10713,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "612",
+    hskLevel: 4 as const,
     word: "困",
     pinyin: "",
     translation: "眠い",
@@ -10135,6 +10731,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "613",
+    hskLevel: 4 as const,
     word: "难受",
     pinyin: "",
     translation: "苦しい、つらい",
@@ -10152,6 +10749,7 @@ export const mockWords: Word[] = [
   },
   {
     id: "614",
+    hskLevel: 4 as const,
     word: "轻松",
     pinyin: "",
     translation: "リラックス",
