@@ -3,7 +3,6 @@ import { View, StyleSheet, Pressable, Alert, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { Image } from "expo-image";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect } from "@react-navigation/native";
@@ -16,8 +15,6 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
 import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel } from "@/lib/storage";
-
-const avatarDefault = require("../../assets/images/avatar-default.png");
 
 const HSK_LEVELS: HskLevel[] = [1, 2, 3, 4, 5, 6];
 
@@ -55,14 +52,33 @@ export default function ProfileScreen() {
     }, [loadData])
   );
 
-  const handleLevelChange = async (level: HskLevel) => {
+  const handleLevelChange = (level: HskLevel) => {
+    if (level === selectedLevel) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setSelectedLevel(level);
-    setLoading(true);
-    await setSelectedHskLevel(level);
-    const data = await getWords();
-    setWords(data);
-    setLoading(false);
+
+    const performChange = async () => {
+      setSelectedLevel(level);
+      setLoading(true);
+      await setSelectedHskLevel(level);
+      const data = await getWords();
+      setWords(data);
+      setLoading(false);
+    };
+
+    if (Platform.OS === "web") {
+      if (confirm(`HSK ${level}級に切り替えますか？`)) {
+        performChange();
+      }
+    } else {
+      Alert.alert(
+        "級の切り替え",
+        `HSK ${level}級に切り替えますか？`,
+        [
+          { text: "キャンセル", style: "cancel" },
+          { text: "切り替え", onPress: performChange },
+        ]
+      );
+    }
   };
 
   const totalWords = words.length;
@@ -124,14 +140,6 @@ export default function ProfileScreen() {
       ]}
       scrollIndicatorInsets={{ bottom: insets.bottom }}
     >
-      <View style={styles.avatarSection}>
-        <Image source={avatarDefault} style={styles.avatar} contentFit="cover" />
-        <ThemedText style={styles.userName}>学習者</ThemedText>
-        <ThemedText style={[styles.userSubtitle, { color: theme.textSecondary }]}>
-          単語マスターを目指して
-        </ThemedText>
-      </View>
-
       <View style={styles.levelRow}>
         <ThemedText style={[styles.levelLabel, { color: theme.textSecondary }]}>HSK</ThemedText>
         {HSK_LEVELS.map((level) => {
@@ -319,26 +327,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: Spacing.lg,
-  },
-  avatarSection: {
-    alignItems: "center",
-    marginBottom: Spacing["2xl"],
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: Spacing.md,
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-    marginBottom: Spacing.xs,
-  },
-  userSubtitle: {
-    fontSize: 14,
-    fontFamily: "Nunito_400Regular",
   },
   levelRow: {
     flexDirection: "row",
