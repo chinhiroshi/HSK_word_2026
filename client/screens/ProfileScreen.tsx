@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -15,6 +16,24 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
 import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel } from "@/lib/storage";
+
+const HSK_AVATARS: Record<HskLevel, any> = {
+  1: require("../../assets/images/avatar-hsk1.png"),
+  2: require("../../assets/images/avatar-hsk2.png"),
+  3: require("../../assets/images/avatar-hsk3.png"),
+  4: require("../../assets/images/avatar-hsk4.png"),
+  5: require("../../assets/images/avatar-hsk5.png"),
+  6: require("../../assets/images/avatar-hsk6.png"),
+};
+
+const HSK_TITLES: Record<HskLevel, string> = {
+  1: "入門者",
+  2: "初級者",
+  3: "中級者",
+  4: "上級者",
+  5: "達人",
+  6: "マスター",
+};
 
 const HSK_LEVELS: HskLevel[] = [1, 2, 3, 4, 5, 6];
 
@@ -140,6 +159,11 @@ export default function ProfileScreen() {
       ]}
       scrollIndicatorInsets={{ bottom: insets.bottom }}
     >
+      <View style={styles.avatarSection}>
+        <Image source={HSK_AVATARS[selectedLevel]} style={styles.avatar} contentFit="cover" />
+        <ThemedText style={styles.userName}>HSK {selectedLevel}級 - {HSK_TITLES[selectedLevel]}</ThemedText>
+      </View>
+
       <View style={styles.levelRow}>
         <ThemedText style={[styles.levelLabel, { color: theme.textSecondary }]}>HSK</ThemedText>
         {HSK_LEVELS.map((level) => {
@@ -327,6 +351,21 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: Spacing.lg,
+  },
+  avatarSection: {
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: Spacing.sm,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   levelRow: {
     flexDirection: "row",
