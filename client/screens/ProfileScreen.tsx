@@ -253,10 +253,6 @@ export default function ProfileScreen() {
         <ThemedText style={styles.quoteText}>
           {HSK_QUOTES[selectedLevel].original}
         </ThemedText>
-        <ThemedText style={[styles.quoteSource, { color: theme.textSecondary }]}>
-          {'― '}
-          {HSK_QUOTES[selectedLevel].source}
-        </ThemedText>
         <View style={styles.quoteActions}>
           <Pressable
             testID="button-speak-quote"
