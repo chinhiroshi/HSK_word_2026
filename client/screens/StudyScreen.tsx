@@ -15,6 +15,7 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -35,6 +36,7 @@ export default function StudyScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const { isGroupLocked } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -97,8 +99,12 @@ export default function StudyScreen() {
     return result;
   }, [words]);
 
-  const handleGroupPress = (group: WordGroup) => {
+  const handleGroupPress = (group: WordGroup, groupIndex: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (isGroupLocked(groupIndex)) {
+      navigation.navigate("Paywall");
+      return;
+    }
     navigation.navigate("WordList", {
       startIndex: group.startIndex,
       endIndex: group.endIndex,
@@ -112,54 +118,67 @@ export default function StudyScreen() {
     }
   };
 
-  const renderGroupItem = ({ item }: { item: WordGroup }) => {
+  const renderGroupItem = ({ item, index }: { item: WordGroup; index: number }) => {
     const totalInGroup = item.words.length;
     const neutralCount = totalInGroup - item.memorizedCount - item.unmemorizedCount;
+    const locked = isGroupLocked(index);
 
     return (
       <Pressable
-        onPress={() => handleGroupPress(item)}
+        onPress={() => handleGroupPress(item, index)}
         style={({ pressed }) => [
           styles.groupCard,
           {
             backgroundColor: theme.backgroundDefault,
             borderColor: theme.border,
-            opacity: pressed ? 0.9 : 1,
+            opacity: pressed ? 0.9 : locked ? 0.7 : 1,
             transform: [{ scale: pressed ? 0.98 : 1 }],
           },
         ]}
         testID={`group-${item.startIndex}`}
       >
         <View style={styles.groupHeader}>
-          <View style={[styles.groupIndex, { backgroundColor: theme.primary }]}>
+          <View style={[styles.groupIndex, { backgroundColor: locked ? theme.textSecondary : theme.primary }]}>
             <ThemedText style={styles.groupIndexText}>
               {item.startIndex}-{item.endIndex}
             </ThemedText>
           </View>
-          <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+          {locked ? (
+            <Feather name="lock" size={18} color={theme.textSecondary} />
+          ) : (
+            <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+          )}
         </View>
 
-        <View style={styles.statsRow}>
-          <View style={[styles.statBadge, { backgroundColor: `${Colors.light.success}20` }]}>
-            <Feather name="check" size={14} color={Colors.light.success} />
-            <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
-              {item.memorizedCount}
+        {locked ? (
+          <View style={styles.lockedRow}>
+            <ThemedText style={[styles.lockedText, { color: theme.textSecondary }]}>
+              プレミアムで解放
             </ThemedText>
           </View>
+        ) : (
+          <View style={styles.statsRow}>
+            <View style={[styles.statBadge, { backgroundColor: `${Colors.light.success}20` }]}>
+              <Feather name="check" size={14} color={Colors.light.success} />
+              <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
+                {item.memorizedCount}
+              </ThemedText>
+            </View>
 
-          <View style={[styles.statBadge, { backgroundColor: `${Colors.light.secondary}20` }]}>
-            <Feather name="flag" size={14} color={Colors.light.secondary} />
-            <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-              {item.unmemorizedCount}
-            </ThemedText>
-          </View>
+            <View style={[styles.statBadge, { backgroundColor: `${Colors.light.secondary}20` }]}>
+              <Feather name="flag" size={14} color={Colors.light.secondary} />
+              <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
+                {item.unmemorizedCount}
+              </ThemedText>
+            </View>
 
-          <View style={[styles.statBadge, { backgroundColor: theme.backgroundSecondary }]}>
-            <ThemedText style={[styles.statText, { color: theme.textSecondary }]}>
-              {neutralCount} 未学習
-            </ThemedText>
+            <View style={[styles.statBadge, { backgroundColor: theme.backgroundSecondary }]}>
+              <ThemedText style={[styles.statText, { color: theme.textSecondary }]}>
+                {neutralCount} 未学習
+              </ThemedText>
+            </View>
           </View>
-        </View>
+        )}
       </Pressable>
     );
   };
@@ -329,5 +348,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  lockedRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  lockedText: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
   },
 });

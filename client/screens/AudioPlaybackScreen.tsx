@@ -15,13 +15,17 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 export default function AudioPlaybackScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
+  const { isPremium, freeWordsLimit } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,11 +60,15 @@ export default function AudioPlaybackScreen() {
   }, [navigation, loadWords]);
 
   const playableWords = useMemo(() => {
-    if (filterUnmemorized) {
-      return words.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
+    let filtered = words;
+    if (!isPremium) {
+      filtered = filtered.slice(0, freeWordsLimit);
     }
-    return words;
-  }, [words, filterUnmemorized]);
+    if (filterUnmemorized) {
+      filtered = filtered.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
+    }
+    return filtered;
+  }, [words, filterUnmemorized, isPremium, freeWordsLimit]);
 
   const prevWordsLenRef = useRef(0);
   useEffect(() => {
@@ -317,6 +325,19 @@ export default function AudioPlaybackScreen() {
           </View>
         </View>
 
+        {!isPremium ? (
+          <Pressable
+            onPress={() => navigation.navigate("Paywall")}
+            style={[styles.premiumBanner, { backgroundColor: `${theme.primary}15`, borderColor: theme.primary }]}
+          >
+            <Feather name="lock" size={16} color={theme.primary} />
+            <ThemedText style={[styles.premiumBannerText, { color: theme.primary }]}>
+              無料版は最初の{freeWordsLimit}語のみ再生可能です
+            </ThemedText>
+            <Feather name="chevron-right" size={16} color={theme.primary} />
+          </Pressable>
+        ) : null}
+
         <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
           <ThemedText style={styles.sectionTitle}>再生</ThemedText>
 
@@ -502,6 +523,20 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
     color: "#FFFFFF",
+  },
+  premiumBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.lg,
+  },
+  premiumBannerText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
   },
   playerCard: {
     borderRadius: BorderRadius.lg,

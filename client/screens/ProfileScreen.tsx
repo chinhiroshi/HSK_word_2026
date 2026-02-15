@@ -17,6 +17,10 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
 import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel } from "@/lib/storage";
 import { speakChinese } from "@/lib/speech";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
   1: require("../../assets/images/avatar-hsk1.png"),
@@ -98,6 +102,8 @@ export default function ProfileScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
+  const { isPremium } = useSubscription();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -349,6 +355,51 @@ export default function ProfileScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      {!isPremium ? (
+        <Pressable
+          testID="button-upgrade-premium"
+          onPress={() => navigation.navigate("Paywall")}
+          style={[
+            styles.subscriptionCard,
+            { backgroundColor: theme.primary, borderColor: theme.primary },
+          ]}
+        >
+          <View style={styles.subscriptionContent}>
+            <View style={styles.subscriptionIcon}>
+              <Feather name="star" size={22} color="#FFFFFF" />
+            </View>
+            <View style={styles.subscriptionTextContainer}>
+              <ThemedText style={styles.subscriptionTitle}>プレミアムにアップグレード</ThemedText>
+              <ThemedText style={styles.subscriptionDesc}>
+                全単語をアンロック - ¥380/月
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.8)" />
+          </View>
+        </Pressable>
+      ) : (
+        <View
+          style={[
+            styles.subscriptionCard,
+            { backgroundColor: `${Colors.light.success}15`, borderColor: Colors.light.success },
+          ]}
+        >
+          <View style={styles.subscriptionContent}>
+            <View style={[styles.subscriptionIcon, { backgroundColor: `${Colors.light.success}30` }]}>
+              <Feather name="check-circle" size={22} color={Colors.light.success} />
+            </View>
+            <View style={styles.subscriptionTextContainer}>
+              <ThemedText style={[styles.subscriptionTitle, { color: Colors.light.success }]}>
+                プレミアム会員
+              </ThemedText>
+              <ThemedText style={[styles.subscriptionDesc, { color: Colors.light.success }]}>
+                全機能がアンロック済み
+              </ThemedText>
+            </View>
+          </View>
+        </View>
+      )}
 
       {hasWordsForLevel ? (
         <>
@@ -619,6 +670,40 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     marginBottom: Spacing.xl,
+  },
+  subscriptionCard: {
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.lg,
+  },
+  subscriptionContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  subscriptionIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.md,
+  },
+  subscriptionTextContainer: {
+    flex: 1,
+  },
+  subscriptionTitle: {
+    fontSize: 15,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    color: "#FFFFFF",
+    marginBottom: 2,
+  },
+  subscriptionDesc: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    color: "rgba(255,255,255,0.8)",
   },
   emptyCard: {
     padding: Spacing["2xl"],

@@ -15,6 +15,7 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -30,10 +31,12 @@ interface GroupInfo {
 
 interface GroupCardProps {
   group: GroupInfo;
+  groupIndex: number;
+  locked: boolean;
   onPress: () => void;
 }
 
-function GroupCard({ group, onPress }: GroupCardProps) {
+function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
   const { theme } = useTheme();
   
   const progress = group.totalCount > 0 
@@ -45,56 +48,72 @@ function GroupCard({ group, onPress }: GroupCardProps) {
       onPress={onPress}
       style={[
         styles.groupCard,
-        { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+        { 
+          backgroundColor: theme.backgroundDefault, 
+          borderColor: theme.border,
+          opacity: locked ? 0.7 : 1,
+        },
       ]}
     >
       <View style={styles.groupHeader}>
-        <View style={[styles.groupIconContainer, { backgroundColor: `${theme.primary}15` }]}>
-          <Feather name="headphones" size={20} color={theme.primary} />
+        <View style={[styles.groupIconContainer, { backgroundColor: locked ? `${theme.textSecondary}15` : `${theme.primary}15` }]}>
+          <Feather name={locked ? "lock" : "headphones"} size={20} color={locked ? theme.textSecondary : theme.primary} />
         </View>
         <View style={styles.groupInfo}>
           <ThemedText style={styles.groupTitle}>
             {group.startIndex} - {group.endIndex}
           </ThemedText>
-          <View style={styles.progressBarContainer}>
-            <View 
-              style={[
-                styles.progressBar, 
-                { backgroundColor: theme.backgroundSecondary }
-              ]}
-            >
+          {locked ? (
+            <ThemedText style={[styles.lockedText, { color: theme.textSecondary }]}>
+              プレミアムで解放
+            </ThemedText>
+          ) : (
+            <View style={styles.progressBarContainer}>
               <View 
                 style={[
-                  styles.progressFill, 
-                  { 
-                    width: `${progress}%`,
-                    backgroundColor: Colors.light.success,
-                  }
-                ]} 
-              />
+                  styles.progressBar, 
+                  { backgroundColor: theme.backgroundSecondary }
+                ]}
+              >
+                <View 
+                  style={[
+                    styles.progressFill, 
+                    { 
+                      width: `${progress}%`,
+                      backgroundColor: Colors.light.success,
+                    }
+                  ]} 
+                />
+              </View>
+              <ThemedText style={[styles.progressText, { color: theme.textSecondary }]}>
+                {progress}%
+              </ThemedText>
             </View>
-            <ThemedText style={[styles.progressText, { color: theme.textSecondary }]}>
-              {progress}%
+          )}
+        </View>
+        {locked ? (
+          <Feather name="lock" size={18} color={theme.textSecondary} />
+        ) : (
+          <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+        )}
+      </View>
+      
+      {locked ? null : (
+        <View style={styles.statsRow}>
+          <View style={styles.statItem}>
+            <Feather name="check-circle" size={14} color={Colors.light.success} />
+            <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
+              {group.memorizedCount}
+            </ThemedText>
+          </View>
+          <View style={styles.statItem}>
+            <Feather name="flag" size={14} color={Colors.light.secondary} />
+            <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
+              {group.needsWorkCount}
             </ThemedText>
           </View>
         </View>
-        <Feather name="chevron-right" size={20} color={theme.textSecondary} />
-      </View>
-      
-      <View style={styles.statsRow}>
-        <View style={styles.statItem}>
-          <Feather name="check-circle" size={14} color={Colors.light.success} />
-          <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
-            {group.memorizedCount}
-          </ThemedText>
-        </View>
-        <View style={styles.statItem}>
-          <Feather name="flag" size={14} color={Colors.light.secondary} />
-          <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-            {group.needsWorkCount}
-          </ThemedText>
-        </View>
-      </View>
+      )}
     </Pressable>
   );
 }
@@ -105,6 +124,7 @@ export default function AudioLearningScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
+  const { isGroupLocked } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -172,16 +192,25 @@ export default function AudioLearningScreen() {
     return { total: words.length, memorized, needsWork };
   }, [words]);
 
-  const handleGroupPress = (group: GroupInfo) => {
+  const handleGroupPress = (group: GroupInfo, groupIndex: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (isGroupLocked(groupIndex)) {
+      navigation.navigate("Paywall");
+      return;
+    }
     navigation.navigate("AudioWordList", {
       startIndex: group.startIndex,
       endIndex: group.endIndex,
     });
   };
 
-  const renderGroupItem = ({ item }: { item: GroupInfo }) => (
-    <GroupCard group={item} onPress={() => handleGroupPress(item)} />
+  const renderGroupItem = ({ item, index }: { item: GroupInfo; index: number }) => (
+    <GroupCard 
+      group={item} 
+      groupIndex={index}
+      locked={isGroupLocked(index)}
+      onPress={() => handleGroupPress(item, index)} 
+    />
   );
 
   const renderEmpty = () => {
@@ -362,5 +391,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  lockedText: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
   },
 });
