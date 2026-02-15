@@ -5,8 +5,8 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import * as Speech from "expo-speech";
 import { useNavigation } from "@react-navigation/native";
+import { speakWithLanguage, stopSpeaking } from "@/lib/speech";
 
 const YOUTUBE_URL = "https://youtu.be/tW5tqaYRYm8?si=d2W2jqRre9F84A1T";
 
@@ -73,23 +73,7 @@ export default function AudioPlaybackScreen() {
   }, [playableWords.length]);
 
   const speak = (text: string, language: string): Promise<void> => {
-    return new Promise((resolve) => {
-      try {
-        Speech.speak(text, {
-          language,
-          rate: playbackRate,
-          onDone: resolve,
-          onError: (error) => {
-            console.warn("Speech playback error:", error);
-            resolve();
-          },
-          onStopped: resolve,
-        });
-      } catch (e) {
-        console.warn("Speech.speak threw:", e);
-        resolve();
-      }
-    });
+    return speakWithLanguage(text, language, playbackRate);
   };
 
   const delay = (ms: number): Promise<void> => {
@@ -178,7 +162,7 @@ export default function AudioPlaybackScreen() {
 
   const stopPlayback = () => {
     isCancelledRef.current = true;
-    Speech.stop();
+    stopSpeaking();
     setIsPlaying(false);
     setCurrentPhase("");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
