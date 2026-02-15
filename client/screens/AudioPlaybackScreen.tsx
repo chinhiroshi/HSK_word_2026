@@ -74,13 +74,21 @@ export default function AudioPlaybackScreen() {
 
   const speak = (text: string, language: string): Promise<void> => {
     return new Promise((resolve) => {
-      Speech.speak(text, {
-        language,
-        rate: playbackRate,
-        onDone: resolve,
-        onError: () => resolve(),
-        onStopped: resolve,
-      });
+      try {
+        Speech.speak(text, {
+          language,
+          rate: playbackRate,
+          onDone: resolve,
+          onError: (error) => {
+            console.warn("Speech playback error:", error);
+            resolve();
+          },
+          onStopped: resolve,
+        });
+      } catch (e) {
+        console.warn("Speech.speak threw:", e);
+        resolve();
+      }
     });
   };
 
