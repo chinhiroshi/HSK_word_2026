@@ -21,6 +21,15 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Sequence: Chinese 1x → Japanese 1x → Chinese example 2x → Japanese example 1x → Chinese example 2x → English 1x
   - Filter for unmemorized words only
   - Set start AND end position for playback range
+  - Free users limited to first 50 words; premium banner links to Paywall
+- **Subscription (Freemium Model)**:
+  - First 50 words per level are free (Group 1)
+  - Groups 2+ require ¥380/month subscription
+  - Locked groups show lock icon + "プレミアムで解放" text
+  - Tapping locked group opens Paywall modal
+  - SubscriptionContext manages state via AsyncStorage
+  - PaywallScreen shows features, price, subscribe/restore buttons
+  - ProfileScreen shows premium upgrade card or active subscription badge
 - **Word Detail**: View word details with example sentences
 - **Profile**: Track learning progress with separate statistics
   - HSK級セレクター (1〜6級): 学習する単語レベルを切り替え
