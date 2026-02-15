@@ -5,6 +5,7 @@ import WordDetailScreen from "@/screens/WordDetailScreen";
 import WordListScreen from "@/screens/WordListScreen";
 import AudioWordListScreen from "@/screens/AudioWordListScreen";
 import UnmemorizedListScreen from "@/screens/UnmemorizedListScreen";
+import PaywallScreen from "@/screens/PaywallScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 
 export type RootStackParamList = {
@@ -13,6 +14,7 @@ export type RootStackParamList = {
   WordList: { startIndex: number; endIndex: number };
   AudioWordList: { startIndex: number; endIndex: number };
   UnmemorizedList: { type: "text" | "audio" };
+  Paywall: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -54,6 +56,14 @@ export default function RootStackNavigator() {
         component={UnmemorizedListScreen}
         options={{
           presentation: "card",
+        }}
+      />
+      <Stack.Screen
+        name="Paywall"
+        component={PaywallScreen}
+        options={{
+          presentation: "modal",
+          headerTitle: "",
         }}
       />
     </Stack.Navigator>
