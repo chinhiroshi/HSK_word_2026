@@ -218,38 +218,6 @@ export default function ProfileScreen() {
         <ThemedText style={styles.userName}>HSK {selectedLevel}級 - {HSK_TITLES[selectedLevel]}</ThemedText>
       </View>
 
-      <View style={styles.levelRow}>
-        <ThemedText style={[styles.levelLabel, { color: theme.textSecondary }]}>HSK</ThemedText>
-        {HSK_LEVELS.map((level) => {
-          const isSelected = level === selectedLevel;
-          const hasData = mockWordsHasLevel(level);
-          return (
-            <Pressable
-              key={level}
-              testID={`button-hsk-level-${level}`}
-              style={[
-                styles.levelPill,
-                {
-                  backgroundColor: isSelected ? theme.primary : theme.backgroundDefault,
-                  borderColor: isSelected ? theme.primary : theme.border,
-                  opacity: hasData ? 1 : 0.45,
-                },
-              ]}
-              onPress={() => handleLevelChange(level)}
-            >
-              <ThemedText
-                style={[
-                  styles.levelPillText,
-                  { color: isSelected ? "#FFFFFF" : theme.text },
-                ]}
-              >
-                {level}
-              </ThemedText>
-            </Pressable>
-          );
-        })}
-      </View>
-
       <View
         style={[
           styles.quoteCard,
@@ -287,6 +255,38 @@ export default function ProfileScreen() {
             </ThemedText>
           </Pressable>
         </View>
+      </View>
+
+      <View style={styles.levelRow}>
+        <ThemedText style={[styles.levelLabel, { color: theme.textSecondary }]}>HSK</ThemedText>
+        {HSK_LEVELS.map((level) => {
+          const isSelected = level === selectedLevel;
+          const hasData = mockWordsHasLevel(level);
+          return (
+            <Pressable
+              key={level}
+              testID={`button-hsk-level-${level}`}
+              style={[
+                styles.levelPill,
+                {
+                  backgroundColor: isSelected ? theme.primary : theme.backgroundDefault,
+                  borderColor: isSelected ? theme.primary : theme.border,
+                  opacity: hasData ? 1 : 0.45,
+                },
+              ]}
+              onPress={() => handleLevelChange(level)}
+            >
+              <ThemedText
+                style={[
+                  styles.levelPillText,
+                  { color: isSelected ? "#FFFFFF" : theme.text },
+                ]}
+              >
+                {level}
+              </ThemedText>
+            </Pressable>
+          );
+        })}
       </View>
 
       <Modal
