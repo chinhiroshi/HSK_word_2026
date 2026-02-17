@@ -189,6 +189,28 @@ export default function WordDetailScreen() {
           </ThemedText>
         </View>
 
+        {word.longExample ? (
+          <View
+            style={[
+              styles.exampleCard,
+              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+            ]}
+          >
+            <View style={styles.exampleHeader}>
+              <ThemedText style={styles.sectionTitle}>長い例文</ThemedText>
+              <SpeakButton text={word.longExample} size="medium" />
+            </View>
+            <ThemedText style={styles.exampleSentence}>
+              {word.longExample}
+            </ThemedText>
+            {word.longExampleTranslation ? (
+              <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
+                {word.longExampleTranslation}
+              </ThemedText>
+            ) : null}
+          </View>
+        ) : null}
+
         <Pressable
           onPress={handleToggleMemorized}
           style={[

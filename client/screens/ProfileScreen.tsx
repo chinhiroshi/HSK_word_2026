@@ -92,7 +92,7 @@ const HSK_WORD_COUNTS: Record<HskLevel, number> = {
   1: 150,
   2: 150,
   3: 300,
-  4: 600,
+  4: 598,
   5: 1300,
   6: 2500,
 };

@@ -10,6 +10,8 @@ export interface Word {
   examplePinyin: string;
   exampleTranslation: string;
   exampleEnglish?: string;
+  longExample?: string;
+  longExampleTranslation?: string;
   isMemorized: boolean;
   unmemorizedCount: number;
   textMemorized: boolean;
