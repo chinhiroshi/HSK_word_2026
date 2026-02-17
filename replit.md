@@ -110,6 +110,8 @@ interface Word {
   examplePinyin: string;
   exampleTranslation: string;
   exampleEnglish?: string;   // Optional English example translation
+  longExample?: string;      // Extended example sentence (Chinese)
+  longExampleTranslation?: string; // Extended example translation (Japanese)
   // Dual memorization tracking
   textMemorized: boolean;         // Text memorization status
   textUnmemorizedCount: number;   // Text "needs work" counter
@@ -128,9 +130,10 @@ interface Word {
 
 ## Development Notes
 - Text-to-speech uses `zh-CN` locale for Mandarin Chinese
-- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "6"
+- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "7"
 - Per-level storage: `@chinese_master_words_hsk{N}` for each level, `@chinese_master_hsk_level` for selected level
-- Currently only HSK4 data available; other levels show "準備中" (coming soon)
+- HSK1 (150 words) and HSK4 (598 words) data available; other levels show "準備中" (coming soon)
+- HSK1 words include longExample and longExampleTranslation fields for extended example sentences
 - Dual memorization system: text (文字暗記) and audio (音声暗記) tracked separately
 - Three states per type: 暗記済み (memorized), 暗記必要 (needs work), 未暗記 (not started)
 - Mark logic accepts "text" or "audio" type parameter for storage functions
