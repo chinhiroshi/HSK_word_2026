@@ -27,8 +27,12 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Groups 2+ require ¥380/month subscription
   - Locked groups show lock icon + "プレミアムで解放" text
   - Tapping locked group opens Paywall modal
-  - SubscriptionContext manages state via AsyncStorage
-  - PaywallScreen shows features, price, subscribe/restore buttons
+  - SubscriptionContext manages state via RevenueCat SDK (react-native-purchases)
+  - RevenueCat handles purchase, restore, and entitlement checking ("premium" entitlement)
+  - API key passed via app.config.js extra → Constants.expoConfig.extra.revenueCatApiKey
+  - On web: RevenueCat runs in Preview API Mode (limited functionality expected)
+  - On iOS/Android via Expo Go: Full RevenueCat Preview API Mode with mock purchases
+  - PaywallScreen shows real pricing from RevenueCat offerings, with loading states
   - ProfileScreen shows premium upgrade card or active subscription badge
 - **Word Detail**: View word details with example sentences
 - **Profile**: Track learning progress with separate statistics
@@ -43,6 +47,7 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
 - **Frontend**: React Native with Expo
 - **Backend**: Express.js (minimal, for static serving)
 - **Storage**: AsyncStorage for local data persistence
+- **Subscription**: RevenueCat (react-native-purchases) for in-app purchases
 - **TTS**: expo-speech for Chinese pronunciation
 - **Fonts**: Nunito (Google Fonts)
 - **Icons**: Feather Icons (@expo/vector-icons)

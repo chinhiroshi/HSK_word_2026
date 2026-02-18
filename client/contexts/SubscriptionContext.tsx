@@ -57,12 +57,14 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   }, []);
 
   const initializeRevenueCat = async () => {
+    if (!REVENUECAT_API_KEY) {
+      console.warn("RevenueCat API key not configured");
+      setLoading(false);
+      return;
+    }
+
     try {
-      if (Platform.OS === "web") {
-        Purchases.configure({ apiKey: REVENUECAT_API_KEY });
-      } else {
-        Purchases.configure({ apiKey: REVENUECAT_API_KEY });
-      }
+      Purchases.configure({ apiKey: REVENUECAT_API_KEY });
 
       if (__DEV__) {
         Purchases.setLogLevel(LOG_LEVEL.DEBUG);
@@ -79,14 +81,18 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
           setCurrentOffering(offerings.current.identifier);
         }
       } catch (offerError) {
-        console.warn("Failed to load offerings:", offerError);
+        if (Platform.OS !== "web") {
+          console.warn("Failed to load offerings:", offerError);
+        }
       }
 
       Purchases.addCustomerInfoUpdateListener((info) => {
         checkPremiumStatus(info).then(setIsPremium);
       });
-    } catch (e) {
-      console.warn("RevenueCat initialization failed:", e);
+    } catch (e: any) {
+      if (Platform.OS !== "web") {
+        console.warn("RevenueCat initialization failed:", e);
+      }
     } finally {
       setLoading(false);
     }
