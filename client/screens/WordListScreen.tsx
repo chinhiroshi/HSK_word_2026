@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 
 import { WordCard } from "@/components/WordCard";
@@ -33,6 +34,7 @@ export default function WordListScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [showLongExample, setShowLongExample] = useState(true);
 
   const loadWords = useCallback(async () => {
     const data = await getWords();
@@ -116,6 +118,7 @@ export default function WordListScreen() {
       <WordCard
         word={item}
         index={originalIndex}
+        showLongExample={showLongExample}
         onPress={() => handleWordPress(item)}
         onMarkUnmemorized={() => handleMarkUnmemorized(item.id)}
         onClearMark={() => handleClearMark(item.id)}
@@ -213,6 +216,30 @@ export default function WordListScreen() {
               まだ ({stats.unmemorized})
             </ThemedText>
           </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShowLongExample(prev => !prev);
+            }}
+            style={[
+              styles.filterButton,
+              { backgroundColor: showLongExample ? theme.primary : theme.backgroundSecondary },
+            ]}
+            testID="toggle-long-example"
+          >
+            <View style={styles.toggleContent}>
+              <Feather name="file-text" size={14} color={showLongExample ? "#FFFFFF" : theme.textSecondary} />
+              <ThemedText
+                style={[
+                  styles.filterButtonText,
+                  { color: showLongExample ? "#FFFFFF" : theme.textSecondary },
+                ]}
+              >
+                長文
+              </ThemedText>
+            </View>
+          </Pressable>
         </ScrollView>
       </View>
 
@@ -262,6 +289,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  toggleContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   list: {
     flex: 1,

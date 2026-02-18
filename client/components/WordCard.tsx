@@ -19,6 +19,7 @@ import { getPinyin } from "@/lib/pinyin";
 interface WordCardProps {
   word: Word;
   index?: number;
+  showLongExample?: boolean;
   onPress: () => void;
   onMarkUnmemorized: () => void;
   onClearMark: () => void;
@@ -35,6 +36,7 @@ const springConfig: WithSpringConfig = {
 export function WordCard({ 
   word, 
   index, 
+  showLongExample = true,
   onPress, 
   onMarkUnmemorized, 
   onClearMark,
@@ -198,7 +200,7 @@ export function WordCard({
           <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
             {word.exampleSentence}
           </ThemedText>
-          {word.longExample ? (
+          {showLongExample && word.longExample ? (
             <ThemedText style={[styles.longExample, { color: theme.textSecondary }]} numberOfLines={1}>
               {word.longExample}
             </ThemedText>
