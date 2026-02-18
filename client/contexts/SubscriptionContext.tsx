@@ -2,8 +2,12 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Purchases, { PurchasesPackage, CustomerInfo, LOG_LEVEL } from "react-native-purchases";
+import Constants from "expo-constants";
 
-const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || "";
+const REVENUECAT_API_KEY =
+  Constants.expoConfig?.extra?.revenueCatApiKey ||
+  process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ||
+  "";
 const PREMIUM_ENTITLEMENT_ID = "premium";
 const FREE_WORDS_LIMIT = 50;
 

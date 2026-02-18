@@ -1,5 +1,5 @@
-import React from "react";
-import { View, StyleSheet, Pressable, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, StyleSheet, Pressable, ScrollView, ActivityIndicator } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
@@ -21,18 +21,42 @@ export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const { purchaseSubscription, restorePurchase, isPremium } = useSubscription();
+  const { purchaseSubscription, restorePurchase, isPremium, availablePackages, loading } = useSubscription();
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+
+  const monthlyPackage = availablePackages.find(
+    (pkg) => pkg.packageType === "MONTHLY"
+  ) || availablePackages[0];
+
+  const priceString = monthlyPackage?.product?.priceString || "¥380";
 
   const handlePurchase = async () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    await purchaseSubscription();
-    navigation.goBack();
+    if (purchasing) return;
+    setPurchasing(true);
+    try {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      const success = await purchaseSubscription(monthlyPackage);
+      if (success) {
+        navigation.goBack();
+      }
+    } finally {
+      setPurchasing(false);
+    }
   };
 
   const handleRestore = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    await restorePurchase();
-    navigation.goBack();
+    if (restoring) return;
+    setRestoring(true);
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      const success = await restorePurchase();
+      if (success) {
+        navigation.goBack();
+      }
+    } finally {
+      setRestoring(false);
+    }
   };
 
   return (
@@ -86,7 +110,7 @@ export default function PaywallScreen() {
         >
           <ThemedText style={styles.priceLabel}>月額プラン</ThemedText>
           <View style={styles.priceRow}>
-            <ThemedText style={styles.priceAmount}>¥380</ThemedText>
+            <ThemedText style={styles.priceAmount}>{priceString}</ThemedText>
             <ThemedText style={styles.pricePeriod}>/月</ThemedText>
           </View>
           <ThemedText style={styles.priceNote}>
@@ -97,22 +121,32 @@ export default function PaywallScreen() {
 
       <Pressable
         testID="button-subscribe"
-        style={[styles.subscribeButton, { backgroundColor: theme.primary }]}
+        style={[styles.subscribeButton, { backgroundColor: theme.primary, opacity: purchasing ? 0.7 : 1 }]}
         onPress={handlePurchase}
+        disabled={purchasing}
       >
-        <ThemedText style={styles.subscribeButtonText}>
-          サブスクリプションを開始
-        </ThemedText>
+        {purchasing ? (
+          <ActivityIndicator color="#FFFFFF" />
+        ) : (
+          <ThemedText style={styles.subscribeButtonText}>
+            サブスクリプションを開始
+          </ThemedText>
+        )}
       </Pressable>
 
       <Pressable
         testID="button-restore"
         style={styles.restoreButton}
         onPress={handleRestore}
+        disabled={restoring}
       >
-        <ThemedText style={[styles.restoreButtonText, { color: theme.primary }]}>
-          購入を復元
-        </ThemedText>
+        {restoring ? (
+          <ActivityIndicator color={theme.primary} size="small" />
+        ) : (
+          <ThemedText style={[styles.restoreButtonText, { color: theme.primary }]}>
+            購入を復元
+          </ThemedText>
+        )}
       </Pressable>
 
       <ThemedText style={[styles.disclaimer, { color: theme.textSecondary }]}>
