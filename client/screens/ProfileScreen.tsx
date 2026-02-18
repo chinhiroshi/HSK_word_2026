@@ -95,7 +95,7 @@ const HSK_WORD_COUNTS: Record<HskLevel, number> = {
   4: 598,
   5: 1300,
   6: 2500,
-};
+} as const;
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
