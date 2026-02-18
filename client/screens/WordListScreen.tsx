@@ -34,7 +34,7 @@ export default function WordListScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
-  const [showLongExample, setShowLongExample] = useState(true);
+  const [showLongExample, setShowLongExample] = useState(false);
 
   const loadWords = useCallback(async () => {
     const data = await getWords();
