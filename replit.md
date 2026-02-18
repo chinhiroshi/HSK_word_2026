@@ -130,9 +130,9 @@ interface Word {
 
 ## Development Notes
 - Text-to-speech uses `zh-CN` locale for Mandarin Chinese
-- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "8"
+- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "9"
 - Per-level storage: `@chinese_master_words_hsk{N}` for each level, `@chinese_master_hsk_level` for selected level
-- All HSK levels have data: HSK1 (150), HSK2 (150), HSK3 (300), HSK4 (598), HSK5 (1300), HSK6 (2500)
+- All HSK levels have data: HSK1 (150), HSK2 (150), HSK3 (300), HSK4 (600), HSK5 (1300), HSK6 (2500)
 - All HSK words include longExample and longExampleTranslation fields for extended example sentences
 - Dual memorization system: text (文字暗記) and audio (音声暗記) tracked separately
 - Three states per type: 暗記済み (memorized), 暗記必要 (needs work), 未暗記 (not started)

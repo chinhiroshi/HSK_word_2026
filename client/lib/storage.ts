@@ -5,7 +5,7 @@ import { mockWords } from "@/data/mockData";
 const HSK_LEVEL_KEY = "@chinese_master_hsk_level";
 const DATA_VERSION_PREFIX = "@chinese_master_data_version_hsk";
 const WORDS_KEY_PREFIX = "@chinese_master_words_hsk";
-const CURRENT_DATA_VERSION = "8";
+const CURRENT_DATA_VERSION = "9";
 
 const OLD_WORDS_KEY = "@chinese_master_words";
 const OLD_DATA_VERSION_KEY = "@chinese_master_data_version";

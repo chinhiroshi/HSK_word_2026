@@ -1,0 +1,601 @@
+﻿No.,Chinese,Pinyin,English,Japanese,Example,Example_Japanese,Example_English,Long_Example,Long_Example_Japanese
+1,爱情,ài qíng,romance; love (romantic); CL:个,恋愛,爱情让人快乐。,愛情は人を幸せにする。,Love makes people happy.,他们的爱情经过了很多困难，但最终还是走到了一起。,彼らの愛情は多くの困難を経験しましたが、最終的に一緒になりました。
+2,安排,ān pái,to arrange; to plan; to set up,手配,我安排了会议。,私は会議を手配した。,I arranged the meeting.,老师已经安排好了下周的考试时间和地点。,先生は来週の試験の時間と場所をすでに手配しました。
+3,安全,ān quán,safe; secure; safety; security,安全,请保证安全第一。,安全第一を必ず守ってください。,Please ensure safety first.,为了安全起见，大家都必须戴好安全帽。,安全のために、みんな安全帽を必ずかぶらなければなりません。
+4,按时,àn shí,on time; before deadline; on schedule,時間通りに,他总是按时来。,彼はいつも時間通りに来る。,He always comes on time.,请你按时完成作业，不要拖到最后一刻。,宿題は時間通りに終わらせて、最後の一瞬まで引き延ばさないでください。
+5,按照,àn zhào,according to; in accordance with; in the light of; on the basis of,〜に従って,按照计划行事。,計画に従って行動する。,Act according to the plan.,我们要按照老师的要求认真准备这次演讲。,私たちは先生の要求に従って、この発表を真剣に準備しなければなりません。
+6,百分之,bǎi fēn zhī,percent;,パーセント,成功率百分之九十。,成功率は90パーセントです。,The success rate is ninety percent.,这次考试我得了百分之九十的分数，非常满意。,今回の試験で私は90点を取り、とても満足しています。
+7,棒,bàng,a stick; club or cudgel; smart; capable; strong; wonderful; classifier for legs of a relay race,すばらしい,你表现得很棒。,あなたはとても素晴らしく振る舞った。,You performed very well.,你的表现非常棒，大家都为你鼓掌了。,君のパフォーマンスはとても素晴らしく、みんなが君に拍手を送りました。
+8,包子,bāo zi,steamed stuffed bun; CL:个,中華まん,早上我吃包子。,朝、私は包子を食べた。,I ate steamed buns in the morning.,早上我吃了几个热腾腾的包子，感觉很满足。,朝、私は熱々の肉まんをいくつか食べて、とても満足しました。
+9,保护,bǎo hù,to protect; to defend; to safeguard; protection; CL:种[zhong3],保護,保护环境很重要。,環境を保護することはとても重要だ。,Protecting the environment is very important.,我们应该保护环境，减少污染，共同努力。,私たちは環境を保護し、汚染を減らし、一緒に努力すべきです。
+10,保证,bǎo zhèng,guarantee; to guarantee; to ensure; to safeguard; to pledge; CL:个,保証,我保证按时完成。,私は時間通りに終わらせることを約束します。,I promise to finish on time.,公司保证所有产品都经过严格的质量检测。,会社はすべての製品が厳しい品質検査を通過していることを保証します。
+11,报名,bào míng,to sign up; to enter one's name; to apply; to register; to enroll; to enlist,申し込み,他报名了比赛。,彼は試合に申し込んだ。,He signed up for the competition.,如果你想参加比赛，请尽快报名。,もし大会に参加したいなら、できるだけ早く申し込んでください。
+12,抱,bào,to hold; to carry (in one's arms); to hug or embrace; surround; cherish,抱く,妈妈抱着宝宝。,お母さんは赤ちゃんを抱いている。,Mother is holding the baby.,妈妈抱着宝宝，温柔地哄他入睡。,お母さんは赤ちゃんを抱いて、優しくあやして寝かしつけました。
+13,抱歉,bào qiàn,sorry; We apologize!; to feel apologetic; to regret,すみません,我很抱歉迟到。,遅れて申し訳ありません。,I am very sorry for being late.,对不起，我迟到了，真的很抱歉。,すみません、遅刻しました。本当に申し訳ありません。
+14,倍,bèi,"(two, three etc) -fold; times (multiplier); double; to increase or multiply",倍,价格涨了两倍。,価格が2倍に上がった。,The price has doubled.,今年的销售额比去年增加了三倍，非常可喜。,今年の売上は去年の3倍に増え、とても喜ばしいです。
+15,本来,běn lái,original; originally; at first; it goes without saying; of course,もともと,本来计划很简单。,もともとの計画はとても簡単だった。,The original plan was very simple.,这本书本来是给孩子看的，但我自己也很喜欢。,この本はもともと子供向けですが、私自身もとても好きです。
+16,笨,bèn,stupid; foolish; silly; slow-witted; clumsy,ばか,我觉得自己笨。,自分はバカだと思う。,I think I am stupid.,他虽然有点笨，但学习非常努力。,彼は少しばかり頭が悪いですが、一生懸命勉強しています。
+17,比如,bǐ rú,for example; for instance; such as,例えば,比如说学汉语。,例えば中国語を学ぶこと。,"For example, learning Chinese.",你可以选择运动，比如篮球、足球或者游泳。,君は運動を選べます。例えばバスケットボール、サッカー、あるいは水泳などです。
+18,毕业,bì yè,to graduate; graduation; to finish school,卒業,他去年毕业了。,彼は去年卒業した。,He graduated last year.,他今年毕业后，打算去国外继续深造。,彼は今年卒業した後、海外でさらに勉強するつもりです。
+19,遍,biàn,a time; everywhere; turn; all over; one time,回数,我去过那里三遍。,そこに三回行ったことがある。,I have been there three times.,我已经看过这部电影三遍了，还是很喜欢。,私はこの映画をすでに3回見ましたが、やはりとても好きです。
+20,标准,biāo zhǔn,(an official) standard; norm; criterion; CL:个,基準,标准很高很严格。,基準は高くて厳しい。,The standards are high and strict.,公司的产品必须符合国家的质量标准。,会社の製品は国の品質基準に合致しなければなりません。
+21,表格,biǎo gé,"form; table; CL:张[zhang1] ,份[fen4]",フォーム,请填写表格。,フォームに記入してください。,Please fill out the form.,请你填写这张表格，然后交给老师。,この用紙に記入してから、先生に提出してください。
+22,表示,biǎo shì,to express; to show; to say; to state; to indicate; to mean,表す,他表示同意意见。,彼は意見に同意すると表明した。,He expressed agreement with the opinion.,他用微笑表示对大家的感谢和尊重。,彼は微笑みでみんなへの感謝と尊敬を表しました。
+23,表演,biǎo yǎn,play; show; performance; exhibition; to perform; to act; to demonstrate; CL:场[chang3],演技,她表演得很棒。,彼女の演技はとても素晴らしかった。,She performed wonderfully.,学校举办了一场精彩的表演，吸引了很多观众。,学校は素晴らしい演技を開催し、多くの観客を惹きつけました。
+24,表扬,biǎo yáng,to praise; to commend,ほめる,老师表扬了他。,先生は彼を褒めた。,The teacher praised him.,老师表扬了他的努力和进步，大家都很高兴。,先生は彼の努力と進歩を褒めて、みんながとても喜びました。
+25,饼干,bǐng gān,"biscuit; cracker; cookie; CL:片[pian4] ,块[kuai4]",ビスケット,我喜欢吃饼干。,私はクッキーを食べるのが好きだ。,I like eating cookies.,下午茶时间，我们一起吃了很多美味的饼干。,午後のお茶の時間に、私たちは一緒にたくさん美味しいクッキーを食べました。
+26,并且,bìng qiě,moreover; furthermore; in addition; besides; and,さらに,他努力学习，并且成功。,彼は一生懸命勉強し、そして成功した。,He studied hard and succeeded.,他不仅学习成绩好，并且在运动方面也很出色。,彼は勉強の成績が良いだけでなく、スポーツの面でも優れています。
+27,博士,bó shì,doctor; court academician (in feudal China); Ph.D.,博士,他是博士学位。,彼は博士号を持っている。,He has a doctoral degree.,她经过多年努力，终于获得了博士学位。,彼女は何年もの努力の末、ついに博士号を取得しました。
+28,不过,bú guò,only; merely; no more than; but; however; anyway (to get back to a previous topic),しかし,我想去，不过没时间。,行きたいけど、時間がない。,"I want to go, but I have no time.",这次考试不难，不过还是要认真复习。,今回の試験は難しくありませんが、やはりしっかり復習しなければなりません。
+29,不得不,bù dé bù,have no choice or option but to; cannot but; have to; can't help it; can't avoid,〜せざるを得ない,我不得不离开了。,私はどうしても出発しなければならなかった。,I had to leave.,因为生病，我不得不请假在家休息几天。,病気のため、私はやむを得ず数日間家で休むために休暇を取りました。
+30,不管,bù guǎn,"no matter (what, how); regardless of; no matter",〜に関係なく,不管天气如何去。,天気がどうであれ行く。,I will go no matter the weather.,不管遇到什么困难，我们都要坚持下去。,どんな困難に遭遇しても、私たちはあきらめずに続けなければなりません。
+31,不仅,bù jǐn,not only (this one); not just (...) but also,だけでなく,她不仅漂亮，还聪明。,彼女は美しいだけでなく、賢い。,She is not only beautiful but also smart.,他不仅会说英语，还能说法语和西班牙语。,彼は英語だけでなく、フランス語とスペイン語も話せます。
+32,部分,bù fen,part; share; section; piece; CL:个,部分,这部分很重要。,この部分はとても重要だ。,This part is very important.,这本书的内容分为几个部分，比较容易理解。,この本の内容はいくつかの部分に分かれており、比較的理解しやすいです。
+33,擦,cā,to wipe; to erase; rubbing (brush stroke in painting); to clean; to polish,拭く,请擦桌子干净。,テーブルをきれいに拭いてください。,Please wipe the table clean.,请用布把桌子上的灰尘擦干净。,布で机の上のほこりをきれいに拭いてください。
+34,猜,cāi,to guess,当てる,你能猜出答案吗？,あなたは答えを当てられますか？,Can you guess the answer?,我猜你今天一定会来参加聚会吧？,私はあなたが今日必ずパーティーに来るだろうと推測しています。
+35,材料,cái liào,"material; data; makings; stuff; CL:个,种[zhong3]",材料,准备好做菜材料。,料理の材料を準備する。,Prepare the ingredients for cooking.,请把所有材料准备好，明天开始上课。,すべての資料を準備して、明日から授業を始めてください。
+36,参观,cān guān,to look around; to inspect; visit and observe,見学,我们参观了博物馆。,私たちは博物館を見学した。,We visited the museum.,我们计划下个月去博物馆参观新的展览。,私たちは来月博物館に行って、新しい展示を見学する予定です。
+37,餐厅,cān tīng,"dining-hall; dining-room; restaurant; CL:间[jian1] ,家[jia1]",レストラン,餐厅里很热闹。,レストランはとても賑やかだ。,The restaurant is very lively.,这家餐厅的菜非常好吃，服务也很周到。,このレストランの料理はとても美味しく、サービスも行き届いています。
+38,厕所,cè suǒ,"toilet; lavatory; CL:间[jian1] ,处[chu4]",トイレ,厕所在哪里？,トイレはどこですか？,Where is the restroom?,请问厕所在哪里？我急着要去。,すみません、トイレはどこですか？急いでいます。
+39,差不多,chà bu duō,almost; nearly; more or less,ほとんど,他们差不多到了。,彼らはほぼ到着した。,They have almost arrived.,我们的想法差不多，可以一起合作完成任务。,私たちの考えはほぼ同じなので、一緒に協力して任務を完成できます。
+40,尝,cháng,to try (to taste); to experience; flavor; (past tense marker); already; formerly; ever; once; test,味わう,我想尝新菜。,新しい料理を試してみたい。,I want to try new dishes.,我第一次尝试了这道菜，味道非常特别。,私は初めてこの料理を味わいましたが、とても特別な味でした。
+41,长城,cháng chéng,the Great Wall,万里の長城,长城很有名。,万里の長城はとても有名だ。,The Great Wall is very famous.,长城是中国最著名的历史建筑之一，值得参观。,万里の長城は中国で最も有名な歴史的建造物の一つで、訪れる価値があります。
+42,长江,cháng jiāng,Changjiang river; Yangtze river,長江,长江是中国最长河流。,長江は中国で最も長い川だ。,The Yangtze River is the longest river in China.,长江是中国最长的河流，流经很多城市。,長江は中国で最も長い川で、多くの都市を流れています。
+43,场,chǎng,large place used for a specific purpose; stage; scene (of a play); threshing floor; classifier for sporting or recreational activities; classifier for number of exams,〜回,看了一场电影。,映画を一回見た。,Watched a movie.,这场比赛非常激烈，观众们都很兴奋。,この試合は非常に激しく、観客たちはみんな興奮していました。
+44,超过,chāo guò,to surpass; to exceed; to outstrip,超える,他的成绩超过我。,彼の成績は私を超えた。,His grades surpassed mine.,他的收入已经超过了去年的两倍，生活变好了。,彼の収入はすでに去年の2倍を超え、生活が良くなりました。
+45,乘坐,chéng zuò,to ride (in a vehicle),乗る,我乘坐火车去。,私は電車に乗って行く。,I go by train.,我们乘坐地铁去市中心，节省了很多时间。,私たちは地下鉄に乗って市の中心に行き、多くの時間を節約しました。
+46,成功,chéng gōng,"success; to succeed; CL:次[ci4] ,个",成功,他终于成功了。,彼はついに成功した。,He finally succeeded.,经过努力，他终于在考试中取得了成功。,努力の末、彼はついに試験で成功を収めました。
+47,成为,chéng wéi,to become; to turn into,〜になる,她成为了老师。,彼女は先生になった。,She became a teacher.,她希望将来成为一名医生，帮助更多的人。,彼女は将来医者になって、もっと多くの人を助けたいと思っています。
+48,诚实,chéng shí,honest; honesty; honorable; truthful,正直,他很诚实可靠。,彼はとても誠実で信頼できる。,He is very honest and reliable.,诚实是做人的基本原则，我们都应该坚持。,誠実さは人としての基本原則であり、私たちは皆守るべきです。
+49,吃惊,chī jīng,to be startled; to be shocked; to be amazed,びっくりする,我吃惊他的消息。,彼のニュースに驚いた。,I was surprised by his news.,听到这个消息后，他感到非常吃惊和激动。,この知らせを聞いて、彼は非常に驚き、感動しました。
+50,重新,chóng xīn,again; once more; re-,再び,请重新开始。,もう一度始めてください。,Please start again.,失败了没关系，我们可以重新开始，再接再厉。,失敗しても大丈夫です。私たちは再出発して、一層努力できます。
+51,抽烟,chōu yān,"to smoke (a cigarette, tobacco)",喫煙,他不喜欢抽烟。,彼はタバコを吸うのが好きではありません。,He doesn't like smoking.,他已经很多年不抽烟了，因为他知道抽烟对身体不好。,彼はもう何年もタバコを吸っていません、なぜならタバコが体に良くないと知っているからです。
+52,出差,chū chāi,to go on an official or business trip,出張,我下周出差北京。,私は来週北京へ出張します。,I will go on a business trip to Beijing next week.,经理下周要去上海出差，准备参加一个重要的会议。,マネージャーは来週上海へ出張に行き、重要な会議に参加する予定です。
+53,出发,chū fā,to start out; to set off,出発,我们明天出发去旅行。,私たちは明日旅行に出発します。,We will set off for a trip tomorrow.,我们决定明天早上七点从家里出发去机场。,私たちは明日の朝7時に家を出発して空港へ行くことにしました。
+54,出生,chū shēng,to be born,出生,他1990年出生。,彼は1990年に生まれました。,He was born in 1990.,他出生在一个美丽的小城市，那里有很多山和河流。,彼は美しい小さな町で生まれました。そこにはたくさんの山や川があります。
+55,出现,chū xiàn,to appear; to arise; to emerge; to show up,出現,问题突然出现了。,問題が突然現れました。,The problem suddenly appeared.,突然，问题出现在我们的计划里，需要马上解决。,突然、問題が私たちの計画に現れ、すぐに解決する必要があります。
+56,厨房,chú fáng,kitchen; CL:间[jian1],台所,妈妈在厨房做饭。,お母さんは台所で料理をしています。,Mom is cooking in the kitchen.,妈妈正在厨房里做饭，香味传遍了整个房子。,お母さんがキッチンで料理をしていて、いい香りが家中に広がっています。
+57,传真,chuán zhēn,fax; facsimile,FAX,我用传真发文件。,私はファックスで書類を送ります。,I send documents by fax.,请把合同传真给我，我需要尽快审核这些文件。,契約書をファックスで送ってください。私はできるだけ早くこれらの書類を確認する必要があります。
+58,窗户,chuāng hu,"window; CL:个,扇[shan4]",窓,请打开窗户通风。,窓を開けて換気してください。,Please open the window for ventilation.,请把窗户打开，让新鲜空气进来。,窓を開けて、新鮮な空気を入れてください。
+59,词语,cí yǔ,word (general term including monosyllables through to short phrases); term (e.g. technical term); expression,単語,这个词语很难懂。,この単語はとても分かりにくいです。,This word is very difficult to understand.,学习新词语对提高汉语水平非常重要。,新しい単語を学ぶことは中国語のレベルを上げるために非常に重要です。
+60,从来,cóng lái,always; at all times; never (if used in negative sentence),今まで,我从来没去过日本。,私は今まで一度も日本に行ったことがありません。,I have never been to Japan.,我从来没有去过那个城市，听说那里很漂亮。,私はその町に一度も行ったことがありませんが、そこはとてもきれいだと聞きました。
+61,粗心,cū xīn,careless; thoughtless,不注意,他做事很粗心。,彼は仕事がとても雑です。,He is very careless in doing things.,因为他太粗心，常常忘记带钥匙。,彼はとても不注意なので、よく鍵を持ってくるのを忘れます。
+62,存,cún,exist; deposit; store; keep; survive,預ける,我把钱存银行。,私はお金を銀行に預けます。,I deposit money in the bank.,请把重要的文件存到电脑的硬盘里。,重要な書類をコンピューターのハードディスクに保存してください。
+63,错误,cuò wù,error; mistake; mistaken; CL:个,間違い,他说错了一个错误。,彼は一つの間違いを言いました。,He said one mistake.,她在考试中发现了一个错误，及时改正了。,彼女は試験で間違いを見つけて、すぐに直しました。
+64,答案,dá àn,answer; solution; CL:个,答え,请给我答案。,答えをください。,Please give me the answer.,老师给了我们这道题的答案，我们可以参考学习。,先生はこの問題の答えを私たちにくれました。参考にして勉強できます。
+65,打扮,dǎ ban,to decorate; to dress; to make up; to adorn; manner of dressing; style of dress,おしゃれ,她喜欢打扮自己。,彼女は自分をおしゃれにするのが好きです。,She likes to dress up herself.,她今天特别用心打扮，参加朋友的生日聚会。,彼女は今日特におしゃれをして、友達の誕生日パーティーに参加します。
+66,打扰,dǎ rǎo,to disturb; to bother; to trouble,邪魔する,对不起，打扰你了。,すみません、お邪魔しました。,Sorry to bother you.,抱歉打扰您，能帮我看一下这个文件吗？,お忙しいところすみません、この書類を見ていただけますか？
+67,打印,dǎ yìn,to print; to seal; to stamp,印刷する,我需要打印文件。,私は書類を印刷する必要があります。,I need to print documents.,请先打印这份报告，然后交给经理审核。,まずこのレポートを印刷してから、マネージャーに確認してもらってください。
+68,打招呼,dǎ zhāo hu,to greet sb by word or action; to give prior notice,挨拶,他跟我打招呼。,彼は私に挨拶しました。,He greeted me.,见到老朋友时，我们总是热情地打招呼。,古い友達に会うとき、私たちはいつも熱心に挨拶します。
+69,打折,dǎ zhé,to give a discount,割引,商店正在打折。,店は割引中です。,The store is having a sale.,这个商店现在打折，很多商品都便宜了。,この店は今セール中で、多くの商品が安くなっています。
+70,打针,dǎ zhēn,to give or have an injection,注射,医生给我打针。,医者は私に注射をしました。,The doctor gave me an injection.,小孩发烧了，医生建议打针治疗。,子供が熱を出したので、医者は注射で治療することを勧めました。
+71,大概,dà gài,roughly; probably; rough; approximate; about,おおよそ,大概十个人参加。,だいたい10人が参加します。,About ten people participate.,他大概十分钟后会到，请你耐心等一会儿。,彼はおよそ10分後に到着しますので、少しの間辛抱して待ってください。
+72,大使馆,dà shǐ guǎn,"embassy; CL:座[zuo4] ,个",大使館,他在大使馆工作。,彼は大使館で働いています。,He works at the embassy.,如果护照丢了，请马上去大使馆申请新的证件。,パスポートをなくしたら、すぐに大使館に行って新しい証明書を申請してください。
+73,大约,dà yuē,approximately; about,約,会议大约下午三点。,会議はだいたい午後3時です。,The meeting is approximately at 3 p.m.,这次旅行大约花费了五千元，包括交通和住宿。,今回の旅行は交通費と宿泊費を含めて、約5000元かかりました。
+74,大夫,dài fu,"doctor; minister of state (in pre-Han states); CL:个,位[wei4]",医者,大夫很专业。,医者はとても専門的です。,The doctor is very professional.,大夫说我需要多休息，避免过度劳累。,医者は私にもっと休むように言い、過度の疲労を避けるように言いました。
+75,戴,dài,"to put on or wear (glasses, hat, gloves etc); to respect; to bear; to support",身につける,她戴着漂亮的帽子。,彼女はきれいな帽子をかぶっています。,She is wearing a beautiful hat.,他每天戴着眼镜工作，以保护视力。,彼は毎日眼鏡をかけて仕事をし、視力を守っています。
+76,当,dāng,to be; manage; withstand; when; during; ought; should; match equally; equal; same; obstruct; just at (a time or place); on the spot; right; just at,〜になる,他当老师已经五年。,彼は先生をしてもう5年になります。,He has been a teacher for five years.,我想当老师，因为我喜欢和学生一起学习。,私は先生になりたいです。なぜなら学生と一緒に学ぶのが好きだからです。
+77,当时,dāng shí,then; at that time; while,当時,当时我很忙。,その時、私はとても忙しかったです。,I was very busy at that time.,当时我正在开会，没有听到你的电话。,その時私は会議中で、あなたの電話に気づきませんでした。
+78,刀,dāo,knife; CL:把[ba3],ナイフ,厨房里有一把刀。,台所に一本の包丁があります。,There is a knife in the kitchen.,厨房里有一把锋利的刀，切菜非常方便。,キッチンには鋭い包丁があり、野菜を切るのにとても便利です。
+79,导游,dǎo yóu,tour guide; to conduct a tour; a guidebook,ガイド,导游介绍景点。,ガイドは観光地を紹介します。,The tour guide introduces the attractions.,导游带我们参观了很多有名的景点，讲解得很详细。,ガイドは私たちを多くの有名な観光地に案内し、とても詳しく説明してくれました。
+80,倒,dào,to move backwards; converse,さかさま,请不要把水倒掉。,水を捨てないでください。,Please do not pour out the water.,请小心倒热水，避免烫伤自己。,熱いお湯を注ぐときは注意してください。やけどしないように。
+81,到处,dào chù,in all places; everywhere,至る所,花开到处都是。,花があちこちに咲いています。,Flowers are blooming everywhere.,节日的时候，到处都是灯光和欢笑声，非常热闹。,祭りの時、あちこちに灯りと笑い声があって、とても賑やかです。
+82,到底,dào dǐ,finally; in the end; when all is said and done; after all; to the end; to the last,結局,他到底去了哪里？,彼は一体どこへ行ったのですか？,Where on earth did he go?,你到底喜欢吃什么菜？告诉我吧！,あなたは一体何の料理が好きですか？教えてください！
+83,道歉,dào qiàn,to apologize; to make an apology,謝る,我向你道歉。,私はあなたに謝ります。,I apologize to you.,因为迟到，他向老师诚恳地道歉了。,遅刻したため、彼は先生に誠実に謝りました。
+84,得,dé,"to have to, to need to (particle used to express capability, possibility, degree, effect...); must; ought to; to need to",得る,他得了奖学金。,彼は奨学金をもらいました。,He received a scholarship.,你得认真学习，这样才能取得好成绩。,真剣に勉強しなければなりません。そうすれば良い成績が取れます。
+85,得意,dé yì,proud of oneself; pleased with oneself; complacent,得意,他对自己很得意。,彼は自分にとても自信があります。,He is very proud of himself.,他完成了任务，非常得意地向大家展示成果。,彼は任務を終えて、とても得意そうにみんなに成果を見せました。
+86,登机牌,dēng jī pái,boarding pass,搭乗券,请出示登机牌。,搭乗券を提示してください。,Please show your boarding pass.,登机牌请提前打印，方便机场快速办理手续。,搭乗券はあらかじめ印刷してください。空港での手続きがスムーズになります。
+87,等,děng,etc (indicating the end of an enumeration),待つ,我在门口等你。,私は入口であなたを待っています。,I am waiting for you at the door.,我们在门口等了半个小时，还是没见到他。,私たちは玄関で30分待ちましたが、彼をまだ見かけません。
+88,低,dī,low; beneath; to lower (one's head); to let droop; to hang down; to incline,低い,这个楼层很低。,この階はとても低いです。,This floor is very low.,这个地方的温度比昨天低了很多，记得多穿衣服。,この場所の気温は昨日よりかなり低いので、忘れずに多く服を着てください。
+89,底,dǐ,background; bottom; base; the end of a period of time; towards the end of (last month),底,杯子底有水。,コップの底に水があります。,There is water at the bottom of the cup.,瓶子的底有一点水，可能没倒干净。,瓶の底に少し水が残っていて、きれいに注げなかったかもしれません。
+90,地点,dì diǎn,place; site; location; venue; CL:個|个[ge4];,場所,会议地点在酒店。,会議の場所はホテルです。,The meeting place is at the hotel.,会议的地点定在市中心的酒店，交通很方便。,会議の場所は市の中心にあるホテルに決まり、交通がとても便利です。
+91,地球,dì qiú,the Earth; planet; CL:个,地球,地球是我们的家。,地球は私たちの家です。,The Earth is our home.,地球是我们唯一的家，需要大家共同保护环境。,地球は私たちの唯一の家であり、みんなで環境を守る必要があります。
+92,地址,dì zhǐ,address; CL:个,住所,请告诉我你的地址。,あなたの住所を教えてください。,Please tell me your address.,请把你的详细地址写在表格上，我们会尽快寄过去。,あなたの詳しい住所を用紙に書いてください。できるだけ早く送ります。
+93,掉,diào,"to fall; to drop; to lag behind; to lose; to go missing; to reduce; fall (in prices); to lose (value, weight etc); to wag; to swing; to turn; to change; to exchange; to swap; to show off; to shed (hair)",落ちる,手机掉在地上。,携帯電話が地面に落ちました。,The mobile phone fell on the ground.,不小心手机从手里掉到了地上，屏幕碎了。,うっかり携帯が手から落ちて画面が割れてしまいました。
+94,调查,diào chá,"investigation; inquiry; to investigate; to survey; survey; (opinion) poll; CL:项[xiang4] ,个",調査,他们正在调查问题。,彼らは問題を調査しています。,They are investigating the problem.,公司正在调查客户的满意度，收集反馈意见。,会社は顧客の満足度を調査して、フィードバックを集めています。
+95,丢,diū,to lose; to put aside; to throw,なくす,我丢了钥匙。,私は鍵をなくしました。,I lost the key.,他把钱包丢了，里面有很多重要的证件。,彼は財布をなくしてしまい、中にはたくさんの重要な証明書が入っていました。
+96,动作,dòng zuò,movement; motion; action; CL:个,動作,他的动作很快。,彼の動きはとても速いです。,His movements are very fast.,学习舞蹈时，要注意动作的准确和优美。,ダンスを習うときは、動作の正確さと美しさに注意しなければなりません。
+97,堵车,dǔ chē,traffic jam; choking,渋滞,路上堵车很严重。,道路の渋滞がとてもひどいです。,The traffic jam on the road is very serious.,因为堵车，我们迟到了二十分钟，真不好意思。,渋滞のせいで私たちは20分遅刻し、本当に申し訳ないです。
+98,肚子,dù zi,belly; abdomen; stomach; CL:个,お腹,我肚子有点疼。,お腹が少し痛いです。,My stomach hurts a little.,吃了太多辣的东西，肚子疼得很厉害。,辛いものを食べ過ぎて、お腹がとても痛いです。
+99,短信,duǎn xìn,text message; SMS,ショートメール,我给你发短信。,私はあなたにショートメッセージを送ります。,I send you a text message.,他给我发了一条短信，告诉我明天的会议时间。,彼は私にショートメッセージを送り、明日の会議の時間を教えてくれました。
+100,对话,duì huà,dialog; CL:个,対話,请听对话录音。,会話の録音を聞いてください。,Please listen to the dialogue recording.,我们通过对话练习，提高了汉语口语能力。,私たちは対話を通じて練習し、中国語の会話能力を向上させました。
+101,对面,duì miàn,opposite,向かい側,学校就在我家对面。,学校は私の家の向かいにあります。,The school is right across from my house.,我的家就在学校对面，走路只需要五分钟。,私の家は学校の向かいにあり、歩いてわずか5分です。
+102,对于,duì yú,regarding; as far as sth is concerned; with regards to,〜について,对于这个问题，我们需要讨论。,この問題について、私たちは議論する必要があります。,We need to discuss this issue.,对于学习汉语，你需要多听多说才能进步。,中国語の勉強については、多く聞いて多く話すことが上達の鍵です。
+103,儿童,ér tóng,child; CL:个,子ども,儿童喜欢玩游戏。,子供たちはゲームをするのが好きです。,Children like to play games.,儿童在玩耍的时候，家长应该时刻注意安全。,子どもたちが遊んでいるとき、親は常に安全に注意しなければなりません。
+104,而,ér,yet (not); and; as well as; and so; but (not); (indicates causal relation); (indicates change of state); (indicates contrast),しかし,他喜欢音乐，而我喜欢运动。,彼は音楽が好きで、私はスポーツが好きです。,"He likes music, and I like sports.",他喜欢运动，而我更喜欢读书和写作。,彼はスポーツが好きですが、私は読書と執筆の方が好きです。
+105,发生,fā shēng,to happen; to occur; to take place; to break out,起こる,昨天晚上发生了事故。,昨夜事故が起きました。,An accident happened last night.,昨晚小区里发生了一起小偷事件，大家都很紧张。,昨晩、住宅地で泥棒事件が起きて、みんなとても緊張しました。
+106,发展,fā zhǎn,development; growth; to develop; to grow; to expand,発展,这个城市发展得很快。,この都市はとても速く発展しています。,This city is developing very quickly.,中国的经济发展速度非常快，吸引了很多外国投资。,中国の経済発展のスピードは非常に速く、多くの外国投資を引きつけています。
+107,法律,fǎ lv4,"law; CL:条[tiao2] , 套[tao4] , 个",法律,我们必须遵守法律。,私たちは法律を守らなければなりません。,We must abide by the law.,法律规定所有人都有平等的权利和义务。,法律はすべての人が平等な権利と義務を持つことを定めています。
+108,翻译,fān yì,"to translate; to interpret; translator; interpreter; translation; interpretation; CL:个,位[wei4] ,名[ming2]",翻訳,他会翻译中文文章。,彼は中国語の記事を翻訳できます。,He can translate Chinese articles.,这篇文章很长，我需要花时间仔细翻译。,この記事はとても長いので、時間をかけて丁寧に翻訳する必要があります。
+109,烦恼,fán nǎo,agonize; agony; annoyance; upset; vexation; worries,悩み,她有很多烦恼。,彼女はたくさんの悩みを持っています。,She has many troubles.,面对学习上的烦恼，我们应该积极寻求帮助解决问题。,勉強の悩みに直面したときは、積極的に助けを求めて問題を解決すべきです。
+110,反对,fǎn duì,to fight against; to oppose; to be opposed to; opposition,反対する,我反对你的意见。,私はあなたの意見に反対です。,I oppose your opinion.,我反对这个计划，因为它可能会带来很多风险。,私はこの計画に反対です。なぜなら多くのリスクをもたらす可能性があるからです。
+111,方法,fāng fǎ,method; way; means; CL:个,方法,学习汉语的方法很多。,中国語を学ぶ方法はたくさんあります。,There are many ways to learn Chinese.,解决问题的方法有很多，我们需要找到最合适的那个。,問題を解決する方法はたくさんありますが、私たちは最も適したものを見つける必要があります。
+112,方面,fāng miàn,respect; aspect; field; side; CL:个,面,他在学习方面很努力。,彼は勉強にとても努力しています。,He works very hard in his studies.,他在学习方面非常努力，所以成绩也很好。,彼は勉強の面で非常に努力しているので、成績も良いです。
+113,方向,fāng xiàng,direction; orientation; path to follow; CL:个,方向,请告诉我正确方向。,正しい方向を教えてください。,Please tell me the correct direction.,请告诉我去火车站的正确方向好吗？,駅に行く正しい方向を教えてもらえますか？
+114,房东,fáng dōng,landlord,家主,房东很友好。,家主はとても親切です。,The landlord is very friendly.,房东要求我们每个月按时交房租，不得拖欠。,大家さんは毎月家賃を期限通りに支払うよう求めており、遅延は許されません。
+115,放弃,fàng qì,to renounce; to abandon; to give up,あきらめる,不要轻易放弃梦想。,夢を簡単にあきらめないでください。,Don't give up your dreams easily.,虽然遇到困难，他从来没有想过放弃自己的梦想。,困難に直面しても、彼は自分の夢をあきらめようと思ったことは一度もありません。
+116,放暑假,fàng shǔ jià,take summer vacation,夏休みを取る,我们放暑假去旅行。,私たちは夏休みに旅行に行きます。,We go on a trip during summer vacation.,今年暑假我计划去北京旅游，放暑假真让人期待。,今年の夏休みは北京へ旅行に行く予定で、夏休みが本当に楽しみです。
+117,放松,fàng sōng,to loosen; to relax,リラックスする,运动可以帮助放松。,運動はリラックスに役立ちます。,Exercise can help you relax.,工作了一天后，听音乐可以帮助我们放松身心。,一日中働いた後、音楽を聴くことで心身をリラックスさせることができます。
+118,份,fèn,"part; share; portion; copy; classifier for gifts, newspaper, magazine, papers, reports, contracts etc",部分,我吃了一份蛋糕。,私はケーキを一切れ食べました。,I ate a piece of cake.,请给我一份菜单，我想点几道菜。,メニューを一部ください。料理を何品か注文したいです。
+119,丰富,fēng fù,rich; plentiful; abundant,豊富な,这里的资源很丰富。,ここの資源はとても豊富です。,The resources here are very abundant.,图书馆的书籍种类丰富，适合各种兴趣的人阅读。,図書館の蔵書は種類が豊富で、あらゆる興味を持つ人に適しています。
+120,否则,fǒu zé,if not; otherwise; else; or else,さもなければ,快点走，否则会迟到。,早く行って、さもないと遅刻しますよ。,"Hurry up, or you'll be late.",你必须按时完成作业，否则老师会批评你。,宿題は期限内に必ず終わらせなければなりません。そうしないと先生に叱られます。
+121,符合,fú hé,in keeping with; in accordance with; tallying with; in line with; to agree with; to accord with; to conform to; to correspond with; to manage; to handle,合う,他的兴趣符合我的。,彼の趣味は私の趣味に合っています。,His interests match mine.,他的行为符合公司的规定，没有违反任何纪律。,彼の行動は会社の規定に合致しており、いかなる規律にも違反していません。
+122,付款,fù kuǎn,pay; payment,支払う,请在出口付款。,出口で支払いをしてください。,Please pay at the exit.,请在付款前确认订单内容是否正确无误。,支払いの前に注文内容が正確かどうか確認してください。
+123,复印,fù yìn,to photocopy; to duplicate a document,コピーする,我需要复印这份文件。,この書類をコピーする必要があります。,I need to photocopy this document.,我需要复印几份文件，请问附近哪里有复印店？,書類を数部コピーする必要がありますが、近くにコピーショップはありますか？
+124,复杂,fù zá,complicated; complex,複雑な,这个问题很复杂。,この問題はとても複雑です。,This problem is very complicated.,这个问题比较复杂，需要大家一起讨论才能解决。,この問題はやや複雑で、みんなで話し合わないと解決できません。
+125,富,fù,rich; surname Fu,裕福な,他家很富有。,彼の家はとても裕福です。,His family is very wealthy.,他家很富有，但他为人非常谦虚和善良。,彼の家はとても裕福ですが、彼はとても謙虚で親切な人です。
+126,父亲,fù qīn,father; also pr. with light tone [fu4 qin5]; CL:个,父親,父亲很关心我。,父は私のことをとても気にかけています。,My father cares about me a lot.,父亲总是默默地支持我，让我感到很温暖。,父はいつも黙って私を支えてくれて、とても温かく感じます。
+127,负责,fù zé,to be in charge of; to take responsibility for; to be to blame; conscientious,責任を持つ,他负责这个项目。,彼はこのプロジェクトを担当しています。,He is responsible for this project.,他负责这个项目的全部工作，压力很大但很有成就感。,彼はこのプロジェクトの全ての仕事を担当しており、プレッシャーは大きいですが達成感もあります。
+128,改变,gǎi biàn,to change; to alter; to transform,変える,生活会改变很多。,生活は大きく変わるでしょう。,Life will change a lot.,生活中很多事情都会改变，我们要学会适应新的环境。,生活の中で多くのことが変わるので、私たちは新しい環境に適応することを学ばなければなりません。
+129,干杯,gān bēi,to drink a toast; Cheers! (proposing a toast); Here's to you!; Bottoms up!; lit. dry cup,乾杯,大家一起干杯吧！,みんなで乾杯しましょう！,Let's all toast together!,大家一起干杯，庆祝朋友的生日非常开心。,みんなで乾杯して、友達の誕生日を祝ってとても楽しかったです。
+130,感动,gǎn dòng,to move (sb); to touch (sb emotionally); moving,感動する,他的故事让我感动。,彼の話は私を感動させました。,His story moved me.,他的故事让我非常感动，眼泪都快流出来了。,彼の話にとても感動して、涙がもうすぐ出そうになりました。
+131,感觉,gǎn jué,to feel; to become aware of; feeling; sense; perception; CL:个,感じる,我感觉今天很热。,今日はとても暑いと感じます。,I feel very hot today.,我感觉这次考试比上次难很多，需要更加努力。,今回の試験は前回よりずっと難しかったと感じて、もっと努力が必要です。
+132,感情,gǎn qíng,"feeling; emotion; sensation; likes and dislikes; deep affection for sb or sth; relationship (i.e. love affair); CL:个,种[zhong3]",感情,他们有很深的感情。,彼らは深い感情を持っています。,They have deep feelings.,他们之间的感情非常深厚，互相支持着对方。,彼らの間の感情は非常に深く、お互いに支え合っています。
+133,感谢,gǎn xiè,(express) thanks; gratitude; grateful; thankful; thanks,感謝する,谢谢你的帮助，我很感谢。,助けてくれてありがとう、とても感謝しています。,"Thank you for your help, I really appreciate it.",感谢你的帮助，没有你我无法完成这项工作。,あなたの助けに感謝します。あなたがいなければこの仕事を終えることはできませんでした。
+134,敢,gǎn,to dare; daring; (polite) may I venture,勇気がある,你敢尝试吗？,あなたは挑戦する勇気がありますか？,Do you dare to try?,我敢保证这次考试你一定能取得好成绩。,私はこの試験であなたが必ず良い成績を取ると断言します。
+135,赶,gǎn,to overtake; to catch up with; to hurry; to rush; to try to catch (the bus etc); to drive (cattle etc) forward; to drive (sb) away; to avail oneself of (an opportunity); until;,急ぐ,我赶时间去上班。,私は急いで仕事に行きます。,I am rushing to work.,我们要赶快出发，否则会错过火车。,私たちは急いで出発しなければなりません。そうしないと電車に乗り遅れます。
+136,干,gàn,to do (some work); to manage; to work,する,你今天干什么？,今日は何をしますか？,What are you doing today?,他每天干很多工作，但从不抱怨，态度很好。,彼は毎日たくさんの仕事をしますが、一度も文句を言わず、態度も良いです。
+137,刚,gāng,just; barely; exactly; hard; firm; strong,ちょうど,我刚到家。,私はちょうど家に着いたところです。,I just got home.,我刚到办公室，还没来得及喝杯水。,私はちょうどオフィスに着いたばかりで、まだ水を一杯飲む時間もありません。
+138,高速公路,gāo sù gōng lù,expressway; highway; freeway,高速道路,高速公路很方便。,高速道路はとても便利です。,The highway is very convenient.,开车在高速公路上可以节省很多时间，但要注意安全。,高速道路を運転すると多くの時間を節約できますが、安全に注意しなければなりません。
+139,胳膊,gē bo,"arm; CL:只[zhi1] ,条[tiao2] ,双[shuang1]",腕,他的胳膊受伤了。,彼の腕はけがをしました。,His arm is injured.,他胳膊受伤了，所以这几天不能参加运动。,彼は腕をけがしたので、ここ数日は運動に参加できません。
+140,各,gè,each; every,それぞれ,各有各的想法。,それぞれにそれぞれの考えがあります。,Everyone has their own ideas.,各位同学请注意，明天的考试时间有所调整。,皆さんに注意してください、明日の試験時間が変更になりました。
+141,公里,gōng lǐ,kilometer,キロメートル,我家离学校五公里。,私の家は学校から5キロ離れています。,My house is five kilometers from the school.,从这里到市中心大约有十公里，开车需要二十分钟。,ここから市の中心まで約10キロで、車で20分かかります。
+142,功夫,gōng fu,skill; art; kung fu; labor; effort,功夫,他学习了很多功夫。,彼はたくさんの技術を学びました。,He has learned a lot of skills.,学好中文需要花很多功夫，但努力一定会有回报。,中国語を上手に学ぶには多くの時間と努力が必要ですが、頑張れば必ず報われます。
+143,工资,gōng zī,"wages; pay; CL:个,份[fen4] ,月[yue4]",給料,他的工资很高。,彼の給料はとても高いです。,His salary is very high.,这个月的工资已经发放了，你可以去银行领取。,今月の給料はすでに支払われているので、銀行で受け取ることができます。
+144,共同,gòng tóng,common; joint; jointly; together; collaborative,共通の,我们有共同的目标。,私たちは共通の目標を持っています。,We have a common goal.,我们共同完成了这个项目，大家都付出了很多努力。,私たちは一緒にこのプロジェクトを完成させ、みんなが多くの努力をしました。
+145,够,gòu,to reach; to be enough,十分な,时间够用吗？,時間は足りますか？,Is there enough time?,我觉得你说得不够清楚，需要再解释一下。,あなたの話は十分ではないと思います。もう少し説明が必要です。
+146,购物,gòu wù,shopping,買い物,我喜欢购物。,私は買い物が好きです。,I like shopping.,周末我喜欢去商场购物，买一些生活必需品。,週末はショッピングモールに買い物に行くのが好きで、生活必需品をいくつか買います。
+147,估计,gū jì,to estimate; to reckon; CL:个,見積もる,我估计他会迟到。,私は彼が遅刻するだろうと見込んでいます。,I estimate he will be late.,根据天气预报，明天估计会下雨，记得带伞。,天気予報によると、明日は雨が降ると予想されるので、傘を忘れないでください。
+148,鼓励,gǔ lì,to encourage,励ます,老师鼓励学生努力。,先生は生徒たちに努力を励まします。,The teacher encourages students to work hard.,老师鼓励我们多读书，提高自己的汉语水平。,先生は私たちにもっと本を読むよう励まし、中国語のレベルを上げるように言います。
+149,故意,gù yì,deliberately; on purpose,故意に,他故意迟到了。,彼はわざと遅刻しました。,He was deliberately late.,他不是故意迟到的，是路上遇到了交通堵塞。,彼は遅刻したのは故意ではなく、途中で交通渋滞に遭ったのです。
+150,顾客,gù kè,client; customer; CL:位[wei4],顧客,顾客对服务很满意。,お客さんはサービスにとても満足しています。,Customers are very satisfied with the service.,这家店的顾客非常多，服务员都很忙碌。,この店の客はとても多く、店員はみんな忙しそうです。
+151,挂,guà,to hang or suspend (from a hook etc); (of a telephone call) to hang up; to be worried or concerned; to make a phone call (topolect); to register or record; to hitch; classifier for sets or clusters of objects,掛ける,请把电话挂了。,電話を切ってください。,Please hang up the phone.,请你把衣服挂在衣柜里，不要乱放。,服をクローゼットに掛けてください、乱雑に置かないで。
+152,关键,guān jiàn,crucial point; crux; CL:个; key; crucial; pivotal,鍵,这件事很关键。,この件はとても重要です。,This matter is very crucial.,这个问题的关键在于我们是否理解了要求。,この問題の鍵は私たちが要求を理解しているかどうかにあります。
+153,观众,guān zhòng,spectators; audience; visitors (to an exhibition etc),観客,观众很热情。,観客はとても熱心です。,The audience is very enthusiastic.,观众们都很期待今晚的音乐会开始。,観客たちはみんな今夜のコンサートの開始を楽しみにしています。
+154,管理,guǎn lǐ,to supervise; to manage; to administer; management; administration; CL:个,管理,他负责管理公司。,彼は会社の管理を担当しています。,He is responsible for managing the company.,公司需要专门的人来管理日常事务。,会社は日常業務を管理する専門の人が必要です。
+155,光,guāng,light (ray); light; ray; CL:道[dao4]; bright; only; merely; to use up,光,房间里没有光。,部屋の中に光がありません。,There is no light in the room.,阳光透过窗户照进了房间，非常温暖。,日光が窓から部屋に差し込み、とても暖かいです。
+156,广播,guǎng bō,broadcast; widely spread; CL:个,放送,广播马上开始。,放送はすぐに始まります。,The broadcast will start soon.,我们每天早上都会收听新闻广播。,私たちは毎朝ニュースのラジオ放送を聴きます。
+157,广告,guǎng gào,to advertise; a commercial; advertisement; CL:项[xiang4],広告,这则广告很有趣。,この広告はとても面白いです。,This advertisement is very interesting.,这家公司的广告在电视上很常见。,この会社の広告はテレビでよく見かけます。
+158,逛,guàng,to stroll; to visit,散歩する,我们一起去逛街。,私たちは一緒に買い物に行きます。,We go shopping together.,周末我喜欢和朋友一起去商场逛街。,週末は友達と一緒にショッピングモールをぶらぶらするのが好きです。
+159,规定,guī dìng,to stipulate; to fix; to set; to formulate; to provide; regulation; rule; CL:个,規定,请遵守学校规定。,学校の規則を守ってください。,Please follow the school rules.,学校规定学生必须按时完成作业。,学校は学生が宿題を時間通りに終えることを規定しています。
+160,国籍,guó jí,nationality,国籍,他的国籍是中国。,彼の国籍は中国です。,His nationality is Chinese.,他的国籍是中国，但他在美国工作。,彼の国籍は中国ですが、アメリカで働いています。
+161,国际,guó jì,international,国際,国际会议很重要。,国際会議はとても重要です。,The international conference is very important.,国际会议将在下个月在北京举行。,国際会議は来月北京で開催されます。
+162,果汁,guǒ zhī,fruit juice,果汁,我喜欢喝果汁。,私は果汁を飲むのが好きです。,I like to drink fruit juice.,我每天早上都会喝一杯新鲜的果汁。,私は毎朝新鮮なジュースを一杯飲みます。
+163,过程,guò chéng,course of events; process; CL:个,過程,学习是一个过程。,学習は一つの過程です。,Learning is a process.,学习一门语言是一个漫长的过程。,一つの言語を学ぶことは長い過程です。
+164,海洋,hǎi yáng,ocean; CL:个,海洋,海洋很美丽。,海はとても美しいです。,The ocean is very beautiful.,海洋里有很多种类的鱼类和植物。,海には多くの種類の魚や植物がいます。
+165,害羞,hài xiū,blush; shy,恥ずかしい,他很害羞不说话。,彼はとても恥ずかしがり屋で話しません。,He is very shy and does not speak.,她在公共场合有点害羞，不喜欢说话。,彼女は公の場で少し恥ずかしがりで、話すのが好きではありません。
+166,寒假,hán jià,winter vacation,冬休み,寒假我去旅行。,冬休みに旅行に行きます。,I will travel during the winter vacation.,寒假期间，我计划去北方旅游几天。,冬休みの間、私は北の方へ数日旅行する予定です。
+167,汗,hàn,"perspiration; sweat; Khan (Persian or Mongol king or emperor); Khan (name); to be speechless (out of helplessness, embarrassment etc) (Internet slang used as an interjection); CL:滴[di1] ,头[tou2] ,身[shen1]",汗,运动后全身是汗。,運動の後、全身が汗だくです。,"After exercising, my whole body is covered in sweat.",运动后，我全身都是汗，非常累。,運動後、全身が汗でいっぱいで、とても疲れました。
+168,航班,háng bān,scheduled flight; flight number; plane; scheduled sailing; sailing number; passenger ship,便,航班准时起飞。,フライトは定刻に離陸しました。,The flight took off on time.,航班因为天气原因被迫延误了两个小时。,天気の理由でフライトは2時間遅れました。
+169,好处,hǎo chu,benefit; advantage; gain; profit; also pronounced hao3 chu4; CL:个,利点,锻炼身体有好处。,体を鍛えることには良い効果があります。,Exercising has benefits for the body.,坚持锻炼的好处是身体越来越健康。,運動を続けることの良い点は体がどんどん健康になることです。
+170,好像,hǎo xiàng,as if; to seem like,〜のようだ,他好像很累。,彼はとても疲れているようです。,He seems very tired.,他好像很忙，没时间参加我们的活动。,彼は忙しいようで、私たちの活動に参加する時間がありません。
+171,号码,hào mǎ,"number; CL:堆[dui1] ,个",番号,请告诉我电话号码。,電話番号を教えてください。,Please tell me the phone number.,请告诉我你的电话号码，我方便联系你。,あなたの電話番号を教えてください、連絡しやすいので。
+172,合格,hé gé,qualified; meeting a standard; eligible (voter),合格,考试终于合格了。,試験にやっと合格しました。,I finally passed the exam.,考试合格后，你就能拿到毕业证书了。,試験に合格したら、卒業証書をもらえます。
+173,合适,hé shì,suitable; fitting; decent; to fit,適切な,这件衣服很合适。,この服はとても似合っています。,This piece of clothing fits very well.,这件衣服很合适你，颜色也很漂亮。,この服はあなたにとても合っていて、色もきれいです。
+174,盒子,hé zi,box,箱,盒子里有礼物。,箱の中にプレゼントがあります。,There is a gift inside the box.,生日礼物都放在那个漂亮的盒子里了。,誕生日プレゼントは全部あのきれいな箱に入っています。
+175,厚,hòu,thick; deep or profound; kind; generous; rich or strong in flavor; to favor; to stress,厚い,这本书很厚。,この本はとても厚いです。,This book is very thick.,这本书很厚，可能需要几天才能读完。,この本は厚くて、読み終わるのに数日かかるかもしれません。
+176,后悔,hòu huǐ,to regret; to repent,後悔する,我不后悔选择。,選択を後悔していません。,I do not regret my choice.,我后悔没有早点学习汉语，现在很难补上。,私はもっと早く中国語を勉強しなかったことを後悔していて、今は追いつくのが難しいです。
+177,互联网,hù lián wǎng,the Internet,インターネット,互联网改变生活。,インターネットは生活を変えました。,The internet has changed life.,通过互联网，我们可以方便地获取各种信息。,インターネットを通じて、私たちは様々な情報を便利に得ることができます。
+178,互相,hù xiāng,each other; mutually; mutual,お互いに,我们互相帮助。,私たちはお互いに助け合います。,We help each other.,我们应该互相帮助，共同解决问题。,私たちはお互いに助け合い、問題を一緒に解決すべきです。
+179,护士,hù shi,nurse; CL:个,看護師,护士很细心。,看護師はとても細やかです。,The nurse is very attentive.,护士每天都认真照顾病人的健康。,看護師は毎日熱心に患者の健康を世話しています。
+180,怀疑,huái yí,to suspect; to doubt; doubt; suspicion; skeptical,疑う,我怀疑他说谎。,私は彼が嘘をついていると疑っています。,I suspect that he is lying.,我怀疑这件事的真相可能不是我们想的那样。,私はこのことの真相は私たちが思っているのとは違うのではないかと疑っています。
+181,回忆,huí yì,to recall; recollection; CL:个,思い出,回忆让我开心。,思い出が私を幸せにします。,Memories make me happy.,小时候的回忆总是让我感到温暖和快乐。,子供の頃の思い出はいつも私を温かく楽しい気持ちにさせます。
+182,活动,huó dòng,"to exercise; to move about; to operate; activity; loose; shaky; active; movable; maneuver; to use connections; CL:项[xiang4] ,个",活動,学校有很多活动。,学校にはたくさんの活動があります。,The school has many activities.,学校组织了很多有趣的活动让学生参加。,学校は学生が参加できるたくさんの楽しい活動を企画しました。
+183,活泼,huó po,lively; vivacious; brisk; active,活発な,孩子们很活泼。,子供たちはとても元気です。,The children are very lively.,小明是个活泼的孩子，大家都喜欢和他玩。,小明は元気な子供で、みんな彼と遊ぶのが好きです。
+184,火,huǒ,fire; CL:把[ba3],火,火很快被扑灭。,火はすぐに消されました。,The fire was quickly extinguished.,野外生火时一定要注意安全，防止火灾。,野外で火を使うときは必ず安全に注意して、火事を防いでください。
+185,获得,huò dé,to obtain; to receive; to get,得る,他获得了奖学金。,彼は奨学金を獲得しました。,He received a scholarship.,通过努力学习，他终于获得了奖学金。,努力して勉強したことで、彼はついに奨学金を獲得しました。
+186,基础,jī chǔ,base; foundation; basis; underlying; CL:个,基礎,基础很重要。,基礎はとても重要です。,The foundation is very important.,学习汉语的基础是掌握拼音和常用词汇。,中国語学習の基礎はピンインとよく使う語彙をマスターすることです。
+187,激动,jī dòng,to excite; to agitate; exciting,感動する,听到消息很激动。,知らせを聞いてとても興奮しました。,I was very excited to hear the news.,听到好消息后，他的心情非常激动。,良い知らせを聞いて、彼はとても感激しました。
+188,积极,jī jí,active; energetic; vigorous; positive (outlook); proactive,積極的な,她态度很积极。,彼女の態度はとても積極的です。,Her attitude is very positive.,她对工作非常积极，总是主动完成任务。,彼女は仕事にとても積極的で、いつも自主的に仕事を終えます。
+189,积累,jī lěi,to accumulate; accumulation; cumulative; cumulatively,蓄積する,他积累了很多经验。,彼は多くの経験を積みました。,He has accumulated a lot of experience.,只有不断积累经验，才能提高自己的能力。,経験を絶えず積み重ねることでしか、自分の能力を高めることはできません。
+190,即使,jí shǐ,even if; even though; given that,たとえ〜でも,即使下雨也去。,たとえ雨が降っても行きます。,I will go even if it rains.,即使下雨，我们也要按计划去爬山。,たとえ雨が降っても、私たちは計画通り山登りに行きます。
+191,及时,jí shí,in time; promptly; without delay; timely,タイムリーな,及时完成任务。,時間内に任務を完了してください。,Complete the task on time.,遇到问题时，要及时向老师请教。,問題に遭ったときは、すぐに先生に質問してください。
+192,寄,jì,to live (in a house); to lodge; to mail; to send; to entrust; to depend,送る,我寄了一封信。,私は手紙を一通送りました。,I sent a letter.,我打算寄一封信给远方的朋友。,私は遠くの友達に手紙を送るつもりです。
+193,技术,jì shù,"technology; technique; skill; CL:门[men2] ,种[zhong3] ,项[xiang4]",技術,他的技术很好。,彼の技術はとても優れています。,His skills are very good.,现代技术使我们的生活变得更加方便。,現代の技術は私たちの生活をより便利にしました。
+194,既然,jì rán,since; as; this being the case,〜なので,既然来了就坐下。,来たからには座ってください。,"Since you are here, please sit down.",既然你已经决定了，我支持你的选择。,あなたがもう決めたのなら、私はあなたの選択を支持します。
+195,继续,jì xù,to continue; to proceed with; to go on with,続ける,我们继续学习吧。,私たちは勉強を続けましょう。,Let's continue studying.,请继续努力，你一定会取得好成绩。,どうぞ努力を続けてください、きっと良い成績を取れます。
+196,计划,jì huà,"plan; project; program; to plan; to map out; CL:个,项[xiang4]",計画,我有一个计划。,私は一つの計画があります。,I have a plan.,我们已经制定了详细的计划，希望顺利完成。,私たちは詳細な計画を立てて、順調に完成することを望んでいます。
+197,记者,jì zhě,reporter; journalist; CL:个,記者,记者在采访他。,記者が彼にインタビューしています。,The reporter is interviewing him.,记者采访了很多专家，写了一篇报道。,記者は多くの専門家にインタビューし、記事を書きました。
+198,加班,jiā bān,to work overtime,残業する,今天我要加班。,今日は残業します。,I will work overtime today.,最近工作很忙，经常需要加班到很晚。,最近仕事が忙しく、よく遅くまで残業しています。
+199,加油站,jiā yóu zhàn,gas station,ガソリンスタンド,加油站很远。,ガソリンスタンドは遠いです。,The gas station is far away.,汽车快没油了，我们去附近的加油站加油吧。,車のガソリンがもう少ないので、近くのガソリンスタンドで給油しましょう。
+200,家具,jiā jù,"furniture; CL:件[jian4] ,套[tao4]",家具,新家具很漂亮。,新しい家具はとても綺麗です。,The new furniture is very beautiful.,新买的家具摆放在客厅，看起来很漂亮。,新しく買った家具はリビングに置いてあり、とてもきれいに見えます。
+201,假,jiǎ,fake; false; artificial; to borrow; if; suppose,偽物,这是假钱，不能用。,これは偽札で、使えません。,This is counterfeit money and cannot be used.,这件衣服是假货，买的时候一定要小心。,この服は偽物です。買うときは必ず注意してください。
+202,价格,jià gé,price; CL:个,価格,这个东西价格很贵。,この物の値段はとても高いです。,This item is very expensive.,这个手机的价格比我预想的要贵很多。,このスマートフォンの価格は私が予想していたよりずっと高いです。
+203,坚持,jiān chí,to continue upholding; to remain committed to; persistence; to persist; to uphold; to insist on; persevere,坚持,他每天坚持跑步。,彼は毎日ランニングを続けています。,He insists on running every day.,无论遇到什么困难，我们都应该坚持下去。,どんな困難に直面しても、私たちはあきらめずに続けるべきです。
+204,减肥,jiǎn féi,to lose weight,ダイエット,她想通过运动减肥。,彼女は運動でダイエットしたいと思っています。,She wants to lose weight through exercise.,她每天运动一个小时，想通过减肥变得更健康。,彼女は毎日1時間運動して、ダイエットでより健康になりたいと思っています。
+205,减少,jiǎn shǎo,to lessen; to decrease; to reduce; to lower,減少,公司减少了开支。,会社は支出を減らしました。,The company reduced expenses.,为了保护环境，我们需要减少使用塑料袋。,環境を守るために、私たちはビニール袋の使用を減らす必要があります。
+206,建议,jiàn yì,"to propose; to suggest; to recommend; proposal; suggestion; recommendation; CL:个,点[dian3]",提案,我有一个建议给你。,あなたに提案があります。,I have a suggestion for you.,老师建议我们多读书，提高自己的汉语水平。,先生は私たちにもっと本を読み、中国語のレベルを上げるように勧めました。
+207,将来,jiāng lái,in the future; future; the future; CL:个,将来,你将来想做什么？,将来何をしたいですか？,What do you want to do in the future?,将来我想成为一名医生，帮助更多的人。,将来、私は医者になって、より多くの人を助けたいです。
+208,奖金,jiǎng jīn,award money; premium; a bonus,ボーナス,他得到了奖金奖励。,彼はボーナスをもらいました。,He received a bonus reward.,公司发给表现好的员工一笔奖金作为奖励。,会社は成績が良い社員に報奨としてボーナスを支給します。
+209,降低,jiàng dī,to reduce; to lower; to bring down,低下する,为了安全降低速度。,安全のために速度を落としてください。,Reduce speed for safety.,为了节约能源，我们应该降低空调的温度。,エネルギーを節約するために、私たちはエアコンの温度を下げるべきです。
+210,降落,jiàng luò,to descend; to land,着陸,飞机马上要降落。,飛行機はまもなく着陸します。,The plane is about to land.,飞机已经开始降落，请大家系好安全带。,飛行機はすでに着陸を始めましたので、皆さんシートベルトをお締めください。
+211,交,jiāo,to hand over; to deliver; to pay (money); to turn over; to make friends; to intersect (lines),渡す,请把书交给老师。,本を先生に渡してください。,Please hand the book to the teacher.,我明天要交一份重要的报告给经理。,私は明日、マネージャーに重要な報告書を提出しなければなりません。
+212,交流,jiāo liú,exchange; give-and-take; to exchange; to alternate; communication; alternating current (electricity),交流,我们需要多交流想法。,私たちはもっと意見交換が必要です。,We need to communicate ideas more.,通过交流，我们可以更好地理解不同的文化。,交流を通じて、私たちは異なる文化をよりよく理解できます。
+213,交通,jiāo tōng,traffic; communications; liaison; to be connected,交通,这里交通非常方便。,ここは交通がとても便利です。,The transportation here is very convenient.,早上交通很拥堵，建议大家提前出门。,朝の交通はとても混雑しているので、皆さん早めに出かけることをおすすめします。
+214,郊区,jiāo qū,suburban district; outskirts; suburbs; CL:个,郊外,他们住在郊区房子。,彼らは郊外の家に住んでいます。,They live in a house in the suburbs.,他们住在城市的郊区，环境非常安静。,彼らは都市の郊外に住んでいて、とても静かな環境です。
+215,骄傲,jiāo ào,arrogant; full of oneself; conceited; proud of sth; CL:个,誇り,他为自己感到骄傲。,彼は自分自身を誇りに思っています。,He feels proud of himself.,她因为取得好成绩而感到非常骄傲。,彼女は良い成績を取ったことでとても誇りに思っています。
+216,饺子,jiǎo zi,"dumpling; pot-sticker; CL:个,只[zhi1]",餃子,妈妈做了很多饺子。,お母さんはたくさんの餃子を作りました。,Mom made a lot of dumplings.,春节的时候，我们一家人一起包饺子庆祝。,春節の時、私たちは家族みんなで餃子を包んでお祝いします。
+217,教授,jiào shòu,"professor; to instruct; to lecture on; CL:个,位[wei4]",教授,教授今天不上课。,教授は今日は授業がありません。,The professor is not teaching today.,这位教授在大学里教了很多年汉语。,この教授は大学で何年も中国語を教えています。
+218,教育,jiào yù,to educate; to teach; education,教育,教育对孩子很重要。,教育は子供にとってとても重要です。,Education is very important for children.,教育对孩子的未来发展非常重要。,教育は子どもの将来の発展にとても重要です。
+219,接受,jiē shòu,to accept; to receive,受け入れる,他接受了这个邀请。,彼はこの招待を受け入れました。,He accepted this invitation.,他愿意接受新的挑战，不怕困难。,彼は新しい挑戦を受け入れる意志があり、困難を恐れません。
+220,接着,jiē zhe,to catch and hold on; to continue; to go on to do sth; to follow; to carry on; then; after that; subsequently; to proceed; to ensue; in turn; in one's turn,続けて,接着他说了一个故事。,続けて彼は一つの話をしました。,Then he told a story.,老师讲完课后，接着让我们做练习题。,先生が授業を終えた後、続けて練習問題をさせました。
+221,结果,jié guǒ,result; outcome; effect; in the event; so that,結果,考试结果很满意。,試験の結果に満足しています。,I am satisfied with the exam results.,经过努力，他的考试结果非常理想。,努力の結果、彼の試験の成績は非常に良かったです。
+222,节,jié,"festival; holiday; node; joint; section; segment; part; to economize; to save; to abridge; moral integrity; classifier for segments, e.g. lessons, train wagons, biblical verses; CL:个",節,每节课都有作业。,毎授業に宿題があります。,There is homework for every class.,我们每节课都会学习新的汉字和语法。,私たちは毎授業、新しい漢字と文法を学びます。
+223,节约,jié yuē,to economize; to conserve (resources); economy; frugal,節約,我们应该节约用水。,私たちは水を節約すべきです。,We should save water.,节约用水是每个人的责任。,水を節約することは、すべての人の責任です。
+224,解释,jiě shì,explanation; to explain; to interpret; to resolve; CL:个,説明する,老师解释了新语法。,先生は新しい文法を説明しました。,The teacher explained the new grammar.,请你解释一下这个词的意思好吗？,この単語の意味を説明してもらえますか？
+225,尽管,jǐn guǎn,"despite; although; even though; in spite of; unhesitatingly; do not hesitate (to ask, complain etc); (go ahead and do it) without hesitating",〜にもかかわらず,尽管下雨，我们去了。,雨が降っていたにもかかわらず、私たちは行きました。,"Although it was raining, we went.",尽管天气不好，我们还是决定去爬山。,天気が悪いにもかかわらず、私たちはそれでも山登りに行くことにしました。
+226,紧张,jǐn zhāng,nervous; keyed up; intense; tense; strained; in short supply; scarce; CL:阵[zhen4],緊張,考试前他很紧张。,試験の前に彼はとても緊張していました。,He was very nervous before the exam.,考试前我感到紧张，但也很期待结果。,試験の前は緊張しましたが、結果も楽しみにしていました。
+227,禁止,jìn zhǐ,to prohibit; to forbid; to ban,禁止する,这里禁止吸烟。,ここは禁煙です。,Smoking is prohibited here.,这里禁止吸烟，请大家遵守规定。,ここは禁煙です。みなさん規則を守ってください。
+228,进行,jìn xíng,to advance; to conduct; underway; in progress; to do; to carry out; to carry on; to execute,行う,会议正在进行中。,会議は進行中です。,The meeting is in progress.,学校正在进行一项重要的科学研究。,学校では重要な科学研究が進められています。
+229,京剧,jīng jù,"Beijing opera; CL:场[chang3] ,出[chu1]",京劇,我喜欢看京剧表演。,私は京劇の公演を見るのが好きです。,I like watching Peking opera performances.,京剧是中国传统的戏曲艺术，非常有特色。,京劇は中国の伝統的なオペラ芸術で、とても特徴があります。
+230,精彩,jīng cǎi,splendid; brilliant,素晴らしい,他的表演非常精彩。,彼の演技はとても素晴らしかったです。,His performance was very wonderful.,这场表演非常精彩，观众们都很满意。,この公演はとても素晴らしく、観客は皆満足しました。
+231,经济,jīng jì,economy; economic,経済,经济发展很快。,経済はとても速く発展しています。,The economy is developing very fast.,国家的经济发展对人民生活有很大影响。,国の経済発展は国民の生活に大きな影響を与えます。
+232,经历,jīng lì,"experience; to experience; to go through; CL:个, 次[Ci4]",経験する,我经历了很多困难。,私は多くの困難を経験しました。,I have experienced many difficulties.,他经历了很多困难，但从未放弃自己的梦想。,彼は多くの困難を経験しましたが、自分の夢をあきらめたことはありません。
+233,经验,jīng yàn,to experience; experience,経験,她有丰富的经验。,彼女は豊富な経験があります。,She has rich experience.,工作经验丰富的人更容易找到好工作。,仕事の経験が豊富な人は、より良い仕事を見つけやすいです。
+234,景色,jǐng sè,scenery; scene; landscape; view,景色,这里的景色很美。,ここの景色はとても美しいです。,The scenery here is very beautiful.,这里的景色非常美丽，吸引了很多游客。,ここの景色はとても美しく、多くの観光客を惹きつけています。
+235,警察,jǐng chá,police; policeman; policewoman; CL:个,警察,警察正在调查案件。,警察は事件を調査しています。,The police are investigating the case.,警察及时赶到现场，维护了秩序。,警察はすぐに現場に駆けつけ、秩序を守りました。
+236,竞争,jìng zhēng,to compete; competition,競争,市场竞争越来越激烈。,市場の競争はますます激しくなっています。,Market competition is becoming more and more intense.,这两个公司之间的竞争非常激烈。,この二つの会社の間の競争は非常に激しいです。
+237,竟然,jìng rán,unexpectedly; to one's surprise; in spite of everything; in that crazy way; actually; to go as far as to,なんと,他竟然忘了约会。,彼はなんと約束を忘れてしまいました。,He actually forgot the appointment.,他竟然忘记了我们的约会，让我很惊讶。,彼はなんと私たちの約束を忘れていて、とても驚きました。
+238,镜子,jìng zi,"mirror; CL:面[mian4] ,个",鏡,请照照镜子看看。,鏡を見てください。,Please look in the mirror.,我每天早上都会照镜子整理一下头发。,私は毎朝鏡を見て髪を整えます。
+239,究竟,jiū jìng,after all (when all is said and done); actually; outcome; result,結局,究竟发生了什么事？,一体何が起こったのですか？,What exactly happened?,你究竟喜欢哪种运动？请告诉我吧。,あなたは一体どんなスポーツが好きですか？教えてください。
+240,举,jǔ,to lift; to hold up; to cite; to enumerate; to act; to raise; to choose; to elect,挙げる,他举手回答问题。,彼は手を挙げて質問に答えました。,He raised his hand to answer the question.,老师举了几个例子来帮助我们理解课文。,先生は私たちが本文を理解するのを助けるためにいくつか例を挙げました。
+241,举办,jǔ bàn,to conduct; to hold,開催する,学校举办了运动会。,学校は運動会を開催しました。,The school held a sports day.,学校将在下个月举办一次运动会。,学校は来月運動会を開催します。
+242,举行,jǔ xíng,"to hold (a meeting, ceremony etc)",行う,会议将在明天举行。,会議は明日開催されます。,The meeting will be held tomorrow.,毕业典礼将在礼堂举行，欢迎大家参加。,卒業式は講堂で行われます。皆さんの参加を歓迎します。
+243,拒绝,jù jué,to refuse; to decline; to reject,拒否する,他拒绝了邀请。,彼は招待を断りました。,He refused the invitation.,他拒绝了这份工作，因为条件不合适。,彼は条件が合わないため、その仕事を断りました。
+244,聚会,jù huì,party; gathering; to meet; to get together,集まり,我们准备了聚会。,私たちはパーティーの準備をしました。,We prepared for the party.,周末我们打算举办一个朋友聚会。,週末に友達の集まりを開く予定です。
+245,距离,jù lí,distance; to be apart; CL:个,距離,两地距离很远。,二つの場所の距離はとても遠いです。,The distance between the two places is very far.,学校离我家有很远的距离，我每天要坐公交车。,学校は私の家からとても遠い距離にあり、毎日バスに乗らなければなりません。
+246,开玩笑,kāi wán xiào,to play a joke; to make fun of; to joke,冗談を言う,别开玩笑了，很认真。,冗談はやめて、とても真剣です。,"Stop joking, it's very serious.",别生气，我只是开玩笑而已。,怒らないでください、ただの冗談です。
+247,开心,kāi xīn,to feel happy; to rejoice; to have a great time; to make fun of sb,嬉しい,听到好消息很开心。,良い知らせを聞いてとても嬉しいです。,I am very happy to hear the good news.,听到好消息后，她高兴得一直笑个不停。,良い知らせを聞いてから、彼女はずっと笑い続けてとても嬉しそうでした。
+248,看法,kàn fǎ,way of looking at a thing; view; opinion; CL:个,考え方,大家的看法不同。,みんなの意見は異なります。,Everyone's opinions are different.,大家对这个问题的看法有很多不同的意见。,みんなこの問題に対する考え方はさまざまです。
+249,烤鸭,kǎo yā,roast duck,北京ダック,我喜欢吃烤鸭。,私は北京ダックを食べるのが好きです。,I like eating roast duck.,北京烤鸭是中国非常有名的传统美食。,北京ダックは中国で非常に有名な伝統的な美食です。
+250,考虑,kǎo lv4,to think over; to consider; consideration,考える,我正在考虑这个问题。,私はこの問題を考えています。,I am considering this problem.,在做决定之前，你应该认真考虑所有的因素。,決定を下す前に、あなたはすべての要素をよく考慮すべきです。
+251,棵,kē,"classifier for trees, cabbages, plants etc",株（植物の量詞）,那棵树很高。,あの木はとても高い。,That tree is very tall.,这棵树已经有五十年的历史了，非常高大。,この木はもう50年の歴史があり、とても高いです。
+252,科学,kē xué,"science; scientific knowledge; scientific; CL:门[men2] ,个,种[zhong3]",科学,科学很重要。,科学はとても重要です。,Science is very important.,科学的发展改变了我们的生活方式。,科学の発展は私たちの生活様式を変えました。
+253,咳嗽,ké sou,to cough; CL:阵[zhen4],咳嗽,他一直咳嗽。,彼はずっと咳をしている。,He has been coughing continuously.,他感冒了，所以一直不停地咳嗽。,彼は風邪をひいているので、ずっと咳をしています。
+254,可怜,kě lián,pitiful; pathetic,かわいそう,他真可怜。,彼は本当にかわいそうだ。,He is really pitiful.,那只小猫看起来很可怜，需要帮助。,あの子猫はとてもかわいそうに見えて、助けが必要です。
+255,可是,kě shì,but; however,しかし,我想去，可是忙。,行きたいけど、忙しい。,"I want to go, but I am busy.",我想去看电影，可是今天太忙了。,映画を見に行きたいですが、今日は忙しすぎます。
+256,可惜,kě xī,it is a pity; what a pity; (it's) too bad,残念,可惜没时间。,残念ながら時間がない。,"Unfortunately, I don't have time.",你没来参加聚会，真是可惜。,あなたがパーティーに来なかったのは、本当に残念です。
+257,客厅,kè tīng,drawing room (room for arriving guests); living room; CL:间[jian1],客間,客厅很舒服。,リビングはとても快適だ。,The living room is very comfortable.,客厅里摆放着一张大沙发和一台电视。,リビングには大きなソファとテレビが置いてあります。
+258,肯定,kěn dìng,to be sure; to be certain; sure; certain; definite; to confirm; to affirm; affirmative,肯定,我肯定成功。,私は必ず成功する。,I am sure to succeed.,他肯定会按时完成这项工作。,彼はきっと時間通りにこの仕事を終えるでしょう。
+259,空,kōng,to empty; vacant; unoccupied; space; leisure; free time;,空（あいている）,你有空吗？,あなたは暇ですか？,Are you free?,明天的会议时间还空着，没有安排任何事情。,明日の会議の時間はまだ空いていて、何の予定もありません。
+260,空气,kōng qì,air; atmosphere,空気,空气很新鲜。,空気がとても新鮮だ。,The air is very fresh.,这里的空气很新鲜，适合户外运动。,ここの空気は新鮮で、アウトドアスポーツに適しています。
+261,恐怕,kǒng pà,to fear; to dread; I'm afraid that...; perhaps; maybe,恐らく,恐怕要迟到。,恐らく遅刻するだろう。,I'm afraid I will be late.,恐怕我们今天赶不上火车了。,恐らく私たちは今日列車に間に合わないでしょう。
+262,苦,kǔ,bitter; hardship; pain; to suffer; painstaking,苦い、つらい,这药很苦。,この薬はとても苦い。,This medicine is very bitter.,这道菜有点苦，但很有营养。,この料理は少し苦いですが、とても栄養があります。
+263,矿泉水,kuàng quán shuǐ,"mineral spring water; CL:瓶[ping2] ,杯[bei1]",ミネラルウォーター,我买矿泉水。,私はミネラルウォーターを買う。,I buy mineral water.,请给我一瓶矿泉水，谢谢。,ミネラルウォーターを一本ください、ありがとうございます。
+264,困,kùn,to be trapped; to surround; to be hard-pressed; stranded; destitute,眠い,我很困了。,私はとても眠い。,I am very sleepy.,昨天晚上没睡好，今天感觉很困。,昨晩よく眠れなかったので、今日はとても眠いです。
+265,困难,kùn nan,(financial etc) difficulty; problem; issue; CL:个,困難,学习有困难。,勉強に困難がある。,There are difficulties in studying.,学习汉语有时候会遇到困难，但不要放弃。,中国語の勉強は時々困難にぶつかりますが、あきらめないでください。
+266,垃圾桶,lā jī tǒng,rubbish bin,ゴミ箱,请扔进垃圾桶。,ゴミ箱に捨ててください。,Please throw it into the trash can.,请把垃圾扔进垃圾桶，不要乱丢。,ゴミはゴミ箱に捨ててください、散らかさないでください。
+267,拉,lā,to pull; to play (string instruments); to drag; to draw,引く、引っぱる,他拉门进去。,彼はドアを引いて入った。,He pulled the door and went in.,他用力拉开了那扇沉重的门。,彼は力を入れてその重いドアを引き開けました。
+268,辣,là,hot (spicy); pungent,辛い,这菜很辣。,この料理はとても辛い。,This dish is very spicy.,这道菜太辣了，我吃不惯。,この料理は辛すぎて、私は慣れません。
+269,来不及,lái bu jí,there's not enough time (to do sth); it's too late (to do sth),間に合わない,来不及吃饭。,食べる時間が間に合わない。,There is not enough time to eat.,我们来不及买票，只能站着回家了。,私たちはチケットを買う時間がなく、立って帰るしかありません。
+270,来得及,lái de jí,there's still time; able to do sth in time,間に合う,我们来得及。,私たちは間に合う。,We have enough time.,你来得及参加晚上的会议吗？,あなたは夜の会議に間に合いますか？
+271,来自,lái zì,to come from (a place); From: (in email header),～から来る,我来自中国。,私は中国から来ました。,I come from China.,他来自一个美丽的海滨城市。,彼は美しい海辺の街から来ました。
+272,懒,lǎn,lazy,怠け者,他很懒。,彼はとても怠け者だ。,He is very lazy.,他很懒，经常不做作业。,彼はとても怠け者で、よく宿題をしません。
+273,浪费,làng fèi,to waste; to squander,浪費する,不要浪费时间。,時間を無駄にしないで。,Don't waste time.,浪费食物是不好的习惯，我们要节约。,食べ物を浪費するのは良くない習慣で、私たちは節約しなければなりません。
+274,浪漫,làng màn,romantic,ロマンチック,他们很浪漫。,彼らはとてもロマンチックだ。,They are very romantic.,他们的婚礼非常浪漫，让人感动。,彼らの結婚式はとてもロマンチックで、感動を与えました。
+275,老虎,lǎo hǔ,tiger; CL:只[zhi1],トラ,老虎很危险。,虎はとても危険だ。,The tiger is very dangerous.,动物园里有一只威风凛凛的老虎。,動物園に威厳のあるトラが一頭います。
+276,冷静,lěng jìng,calm; cool-headed,冷静,请保持冷静。,冷静を保ってください。,Please stay calm.,遇到问题时，要保持冷静，才能找到解决办法。,問題に直面した時は、冷静さを保ってこそ解決策を見つけられます。
+277,理发,lǐ fà,a barber; hairdressing,散髪,我去理发店。,私は理髪店に行く。,I am going to the barber shop.,我明天去理发店剪头发。,私は明日理髪店に行って髪を切ります。
+278,理解,lǐ jiě,to comprehend; to understand; comprehension; understanding,理解する,我理解你的意思。,私はあなたの意味を理解しています。,I understand what you mean.,我能理解你的想法，我们一起努力吧。,あなたの考えが理解できます、一緒に頑張りましょう。
+279,理想,lǐ xiǎng,a dream; an ideal; perfection; ideal; perfect; desirable; CL:个,理想,这是我的理想。,これが私の理想です。,This is my ideal.,他的理想是成为一名医生，帮助别人。,彼の理想は医者になって人を助けることです。
+280,礼拜天,lǐ bài tiān,Sunday,日曜日,礼拜天去公园。,日曜日に公園へ行く。,Go to the park on Sunday.,礼拜天我们一家人一起去公园玩。,日曜日に私たち家族は一緒に公園に遊びに行きます。
+281,礼貌,lǐ mào,courtesy; manners,礼儀,要有礼貌。,礼儀正しくしなさい。,You should be polite.,遇到长辈要有礼貌，尊重他们。,年長者に会ったら礼儀正しく接し、尊重しましょう。
+282,例如,lì rú,for example; for instance; such as,例えば,例如苹果和香蕉。,例えばリンゴやバナナ。,"For example, apples and bananas.",例如，我喜欢吃水果，尤其是苹果和香蕉。,例えば、私は果物が好きで、特にリンゴとバナナが好きです。
+283,力气,lì qi,strength; CL:把[ba3],力,我没有力气。,私は力がない。,I have no strength.,搬这箱东西需要很大的力气。,この箱を運ぶにはかなりの力が必要です。
+284,厉害,lì hai,difficult to deal with; difficult to endure; ferocious; radical; serious; terrible; violent; tremendous; awesome,すごい,他很厉害。,彼はとてもすごい。,He is very awesome.,他的中文说得很厉害，大家都很佩服。,彼の中国語はとても上手で、みんな感心しています。
+285,俩,liǎ,two (colloquial equivalent of 两个); both; some,二人,我们俩是朋友。,私たち二人は友達です。,The two of us are friends.,他们俩是很好的朋友，经常一起学习。,彼ら二人はとても良い友達で、よく一緒に勉強しています。
+286,联系,lián xì,connection; contact; relation; in touch with; to integrate; to link; to touch,連絡する,请联系我。,私に連絡してください。,Please contact me.,请保持联系，告诉我你的最新情况。,連絡を取り続けて、あなたの最新の状況を教えてください。
+287,连,lián,"to link; to join; to connect; continuously; in succession; including; (used with 也, 都 etc) even; company (military)",連なる,连我也不知道。,私でさえ知らない。,Even I don't know.,他连饭都没吃就去上班了，真辛苦。,彼は食事もせずに仕事に行った、本当に大変です。
+288,凉快,liáng kuai,nice and cold; pleasantly cool,涼しい,天气很凉快。,天気はとても涼しい。,The weather is very cool.,今天的天气很凉快，适合出去散步。,今日は涼しくて、散歩に出かけるのに適しています。
+289,零钱,líng qián,change (of money); small change; pocket money,小銭,我有零钱。,私は小銭を持っている。,I have some change.,请帮我找一些零钱，我要买报纸。,少し小銭を見つけてください、新聞を買いたいです。
+290,另外,lìng wài,additional; in addition; besides; separate; other; moreover; furthermore,別の,另外一个问题。,もう一つの問題。,Another problem.,我已经完成了作业，另外还帮朋友做了题。,宿題はもう終わりました、さらに友達の問題も手伝いました。
+291,流利,liú lì,fluent,流暢,他说汉语很流利。,彼は中国語がとても流暢だと言った。,He said he is very fluent in Chinese.,她的英语说得很流利，交流没问题。,彼女は英語をとても流暢に話し、コミュニケーションに問題ありません。
+292,流行,liú xíng,to spread; to rage (of contagious disease); popular; fashionable; prevalent; (math.) manifold,流行する,这歌很流行。,この歌はとても流行っている。,This song is very popular.,这种音乐在年轻人中非常流行。,この音楽は若者の間でとても流行っています。
+293,留,liú,to retain; to stay; to remain; to keep; to preserve; to leave (eg a message),残す、留まる,我留在家里。,私は家にいる。,I stay at home.,我打算明年留在中国继续学习。,私は来年中国に残って勉強を続けるつもりです。
+294,旅行,lǚ xíng,"to travel; journey; trip; CL:趟[tang4],次[ci4],個|个[ge4];",旅行,我们去旅行吧。,旅行に行きましょう。,Let's go on a trip.,今年夏天我们计划去欧洲旅行。,今年の夏、私たちはヨーロッパ旅行を計画しています。
+295,乱,luàn,in confusion or disorder; in a confused state of mind; disorder; upheaval; riot; illicit sexual relations; to throw into disorder; to mix up; indiscriminate; random; arbitrary,乱れる,房间很乱。,部屋はとても散らかっている。,The room is very messy.,他的房间很乱，需要好好整理一下。,彼の部屋はとても散らかっていて、ちゃんと片付ける必要があります。
+296,律师,lv4 shī,lawyer,弁護士,他是律师。,彼は弁護士だ。,He is a lawyer.,她是一名律师，专门处理合同纠纷。,彼女は弁護士で、主に契約の紛争を扱っています。
+297,麻烦,má fan,inconvenient; troublesome; to trouble or bother sb; to put sb to trouble,面倒,麻烦你帮忙。,お手数ですが助けてください。,Please kindly help me.,帮我一个忙，真是太麻烦你了。,ちょっと手伝ってくれて、本当にお手数をおかけします。
+298,马虎,mǎ hu,careless; sloppy; negligent; skimpy,いい加減,他做事马虎。,彼は仕事がいい加減だ。,He does things carelessly.,他做事很马虎，经常忘记重要的事情。,彼は物事をいい加減にやるので、よく大事なことを忘れます。
+299,满,mǎn,full; filled; packed; fully; completely; quite; to reach the limit; to satisfy; satisfied; contented; to fill; abbr. for Manchurian,満ちる,杯子满了。,コップはいっぱいだ。,The cup is full.,今天的会议内容非常满，讨论了很多问题。,今日の会議の内容は非常に充実していて、多くの問題を議論しました。
+300,毛,máo,hair; feather; down,毛（通貨単位）,这个一毛钱。,これは一毛（0.1元）です。,This costs one mao (0.1 yuan).,这件衣服的价格是三百块零五毛。,この服の値段は300元と5角です。
+301,毛巾,máo jīn,towel; CL:条[tiao2],タオル,我用毛巾擦脸。,私はタオルで顔を拭きます。,I wipe my face with a towel.,洗完澡后，我用毛巾把头发擦干。,お風呂に入った後、タオルで髪を拭きました。
+302,美丽,měi lì,beautiful,美しい,她的花园很美丽。,彼女の庭はとても美しいです。,Her garden is very beautiful.,她穿着一件美丽的红色连衣裙参加晚会。,彼女は美しい赤いワンピースを着てパーティーに参加しました。
+303,梦,mèng,"dream; CL:场[chang2] ,个",夢,我做了一个好梦。,私は良い夢を見ました。,I had a good dream.,昨晚我做了一个奇怪的梦，梦见自己飞了起来。,昨晩、私は変な夢を見て、自分が飛んでいる夢でした。
+304,迷路,mí lù,to lose the way; lost; labyrinth; labyrinthus vestibularis (of the inner ear),道に迷う,他在城市里迷路了。,彼は街で迷子になりました。,He got lost in the city.,我们在陌生的城市里迷路了，不知道该往哪里走。,私たちは見知らぬ街で道に迷って、どこへ行けばいいかわかりませんでした。
+305,密码,mì mǎ,code; secret code; password; pin number,パスワード,请不要告诉别人密码。,どうか他の人にパスワードを教えないでください。,Please don't tell others the password.,请不要告诉别人你的密码，这样才能保证安全。,他人にパスワードを教えないでください。そうすれば安全を確保できます。
+306,免费,miǎn fèi,free (of charge),無料,这本书是免费的。,この本は無料です。,This book is free.,这家咖啡店提供免费的无线网络服务。,このカフェは無料のWi-Fiサービスを提供しています。
+307,秒,miǎo,second (of time); unit of angle or arc equivalent to one sixtieth of a degree,秒,比赛只剩五秒。,試合はあと5秒だけ残っています。,Only five seconds remain in the match.,比赛开始后，他在几秒钟内就跑到了终点。,試合が始まってから、彼は数秒でゴールに到達しました。
+308,民族,mín zú,nationality; ethnic group; CL:个,民族,中国有很多民族。,中国には多くの民族があります。,China has many ethnic groups.,中国是一个有56个民族的多民族国家。,中国は56の民族がいる多民族国家です。
+309,母亲,mǔ qīn,mother; also pr. with light tone [mu3 qin5]; CL:个,母親,母亲很关心我。,母は私のことをとても心配しています。,My mother cares about me a lot.,母亲每天早起为家人准备早餐，非常辛苦。,母は毎日早起きして家族のために朝食を準備し、とても大変です。
+310,目的,mù dì,purpose; aim; goal; target; objective; CL:个,目的,旅行的目的很重要。,旅行の目的はとても重要です。,The purpose of travel is very important.,学习汉语的目的不仅是为了考试，更是为了交流。,中国語を学ぶ目的は試験のためだけでなく、交流のためでもあります。
+311,耐心,nài xīn,to be patient; patient (adjective),忍耐,学习需要耐心。,勉強には忍耐が必要です。,Learning requires patience.,在教孩子学习时，父母需要有足够的耐心。,子どもに勉強を教える時、親は十分な忍耐力が必要です。
+312,难道,nán dào,don't tell me...; could it be that...?,まさか,难道你不相信我？,まさか私を信じていないのですか？,Don't you believe me?,难道你不想去旅行吗？我们可以一起计划。,まさか旅行に行きたくないのですか？一緒に計画できますよ。
+313,难受,nán shòu,to feel unwell; to suffer pain; to be difficult to bear,つらい,感冒让我很难受。,風邪でとてもつらいです。,The cold makes me feel very uncomfortable.,感冒的时候身体很难受，需要多休息和喝水。,風邪のときは体調がとても悪く、多く休んで水を飲む必要があります。
+314,内,nèi,inside; inner; internal; within; interior,内側,箱子里面有书。,箱の中に本があります。,There are books inside the box.,请把文件放在抽屉的内侧，这样比较安全。,書類を引き出しの内側に入れてください。そうすると安全です。
+315,内容,nèi róng,"content; substance; details; CL:个,项[xiang4]",内容,这篇文章内容丰富。,この記事は内容が豊富です。,This article is rich in content.,这本书的内容非常丰富，适合各个年龄段的人阅读。,この本の内容はとても豊富で、あらゆる年齢層の人に適しています。
+316,能力,néng lì,capability; capable; able; ability; CL:个,能力,他的能力很强。,彼の能力はとても高いです。,His ability is very strong.,提高语言能力需要不断地练习和积累词汇。,語学力を向上させるには、絶えず練習し語彙を蓄積する必要があります。
+317,年龄,nián líng,"(a person's) age; CL:把[ba3] ,个",年齢,你今年多大年龄？,あなたは今年何歳ですか？,How old are you this year?,年龄不是问题，重要的是有没有学习的热情。,年齢は問題ではなく、大切なのは学ぶ熱意があるかどうかです。
+318,弄,nòng,to do (to manage); to manage; to handle; to play with; to fool with; to mess with; to fix; to toy with,する,我弄坏了手机。,私は携帯電話を壊してしまいました。,I broke my phone.,我弄坏了手机，现在需要去修理店修理。,私は携帯電話を壊してしまい、今は修理店に行って直してもらう必要があります。
+319,暖和,nuǎn huo,warm (weather); nice and warm,暖かい,春天很暖和。,春はとても暖かいです。,Spring is very warm.,冬天的时候，穿得暖和一点对健康很好。,冬の時期は、暖かく服を着ることが健康にとても良いです。
+320,偶尔,ǒu ěr,occasionally; once in a while; sometimes,たまに,我偶尔去跑步。,私は時々ジョギングに行きます。,I occasionally go running.,我偶尔会去公园散步，放松自己的心情。,私は時々公園に散歩に行って、自分の気持ちをリラックスさせます。
+321,排队,pái duì,to line up; queue up; form a line,列に並ぶ,大家排队买票。,みんなで列を作ってチケットを買います。,Everyone lines up to buy tickets.,节假日的时候，很多人排队买票，非常拥挤。,休日には、多くの人がチケットを買うために並び、とても混雑します。
+322,排列,pái liè,to arrange; arrangement; array; permutation (i.e. ordered choice of n elements out of m),並べる,请排列好椅子。,椅子をきちんと並べてください。,Please arrange the chairs properly.,请按照字母顺序排列这些文件，方便查找。,これらの書類をアルファベット順に並べてください。探しやすくなります。
+323,判断,pàn duàn,to decide; to determine; CL:个,判断する,我不能判断对错。,私は正しいか間違っているか判断できません。,I cannot judge right or wrong.,老师根据学生的表现来判断他们的学习进度。,先生は生徒の様子をもとに、彼らの学習進度を判断します。
+324,陪,péi,to accompany; to keep sb company,付き添う,我陪你去医院。,私はあなたと一緒に病院へ行きます。,I will accompany you to the hospital.,周末我会陪父母一起去公园散步聊天。,週末に私は両親と一緒に公園へ散歩に行っておしゃべりします。
+325,批评,pī píng,to criticize; criticism; CL:个,批判する,老师批评了我。,先生に叱られました。,The teacher criticized me.,他经常批评自己的缺点，但也要看到优点。,彼は自分の欠点をよく批判しますが、長所も見るべきです。
+326,皮肤,pí fū,skin; CL:种[zhong3],皮膚,他的皮肤很白。,彼は肌がとても白いです。,He has very fair skin.,夏天要注意保护皮肤，避免太阳晒伤。,夏は皮膚の保護に注意し、日焼けを避けなければなりません。
+327,脾气,pí qi,temperament; disposition; temper; CL:个,気性,他脾气很急。,彼は短気です。,He has a quick temper.,他的脾气很好，遇到困难也不会轻易生气。,彼は気性が穏やかで、困難に直面しても簡単には怒りません。
+328,篇,piān,"piece of writing; sheet; bound set of bamboo slips used for record keeping (old); classifier for written items: chapter, article",篇（文章などの量詞）,我写了一篇文章。,私は一篇の記事を書きました。,I wrote an article.,这篇文章讲述了环保的重要性和方法。,この記事は環境保護の重要性と方法について述べています。
+329,骗,piàn,to cheat; to swindle; to deceive; to fool; to hoodwink; to trick,騙す,不要骗别人感情。,他人の感情を騙してはいけません。,Don't deceive others' feelings.,不要相信陌生人说的话，有时候他们会骗你。,知らない人の言うことを信じてはいけません。時々彼らはあなたを騙すことがあります。
+330,乒乓球,pīng pāng qiú,table tennis; ping-pong; ping pong; table tennis ball; CL:个,卓球,我们喜欢打乒乓球。,私たちは卓球をするのが好きです。,We like playing table tennis.,我每周都会和朋友一起打乒乓球锻炼身体。,私は毎週友達と一緒に卓球をして体を鍛えています。
+331,平时,píng shí,in normal times; in peacetime,普段,平时我很忙。,普段はとても忙しいです。,I am usually very busy.,平时我喜欢看书和听音乐放松自己。,普段は読書や音楽を聴いて自分をリラックスさせるのが好きです。
+332,破,pò,"broken; damaged; worn out; to break, split or cleave; to get rid of; to destroy; to break with; to defeat; to capture (a city etc); to expose the truth of",壊れる,我的手机破了。,私の携帯電話は壊れました。,My phone is broken.,我的手机屏幕破了，需要去换新的屏幕。,私の携帯電話の画面が割れて、新しい画面に交換する必要があります。
+333,葡萄,pú tao,grape,ぶどう,我喜欢吃葡萄。,私はぶどうを食べるのが好きです。,I like eating grapes.,葡萄是夏天常见的水果，味道又甜又多汁。,ぶどうは夏によく見られる果物で、味が甘くてジューシーです。
+334,普遍,pǔ biàn,universal; general; widespread; common,一般的,这种问题很普遍。,この種の問題はとても一般的です。,This kind of problem is very common.,这种问题在我们国家很普遍，需要引起重视。,このような問題は私たちの国では非常に一般的で、注意を払う必要があります。
+335,普通话,pǔ tōng huà,Mandarin (common language); Putonghua (common speech of the Chinese language); ordinary speech,標準中国語,我们说普通话。,私たちは普通話を話します。,We speak Mandarin.,普通话是中国的官方语言，很多人都在学习。,普通話は中国の公用語で、多くの人が学んでいます。
+336,其次,qí cì,next; secondly,次に,首先学习汉字，其次学习语法。,まず漢字を学び、次に文法を学びます。,"First learn Chinese characters, then learn grammar.",他首先完成了作业，其次参加了体育锻炼。,彼はまず宿題を終え、次に体育の運動に参加しました。
+337,其中,qí zhōng,among; in; included among these,その中,书中有很多知识，其中有趣的部分。,本の中には多くの知識があり、その中には面白い部分もあります。,"There is a lot of knowledge in the book, including interesting parts.",这本书有很多章节，其中有一章讲历史很有趣。,この本には多くの章があり、その中の一章は歴史についてで、とても面白いです。
+338,气候,qì hòu,climate; atmosphere; situation; CL:种[zhong3],気候,这里的气候很温暖。,ここの気候はとても温暖です。,The climate here is very warm.,这个地区的气候四季分明，适合农作物生长。,この地域の気候は四季がはっきりしており、農作物の生育に適しています。
+339,千万,qiān wàn,ten million; countless; many; one must by all means,絶対に,千万别忘了带钥匙。,絶対に鍵を持っていくのを忘れないでください。,Be sure not to forget to bring the keys.,这次考试千万不要放松，一定要认真复习。,今回の試験は絶対に気を抜かず、しっかり復習しなければなりません。
+340,签证,qiān zhèng,visa; certificate; to certify; CL:个,ビザ,我正在办理签证。,私は今ビザの手続きをしています。,I am currently processing my visa.,去国外旅游前，记得办理好签证手续。,海外旅行に行く前に、ビザの手続きを必ず済ませてください。
+341,敲,qiāo,extort; knock; to strike; to knock (at a door); to hit,叩く,请敲门再进来。,入る前にノックしてください。,Please knock before entering.,有人敲门了，请你去看看是谁。,誰かがドアをノックしています。誰か見に行ってください。
+342,桥,qiáo,bridge; CL:座[zuo4],橋,我们过了那座桥。,私たちはあの橋を渡りました。,We crossed that bridge.,这座桥连接了两个城市，交通非常方便。,この橋は二つの都市をつなぎ、交通がとても便利です。
+343,巧克力,qiǎo kè lì,chocolate (loanword); CL:块[kuai4],チョコレート,她喜欢吃巧克力。,彼女はチョコレートを食べるのが好きです。,She likes eating chocolate.,她喜欢吃巧克力，每天都会买一些当零食。,彼女はチョコレートを食べるのが好きで、毎日おやつとしていくつか買います。
+344,亲戚,qīn qi,"a relative (i.e. family relation); CL:门[men2] ,个,位[wei4]",親戚,假期我见了亲戚。,休暇中に親戚に会いました。,I met relatives during the holiday.,春节的时候，很多亲戚会回家一起过年。,春節の時、多くの親戚が家に帰って一緒に新年を祝います。
+345,轻,qīng,light (not heavy); light; easy; gentle; soft; reckless; unimportant; frivolous; small in number; unstressed; neutral,軽い,这个包很轻。,このバッグはとても軽いです。,This bag is very light.,这件衣服很轻，穿起来非常舒服。,この服はとても軽く、着心地が非常に良いです。
+346,轻松,qīng sōng,gentle; relaxed,気楽な,假期我很轻松。,休暇中はとてもリラックスしています。,I am very relaxed during the holiday.,考试结束后，我感到非常轻松和开心。,試験が終わった後、私はとてもリラックスして嬉しく感じました。
+347,情况,qíng kuàng,"circumstances; state of affairs; situation; CL:个,种[zhong3]",状況,请告诉我情况。,状況を教えてください。,Please tell me the situation.,根据目前的情况，我们需要调整计划。,現在の状況に基づいて、計画を調整する必要があります。
+348,穷,qióng,exhausted; poor,貧しい,他家很穷。,彼の家はとても貧しいです。,His family is very poor.,他们家因为穷，生活条件比较困难。,彼らの家は貧しいため、生活条件がやや厳しいです。
+349,区别,qū bié,difference; to distinguish; to discriminate; to make a distinction; CL:个,違い,这两者有区别。,この二つには違いがあります。,There is a difference between these two.,这两个词的意思有区别，要注意区分使用。,この二つの言葉は意味に違いがあるので、使い分けに注意してください。
+350,取,qǔ,to take; to get; to choose; to fetch,取る,请帮我取东西。,物を取るのを手伝ってください。,Please help me get something.,请你帮我取一下桌子上的那本书，谢谢。,テーブルの上にあるあの本を取ってくれませんか、ありがとう。
+351,全部,quán bù,whole; entire; complete,全部,我吃了全部饭。,私は全部ご飯を食べました。,I ate all the rice.,我把全部的工作都完成了，感觉很有成就感。,私は全部の仕事を終えて、とても達成感を感じています。
+352,缺点,quē diǎn,weak point; fault; shortcoming; CL:个,欠点,他的缺点很明显。,彼の欠点はとても明らかです。,His shortcomings are very obvious.,每个人都有缺点，重要的是我们要努力改正。,誰にでも欠点はありますが、大切なのはそれを努力して直すことです。
+353,缺少,quē shǎo,lack; shortage of; shortfall; to be short (of); to lack,不足,我们缺少时间了。,私たちは時間が足りなくなりました。,We are running out of time.,他缺少经验，所以需要多向老师请教。,彼は経験が不足しているので、先生にたくさん教えを請う必要があります。
+354,却,què,but; yet; however; while; to go back; to decline; to retreat; nevertheless; even though,しかし,我想去， 却没钱。,行きたいけど、お金がありません。,"I want to go, but I have no money.",我以为他会来，结果他却没有出现。,彼が来ると思っていたのに、結局彼は現れませんでした。
+355,确实,què shí,indeed; really; reliable; real; true,確かに,他确实很努力。,彼は確かにとても努力しています。,He is indeed very hardworking.,他的说法确实有道理，我们应该认真考虑。,彼の言い分は確かに道理があるので、私たちは真剣に考えるべきです。
+356,然而,rán ér,however; yet; but,しかし,天气冷，然而他出门。,天気は寒いのに、彼は出かけました。,"The weather is cold; however, he went out.",天气很冷，然而他还是决定去跑步。,天気はとても寒いのに、彼はそれでも走りに行くことに決めました。
+357,热闹,rè nao,bustling with noise and excitement; lively,賑やか,市场非常热闹。,市場はとても賑やかです。,The market is very lively.,春节的时候，街上非常热闹，到处都是欢笑声。,春節の時、街はとても賑やかで、あちこちから笑い声が聞こえます。
+358,任何,rèn hé,any; whatever; whichever; whatsoever,どんな,你可以问任何人。,あなたは誰にでも聞いていいです。,You can ask anyone.,你可以在任何时间联系我，我都会帮你的。,あなたはいつでも私に連絡していいですよ、私は必ず助けます。
+359,任务,rèn wu,"mission; assignment; task; duty; role; CL:项[xiang4] ,个",任務,今天的任务很重。,今日の任務はとても重いです。,Today's task is very heavy.,完成这个任务需要团队合作和耐心。,この任務を完成するにはチームワークと忍耐が必要です。
+360,扔,rēng,to throw; to throw away,投げる,请不要扔垃圾。,ゴミを捨てないでください。,Please do not throw garbage.,请不要随地扔垃圾，保持环境清洁很重要。,どうかゴミをそこらに捨てないでください。環境をきれいに保つことはとても重要です。
+361,仍然,réng rán,still; yet,依然,他仍然很忙。,彼は依然としてとても忙しいです。,He is still very busy.,虽然遇到困难，他仍然坚持自己的梦想。,困難に直面しても、彼はそれでも自分の夢を貫いています。
+362,日记,rì jì,"diary; CL:则[ze2] ,本[ben3] ,篇[pian1]",日記,我每天写日记。,私は毎日日記を書きます。,I write a diary every day.,她每天晚上都会写日记，记录生活中的点滴。,彼女は毎晩日記を書いて、生活のあれこれを記録しています。
+363,入口,rù kǒu,entrance,入口,入口在左边。,入口は左側にあります。,The entrance is on the left.,商店的入口就在马路对面，非常容易找到。,お店の入口は道路の向かいにあり、とても見つけやすいです。
+364,散步,sàn bù,to take a walk; to go for a walk,散歩,我们晚上散步去。,私たちは夜に散歩に行きます。,We go for a walk in the evening.,下午天气很好，我们一起去公园散步吧。,午後は天気が良いので、一緒に公園へ散歩に行きましょう。
+365,森林,sēn lín,forest; CL:片[pian4],森林,森林里有很多动物。,森にはたくさんの動物がいます。,There are many animals in the forest.,森林里有很多动物，是大自然的家园。,森林にはたくさんの動物がいて、自然の家です。
+366,沙发,shā fā,"sofa; CL:条[tiao2] ,张[zhang1]",ソファー,沙发很舒服。,ソファはとても快適です。,The sofa is very comfortable.,客厅里有一张舒服的沙发，大家可以坐在那里聊天。,リビングには快適なソファがあり、みんなそこで話をすることができます。
+367,伤心,shāng xīn,to grieve; to be broken-hearted; to feel deeply hurt; sad,悲しい,他听到消息很伤心。,彼はその知らせを聞いてとても悲しかったです。,He was very sad to hear the news.,他因为考试没通过，感到非常伤心和失落。,彼は試験に落ちて、とても悲しくて落ち込みました。
+368,商量,shāng liang,to consult; to talk over; to discuss,相談する,我们商量一下计划。,私たちは計画について相談します。,We discuss the plan.,遇到重要的问题，我们应该好好商量再做决定。,重要な問題に出会ったら、よく相談してから決定すべきです。
+369,稍微,shāo wēi,a little bit,少し,请稍微等一下。,少しだけ待ってください。,Please wait a moment.,请稍微等一会儿，我马上就回来。,少しだけ待ってください、すぐに戻ってきます。
+370,勺子,sháo zi,scoop; ladle; CL:把[ba3],おたま,用勺子吃汤吧。,スプーンでスープを飲みましょう。,Use a spoon to eat the soup.,喝汤的时候要用勺子，这样比较方便又安全。,スープを飲むときはスプーンを使うと便利で安全です。
+371,社会,shè huì,society; CL:个,社会,社会变化很快。,社会の変化はとても速いです。,Social changes are very fast.,社会的发展需要每个人的共同努力和贡献。,社会の発展には、みんなの共同の努力と貢献が必要です。
+372,深,shēn,"deep; late; profound; dark (of color, water etc); deep",深い,这条河很深。,この川はとても深いです。,This river is very deep.,这条河水很深，游泳的时候要特别小心。,この川の水はとても深いので、泳ぐときは特に注意しなければなりません。
+373,申请,shēn qǐng,to apply for sth; application (form etc); CL:份[fen4],申し込む,我申请了奖学金。,私は奨学金を申請しました。,I applied for a scholarship.,我已经准备好申请大学，希望能顺利通过审核。,私はもう大学に出願する準備ができていて、無事に審査を通れることを願っています。
+374,甚至,shèn zhì,so much so that; even,さえも,他甚至不说话。,彼は話もしませんでした。,He didn't even speak.,他工作很努力，甚至经常加班到很晚。,彼は仕事をとても頑張っていて、時には遅くまで残業することもあります。
+375,生活,shēng huó,life; activity; to live; livelihood,生活,生活很忙碌。,生活はとても忙しいです。,Life is very busy.,在大城市生活节奏很快，需要学会适应。,大都市での生活はペースが速いので、適応することを学ぶ必要があります。
+376,生命,shēng mìng,life; living; biological; CL:个,生命,生命很宝贵。,命はとても貴重です。,Life is very precious.,保护生命是每个人应尽的责任和义务。,命を守ることは、誰もが果たすべき責任と義務です。
+377,生意,shēng yì,life force; vitality;,商売,他的生意很好。,彼の商売はとても良いです。,His business is very good.,他的生意越来越好，客户也越来越多了。,彼の商売はどんどん良くなって、顧客も増えてきました。
+378,省,shěng,to do without; to economize; to save; to omit; to leave out; province; CL:个,省,我住在广东省。,私は広東省に住んでいます。,I live in Guangdong Province.,这个省有很多美丽的景点，值得去旅游。,この省にはたくさんの美しい観光地があり、旅行する価値があります。
+379,剩,shèng,to remain; to be left; to have as remainder,残り,饭还剩一点。,ご飯が少し残っています。,There is a little rice left.,晚饭吃完后，还剩下很多菜没有吃完。,夕食を食べ終わった後、まだたくさんの料理が残っていました。
+380,失败,shī bài,to be defeated; to lose; to fail (e.g. experiments); failure; defeat; CL:次[ci4],失敗,考试失败了。,試験に失敗しました。,I failed the exam.,虽然这次比赛失败了，但我们从中学到了很多经验。,今回の試合は負けましたが、私たちはたくさんの経験を学びました。
+381,失望,shī wàng,disappointed; to lose hope; to despair,失望,我感到很失望。,私はとても失望しました。,I felt very disappointed.,考试没通过让他很失望，但他决定继续努力。,試験に合格できず彼はとても失望しましたが、努力を続けることに決めました。
+382,师傅,shī fu,"master; qualified worker; respectful form of address for older men; CL:个,位[wei4] ,名[ming2]",先生,师傅教我开车。,師匠が私に運転を教えました。,The master taught me how to drive.,师傅教我怎么修理自行车，我学到了很多东西。,師匠が自転車の直し方を教えてくれて、たくさんのことを学びました。
+383,十分,shí fēn,to divide into ten equal parts; very; hundred percent; completely; extremely; utterly; absolutely,非常に,他十分努力学习。,彼は非常に一生懸命勉強しています。,He studies very hard.,这次旅行我十分开心，留下了美好的回忆。,今回の旅行はとても楽しく、素敵な思い出ができました。
+384,实际,shí jì,actual; reality; practice,実際,实际情况不同。,実際の状況は違います。,The actual situation is different.,我们要根据实际情况来制定计划，不能盲目行动。,私たちは実際の状況に基づいて計画を立てなければならず、盲目的に行動してはいけません。
+385,实在,shí zài,in reality; honestly; really; verily; concrete,本当に,我实在没时间。,本当に時間がありません。,I really have no time.,他实在太忙，所以没时间参加我们的活动。,彼は本当に忙しすぎて、私たちの活動に参加する時間がありません。
+386,使,shǐ,to cause; to enable; to use; to employ; to make; to send; to instruct sb to do sth; envoy; messenger,使う,手机使我方便。,携帯電話は私を便利にします。,The mobile phone makes me convenient.,老师的话使我明白了学习的重要性。,先生の言葉が私に学習の重要性を理解させました。
+387,使用,shǐ yòng,to use; to employ; to apply; to make use of,使用する,请使用这个软件。,このソフトを使ってください。,Please use this software.,请正确使用手机，避免影响他人。,携帯電話は正しく使って、他の人に迷惑をかけないようにしてください。
+388,世纪,shì jì,century; CL:个,世紀,这是21世纪。,これは21世紀です。,This is the 21st century.,二十一世纪是科技飞速发展的时代。,21世紀は科学技術が急速に発展する時代です。
+389,是否,shì fǒu,whether (or not); if; is or isn't,かどうか,你是否来了？,あなたは来ましたか？,Did you come?,我还不确定是否参加明天的会议。,私はまだ明日の会議に参加するかどうか確かではありません。
+390,适合,shì hé,to fit; to suit,適合する,这衣服很适合你。,この服はあなたにとても似合います。,This clothes suit you very well.,这件衣服很适合你，穿上一定很好看。,この服はあなたにとても似合います。着るときっときれいに見えますよ。
+391,适应,shì yìng,to suit; to fit; to be suitable; to adapt; to get used to sth,慣れる,我适应了新环境。,私は新しい環境に慣れました。,I have adapted to the new environment.,刚开始上班时，我花了很多时间适应新的环境。,仕事を始めたばかりの時、新しい環境に慣れるのにたくさんの時間がかかりました。
+392,收,shōu,to receive; to accept; to collect; in care of (used on address line after name),受け取る,我收到了礼物。,私はプレゼントを受け取りました。,I received a gift.,请把桌子上的书收起来，保持整洁。,机の上の本を片付けて、きれいに保ってください。
+393,收入,shōu rù,"to take in; income; revenue; CL:笔[bi3] ,个",収入,他的收入很高。,彼の収入はとても高いです。,His income is very high.,他的收入增加了，所以买了一辆新车。,彼の収入が増えたので、新しい車を買いました。
+394,收拾,shōu shi,to put in order; to tidy up; to pack; to repair; to punish (colloquial); to manage,片付ける,请帮我收拾房间。,私の部屋を片付けるのを手伝ってください。,Please help me tidy up the room.,每天睡觉前，我都会收拾房间，保持整齐。,毎晩寝る前に部屋を片付けて、きちんと保っています。
+395,首都,shǒu dū,capital (city); CL:个,首都,北京是中国首都。,北京は中国の首都です。,Beijing is the capital of China.,北京是中国的首都，有很多著名的历史景点。,北京は中国の首都で、有名な歴史的観光地がたくさんあります。
+396,首先,shǒu xiān,first (of all); in the first place,まず,首先要学习汉语。,まず漢語を勉強しなければなりません。,"First, you need to learn Chinese.",首先，我们需要制定一个详细的计划。,まず第一に、私たちは詳細な計画を立てる必要があります。
+397,受不了,shòu bù liǎo,unbearable; unable to endure; can't stand,耐えられない,我受不了噪音。,私は騒音に耐えられません。,I can't stand the noise.,天气太热了，我实在受不了了，想开空调。,天気が暑すぎて、本当に我慢できません。エアコンをつけたいです。
+398,受到,shòu dào,to suffer; obtained; given; to receive,受ける,他受到大家欢迎。,彼はみんなに歓迎されています。,He is welcomed by everyone.,他因为努力学习，受到了老师的表扬。,彼は一生懸命勉強したので、先生から褒められました。
+399,售货员,shòu huò yuán,salesperson; CL:个,店員,售货员很热情。,店員はとても親切です。,The salesperson is very enthusiastic.,售货员很热情，帮我选了一件合适的衣服。,店員はとても親切で、私に合った服を選んでくれました。
+400,输,shū,to transport; to lose; to donate; to enter (a password),負ける,比赛我们输了。,試合で私たちは負けました。,We lost the match.,比赛中虽然输了，但我们没有放弃，继续努力。,試合では負けましたが、私たちはあきらめずに努力を続けました。
+401,熟悉,shú xī,to be familiar with; to know well,よく知る,我对这城市很熟悉。,私はこの街にとても詳しい。,I am very familiar with this city.,我对这座城市的环境非常熟悉，已经生活了五年。,私はこの街の環境にとても詳しく、すでに5年間住んでいます。
+402,数量,shù liàng,quantity; amount; CL:个,数量,数量影响价格。,数量は価格に影響する。,Quantity affects the price.,这批货物的数量比预期的要多出二十箱。,この荷物の数量は予想よりも20箱多いです。
+403,数字,shù zì,numeral; digit; number; figure; amount; digital (electronics etc); CL:个,数字,请写下这个数字。,この数字を書いてください。,Please write down this number.,请你把这些数字写清楚，方便统计和分析。,これらの数字をはっきり書いてください。集計と分析がしやすくなります。
+404,帅,shuài,handsome; graceful; smart; commander in chief,かっこいい,他是个帅男孩。,彼はハンサムな男の子です。,He is a handsome boy.,他长得很帅，所以在学校里很受欢迎。,彼はとてもかっこいいので、学校でとても人気があります。
+405,顺便,shùn biàn,conveniently; in passing; without much extra effort,ついでに,顺便帮我买水果。,ついでに果物を買ってきてください。,Please help me buy some fruit on the way.,我去超市顺便买了点水果和蔬菜。,スーパーに行くついでに、果物と野菜を少し買いました。
+406,顺利,shùn lì,smoothly; without a hitch,順調,工作进行得很顺利。,仕事は順調に進んでいる。,The work is going smoothly.,这次考试顺利通过了，我感到很开心。,今回の試験は順調に合格できて、とてもうれしいです。
+407,顺序,shùn xù,sequence; order,順序,请按顺序排队。,順番に並んでください。,Please line up in order.,请按照顺序排队，保持秩序和安全。,順番に並んで、秩序と安全を保ってください。
+408,说明,shuō míng,to explain; to illustrate; explanation; directions; caption; CL:个,説明する,老师说明了规则。,先生がルールを説明した。,The teacher explained the rules.,老师详细说明了这道题的解答方法。,先生はこの問題の解答方法を詳しく説明しました。
+409,硕士,shuò shì,master's degree; learned person,修士,她是一位硕士生。,彼女は修士課程の学生です。,She is a master's student.,他去年获得了硕士学位，专业是计算机科学。,彼は昨年修士号を取得し、専攻はコンピューターサイエンスです。
+410,死,sǐ,to die; impassable; uncrossable; inflexible; rigid; extremely,死ぬ,树木快要死了。,木がもうすぐ枯れそうだ。,The trees are about to die.,因为事故，他差点死了，幸好被及时救了。,事故のため、彼はもう少しで死ぬところでしたが、幸いにもすぐに救助されました。
+411,塑料袋,sù liào dài,plastic bag,ビニール袋,请不要用塑料袋。,ビニール袋は使わないでください。,Please do not use plastic bags.,请不要随意丢弃塑料袋，保护环境很重要。,プラスチック袋を勝手に捨てないでください。環境保護はとても重要です。
+412,速度,sù dù,speed; rate; velocity; CL:个,速度,汽车速度很快。,車の速度はとても速い。,The car's speed is very fast.,汽车的速度太快了，请注意安全驾驶。,車の速度が速すぎます。安全運転に注意してください。
+413,酸,suān,sour; tart; sick at heart; grieved; sore; aching; acid,酸っぱい,这个苹果有点酸。,このリンゴは少し酸っぱい。,This apple is a bit sour.,这个柠檬有点酸，但是非常新鲜。,このレモンは少し酸っぱいですが、とても新鮮です。
+414,随便,suí biàn,as one wishes; as one pleases; at random; negligent; casual; wanton,自由に,你可以随便选择。,あなたは自由に選んでいい。,You can choose freely.,你可以随便坐，不用担心位置的问题。,どうぞご自由に座ってください。席のことは気にしなくていいです。
+415,随着,suí zhe,along with; in the wake of; following,～に従って,随着时间变化。,時間の経過とともに変化する。,Changes occur with the passage of time.,随着时间的推移，技术不断地发展和进步。,時間の経過とともに、技術は絶えず発展し進歩しています。
+416,孙子,sūn zi,grandson (paternal),孫,他有一个孙子。,彼には孫が一人いる。,He has a grandson.,我的孙子今年上小学，一直很喜欢画画。,私の孫は今年小学校に入り、ずっと絵を描くのが好きです。
+417,所有,suǒ yǒu,all; to possess; to have; to own,すべての,所有人都来了。,みんなが来た。,Everyone came.,所有的学生都参加了这次重要的考试。,全ての学生がこの重要な試験に参加しました。
+418,台,tái,desk; platform; stage; terrace; stand; support; station; broadcasting station; desk; classifier for vehicles or machines; Taiwan (abbr.),台（機械）,这台电脑很新。,このパソコンはとても新しい。,This computer is very new.,这台电脑的性能很好，适合玩大型游戏。,このパソコンは性能が良く、大型ゲームに適しています。
+419,抬,tái,to lift; to raise; (of two or more persons) to carry,持ち上げる,请帮我抬箱子。,箱を持ち上げるのを手伝ってください。,Please help me lift the box.,我们一起抬桌子，把它搬到阳台上去。,私たちは一緒にテーブルを持ち上げて、ベランダに運びました。
+420,态度,tài du,manner; bearing; attitude; approach; CL:个,態度,他的态度很友好。,彼の態度はとても友好的だ。,His attitude is very friendly.,他的态度非常认真，让老师很满意。,彼の態度は非常に真面目で、先生はとても満足しています。
+421,弹钢琴,tán gāng qín,play the piano,ピアノを弾く,她喜欢弹钢琴。,彼女はピアノを弾くのが好きだ。,She likes playing the piano.,她每天都会练习弹钢琴，技术越来越好。,彼女は毎日ピアノを練習していて、技術がどんどん良くなっています。
+422,谈,tán,to discuss; to chat; to converse; to talk; to speak,話す,我们谈了很多话。,私たちはたくさん話した。,We talked a lot.,我们在会议上谈了很多关于项目的问题。,私たちは会議でプロジェクトに関する多くの問題を話し合いました。
+423,汤,tāng,soup; broth; hot water,スープ,喝一碗热汤吧。,熱いスープを一杯飲みましょう。,Have a bowl of hot soup.,冬天喝一碗热汤，可以让身体暖和起来。,冬に熱いスープを一杯飲むと、体が温まります。
+424,糖,táng,"sugar; sweets; candy; CL:颗[ke1] ,块[kuai4]",砂糖,请少放点糖。,砂糖は少なめにしてください。,Please put less sugar.,请帮我少放点糖，我不喜欢太甜的味道。,砂糖は少なめに入れてください。私は甘すぎる味が好きではありません。
+425,躺,tǎng,to recline; to lie down,横になる,他躺在床上。,彼はベッドに横たわっている。,He is lying on the bed.,他躺在沙发上休息，看电视很放松。,彼はソファに横になって休み、テレビを見てリラックスしています。
+426,趟,tàng,quantifier for the number of trips or runs made,回（動作の回数）,我去了一趟商店。,私は店に一度行ってきた。,I went to the store once.,我今天去了一趟超市，买了很多东西。,私は今日一度スーパーに行って、たくさんのものを買いました。
+427,讨论,tǎo lùn,to talk over; to discuss; CL:个,討論する,我们讨论了计划。,私たちは計画について話し合った。,We discussed the plan.,老师让我们小组讨论这个问题，提出不同意见。,先生は私たちのグループにこの問題を議論し、異なる意見を出すように言いました。
+428,讨厌,tǎo yàn,to dislike; to loathe; disagreeable; troublesome; annoying; nasty; to hate doing something,嫌い,我讨厌下雨天。,私は雨の日が嫌いだ。,I hate rainy days.,我讨厌下雨天，因为不能出去玩。,私は雨の日が嫌いです。なぜなら外で遊べないからです。
+429,特点,tè diǎn,characteristic (feature); trait; feature; CL:个,特徴,这本书的特点是清晰。,この本の特徴はわかりやすさだ。,The characteristic of this book is clarity.,每个品牌都有自己的特点和优势。,それぞれのブランドには独自の特徴と強みがあります。
+430,提,tí,to carry; to lift; to raise,出す,请提问题。,質問してください。,Please ask questions.,请你提一个问题，让大家一起回答。,質問を一つ出してください。みんなで答えましょう。
+431,提供,tí gōng,to supply; to provide; to furnish; to offer,提供する,公司提供培训。,会社は研修を提供している。,The company provides training.,公司提供免费的午餐给所有员工。,会社は全ての社員に無料の昼食を提供しています。
+432,提前,tí qián,to shift to an earlier date; to bring forward; to advance; in advance,前もって,请提前通知我。,事前に私に知らせてください。,Please notify me in advance.,为了避免堵车，我们提前出发了。,渋滞を避けるために、私たちは早めに出発しました。
+433,提醒,tí xǐng,to call attention to; to warn of; to remind,注意を促す,老师提醒我们考试。,先生は私たちに試験を注意した。,The teacher reminded us about the exam.,老师提醒我们明天要交作业，不要忘记。,先生は明日宿題を提出するように私たちに注意を促しました。忘れないでください。
+434,填空,tián kòng,to fill a job vacancy; to fill in a blank (e.g. on questionnaire or exam paper),空欄を埋める,请填空这句话。,この文の空欄を埋めてください。,Please fill in the blanks of this sentence.,请在这张试卷上填空，不要漏掉任何题目。,この試験用紙の空欄を埋めてください。問題を見落とさないでください。
+435,条件,tiáo jiàn,circumstances; condition; term; factor; requirement; prerequisite; qualification; CL:个,条件,成功需要好条件。,成功には良い条件が必要だ。,Success requires good conditions.,申请这份工作需要满足一定的条件和经验。,この仕事に応募するには一定の条件と経験を満たす必要があります。
+436,停,tíng,to halt; to stop; to park (a car);,止まる,车在红灯停。,車は赤信号で止まる。,The car stops at the red light.,红灯亮了，汽车必须停下来等待。,赤信号が点灯したので、車は必ず止まって待たなければなりません。
+437,挺,tǐng,to (physically) straighten up; to stick out; to endure or hold out; straight; stiff; outstanding; extraordinary; rather; quite; very; classifier for machine guns,かなり,天气挺冷的。,天気はかなり寒い。,The weather is quite cold.,这件衣服挺漂亮的，你可以试试看。,この服はかなりきれいです。試着してみてもいいですよ。
+438,通过,tōng guò,to pass through; to get through; by means of; through; via; to adopt; to pass (a bill); to switch over,通る,他通过了考试。,彼は試験に合格した。,He passed the exam.,他通过努力终于考上了理想的大学。,彼は努力を通じてついに理想の大学に合格しました。
+439,通知,tōng zhī,to notify; to inform; notice; notification; CL:个,通知,老师通知了作业。,先生は宿題を知らせた。,The teacher notified us about the homework.,学校已经通过邮件通知了家长开会的时间。,学校はすでにメールで保護者に会議の日時を通知しました。
+440,同情,tóng qíng,compassion; relent; sympathize; sympathy,同情する,我同情他的困难。,私は彼の困難に同情する。,I sympathize with his difficulties.,我很同情那些生活困难的人，愿意帮助他们。,私は生活に困っている人たちに同情し、助けたいと思っています。
+441,同时,tóng shí,at the same time; simultaneously,同時に,他同时学两门课。,彼は同時に二つの科目を学んでいる。,He studies two subjects at the same time.,他同时会说三种语言，非常厉害。,彼は同時に三つの言語を話せて、とてもすごいです。
+442,推,tuī,to push; to cut; to refuse; to reject; to decline; to shirk (responsibility); to put off; to delay; to push forward; to nominate; to elect,押す,请推开门。,ドアを押して開けてください。,Please push the door open.,请你帮我推一下门，门有点重。,ちょっとドアを押してくれませんか？ドアが少し重いです。
+443,推迟,tuī chí,to postpone; to put off; to defer,延期する,会议推迟到明天。,会議は明日に延期された。,The meeting was postponed until tomorrow.,因为天气不好，会议被推迟到下周举行。,天気が悪いため、会議は来週に延期されました。
+444,脱,tuō,to shed; to take off; to escape; to get away from,脱ぐ,请脱鞋进屋。,靴を脱いで家に入ってください。,Please take off your shoes before entering the house.,进房间前请脱鞋，保持室内清洁。,部屋に入る前に靴を脱いで、室内をきれいに保ってください。
+445,袜子,wà zi,"socks; stockings; CL:只[zhi1] ,对[dui4] ,双[shuang1]",靴下,袜子洗干净了。,靴下はきれいに洗った。,The socks have been washed clean.,他每天早上都会穿干净的袜子去上班。,彼は毎朝きれいな靴下を履いて出勤します。
+446,完全,wán quán,complete; whole; totally; entirely,完全に,我完全理解了。,私は完全に理解した。,I completely understood.,我完全理解你的想法，没有任何问题。,私はあなたの考えを完全に理解していて、全く問題ありません。
+447,往往,wǎng wǎng,often; frequently,しばしば,他往往迟到。,彼はたいてい遅刻する。,He is often late.,天气变化时，人们往往会感冒生病。,天気が変わると、人はしばしば風邪をひきます。
+448,网球,wǎng qiú,tennis; CL:个,テニス,我喜欢打网球。,私はテニスをするのが好きだ。,I like playing tennis.,他每周都会打一次网球，身体很健康。,彼は毎週一回テニスをしていて、体がとても健康です。
+449,网站,wǎng zhàn,website; network station; node,ウェブサイト,这个网站很有用。,このウェブサイトはとても役に立つ。,This website is very useful.,你可以在这个网站上找到很多学习资料。,あなたはこのウェブサイトで多くの学習資料を見つけることができます。
+450,危险,wēi xiǎn,danger; dangerous,危険,山上有危险标志。,山の上に危険の標識がある。,There is a danger sign on the mountain.,爬山有一定的危险，大家一定要注意安全。,登山には一定の危険があるので、みんな必ず安全に注意してください。
+451,卫生间,wèi shēng jiān,bathroom; toilet; WC; CL:间[jian1],トイレ,卫生间里很干净。,トイレはとてもきれいです。,The bathroom is very clean.,请问卫生间在哪里？我需要马上去洗手间。,すみません、トイレはどこですか？すぐに洗面所に行く必要があります。
+452,味道,wèi dào,flavor; smell; hint of,味,这道菜味道很好。,この料理はとても美味しいです。,This dish tastes very good.,这道菜的味道非常好，让我想起了家乡的味道。,この料理の味はとても良くて、故郷の味を思い出させます。
+453,温度,wēn dù,temperature; CL:个,温度,今天温度很高。,今日は気温がとても高いです。,The temperature is very high today.,今天的温度很高，大家出门记得多喝水。,今日は気温が高いので、みんな外出するときはたくさん水を飲んでください。
+454,文章,wén zhāng,"article; essay; literary works; writings; hidden meaning; CL:篇[pian1] ,段[duan4] ,页[ye4]",文章,老师发了一篇文章。,先生が一つの記事を配りました。,The teacher handed out an article.,这篇文章介绍了中国的传统文化，非常有趣。,この記事は中国の伝統文化について紹介していて、とても面白いです。
+455,污染,wū rǎn,pollution; contamination; CL:个,汚染,空气污染很严重。,大気汚染がとても深刻です。,Air pollution is very serious.,空气污染已经成为城市发展中必须解决的问题。,大気汚染はすでに都市の発展において解決しなければならない問題となっています。
+456,无,wú,un-; to lack; -less; not to have; no; none; not; to lack,無い,我今天无时间。,私は今日時間がありません。,I have no time today.,他无任何理由就离开了，没有跟我说一声。,彼は何の理由もなく去ってしまい、私に一言も言いませんでした。
+457,无聊,wú liáo,nonsense; bored,退屈,他觉得很无聊。,彼はとても退屈だと感じています。,He feels very bored.,今天下午没有什么事情做，感觉有点无聊。,今日の午後は特にやることがなく、少し退屈に感じています。
+458,无论,wú lùn,no matter what or how; regardless of whether...,〜に関係なく,无论天气，都去。,天気に関係なく行きます。,I will go regardless of the weather.,无论天气怎么样，我每天都会去跑步保持健康。,天気がどうであろうと、私は毎日健康のためにジョギングに行きます。
+459,误会,wù huì,to misunderstand; to mistake; misunderstanding; CL:个,誤解,我们有点误会了。,私たちは少し誤解がありました。,We had a bit of a misunderstanding.,我们之间发生了误会，需要好好沟通才能解决。,私たちの間に誤解が起きたので、しっかり話し合って解決しなければなりません。
+460,吸引,xī yǐn,"to attract (interest, investment etc); CL:个",引きつける,这个广告很吸引人。,この広告はとても人を引きつけます。,This advertisement is very attractive.,这部电影的故事情节很吸引人，我看得很投入。,この映画のストーリーはとても魅力的で、私は夢中で観ました。
+461,西红柿,xī hóng shì,tomato; CL:只[zhi1],トマト,西红柿很新鲜。,トマトはとても新鮮です。,The tomatoes are very fresh.,西红柿不仅美味，还富含丰富的维生素。,トマトは美味しいだけでなく、豊富なビタミンも含んでいます。
+462,咸,xián,salty,しょっぱい,这个菜太咸了。,この料理は塩辛すぎます。,This dish is too salty.,这道菜有点咸，下次做的时候要少放盐。,この料理は少し塩辛いので、次に作るときは塩を少なめに入れます。
+463,现金,xiàn jīn,cash,現金,请付现金买单。,現金で支払ってください。,Please pay in cash.,请问这里可以用现金付款吗？我没有带银行卡。,こちらは現金で支払えますか？カードを持ってきていません。
+464,羡慕,xiàn mù,envious; envy; to admire,羨む,我羡慕他的生活。,私は彼の生活を羨ましく思います。,I envy his life.,我很羡慕她的生活，因为她每天都很快乐。,私は彼女の生活を羨ましく思います。なぜなら彼女は毎日幸せだからです。
+465,相反,xiāng fǎn,opposite; contrary,反対,我们意见相反。,私たちは意見が反対です。,We have opposite opinions.,他和我想法相反，我们经常有不同的意见。,彼は私とは考えが逆で、私たちはよく意見が違います。
+466,相同,xiāng tóng,identical; same,同じ,我们穿相同衣服。,私たちは同じ服を着ています。,We are wearing the same clothes.,虽然我们来自不同的地方，但兴趣爱好相同。,私たちは違う場所から来ましたが、趣味は同じです。
+467,香,xiāng,fragrant; sweet smelling; aromatic; savory or appetizing; (to eat) with relish; (of sleep) sound; perfume or spice; joss or incense stick; CL:根[gen1],良い香り,花园里花很香。,庭の花はとても良い香りがします。,The flowers in the garden smell very nice.,这朵花非常香，整个房间都充满了花香。,この花はとても香りが良くて、部屋中に花の香りが満ちています。
+468,详细,xiáng xì,detailed; in detail; minute,詳細な,请告诉我详细情况。,詳しい状況を教えてください。,Please tell me the detailed situation.,请你把事情的经过说得详细一点，我好理解。,その事の経緯をもう少し詳しく話してください、理解しやすいので。
+469,响,xiǎng,to make a sound; to sound; to ring; loud; classifier for noises,鳴る,手机响了起来。,携帯電話が鳴り始めました。,The phone started ringing.,手机铃声响了，我赶紧去接电话。,携帯電話の着信音が鳴ったので、急いで電話に出ました。
+470,橡皮,xiàng pí,rubber; an eraser; CL:块[kuai4],消しゴム,我忘带橡皮了。,消しゴムを持ってくるのを忘れました。,I forgot to bring my eraser.,考试时如果写错了，可以用橡皮擦掉重新写。,試験のときに間違えたら、消しゴムで消して書き直せます。
+471,消息,xiāo xi,news; information; CL:条[tiao2],ニュース,我收到好消息。,私は良い知らせを受け取りました。,I received good news.,我刚收到一个好消息，明天可以放假一天。,私はちょうど良い知らせを受け取りました。明日一日休みです。
+472,小吃,xiǎo chī,snack; refreshments; CL:家[jia1],軽食,这里有很多小吃。,ここにはたくさんの軽食があります。,There are many snacks here.,夜市里有很多美味的小吃，值得一试。,夜市には美味しい屋台料理がたくさんあり、一度試す価値があります。
+473,小伙子,xiǎo huǒ zi,lad; young fellow; young man; young guy; youngster; CL:个,若者,小伙子很努力。,若者はとても努力しています。,The young man works very hard.,那个小伙子很努力学习，将来一定会成功。,あの若者はとても勉強熱心で、将来きっと成功するでしょう。
+474,小说,xiǎo shuō,"novel; fiction; CL:本[ben3] ,部[bu4]",小説,我喜欢看小说。,私は小説を読むのが好きです。,I like reading novels.,这本小说的故事很感人，让我忍不住流泪。,この小説の物語はとても感動的で、私は思わず涙を流しました。
+475,效果,xiào guǒ,result; effect; quality; CL:个,効果,新药效果很好。,新しい薬の効果はとても良いです。,The new medicine works very well.,这种药的效果很好，病人很快就康复了。,この薬の効果はとても良くて、患者はすぐに回復しました。
+476,笑话,xiào huà,joke; jest; CL:个,ジョーク,他说了一个笑话。,彼はジョークを一つ言いました。,He told a joke.,他讲了一个笑话，大家都笑得很开心。,彼がジョークを言ったので、みんなとても楽しく笑いました。
+477,心情,xīn qíng,mood; frame of mind; CL:个,気分,他今天心情不错。,彼は今日気分が良いです。,He is in a good mood today.,今天的心情很好，因为我通过了考试。,今日は気分がとても良いです。なぜなら試験に合格したからです。
+478,辛苦,xīn kǔ,hard; exhausting; with much toil; thanks for your trouble,苦労,工作很辛苦。,仕事はとても大変です。,Work is very hard.,为了完成任务，他工作得非常辛苦。,任務を完成させるために、彼は非常に苦労して働きました。
+479,信封,xìn fēng,envelope; CL:个,封筒,信封里有信。,封筒の中に手紙があります。,There is a letter inside the envelope.,我把信放进信封里，然后寄到了朋友家。,私は手紙を封筒に入れて、それから友達の家に送りました。
+480,信息,xìn xī,information; news; message,情報,请给我信息。,情報をください。,Please give me information.,请把重要的信息发给我，我好及时处理。,重要な情報を私に送ってください、すぐに対応できるように。
+481,信心,xìn xīn,confidence; faith (in sb or sth); CL:个,自信,她有很大信心。,彼女はとても自信があります。,She has great confidence.,只要有信心，就一定能够完成这个目标。,自信さえあれば、必ずこの目標を達成できます。
+482,兴奋,xīng fèn,excited; excitement,興奮,孩子们很兴奋。,子供たちはとても興奮しています。,The children are very excited.,听到好消息后，她非常兴奋，跳了起来。,良い知らせを聞いた後、彼女はとても興奮して飛び跳ねました。
+483,行,xíng,to walk; to go; to travel; a visit; temporary; makeshift; current; in circulation; to do; to perform; capable; competent; effective; all right; OK!; will do,大丈夫,你行，我相信你。,君ならできる、私は君を信じています。,"You can do it, I believe in you.",你要是没问题，这次考试就能行了。,問題がなければ、今回の試験はうまくいくでしょう。
+484,醒,xǐng,to wake up; to awaken; to be awake,目覚める,我七点醒了。,私は7時に目が覚めました。,I woke up at seven o'clock.,我早上六点醒了，准备去跑步锻炼身体。,私は朝6時に目が覚めて、ジョギングに行って体を鍛える準備をしました。
+485,幸福,xìng fú,happiness; happy; blessed; well-being,幸福,他们过得很幸福。,彼らはとても幸せに暮らしています。,They live very happily.,他们一家人生活得很幸福，互相关心帮助。,彼ら家族はとても幸せに暮らしていて、お互いに気遣い助け合っています。
+486,性别,xìng bié,gender; sex; distinguishing between the sexes,性別,请写明性别。,性別を明記してください。,Please specify your gender.,在填写表格时，请注意性别栏的选择。,フォームに記入するときは、性別欄の選択に注意してください。
+487,性格,xìng gé,nature (temperament); nature; disposition; temperament; character; CL:个,性格,她性格很开朗。,彼女は性格がとても明るいです。,She has a very cheerful personality.,他的性格开朗，很容易和别人相处。,彼は性格が明るくて、他人と仲良くなるのがとても上手です。
+488,修理,xiū lǐ,to repair; to perform maintenance; to overhaul; to fix; to prune; to trim,修理する,我修理了电脑。,私はパソコンを修理しました。,I repaired the computer.,我的手机坏了，昨天去店里修理了。,私の携帯電話が壊れたので、昨日店に修理に行きました。
+489,许多,xǔ duō,a great deal of; many; a lot of; much,たくさん,这里有许多书。,ここにはたくさんの本があります。,There are many books here.,这座城市有许多名胜古迹，吸引了很多游客。,この都市には多くの名勝古跡があり、多くの観光客を引きつけています。
+490,学期,xué qī,school term; semester; CL:个,学期,新学期开始了。,新学期が始まりました。,The new semester has started.,这个学期的课程安排得很紧张，需要好好学习。,今学期の授業はとても詰まっているので、しっかり勉強する必要があります。
+491,呀,ya,"(particle equivalent to 啊 after a vowel, expressing surprise or doubt)",〜ね,你来了呀？,来たの？,"You came, huh?",你来了呀！我正想找你一起去看电影呢。,来たね！ちょうど君を誘って一緒に映画を見に行こうと思ってたんだ。
+492,压力,yā lì,pressure,ストレス,工作压力很大。,仕事のプレッシャーがとても大きいです。,The work pressure is very high.,工作压力很大，周末我喜欢去公园放松一下。,仕事のプレッシャーが大きいので、週末は公園に行ってリラックスするのが好きです。
+493,牙膏,yá gāo,toothpaste; CL:管[guan3],歯磨き粉,我买了牙膏。,私は歯磨き粉を買いました。,I bought toothpaste.,早上起床后，我习惯先刷牙用牙膏清洁口腔。,朝起きてから、私はまず歯磨き粉で歯を磨いて口をきれいにするのが習慣です。
+494,亚洲,yà zhōu,Asia; Asian,アジア,亚洲很大。,アジアはとても大きいです。,Asia is very large.,亚洲是世界上人口最多的大陆，有很多国家。,アジアは世界で最も人口の多い大陸で、多くの国があります。
+495,严格,yán gé,strict; stringent; tight; rigorous,厳しい,老师很严格。,先生はとても厳しいです。,The teacher is very strict.,老师对学生的要求非常严格，希望大家认真学习。,先生は生徒に対して非常に厳しく、みんなに真面目に勉強してほしいと思っています。
+496,严重,yán zhòng,serious; severe; critical; grave,深刻な,问题很严重。,問題はとても深刻です。,The problem is very serious.,交通事故造成了严重的伤害，需要及时救治。,交通事故は深刻なけがを引き起こし、迅速な治療が必要です。
+497,盐,yán,salt; CL:粒[li4],塩,请少放盐。,塩は少なめにしてください。,Please put less salt.,做饭的时候要注意盐的用量，不能放太多。,料理をするときは塩の量に注意し、入れすぎてはいけません。
+498,研究,yán jiū,research; a study; CL:項|项[xiang4];,研究,他在研究问题。,彼は問題を研究しています。,He is studying the problem.,大学里有很多学生从事环境保护的研究工作。,大学には環境保護の研究に従事している学生がたくさんいます。
+499,演出,yǎn chū,"to act (in a play); to perform; to put on (a performance); performance; concert; show; CL:场[chang2] ,次[ci4]",公演,今晚有演出。,今晩は公演があります。,There is a performance tonight.,今晚的演出非常精彩，观众们都报以热烈的掌声。,今夜の公演はとても素晴らしく、観客たちは熱烈な拍手を送りました。
+500,演员,yǎn yuán,"actor or actress; performer; CL:个,位[wei4] ,名[ming2]",俳優,他是一名演员。,彼は俳優です。,He is an actor.,这位演员表演得很自然，赢得了观众的喜爱。,この俳優はとても自然に演技をして、観客の好感を得ました。
+501,眼镜,yǎn jìng,spectacles; eyeglasses; CL:副[fu4],眼鏡,我戴眼镜看书。,私は眼鏡をかけて本を読みます。,I wear glasses to read books.,我戴眼镜已经有五年了，感觉视力有了很大改善。,私は眼鏡をかけてもう五年になりますが、視力が大きく改善したと感じています。
+502,阳光,yáng guāng,sunlight; sunshine; transparent (open to public scrutinity); CL:线[xian4],日光,阳光很温暖。,日差しはとても暖かい。,The sunlight is very warm.,早上的阳光非常温暖，让人心情特别好。,朝の陽光はとても暖かくて、人の気分を特に良くさせます。
+503,养成,yǎng chéng,to cultivate; to raise; to form (a habit); to acquire,養う,养成好习惯。,良い習慣を身につける。,Develop good habits.,养成每天早起锻炼的习惯对身体很有好处。,毎朝早く起きて運動する習慣を身につけることは体にとても良いです。
+504,样子,yàng zi,manner; air; looks; aspect,様子,他的样子很开心。,彼の様子はとても嬉しそうだ。,He looks very happy.,他的样子看起来很疲惫，可能是工作太累了。,彼の様子はとても疲れているように見えます。多分仕事が大変すぎるのでしょう。
+505,邀请,yāo qǐng,to invite; invitation; CL:个,招待,我邀请你参加。,私はあなたを招待します。,I invite you to participate.,我想邀请你参加下个月的生日派对，请务必来。,来月の誕生日パーティーにあなたを招待したいので、ぜひ来てください。
+506,要是,yào shi,if,もし〜なら,要是下雨，我不去。,もし雨が降ったら、行きません。,"If it rains, I won't go.",要是明天下雨，我们就改天再去爬山吧。,もし明日雨が降ったら、別の日にハイキングに行きましょう。
+507,钥匙,yào shi,key; CL:把[ba3],鍵,钥匙忘带了。,鍵を持ってくるのを忘れた。,I forgot to bring the key.,我找不到钥匙了，可能忘在办公室了。,鍵が見つかりません。多分オフィスに忘れてきたのでしょう。
+508,也许,yě xǔ,perhaps; maybe; probably,多分,也许他会来。,たぶん彼は来るだろう。,Maybe he will come.,他今天没来， 也许是身体不舒服吧。,彼は今日来なかったけど、多分体調が良くないのだろう。
+509,叶子,yè zi,foliage; leaf; CL:片[pian4],葉,树上的叶子绿。,木の葉は緑色だ。,The leaves on the tree are green.,秋天的时候，树上的叶子变成了黄色和红色。,秋になると、木の葉が黄色や赤色に変わります。
+510,页,yè,page; leaf,ページ,我读了三页。,私は三ページ読みました。,I read three pages.,请翻到书的第三页，看一下这段话的意思。,本の3ページをめくって、この段落の意味を見てください。
+511,一切,yī qiè,everything; every; all,すべて,一切都准备好了。,すべて準備ができている。,Everything is ready.,他对一切事情都很认真，从不马虎。,彼はすべての物事にとても真剣で、決していい加減ではありません。
+512,以,yǐ,to use as; according to; because of,〜によって,以努力取得成功。,努力して成功を収める。,Achieve success through hard work.,以我的经验来看，这个方法效果最好。,私の経験から見ると、この方法が一番効果的です。
+513,以为,yǐ wéi,to believe; to think; to consider; to be under the impression,思い込む,我以为你来了。,私はあなたが来たと思っていた。,I thought you came.,我以为他已经走了，没想到他还在这里。,彼はもう行ったと思っていたら、まさかまだここにいたとは。
+514,意见,yì jiàn,"opinion; suggestion; idea; objection; complaint; CL:点[dian3] ,条[tiao2]",意見,请提出你的意见。,あなたの意見を述べてください。,Please express your opinion.,请你提出宝贵的意见，帮助我们改进工作。,貴重な意見を出して、私たちの仕事の改善を手伝ってください。
+515,艺术,yì shù,art; CL:种[zhong3],芸術,我喜欢艺术展览。,私は美術展が好きです。,I like art exhibitions.,他对艺术非常感兴趣，经常去博物馆参观。,彼は芸術にとても興味があって、よく美術館を訪れます。
+516,因此,yīn cǐ,consequently; as a result; thus,したがって,天气不好，因此取消。,天気が悪いため、中止になった。,The event was canceled because of bad weather.,天气很冷， 因此我们决定取消户外活动。,天気がとても寒いので、そのため私たちは屋外活動を中止することに決めました。
+517,引起,yǐn qǐ,to give rise to; to lead to; to cause; to arouse,引き起こす,他的话引起争论。,彼の言葉が議論を引き起こした。,His words caused a debate.,这个问题引起了大家的关注，必须尽快解决。,この問題はみんなの関心を引き起こし、早急に解決しなければなりません。
+518,印象,yìn xiàng,impression; reflection; perception; CL:个,印象,她给我好印象。,彼女は私に良い印象を与えた。,She gave me a good impression.,第一次见面，他给我留下了很深的印象。,初めて会った時、彼は私に深い印象を残しました。
+519,赢,yíng,to win; to beat; to profit,勝つ,我们赢了比赛。,私たちは試合に勝った。,We won the match.,经过努力，他终于在比赛中赢得了冠军。,努力の末、彼は試合でついに優勝を勝ち取りました。
+520,应聘,yìng pìn,to accept a job offer; to apply for an advertised position,応募する,他应聘了这工作。,彼はこの仕事に応募した。,He applied for this job.,我准备应聘那家公司的销售职位，希望能成功。,私はあの会社の営業の職に応募する準備をしており、成功を願っています。
+521,勇敢,yǒng gǎn,brave; courageous,勇敢な,她很勇敢面对困难。,彼女は困難に勇敢に立ち向かう。,She bravely faces difficulties.,遇到困难时，我们要勇敢面对，不要轻易放弃。,困難に直面した時、私たちは勇敢に立ち向かい、簡単にあきらめてはいけません。
+522,永远,yǒng yuǎn,forever; eternal,永遠に,我永远支持你。,私はいつもあなたを応援します。,I will always support you.,我希望我们的友谊能够永远持续下去。,私たちの友情が永遠に続くことを望んでいます。
+523,优点,yōu diǎn,merit; benefit; strong point; advantage; CL:个,長所,优点是认真学习。,長所は真面目に勉強することだ。,The advantage is studying seriously.,他的优点是工作认真，而且很有责任心。,彼の長所は仕事に真剣で、とても責任感が強いことです。
+524,优秀,yōu xiù,outstanding; excellent,優秀な,他是优秀学生。,彼は優秀な学生だ。,He is an excellent student.,她是一位非常优秀的学生，成绩一直名列前茅。,彼女は非常に優秀な学生で、成績はずっとトップクラスです。
+525,幽默,yōu mò,humor; humorous,ユーモア,他很幽默有趣。,彼はとてもユーモアがあって面白い。,He is very humorous and interesting.,他的幽默感让大家在紧张的工作中感到轻松。,彼のユーモアのセンスが、みんなを緊張した仕事の中でリラックスさせます。
+526,尤其,yóu qí,especially; particularly,特に,我喜欢水果，尤其苹果。,私は果物が好きで、特にリンゴが好きだ。,"I like fruits, especially apples.",这个地方风景很美，尤其是晚上灯光很漂亮。,この場所は景色がとても美しく、特に夜のライトアップがとても綺麗です。
+527,由,yóu,to follow; from; it is for...to; reason; cause; because of; due to; to; to leave it (to sb); by (introduces passive verb),〜によって,活动由学校组织。,活動は学校が主催している。,The event is organized by the school.,这次比赛的结果由专业评委来决定。,今回の試合の結果は専門の審査員によって決定されます。
+528,由于,yóu yú,due to; as a result of; thanks to; owing to; since; because,〜のために,由于下雨，迟到了。,雨のため遅刻した。,I was late due to rain.,由于下雨，比赛不得不推迟到明天举行。,雨のため、試合は明日に延期せざるを得ませんでした。
+529,邮局,yóu jú,"post office; CL:家[jia1] ,个",郵便局,我去邮局寄信。,私は郵便局へ手紙を出しに行く。,I go to the post office to mail a letter.,我去邮局寄了一封信，顺便买了几张明信片。,郵便局に行って手紙を出し、ついでに数枚のはがきを買いました。
+530,友好,yǒu hǎo,friendly; amicable,友好的,他们关系很友好。,彼らはとても仲が良い。,They have a very friendly relationship.,他们两国的关系一直非常友好，互相支持。,彼ら二国間の関係はずっととても友好的で、互いに支え合っています。
+531,友谊,yǒu yì,companionship; fellowship; friendship,友情,我们有深厚友谊。,私たちは深い友情を持っている。,We have a deep friendship.,我们的友谊从大学时代开始，一直很深厚。,私たちの友情は大学時代から始まり、ずっと深いものです。
+532,有趣,yǒu qù,interesting; fascinating; amusing,面白い,这本书很有趣。,この本はとても面白い。,This book is very interesting.,这本书内容丰富，故事也很有趣，值得一读。,この本は内容が豊富で、話もとても面白く、読む価値があります。
+533,于是,yú shì,thereupon; as a result; consequently; thus; hence,それで,他迟到，于是没参加。,彼は遅刻したので、参加しなかった。,"He was late, so he didn't participate.",他没带伞，于是被雨淋湿了全身。,彼は傘を持っていなかったので、そのため雨に全身ずぶ濡れになりました。
+534,愉快,yú kuài,cheerful; cheerily; delightful; pleasant; pleasantly; pleasing; happy; delighted,愉快な,度过了愉快一天。,楽しい一日を過ごした。,Spent a pleasant day.,祝你生日愉快，生活幸福美满！,あなたの誕生日が楽しく、生活が幸せで満ち溢れますように！
+535,与,yǔ,to give; to help; to get along with; and; with,〜と,我与朋友一起去。,私は友達と一緒に行く。,I go together with my friend.,他与大家分享了自己的学习经验，受到了欢迎。,彼は皆と自分の学習経験を共有し、歓迎されました。
+536,羽毛球,yǔ máo qiú,badminton; shuttlecock; CL:个,バドミントン,他们喜欢打羽毛球。,彼らはバドミントンをするのが好きだ。,They like playing badminton.,每个周末我们都会一起打羽毛球，锻炼身体。,毎週末、私たちは一緒にバドミントンをして体を鍛えています。
+537,语法,yǔ fǎ,grammar,文法,学习语法很重要。,文法の勉強はとても重要だ。,Studying grammar is very important.,学习语法对提高语言水平非常重要。,文法を学ぶことは言語レベルを向上させるのにとても重要です。
+538,语言,yǔ yán,"language; CL:门[men2] ,种[zhong3]",言語,我学习汉语语言。,私は中国語を勉強している。,I study the Chinese language.,掌握多种语言对将来的工作有很大帮助。,多くの言語を習得することは将来の仕事に大いに役立ちます。
+539,预习,yù xí,to prepare a lesson,予習する,每天预习新课。,毎日新しい授業の予習をする。,Preview new lessons every day.,上课前预习新课内容，可以更好地理解老师讲解。,授業の前に新しい授業内容を予習すると、先生の説明をよりよく理解できます。
+540,原来,yuán lái,original; former; originally; formerly; at first; so... actually,本来,原来你也来。,なるほど、あなたも来たのか。,So you came too.,原来他已经知道了这个消息，只是没告诉我们。,実は彼はもうこのニュースを知っていて、ただ私たちに教えていなかっただけです。
+541,原谅,yuán liàng,to excuse; to forgive; to pardon,許す,请原谅我的错误。,私の間違いを許してください。,Please forgive my mistake.,对不起，我不是故意的，请你原谅我这次的错误。,ごめんなさい、私は故意ではありませんでした。今回のミスをどうか許してください。
+542,原因,yuán yīn,cause; origin; root cause; reason; CL:个,原因,迟到的原因是堵车。,遅刻の原因は渋滞だ。,The reason for being late is traffic jam.,他的迟到有很多原因，比如交通堵塞和身体不适。,彼の遅刻には多くの原因があり、例えば交通渋滞や体調不良です。
+543,约会,yuē huì,"appointment; engagement; date; CL:次[ci4] ,个",デート,他们约会去看电影。,彼らはデートで映画を見に行く。,They go to watch a movie on a date.,他们约会去了电影院，看了一部最新的电影。,彼らはデートで映画館に行き、最新の映画を観ました。
+544,阅读,yuè dú,to read; reading,読書,我喜欢阅读小说。,私は小説を読むのが好きだ。,I like reading novels.,每天晚上我都会花时间阅读一些有趣的书籍。,毎晩、私は時間をかけていくつかの面白い本を読んでいます。
+545,云,yún,cloud; CL:朵[duo3],雲,天空有很多云。,空にはたくさんの雲がある。,There are many clouds in the sky.,天空中飘着几朵白云，风景非常美丽。,空にはいくつかの白い雲が漂っていて、景色がとても美しいです。
+546,允许,yǔn xǔ,to permit; to allow,許可する,老师允许我们休息。,先生は私たちに休憩を許可した。,The teacher allowed us to rest.,老师允许我们在课堂上用手机查资料。,先生は授業中に携帯で資料を調べることを許可しました。
+547,杂志,zá zhì,"magazine; CL:本[ben3] ,份[fen4] ,期[qi1]",雑誌,我买了新杂志。,私は新しい雑誌を買った。,I bought a new magazine.,我喜欢看各种杂志，尤其是旅游和美食类的。,私はいろいろな雑誌を読むのが好きで、特に旅行やグルメの雑誌が好きです。
+548,咱们,zán men,we or us (including both the speaker and the person(s) spoken to); I or me; you,私たち,咱们一起去吧。,一緒に行こう。,Let's go together.,咱们一起去吃饭吧，顺便聊聊最近的生活。,私たち一緒に食事に行きませんか。そのついでに最近の生活について話しましょう。
+549,暂时,zàn shí,temporary; provisional; for the time being,一時的,这只是暂时问题。,これはただの一時的な問題だ。,This is just a temporary problem.,这个问题暂时不能解决，需要更多时间考虑。,この問題は一時的に解決できず、もっと時間をかけて考える必要があります。
+550,脏,zāng,dirty,汚い,地板很脏了。,床がとても汚れている。,The floor is very dirty.,他的衣服很脏，需要马上洗一洗。,彼の服はとても汚れているので、すぐに洗う必要があります。
+551,责任,zé rèn,responsibility; blame; duty; CL:个,責任,每个人都有责任。,誰にでも責任がある。,Everyone has responsibility.,每个人都应该对自己的行为负责，因为责任很重要。,誰もが自分の行動に責任を持つべきです。責任はとても重要だからです。
+552,增加,zēng jiā,to raise; to increase,増加,公司增加了员工。,会社は従業員を増やした。,The company has increased its staff.,今年公司的销售额比去年增加了百分之二十。,今年の会社の売上高は昨年に比べて20％増えました。
+553,占线,zhàn xiàn,busy (telephone),話中,电话一直占线。,電話がずっと話し中だ。,The phone line is busy all the time.,电话总是占线，我很难联系到客户。,電話がいつも話し中で、お客様に連絡を取るのが難しいです。
+554,招聘,zhāo pìn,recruitment; to invite applications for a job,採用,公司正在招聘新人。,会社は新しい人を募集している。,The company is recruiting new employees.,公司正在招聘有经验的市场营销人员。,会社は経験のあるマーケティング担当者を募集しています。
+555,照,zhào,according to; in accordance with; to shine; to illuminate; to reflect; to look at (one's reflection); to take (a photo); photo; as requested; as before;,写真を撮る,请帮我照一张。,写真を一枚撮ってください。,Please take a photo for me.,请你帮我照一下这张照片好吗？,この写真を撮ってもらえますか？
+556,真正,zhēn zhèng,genuine; real; true; genuinely,本当の,他是真正的朋友。,彼は本当の友達だ。,He is a true friend.,只有真正努力，才能取得成功。,本当に努力した人だけが成功を収めることができます。
+557,整理,zhěng lǐ,"to arrange; to tidy up; to sort out; to straighten out; to list systematically; to collate (data, files); to pack (luggage)",整理する,请整理你的房间。,部屋を片付けてください。,Please tidy up your room.,我要把房间整理干净，才能安心学习。,部屋をきれいに整理してからでないと、安心して勉強できません。
+558,正常,zhèng cháng,regular; normal; ordinary,正常,机器现在正常工作。,機械は今正常に動いている。,The machine is working normally now.,今天的天气很正常，没有什么特别的变化。,今日の天気は普通で、特に変わったことはありません。
+559,正好,zhèng hǎo,just (in time); just right; just enough; to happen to; to chance to; by chance; it just so happens that,ちょうど,时间正好，我来了。,ちょうどいい時間に、私は来た。,"The time is just right, I have arrived.",我正好有时间，可以帮你完成这个任务。,ちょうど時間があるので、この仕事を手伝うことができます。
+560,正确,zhèng què,correct; proper,正しい,答案是正确的。,答えは正しい。,The answer is correct.,你说的话不正确，请再仔细考虑一下。,あなたの言ったことは正しくないので、もう一度よく考えてください。
+561,正式,zhèng shì,formal; official,正式な,这是正式的邀请函。,これは正式な招待状です。,This is an official invitation letter.,我们下周有一个正式的会议，请准时参加。,来週正式な会議がありますので、時間通りに参加してください。
+562,证明,zhèng míng,proof; certificate; identification; testimonial; to prove; to testify; to confirm the truth of; CL:个,証明する,请出示身份证明。,身分証明書を提示してください。,Please show your identification.,请出示身份证明，以便办理相关手续。,身分証明書を提示してください、手続きを進めるために。
+563,之,zhī,"(possessive particle, literary equivalent of 的); him; her; its",の（文語）,这是我之书。,これは私の本だ。,This is my book.,这本书之所以受欢迎，是因为内容非常实用。,この本が人気がある理由は、内容がとても実用的だからです。
+564,支持,zhī chí,to be in favor of; to support; to back; support; backing; to stand by; CL:个,支持,我们支持你的决定。,私たちはあなたの決定を支持します。,We support your decision.,家人一直支持我的决定，让我很感动。,家族がずっと私の決断を支持してくれて、とても感動しました。
+565,知识,zhī shi,intellectual; knowledge-related; knowledge; CL:门[men2],知識,知识改变命运。,知識は運命を変える。,Knowledge changes destiny.,学习新知识可以帮助我们更好地适应社会。,新しい知識を学ぶことは、社会によりよく適応するのに役立ちます。
+566,值得,zhí de,to be worth; to deserve,価値がある,这本书值得读。,この本は読む価値がある。,This book is worth reading.,这本书值得一读，因为内容很有趣。,この本は読む価値があります。内容がとても面白いからです。
+567,植物,zhí wù,botanical; plant; vegetation; CL:种[zhong3],植物,植物需要阳光。,植物は日光を必要とする。,Plants need sunlight.,植物需要阳光和水才能健康地生长。,植物は健康に成長するために日光と水が必要です。
+568,直接,zhí jiē,direct; opposite: indirect 间接; immediate; directly; straightforward,直接の,请直接联系我。,直接私に連絡してください。,Please contact me directly.,请直接告诉我你的想法，不用担心别人的意见。,遠慮せずに直接あなたの考えを教えてください。他人の意見は気にしなくていいです。
+569,职业,zhí yè,occupation; profession; vocation; professional,職業,他选择了新职业。,彼は新しい職業を選んだ。,He chose a new career.,医生是一个非常重要的职业，需要专业知识。,医者はとても重要な職業で、専門知識が必要です。
+570,只好,zhǐ hǎo,without any better option; to have to; to be forced to,やむを得ず,没办法，只好走了。,仕方がない、仕方なく行った。,"There was no way, so I had to leave.",因为下雨了，我们只好取消了今天的计划。,雨が降ったので、私たちは仕方なく今日の予定をキャンセルしました。
+571,只要,zhǐ yào,if only; so long as,さえ〜すれば,只要努力就行。,努力さえすればいい。,"As long as you work hard, it's fine.",只要努力学习，成绩一定会提高。,努力して勉強さえすれば、成績は必ず上がります。
+572,指,zhǐ,finger; to point at or to; to indicate or refer to; to depend on; to count on; (of hair) to stand on end,指す,他指着那座山。,彼はあの山を指さした。,He pointed at that mountain.,老师指着黑板，详细解释了这个问题。,先生は黒板を指して、この問題を詳しく説明しました。
+573,至少,zhì shǎo,at least; (to say the) least,少なくとも,至少需要三天。,少なくとも三日必要だ。,At least three days are needed.,参加考试的人至少要提前半小时到达考场。,試験に参加する人は少なくとも30分前に試験会場に着かなければなりません。
+574,质量,zhì liàng,quality; mass (in physics); CL:个,品質,产品质量很好。,製品の品質はとても良い。,The product quality is very good.,这个产品的质量很好，很多顾客都很满意。,この商品の品質はとても良く、多くの顧客が満足しています。
+575,重,zhòng,heavy; serious,重い,这个包很重。,このバッグはとても重い。,This bag is very heavy.,我觉得这个包很重，可能装了太多东西。,このかばんは重いと思います。たくさん物を入れすぎたかもしれません。
+576,重点,zhòng diǎn,emphasis; focal point; priority; key; with the emphasis on; focusing on,重点,考试重点很难。,試験の重点は難しい。,The key points of the exam are difficult.,学习这门课程的重点是掌握基础知识。,このコースの重点は基礎知識を習得することです。
+577,重视,zhòng shì,to attach importance to sth; to value,重視する,公司重视员工。,会社は従業員を重視している。,The company values its employees.,老师很重视学生的学习态度和努力。,先生は生徒の学習態度と努力をとても重視しています。
+578,周围,zhōu wéi,surroundings; environment; to encompass,周囲,周围环境很安静。,周りの環境はとても静かだ。,The surrounding environment is very quiet.,公园的周围有很多漂亮的花和树木。,公園の周りにはたくさんのきれいな花や木があります。
+579,主意,zhǔ yi,plan; idea; decision; CL:个,考え,你有什么主意？,何かアイデアはありますか？,Do you have any ideas?,你有什么好主意，可以帮助我们解决问题吗？,何か良いアイデアはありますか？私たちが問題を解決するのに役立ちますか？
+580,祝贺,zhù hè,to congratulate; congratulations; CL:个,祝う,祝贺你成功了。,成功おめでとう。,Congratulations on your success.,祝贺你通过了考试，真为你高兴！,試験に合格おめでとう。本当にうれしいです！
+581,著名,zhù míng,famous; noted; well-known; celebrated,有名な,他是著名作家。,彼は有名な作家だ。,He is a famous writer.,他是一位著名的作家，写了很多畅销书。,彼は有名な作家で、多くのベストセラーを書きました。
+582,专门,zhuān mén,specialist; specialized; customized,専門の,他专门研究历史。,彼は歴史を専門に研究している。,He specializes in studying history.,这家店专门卖各种各样的茶叶和咖啡。,この店は様々なお茶とコーヒーを専門に販売しています。
+583,专业,zhuān yè,"specialty; specialized field; main field of study (at university); major; professional; CL:门[men2] ,个",専門的,她有专业知识。,彼女は専門的な知識を持っている。,She has professional knowledge.,她的专业是计算机科学，毕业后找到了好工作。,彼女の専攻はコンピューターサイエンスで、卒業後良い仕事を見つけました。
+584,转,zhuǎn,to turn; to change direction; to transfer; to forward (mail);,回す,请把书转给我。,本を私に回してください。,Please pass the book to me.,请你把文件转给负责这个项目的同事。,この書類をこのプロジェクトを担当している同僚に回してください。
+585,赚,zhuàn,earn; make a profit,稼ぐ,他赚了很多钱。,彼はたくさんお金を稼いだ。,He earned a lot of money.,他通过自己的努力赚了很多钱。,彼は自分の努力でたくさんのお金を稼ぎました。
+586,准确,zhǔn què,accurate; exact; precise,正確な,数据很准确。,データはとても正確だ。,The data is very accurate.,我们需要准确的数据来做这个报告。,この報告を作成するには正確なデータが必要です。
+587,准时,zhǔn shí,on time; punctual; on schedule,時間通り,他准时到学校。,彼は時間通りに学校に着いた。,He arrived at school on time.,请大家准时参加明天的会议，不要迟到。,明日の会議にはみんな時間どおりに参加してください、遅れないように。
+588,仔细,zǐ xì,careful; attentive; cautious,注意深い,请仔细听讲。,注意深く話を聞いてください。,Please listen carefully.,做事情要仔细，不能马虎大意。,物事は注意深く行い、いい加減にしてはいけません。
+589,自然,zì rán,at ease; free from affectation; natural,自然,这是自然现象。,これは自然現象だ。,This is a natural phenomenon.,自然风光非常美丽，吸引了很多游客。,自然の風景は非常に美しく、多くの観光客を惹きつけています。
+590,自信,zì xìn,confidence; self-confidence,自信,她很有自信。,彼女はとても自信がある。,She is very confident.,自信是成功的重要因素之一。,自信は成功の重要な要素の一つです。
+591,总结,zǒng jié,to sum up; to conclude; summary; resume; CL:个,まとめる,请总结这篇文章。,この記事をまとめてください。,Please summarize this article.,请你总结一下这次会议的主要内容。,この会議の主な内容をまとめてください。
+592,租,zū,to rent; to charter; to rent out; to lease out; to hire; rent; land tax,借りる,我租了一辆车。,私は車を一台借りた。,I rented a car.,我打算在市中心租一套公寓住。,私は市の中心部でアパートを借りて住むつもりです。
+593,最好,zuì hǎo,best; (you) had better (do what we suggest),できれば,最好明天来。,明日来るのが一番いい。,It’s best to come tomorrow.,你最好早点休息，明天还有重要的考试。,あなたは早く休んだほうがいいです。明日は重要な試験がありますから。
+594,尊重,zūn zhòng,esteem; respect; to honor; to value sth,尊重する,请尊重别人的意见。,他人の意見を尊重してください。,Please respect others' opinions.,我们应该尊重别人的意见，学会理解和包容。,私たちは他人の意見を尊重し、理解と寛容を学ぶべきです。
+595,左右,zuǒ yòu,approximately; about; left and right; around; (dial.) anyway,〜前後,会议有二十人左右。,会議には約20人いる。,There are about twenty people at the meeting.,这条路大约有五公里左右，走路需要一个小时。,この道はだいたい5キロくらいで、歩くと1時間かかります。
+596,作家,zuò jiā,"author; CL:個|个[ge4],位[wei4];",作家,她是一位作家。,彼女は作家の一人だ。,She is a writer.,那位作家写的小说深受年轻人的喜爱。,あの作家が書いた小説は若者にとても人気があります。
+597,作用,zuò yòng,"to act on; to affect; action; function; activity; impact; result; effect; purpose; intent; to play a role; corresponds to English -ity, -ism, -ization; CL:个",作用,药有很好的作用。,薬はとても良い効果がある。,The medicine has a very good effect.,运动对身体有很好的作用，应该坚持锻炼。,運動は体にとても良い効果があるので、続けて運動すべきです。
+598,作者,zuò zhě,writer; author; CL:个,著者,他是这书的作者。,彼はこの本の著者だ。,He is the author of this book.,这本书的作者是一位经验丰富的学者。,この本の作者は経験豊富な学者です。
+599,座,zuò,"seat; base; stand; classifier for buildings, mountains and similar immovable objects; CL:个",座る,请在这里座。,ここに座ってください。,Please sit here.,我们在山上看到了一座古老的寺庙，非常壮观。,山の上で古い寺院を見ました、とても壮大でした。
+600,座位,zuò wèi,a place to sit; CL:个,座席,座位已经满了。,席はもう満席です。,The seats are already full.,请问这里还有空的座位吗？我想坐下休息一下。,ここに空いている席はありますか？ちょっと座って休みたいです。
