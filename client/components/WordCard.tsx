@@ -198,6 +198,11 @@ export function WordCard({
           <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
             {word.exampleSentence}
           </ThemedText>
+          {word.longExample ? (
+            <ThemedText style={[styles.longExample, { color: theme.textSecondary }]} numberOfLines={1}>
+              {word.longExample}
+            </ThemedText>
+          ) : null}
         </View>
       </Pressable>
     </Animated.View>
@@ -285,5 +290,10 @@ const styles = StyleSheet.create({
   exampleSentence: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
+  },
+  longExample: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
   },
 });
