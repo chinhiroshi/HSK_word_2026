@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Purchases, { PurchasesPackage, CustomerInfo, LOG_LEVEL } from "react-native-purchases";
 
-const SUBSCRIPTION_KEY = "@chinese_master_subscription";
+const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || "";
+const PREMIUM_ENTITLEMENT_ID = "premium";
 const FREE_WORDS_LIMIT = 50;
 
 interface SubscriptionState {
@@ -14,8 +16,10 @@ interface SubscriptionContextType extends SubscriptionState {
   isGroupLocked: (groupIndex: number) => boolean;
   isWordIndexLocked: (wordIndex: number) => boolean;
   freeWordsLimit: number;
-  restorePurchase: () => Promise<void>;
-  purchaseSubscription: () => Promise<void>;
+  restorePurchase: () => Promise<boolean>;
+  purchaseSubscription: (pkg?: PurchasesPackage) => Promise<boolean>;
+  availablePackages: PurchasesPackage[];
+  currentOffering: string | null;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType>({
@@ -24,31 +28,62 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   isGroupLocked: () => false,
   isWordIndexLocked: () => false,
   freeWordsLimit: FREE_WORDS_LIMIT,
-  restorePurchase: async () => {},
-  purchaseSubscription: async () => {},
+  restorePurchase: async () => false,
+  purchaseSubscription: async () => false,
+  availablePackages: [],
+  currentOffering: null,
 });
 
 export function useSubscription() {
   return useContext(SubscriptionContext);
 }
 
+async function checkPremiumStatus(customerInfo: CustomerInfo): Promise<boolean> {
+  return typeof customerInfo.entitlements.active[PREMIUM_ENTITLEMENT_ID] !== "undefined";
+}
+
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
   const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [availablePackages, setAvailablePackages] = useState<PurchasesPackage[]>([]);
+  const [currentOffering, setCurrentOffering] = useState<string | null>(null);
 
   useEffect(() => {
-    loadSubscriptionStatus();
+    initializeRevenueCat();
   }, []);
 
-  const loadSubscriptionStatus = async () => {
+  const initializeRevenueCat = async () => {
     try {
-      const stored = await AsyncStorage.getItem(SUBSCRIPTION_KEY);
-      if (stored === "true") {
-        setIsPremium(true);
+      if (Platform.OS === "web") {
+        Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+      } else {
+        Purchases.configure({ apiKey: REVENUECAT_API_KEY });
       }
-      setLoading(false);
+
+      if (__DEV__) {
+        Purchases.setLogLevel(LOG_LEVEL.DEBUG);
+      }
+
+      const customerInfo = await Purchases.getCustomerInfo();
+      const premium = await checkPremiumStatus(customerInfo);
+      setIsPremium(premium);
+
+      try {
+        const offerings = await Purchases.getOfferings();
+        if (offerings.current && offerings.current.availablePackages.length > 0) {
+          setAvailablePackages(offerings.current.availablePackages);
+          setCurrentOffering(offerings.current.identifier);
+        }
+      } catch (offerError) {
+        console.warn("Failed to load offerings:", offerError);
+      }
+
+      Purchases.addCustomerInfoUpdateListener((info) => {
+        checkPremiumStatus(info).then(setIsPremium);
+      });
     } catch (e) {
-      console.warn("Failed to load subscription status:", e);
+      console.warn("RevenueCat initialization failed:", e);
+    } finally {
       setLoading(false);
     }
   };
@@ -69,23 +104,35 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     [isPremium]
   );
 
-  const purchaseSubscription = async () => {
+  const purchaseSubscription = async (pkg?: PurchasesPackage): Promise<boolean> => {
     try {
-      await AsyncStorage.setItem(SUBSCRIPTION_KEY, "true");
-      setIsPremium(true);
-    } catch (e) {
-      console.warn("Purchase failed:", e);
+      const packageToPurchase = pkg || availablePackages[0];
+      if (!packageToPurchase) {
+        console.warn("No package available for purchase");
+        return false;
+      }
+
+      const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
+      const premium = await checkPremiumStatus(customerInfo);
+      setIsPremium(premium);
+      return premium;
+    } catch (e: any) {
+      if (!e.userCancelled) {
+        console.warn("Purchase failed:", e);
+      }
+      return false;
     }
   };
 
-  const restorePurchase = async () => {
+  const restorePurchase = async (): Promise<boolean> => {
     try {
-      const stored = await AsyncStorage.getItem(SUBSCRIPTION_KEY);
-      if (stored === "true") {
-        setIsPremium(true);
-      }
+      const customerInfo = await Purchases.restorePurchases();
+      const premium = await checkPremiumStatus(customerInfo);
+      setIsPremium(premium);
+      return premium;
     } catch (e) {
       console.warn("Restore failed:", e);
+      return false;
     }
   };
 
@@ -99,6 +146,8 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         freeWordsLimit: FREE_WORDS_LIMIT,
         restorePurchase,
         purchaseSubscription,
+        availablePackages,
+        currentOffering,
       }}
     >
       {children}
