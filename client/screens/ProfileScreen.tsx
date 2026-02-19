@@ -111,6 +111,35 @@ export default function ProfileScreen() {
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
 
+  const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
+  const REVIEW_THRESHOLD = 10;
+
+  const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
+    if (!isPremium) return;
+    try {
+      const alreadyPrompted = await AsyncStorage.getItem(REVIEW_PROMPTED_KEY);
+      if (alreadyPrompted === "true") return;
+
+      const totalMemorized = wordData.filter(
+        (w) => (w.textMemorized && (w.textUnmemorizedCount || 0) === 0) ||
+               (w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0)
+      ).length;
+
+      if (totalMemorized >= REVIEW_THRESHOLD) {
+        await AsyncStorage.setItem(REVIEW_PROMPTED_KEY, "true");
+        setTimeout(async () => {
+          try {
+            if (await StoreReview.hasAction()) {
+              await StoreReview.requestReview();
+            }
+          } catch (e) {
+            console.warn("Auto review prompt failed:", e);
+          }
+        }, 1500);
+      }
+    } catch {}
+  }, [isPremium]);
+
   const loadData = useCallback(async () => {
     const level = await getSelectedHskLevel();
     setSelectedLevel(level);
@@ -118,7 +147,8 @@ export default function ProfileScreen() {
     const data = await getWords();
     setWords(data);
     setLoading(false);
-  }, []);
+    checkAndPromptReview(data);
+  }, [checkAndPromptReview]);
 
   useFocusEffect(
     useCallback(() => {
@@ -402,7 +432,7 @@ export default function ProfileScreen() {
         </View>
       )}
 
-      {isPremium ? (
+      {!isPremium ? (
         <Pressable
           testID="button-review-app"
           onPress={async () => {
