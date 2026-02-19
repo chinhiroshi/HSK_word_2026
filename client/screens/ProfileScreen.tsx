@@ -110,8 +110,10 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
+  const REVIEW_DONE_KEY = "@chinese_master_review_done";
   const REVIEW_THRESHOLD = 10;
 
   const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
@@ -148,6 +150,10 @@ export default function ProfileScreen() {
     setWords(data);
     setLoading(false);
     checkAndPromptReview(data);
+    try {
+      const reviewDone = await AsyncStorage.getItem(REVIEW_DONE_KEY);
+      setHasReviewed(reviewDone === "true");
+    } catch {}
   }, [checkAndPromptReview]);
 
   useFocusEffect(
@@ -432,7 +438,7 @@ export default function ProfileScreen() {
         </View>
       )}
 
-      {!isPremium ? (
+      {!hasReviewed ? (
         <Pressable
           testID="button-review-app"
           onPress={async () => {
@@ -450,6 +456,8 @@ export default function ProfileScreen() {
                   Linking.openURL(storeUrl);
                 }
               }
+              await AsyncStorage.setItem(REVIEW_DONE_KEY, "true");
+              setHasReviewed(true);
             } catch (e) {
               console.warn("Review request failed:", e);
             }
