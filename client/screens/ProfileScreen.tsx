@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, StyleSheet, Pressable, Alert, Platform, Modal } from "react-native";
+import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking } from "react-native";
+import * as StoreReview from "expo-store-review";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -401,6 +402,50 @@ export default function ProfileScreen() {
         </View>
       )}
 
+      {isPremium ? (
+        <Pressable
+          testID="button-review-app"
+          onPress={async () => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            try {
+              if (await StoreReview.hasAction()) {
+                await StoreReview.requestReview();
+              } else {
+                const storeUrl = Platform.select({
+                  ios: "https://apps.apple.com/app/id{YOUR_APP_ID}",
+                  android: "https://play.google.com/store/apps/details?id=com.hskhsk.app",
+                  default: "",
+                });
+                if (storeUrl) {
+                  Linking.openURL(storeUrl);
+                }
+              }
+            } catch (e) {
+              console.warn("Review request failed:", e);
+            }
+          }}
+          style={[
+            styles.reviewCard,
+            { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+          ]}
+        >
+          <View style={styles.reviewContent}>
+            <View style={[styles.reviewIcon, { backgroundColor: `${theme.secondary}15` }]}>
+              <Feather name="heart" size={20} color={theme.secondary} />
+            </View>
+            <View style={styles.reviewTextContainer}>
+              <ThemedText style={styles.reviewTitle}>
+                アプリを評価する
+              </ThemedText>
+              <ThemedText style={[styles.reviewDesc, { color: theme.textSecondary }]}>
+                レビューやコメントで応援してください
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+          </View>
+        </Pressable>
+      ) : null}
+
       {hasWordsForLevel ? (
         <>
           <View
@@ -704,6 +749,37 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     color: "rgba(255,255,255,0.8)",
+  },
+  reviewCard: {
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.lg,
+  },
+  reviewContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  reviewIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.md,
+  },
+  reviewTextContainer: {
+    flex: 1,
+  },
+  reviewTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+    marginBottom: 2,
+  },
+  reviewDesc: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
   },
   emptyCard: {
     padding: Spacing["2xl"],
