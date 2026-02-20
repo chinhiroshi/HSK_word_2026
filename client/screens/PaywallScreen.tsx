@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable, ScrollView, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, ActivityIndicator, Modal } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
@@ -21,9 +21,11 @@ export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { theme } = useTheme();
-  const { purchaseSubscription, restorePurchase, isPremium, availablePackages, loading } = useSubscription();
+  const { purchaseSubscription, restorePurchase, isPremium, availablePackages, loading, initError } = useSubscription();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const monthlyPackage = availablePackages.find(
     (pkg) => pkg.packageType === "MONTHLY"
@@ -36,9 +38,13 @@ export default function PaywallScreen() {
     setPurchasing(true);
     try {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      const success = await purchaseSubscription(monthlyPackage);
-      if (success) {
+      const result = await purchaseSubscription(monthlyPackage);
+      if (result.success) {
         navigation.goBack();
+      } else if (result.cancelled) {
+      } else if (result.error) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        setErrorMessage(result.error);
       }
     } finally {
       setPurchasing(false);
@@ -50,9 +56,13 @@ export default function PaywallScreen() {
     setRestoring(true);
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      const success = await restorePurchase();
-      if (success) {
-        navigation.goBack();
+      const result = await restorePurchase();
+      if (result.success) {
+        setSuccessMessage("サブスクリプションを復元しました。");
+        setTimeout(() => navigation.goBack(), 1500);
+      } else if (result.error) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        setErrorMessage(result.error);
       }
     } finally {
       setRestoring(false);
@@ -100,6 +110,13 @@ export default function PaywallScreen() {
           </View>
         ))}
       </View>
+
+      {initError ? (
+        <View style={[styles.errorBanner, { backgroundColor: "#FEF2F2", borderColor: "#FECACA" }]}>
+          <Feather name="alert-circle" size={16} color="#DC2626" />
+          <ThemedText style={styles.errorBannerText}>{initError}</ThemedText>
+        </View>
+      ) : null}
 
       <View style={styles.priceSection}>
         <View
@@ -152,6 +169,50 @@ export default function PaywallScreen() {
       <ThemedText style={[styles.disclaimer, { color: theme.textSecondary }]}>
         サブスクリプションは自動更新されます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。
       </ThemedText>
+
+      <Modal
+        visible={errorMessage !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setErrorMessage(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.backgroundDefault }]}>
+            <View style={[styles.modalIconCircle, { backgroundColor: "#FEE2E2" }]}>
+              <Feather name="alert-triangle" size={28} color="#DC2626" />
+            </View>
+            <ThemedText style={styles.modalTitle}>エラー</ThemedText>
+            <ThemedText style={[styles.modalMessage, { color: theme.textSecondary }]}>
+              {errorMessage}
+            </ThemedText>
+            <Pressable
+              style={[styles.modalButton, { backgroundColor: theme.primary }]}
+              onPress={() => setErrorMessage(null)}
+            >
+              <ThemedText style={styles.modalButtonText}>閉じる</ThemedText>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={successMessage !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSuccessMessage(null)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.backgroundDefault }]}>
+            <View style={[styles.modalIconCircle, { backgroundColor: "#D1FAE5" }]}>
+              <Feather name="check-circle" size={28} color="#059669" />
+            </View>
+            <ThemedText style={styles.modalTitle}>完了</ThemedText>
+            <ThemedText style={[styles.modalMessage, { color: theme.textSecondary }]}>
+              {successMessage}
+            </ThemedText>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -219,6 +280,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
   },
+  errorBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  errorBannerText: {
+    flex: 1,
+    fontSize: 12,
+    color: "#DC2626",
+    lineHeight: 18,
+  },
   priceSection: {
     marginBottom: Spacing.xl,
   },
@@ -282,5 +358,51 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
     lineHeight: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Spacing.xl,
+  },
+  modalContent: {
+    width: "100%",
+    borderRadius: BorderRadius.xl,
+    padding: Spacing["2xl"],
+    alignItems: "center",
+  },
+  modalIconCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    marginBottom: Spacing.sm,
+  },
+  modalMessage: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+    lineHeight: 22,
+    marginBottom: Spacing.xl,
+  },
+  modalButton: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing["2xl"],
+    borderRadius: BorderRadius.full,
+    alignItems: "center",
+  },
+  modalButtonText: {
+    fontSize: 15,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    color: "#FFFFFF",
   },
 });

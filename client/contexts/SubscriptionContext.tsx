@@ -20,10 +20,11 @@ interface SubscriptionContextType extends SubscriptionState {
   isGroupLocked: (groupIndex: number) => boolean;
   isWordIndexLocked: (wordIndex: number) => boolean;
   freeWordsLimit: number;
-  restorePurchase: () => Promise<boolean>;
-  purchaseSubscription: (pkg?: PurchasesPackage) => Promise<boolean>;
+  restorePurchase: () => Promise<{ success: boolean; error?: string }>;
+  purchaseSubscription: (pkg?: PurchasesPackage) => Promise<{ success: boolean; error?: string; cancelled?: boolean }>;
   availablePackages: PurchasesPackage[];
   currentOffering: string | null;
+  initError: string | null;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType>({
@@ -32,10 +33,11 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   isGroupLocked: () => false,
   isWordIndexLocked: () => false,
   freeWordsLimit: FREE_WORDS_LIMIT,
-  restorePurchase: async () => false,
-  purchaseSubscription: async () => false,
+  restorePurchase: async () => ({ success: false }),
+  purchaseSubscription: async () => ({ success: false }),
   availablePackages: [],
   currentOffering: null,
+  initError: null,
 });
 
 export function useSubscription() {
@@ -51,6 +53,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const [loading, setLoading] = useState(true);
   const [availablePackages, setAvailablePackages] = useState<PurchasesPackage[]>([]);
   const [currentOffering, setCurrentOffering] = useState<string | null>(null);
+  const [initError, setInitError] = useState<string | null>(null);
 
   useEffect(() => {
     initializeRevenueCat();
@@ -58,31 +61,54 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const initializeRevenueCat = async () => {
     if (!REVENUECAT_API_KEY) {
-      console.warn("RevenueCat API key not configured");
+      console.warn("[RevenueCat] API key not configured");
+      setInitError("APIキーが設定されていません");
       setLoading(false);
       return;
     }
 
     try {
+      console.log("[RevenueCat] Configuring with API key:", REVENUECAT_API_KEY.substring(0, 8) + "...");
+      console.log("[RevenueCat] Platform:", Platform.OS);
+
       Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+      Purchases.setLogLevel(LOG_LEVEL.DEBUG);
 
-      if (__DEV__) {
-        Purchases.setLogLevel(LOG_LEVEL.DEBUG);
-      }
-
+      console.log("[RevenueCat] Getting customer info...");
       const customerInfo = await Purchases.getCustomerInfo();
       const premium = await checkPremiumStatus(customerInfo);
       setIsPremium(premium);
+      console.log("[RevenueCat] Premium status:", premium);
+      console.log("[RevenueCat] Active entitlements:", Object.keys(customerInfo.entitlements.active));
 
       try {
+        console.log("[RevenueCat] Loading offerings...");
         const offerings = await Purchases.getOfferings();
+        console.log("[RevenueCat] Offerings loaded:", {
+          current: offerings.current?.identifier || "none",
+          allKeys: Object.keys(offerings.all),
+          packageCount: offerings.current?.availablePackages.length || 0,
+        });
+
         if (offerings.current && offerings.current.availablePackages.length > 0) {
           setAvailablePackages(offerings.current.availablePackages);
           setCurrentOffering(offerings.current.identifier);
+          offerings.current.availablePackages.forEach((pkg, i) => {
+            console.log(`[RevenueCat] Package ${i}:`, {
+              type: pkg.packageType,
+              identifier: pkg.identifier,
+              productId: pkg.product?.identifier,
+              price: pkg.product?.priceString,
+            });
+          });
+        } else {
+          console.warn("[RevenueCat] No packages available in current offering");
+          setInitError("商品情報が取得できません。RevenueCatダッシュボードの設定を確認してください。");
         }
-      } catch (offerError) {
+      } catch (offerError: any) {
+        console.warn("[RevenueCat] Failed to load offerings:", offerError?.message || offerError);
         if (Platform.OS !== "web") {
-          console.warn("Failed to load offerings:", offerError);
+          setInitError(`オファリング取得エラー: ${offerError?.message || "不明なエラー"}`);
         }
       }
 
@@ -90,8 +116,9 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         checkPremiumStatus(info).then(setIsPremium);
       });
     } catch (e: any) {
+      console.warn("[RevenueCat] Initialization failed:", e?.message || e);
       if (Platform.OS !== "web") {
-        console.warn("RevenueCat initialization failed:", e);
+        setInitError(`初期化エラー: ${e?.message || "不明なエラー"}`);
       }
     } finally {
       setLoading(false);
@@ -114,35 +141,67 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     [isPremium]
   );
 
-  const purchaseSubscription = async (pkg?: PurchasesPackage): Promise<boolean> => {
+  const purchaseSubscription = async (pkg?: PurchasesPackage): Promise<{ success: boolean; error?: string; cancelled?: boolean }> => {
     try {
       const packageToPurchase = pkg || availablePackages[0];
       if (!packageToPurchase) {
-        console.warn("No package available for purchase");
-        return false;
+        const msg = "購入可能な商品がありません。RevenueCatダッシュボードでOffering・Product・Entitlementが正しく設定されているか確認してください。";
+        console.warn("[RevenueCat] No package available for purchase");
+        return { success: false, error: msg };
       }
+
+      console.log("[RevenueCat] Purchasing package:", {
+        type: packageToPurchase.packageType,
+        productId: packageToPurchase.product?.identifier,
+        price: packageToPurchase.product?.priceString,
+      });
 
       const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
       const premium = await checkPremiumStatus(customerInfo);
       setIsPremium(premium);
-      return premium;
+      console.log("[RevenueCat] Purchase result - premium:", premium);
+      return { success: premium };
     } catch (e: any) {
-      if (!e.userCancelled) {
-        console.warn("Purchase failed:", e);
+      if (e.userCancelled) {
+        console.log("[RevenueCat] Purchase cancelled by user");
+        return { success: false, cancelled: true };
       }
-      return false;
+      const errorCode = e.code || "unknown";
+      const errorMsg = e.message || e.readableErrorCode || "不明なエラー";
+      console.warn("[RevenueCat] Purchase failed:", { code: errorCode, message: errorMsg, full: e });
+
+      let userMessage = `購入エラー (${errorCode}): ${errorMsg}`;
+      if (errorCode === "ProductNotAvailableForPurchaseError" || errorCode === "3") {
+        userMessage = "この商品は現在購入できません。App Store Connectで商品が承認済みか確認してください。";
+      } else if (errorCode === "StoreProblemError" || errorCode === "2") {
+        userMessage = "ストアとの通信に問題があります。しばらく待ってからもう一度お試しください。";
+      } else if (errorCode === "NetworkError" || errorCode === "1") {
+        userMessage = "ネットワークエラーが発生しました。接続を確認してください。";
+      } else if (errorCode === "PurchaseNotAllowedError" || errorCode === "5") {
+        userMessage = "この端末では購入が許可されていません。設定を確認してください。";
+      } else if (errorCode === "ConfigurationError" || errorCode === "23") {
+        userMessage = "RevenueCatの設定に問題があります。ダッシュボードでProducts・Offerings・Entitlementsを確認してください。";
+      }
+
+      return { success: false, error: userMessage };
     }
   };
 
-  const restorePurchase = async (): Promise<boolean> => {
+  const restorePurchase = async (): Promise<{ success: boolean; error?: string }> => {
     try {
+      console.log("[RevenueCat] Restoring purchases...");
       const customerInfo = await Purchases.restorePurchases();
       const premium = await checkPremiumStatus(customerInfo);
       setIsPremium(premium);
-      return premium;
-    } catch (e) {
-      console.warn("Restore failed:", e);
-      return false;
+      console.log("[RevenueCat] Restore result - premium:", premium);
+      if (!premium) {
+        return { success: false, error: "復元可能なサブスクリプションが見つかりませんでした。" };
+      }
+      return { success: true };
+    } catch (e: any) {
+      const errorMsg = e.message || "不明なエラー";
+      console.warn("[RevenueCat] Restore failed:", errorMsg);
+      return { success: false, error: `復元エラー: ${errorMsg}` };
     }
   };
 
@@ -158,6 +217,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         purchaseSubscription,
         availablePackages,
         currentOffering,
+        initError,
       }}
     >
       {children}
