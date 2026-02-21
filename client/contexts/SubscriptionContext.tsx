@@ -103,11 +103,15 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
           });
         } else {
           console.warn("[RevenueCat] No packages available in current offering");
-          setInitError("商品情報が取得できません。RevenueCatダッシュボードの設定を確認してください。");
+          const isExpoGo = Constants.appOwnership === "expo";
+          if (!isExpoGo) {
+            setInitError("商品情報が取得できません。RevenueCatダッシュボードの設定を確認してください。");
+          }
         }
       } catch (offerError: any) {
         console.warn("[RevenueCat] Failed to load offerings:", offerError?.message || offerError);
-        if (Platform.OS !== "web") {
+        const isExpoGo = Constants.appOwnership === "expo";
+        if (Platform.OS !== "web" && !isExpoGo) {
           setInitError(`オファリング取得エラー: ${offerError?.message || "不明なエラー"}`);
         }
       }

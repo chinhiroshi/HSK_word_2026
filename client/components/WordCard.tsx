@@ -220,11 +220,6 @@ export function WordCard({
               </Pressable>
             </View>
           ) : null}
-          {showLongExample && word.longExampleTranslation ? (
-            <ThemedText style={[styles.longExampleTranslation, { color: theme.textSecondary }]}>
-              {word.longExampleTranslation}
-            </ThemedText>
-          ) : null}
         </View>
       </Pressable>
     </Animated.View>

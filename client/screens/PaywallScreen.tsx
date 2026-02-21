@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Pressable, ScrollView, ActivityIndicator, Modal } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, ActivityIndicator, Modal, Platform } from "react-native";
+import Constants from "expo-constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
@@ -111,7 +112,7 @@ export default function PaywallScreen() {
         ))}
       </View>
 
-      {initError ? (
+      {initError && Platform.OS !== "web" && !Constants.appOwnership ? (
         <View style={[styles.errorBanner, { backgroundColor: "#FEF2F2", borderColor: "#FECACA" }]}>
           <Feather name="alert-circle" size={16} color="#DC2626" />
           <ThemedText style={styles.errorBannerText}>{initError}</ThemedText>
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   priceAmount: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
