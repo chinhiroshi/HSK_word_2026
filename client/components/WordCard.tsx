@@ -15,6 +15,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getPinyin } from "@/lib/pinyin";
+import { speakChinese } from "@/lib/speech";
 
 interface WordCardProps {
   word: Word;
@@ -201,8 +202,27 @@ export function WordCard({
             {word.exampleSentence}
           </ThemedText>
           {showLongExample && word.longExample ? (
-            <ThemedText style={[styles.longExample, { color: theme.textSecondary }]} numberOfLines={1}>
-              {word.longExample}
+            <View style={styles.longExampleRow}>
+              <ThemedText style={[styles.longExample, { color: theme.textSecondary }]}>
+                {word.longExample}
+              </ThemedText>
+              <Pressable
+                testID={`button-speak-long-${word.id}`}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  speakChinese(word.longExample || "");
+                }}
+                style={[styles.longExampleSpeakButton, { backgroundColor: `${theme.primary}15` }]}
+                hitSlop={8}
+              >
+                <Feather name="volume-2" size={14} color={theme.primary} />
+              </Pressable>
+            </View>
+          ) : null}
+          {showLongExample && word.longExampleTranslation ? (
+            <ThemedText style={[styles.longExampleTranslation, { color: theme.textSecondary }]}>
+              {word.longExampleTranslation}
             </ThemedText>
           ) : null}
         </View>
@@ -293,10 +313,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
   },
+  longExampleRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginTop: 4,
+    gap: Spacing.xs,
+  },
   longExample: {
+    flex: 1,
     fontSize: 15,
     fontFamily: "Nunito_400Regular",
-    marginTop: 4,
     lineHeight: 22,
+  },
+  longExampleSpeakButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 0,
+  },
+  longExampleTranslation: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
+    lineHeight: 20,
   },
 });
