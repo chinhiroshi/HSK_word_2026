@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   priceAmount: {
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",

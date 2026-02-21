@@ -294,8 +294,9 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
   },
   longExample: {
-    fontSize: 13,
+    fontSize: 15,
     fontFamily: "Nunito_400Regular",
-    marginTop: 2,
+    marginTop: 4,
+    lineHeight: 22,
   },
 });
