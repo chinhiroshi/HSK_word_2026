@@ -7,7 +7,7 @@ import Constants from "expo-constants";
 const REVENUECAT_API_KEY =
   Constants.expoConfig?.extra?.revenueCatApiKey ||
   process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ||
-  "appl_BVVXQEBFhgNtNBvWEA";
+  "appl_BVVXQEBFhgNtNBvWEACExXHMPJc";
 const PREMIUM_ENTITLEMENT_ID = "premium";
 const FREE_WORDS_LIMIT = 50;
 
