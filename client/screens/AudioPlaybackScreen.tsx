@@ -36,6 +36,8 @@ export default function AudioPlaybackScreen() {
   const [startPosition, setStartPosition] = useState("1");
   const [endPosition, setEndPosition] = useState("");
   const [playbackRate, setPlaybackRate] = useState(1.0);
+  const [showSpokenText, setShowSpokenText] = useState(true);
+  const [currentSpokenText, setCurrentSpokenText] = useState("");
   
   const isCancelledRef = useRef(false);
 
@@ -92,6 +94,7 @@ export default function AudioPlaybackScreen() {
     if (isCancelledRef.current) return;
 
     setCurrentPhase("中国語単語 (1回)");
+    setCurrentSpokenText(word.word);
     await speak(word.word, "zh-CN");
     if (isCancelledRef.current) return;
 
@@ -99,6 +102,7 @@ export default function AudioPlaybackScreen() {
     if (isCancelledRef.current) return;
 
     setCurrentPhase("日本語訳");
+    setCurrentSpokenText(word.translation);
     await speak(word.translation, "ja-JP");
     if (isCancelledRef.current) return;
 
@@ -108,6 +112,7 @@ export default function AudioPlaybackScreen() {
     for (let i = 0; i < 2; i++) {
       if (isCancelledRef.current) return;
       setCurrentPhase(`中国語例文 (${i + 1}/2回目)`);
+      setCurrentSpokenText(word.exampleSentence);
       await speak(word.exampleSentence, "zh-CN");
       if (isCancelledRef.current) return;
       await delay(300);
@@ -117,6 +122,7 @@ export default function AudioPlaybackScreen() {
     await delay(500);
 
     setCurrentPhase("日本語例文訳");
+    setCurrentSpokenText(word.exampleTranslation);
     await speak(word.exampleTranslation, "ja-JP");
     if (isCancelledRef.current) return;
 
@@ -125,6 +131,7 @@ export default function AudioPlaybackScreen() {
     for (let i = 0; i < 2; i++) {
       if (isCancelledRef.current) return;
       setCurrentPhase(`中国語例文 (${i + 3}/4回目)`);
+      setCurrentSpokenText(word.exampleSentence);
       await speak(word.exampleSentence, "zh-CN");
       if (isCancelledRef.current) return;
       await delay(300);
@@ -135,9 +142,11 @@ export default function AudioPlaybackScreen() {
 
     if (word.exampleEnglish) {
       setCurrentPhase("英語例文");
+      setCurrentSpokenText(word.exampleEnglish);
       await speak(word.exampleEnglish, "en-US");
     } else {
       setCurrentPhase("英語訳");
+      setCurrentSpokenText(word.translation);
       await speak(word.translation, "en-US");
     }
     
@@ -173,6 +182,7 @@ export default function AudioPlaybackScreen() {
     stopSpeaking();
     setIsPlaying(false);
     setCurrentPhase("");
+    setCurrentSpokenText("");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
@@ -317,6 +327,42 @@ export default function AudioPlaybackScreen() {
             </View>
           </View>
 
+          <View style={styles.settingRow}>
+            <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
+              テキスト表示
+            </ThemedText>
+            <Pressable
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setShowSpokenText(!showSpokenText);
+              }}
+              style={[
+                styles.toggleButton,
+                { 
+                  backgroundColor: showSpokenText 
+                    ? Colors.light.primary 
+                    : theme.backgroundSecondary 
+                },
+              ]}
+            >
+              <View style={styles.toggleContent}>
+                <Feather 
+                  name={showSpokenText ? "eye" : "eye-off"} 
+                  size={14} 
+                  color={showSpokenText ? "#FFFFFF" : theme.textSecondary} 
+                />
+                <ThemedText 
+                  style={[
+                    styles.toggleText, 
+                    { color: showSpokenText ? "#FFFFFF" : theme.textSecondary }
+                  ]}
+                >
+                  {showSpokenText ? "ON" : "OFF"}
+                </ThemedText>
+              </View>
+            </Pressable>
+          </View>
+
           <View style={styles.infoRow}>
             <Feather name="info" size={14} color={theme.textSecondary} />
             <ThemedText style={[styles.infoText, { color: theme.textSecondary }]}>
@@ -356,7 +402,20 @@ export default function AudioPlaybackScreen() {
                 </ThemedText>
               </View>
             </View>
-          ) : (
+          ) : null}
+
+          {isPlaying && currentWord && showSpokenText && currentSpokenText ? (
+            <View style={[styles.spokenTextCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
+              <ThemedText style={[styles.spokenTextLabel, { color: theme.textSecondary }]}>
+                {currentPhase}
+              </ThemedText>
+              <ThemedText style={styles.spokenText}>
+                {currentSpokenText}
+              </ThemedText>
+            </View>
+          ) : null}
+
+          {!isPlaying ? (
             <View style={styles.readyState}>
               <Feather name="headphones" size={48} color={theme.textSecondary} />
               <ThemedText style={[styles.readyText, { color: theme.textSecondary }]}>
@@ -366,7 +425,7 @@ export default function AudioPlaybackScreen() {
                 }
               </ThemedText>
             </View>
-          )}
+          ) : null}
 
           <View style={styles.controls}>
             {isPlaying ? (
@@ -453,6 +512,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  toggleContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
   },
   positionInputContainer: {
     flexDirection: "row",
@@ -573,6 +637,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: "Nunito_400Regular",
     marginTop: 2,
+  },
+  spokenTextCard: {
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    padding: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  spokenTextLabel: {
+    fontSize: 11,
+    fontFamily: "Nunito_600SemiBold",
+    marginBottom: Spacing.xs,
+  },
+  spokenText: {
+    fontSize: 20,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    lineHeight: 30,
   },
   readyState: {
     alignItems: "center",
