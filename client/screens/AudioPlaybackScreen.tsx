@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { View, StyleSheet, Pressable, ScrollView, TextInput, Linking } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, TextInput, Linking, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
+import Slider from "@react-native-community/slider";
 import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 import { speakWithLanguage, stopSpeaking } from "@/lib/speech";
@@ -41,7 +42,8 @@ export default function AudioPlaybackScreen() {
   
   const isCancelledRef = useRef(false);
 
-  const SPEED_OPTIONS = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+  const SPEED_MIN = 0.5;
+  const SPEED_MAX = 1.5;
 
   const loadWords = useCallback(async () => {
     await initializeData();
@@ -287,43 +289,37 @@ export default function AudioPlaybackScreen() {
             </View>
           </View>
 
-          <View style={styles.settingRow}>
-            <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
-              再生速度
-            </ThemedText>
-            <View style={styles.speedContainer}>
-              {SPEED_OPTIONS.map((speed) => (
-                <Pressable
-                  key={speed}
-                  onPress={() => {
-                    if (!isPlaying) {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      setPlaybackRate(speed);
-                    }
-                  }}
-                  style={[
-                    styles.speedButton,
-                    {
-                      backgroundColor: playbackRate === speed 
-                        ? Colors.light.primary 
-                        : theme.backgroundSecondary,
-                      borderColor: playbackRate === speed 
-                        ? Colors.light.primary 
-                        : theme.border,
-                    },
-                  ]}
-                  disabled={isPlaying}
-                >
-                  <ThemedText
-                    style={[
-                      styles.speedButtonText,
-                      { color: playbackRate === speed ? "#FFFFFF" : theme.text },
-                    ]}
-                  >
-                    {speed}x
-                  </ThemedText>
-                </Pressable>
-              ))}
+          <View style={styles.speedSection}>
+            <View style={styles.speedHeader}>
+              <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
+                再生速度
+              </ThemedText>
+              <ThemedText style={[styles.speedValue, { color: Colors.light.primary }]}>
+                {playbackRate.toFixed(2)}x
+              </ThemedText>
+            </View>
+            <View style={styles.sliderRow}>
+              <ThemedText style={[styles.sliderLabel, { color: theme.textSecondary }]}>
+                {SPEED_MIN}x
+              </ThemedText>
+              <Slider
+                style={styles.slider}
+                minimumValue={SPEED_MIN}
+                maximumValue={SPEED_MAX}
+                step={0.05}
+                value={playbackRate}
+                onValueChange={(val: number) => {
+                  const rounded = Math.round(val * 100) / 100;
+                  setPlaybackRate(rounded);
+                }}
+                minimumTrackTintColor={Colors.light.primary}
+                maximumTrackTintColor={theme.border}
+                thumbTintColor={Colors.light.primary}
+                disabled={isPlaying}
+              />
+              <ThemedText style={[styles.sliderLabel, { color: theme.textSecondary }]}>
+                {SPEED_MAX}x
+              </ThemedText>
             </View>
           </View>
 
@@ -535,23 +531,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
   },
-  speedContainer: {
+  speedSection: {
+    marginBottom: Spacing.md,
+  },
+  speedHeader: {
     flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.xs,
-  },
-  speedButton: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    minWidth: 44,
+    justifyContent: "space-between",
     alignItems: "center",
+    marginBottom: Spacing.sm,
   },
-  speedButtonText: {
+  speedValue: {
+    fontSize: 16,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  sliderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  slider: {
+    flex: 1,
+    height: 40,
+  },
+  sliderLabel: {
     fontSize: 12,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_400Regular",
+    minWidth: 30,
+    textAlign: "center",
   },
   infoRow: {
     flexDirection: "row",
