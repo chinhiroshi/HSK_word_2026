@@ -37,7 +37,7 @@ export default function AudioPlaybackScreen() {
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [showSpokenText, setShowSpokenText] = useState(true);
   const [currentSpokenText, setCurrentSpokenText] = useState("");
-  const [markedWords, setMarkedWords] = useState<{word: string; pinyin: string; translation: string}[]>([]);
+  const [markedWords, setMarkedWords] = useState<{id: string; word: string; pinyin: string; translation: string}[]>([]);
   const flashAnim = useRef(new Animated.Value(0)).current;
   
   const isCancelledRef = useRef(false);
@@ -195,8 +195,8 @@ export default function AudioPlaybackScreen() {
     const data = await getWords();
     setWords(data);
     setMarkedWords(prev => {
-      if (prev.some(w => w.word === currentWord.word)) return prev;
-      return [...prev, { word: currentWord.word, pinyin: currentWord.pinyin, translation: currentWord.translation }];
+      if (prev.some(w => w.id === currentWord.id)) return prev;
+      return [...prev, { id: currentWord.id, word: currentWord.word, pinyin: currentWord.pinyin, translation: currentWord.translation }];
     });
     flashAnim.setValue(1);
     Animated.timing(flashAnim, {
@@ -492,20 +492,43 @@ export default function AudioPlaybackScreen() {
                 <ThemedText style={[styles.clearButton, { color: theme.textSecondary }]}>クリア</ThemedText>
               </Pressable>
             </View>
-            {markedWords.map((w, idx) => (
-              <Animated.View
-                key={w.word}
-                style={[
-                  styles.markedWordItem,
-                  { borderTopColor: theme.border },
-                  idx === markedWords.length - 1 ? { opacity: flashAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] }) } : null,
-                ]}
-              >
-                <ThemedText style={styles.markedWordChinese}>{w.word}</ThemedText>
-                <ThemedText style={[styles.markedWordPinyin, { color: theme.textSecondary }]}>{w.pinyin}</ThemedText>
-                <ThemedText style={[styles.markedWordTranslation, { color: theme.textSecondary }]}>{w.translation}</ThemedText>
-              </Animated.View>
-            ))}
+            {markedWords.map((w, idx) => {
+              const wordData = words.find(wd => wd.id === w.id);
+              const textNeedsWork = wordData ? (wordData.textUnmemorizedCount || 0) > 0 : false;
+              const audioNeedsWork = wordData ? (wordData.audioUnmemorizedCount || 0) > 0 : false;
+              return (
+                <Animated.View
+                  key={w.id}
+                  style={[
+                    styles.markedWordItem,
+                    { borderTopColor: theme.border },
+                    idx === markedWords.length - 1 ? { opacity: flashAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] }) } : null,
+                  ]}
+                >
+                  <View style={styles.markedWordLeft}>
+                    <ThemedText style={styles.markedWordChinese}>{w.word}</ThemedText>
+                    <ThemedText style={[styles.markedWordPinyin, { color: theme.textSecondary }]}>{w.pinyin}</ThemedText>
+                  </View>
+                  <View style={styles.markedWordRight}>
+                    <View style={styles.markedBadges}>
+                      {textNeedsWork ? (
+                        <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.secondary}20` }]}>
+                          <Feather name="book-open" size={10} color={Colors.light.secondary} />
+                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.secondary }]}>読</ThemedText>
+                        </View>
+                      ) : null}
+                      {audioNeedsWork ? (
+                        <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.alert}20` }]}>
+                          <Feather name="headphones" size={10} color={Colors.light.alert} />
+                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>音</ThemedText>
+                        </View>
+                      ) : null}
+                    </View>
+                    <ThemedText style={[styles.markedWordTranslation, { color: theme.textSecondary }]}>{w.translation}</ThemedText>
+                  </View>
+                </Animated.View>
+              );
+            })}
           </Animated.View>
         ) : null}
       </ScrollView>
@@ -649,9 +672,22 @@ const styles = StyleSheet.create({
   markedWordItem: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    justifyContent: "space-between",
     paddingVertical: Spacing.sm,
     borderTopWidth: 1,
+  },
+  markedWordLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    flexShrink: 0,
+  },
+  markedWordRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    flex: 1,
+    justifyContent: "flex-end",
   },
   markedWordChinese: {
     fontSize: 16,
@@ -662,10 +698,26 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
   },
+  markedBadges: {
+    flexDirection: "row",
+    gap: 4,
+  },
+  memoBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  memoBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
   markedWordTranslation: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
-    flex: 1,
     textAlign: "right",
   },
   premiumBanner: {
