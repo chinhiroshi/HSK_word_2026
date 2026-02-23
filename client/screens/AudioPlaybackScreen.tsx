@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { View, StyleSheet, Pressable, ScrollView, TextInput, Linking, Platform } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, TextInput } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -9,13 +9,11 @@ import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 import { speakWithLanguage, stopSpeaking } from "@/lib/speech";
 
-const YOUTUBE_URL = "https://youtu.be/tW5tqaYRYm8?si=d2W2jqRre9F84A1T";
-
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWords, initializeData } from "@/lib/storage";
+import { getWords, initializeData, markAsUnmemorized } from "@/lib/storage";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -186,6 +184,14 @@ export default function AudioPlaybackScreen() {
     setCurrentPhase("");
     setCurrentSpokenText("");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  const handleMarkUnmemorized = async () => {
+    if (!currentWord) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    await markAsUnmemorized(currentWord.id, "audio");
+    const data = await getWords();
+    setWords(data);
   };
 
   const toggleFilter = () => {
@@ -425,13 +431,22 @@ export default function AudioPlaybackScreen() {
 
           <View style={styles.controls}>
             {isPlaying ? (
-              <Pressable
-                onPress={stopPlayback}
-                style={[styles.controlButton, styles.stopButton]}
-              >
-                <Feather name="square" size={24} color="#FFFFFF" />
-                <ThemedText style={styles.controlButtonText}>停止</ThemedText>
-              </Pressable>
+              <View style={styles.playingControls}>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.controlButton, styles.unmemorizedButton, { backgroundColor: Colors.light.alert }]}
+                >
+                  <Feather name="flag" size={20} color="#FFFFFF" />
+                  <ThemedText style={styles.controlButtonText}>覚えてない</ThemedText>
+                </Pressable>
+                <Pressable
+                  onPress={stopPlayback}
+                  style={[styles.controlButton, styles.stopButton]}
+                >
+                  <Feather name="square" size={20} color="#FFFFFF" />
+                  <ThemedText style={styles.controlButtonText}>停止</ThemedText>
+                </Pressable>
+              </View>
             ) : (
               <Pressable
                 onPress={startPlayback}
@@ -447,20 +462,6 @@ export default function AudioPlaybackScreen() {
               </Pressable>
             )}
           </View>
-        </View>
-
-        <View style={[styles.youtubeCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
-          <ThemedText style={styles.sectionTitle}>YouTube動画</ThemedText>
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Linking.openURL(YOUTUBE_URL);
-            }}
-            style={[styles.youtubeButton, { backgroundColor: "#FF0000" }]}
-          >
-            <Feather name="youtube" size={20} color="#FFFFFF" />
-            <ThemedText style={styles.youtubeButtonText}>YouTubeで視聴</ThemedText>
-          </Pressable>
         </View>
       </ScrollView>
     </View>
@@ -575,25 +576,14 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 16,
   },
-  youtubeCard: {
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    padding: Spacing.lg,
-    marginBottom: Spacing.lg,
-  },
-  youtubeButton: {
+  playingControls: {
     flexDirection: "row",
-    alignItems: "center",
+    gap: Spacing.md,
     justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.md,
   },
-  youtubeButtonText: {
-    fontSize: 15,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-    color: "#FFFFFF",
+  unmemorizedButton: {
+    flex: 1,
+    justifyContent: "center",
   },
   premiumBanner: {
     flexDirection: "row",
@@ -689,6 +679,8 @@ const styles = StyleSheet.create({
   },
   stopButton: {
     backgroundColor: Colors.light.secondary,
+    flex: 1,
+    justifyContent: "center",
   },
   disabledButton: {
     opacity: 0.5,
