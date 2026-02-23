@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { View, StyleSheet, Pressable, ScrollView, TextInput } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, TextInput, Animated } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -37,6 +37,8 @@ export default function AudioPlaybackScreen() {
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [showSpokenText, setShowSpokenText] = useState(true);
   const [currentSpokenText, setCurrentSpokenText] = useState("");
+  const [markedWords, setMarkedWords] = useState<{word: string; pinyin: string; translation: string}[]>([]);
+  const flashAnim = useRef(new Animated.Value(0)).current;
   
   const isCancelledRef = useRef(false);
 
@@ -192,6 +194,16 @@ export default function AudioPlaybackScreen() {
     await markAsUnmemorized(currentWord.id, "audio");
     const data = await getWords();
     setWords(data);
+    setMarkedWords(prev => {
+      if (prev.some(w => w.word === currentWord.word)) return prev;
+      return [...prev, { word: currentWord.word, pinyin: currentWord.pinyin, translation: currentWord.translation }];
+    });
+    flashAnim.setValue(1);
+    Animated.timing(flashAnim, {
+      toValue: 0,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
   };
 
   const toggleFilter = () => {
@@ -463,6 +475,39 @@ export default function AudioPlaybackScreen() {
             )}
           </View>
         </View>
+
+        {markedWords.length > 0 ? (
+          <Animated.View style={[styles.markedListCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+            <View style={styles.markedListHeader}>
+              <Feather name="flag" size={16} color={Colors.light.alert} />
+              <ThemedText style={[styles.sectionTitle, { flex: 1 }]}>
+                覚えてない単語 ({markedWords.length})
+              </ThemedText>
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setMarkedWords([]);
+                }}
+              >
+                <ThemedText style={[styles.clearButton, { color: theme.textSecondary }]}>クリア</ThemedText>
+              </Pressable>
+            </View>
+            {markedWords.map((w, idx) => (
+              <Animated.View
+                key={w.word}
+                style={[
+                  styles.markedWordItem,
+                  { borderTopColor: theme.border },
+                  idx === markedWords.length - 1 ? { opacity: flashAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] }) } : null,
+                ]}
+              >
+                <ThemedText style={styles.markedWordChinese}>{w.word}</ThemedText>
+                <ThemedText style={[styles.markedWordPinyin, { color: theme.textSecondary }]}>{w.pinyin}</ThemedText>
+                <ThemedText style={[styles.markedWordTranslation, { color: theme.textSecondary }]}>{w.translation}</ThemedText>
+              </Animated.View>
+            ))}
+          </Animated.View>
+        ) : null}
       </ScrollView>
     </View>
   );
@@ -584,6 +629,44 @@ const styles = StyleSheet.create({
   unmemorizedButton: {
     flex: 1,
     justifyContent: "center",
+  },
+  markedListCard: {
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+  markedListHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  clearButton: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+  },
+  markedWordItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+    borderTopWidth: 1,
+  },
+  markedWordChinese: {
+    fontSize: 16,
+    fontWeight: "600",
+    fontFamily: "Nunito_700Bold",
+  },
+  markedWordPinyin: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+  },
+  markedWordTranslation: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    flex: 1,
+    textAlign: "right",
   },
   premiumBanner: {
     flexDirection: "row",
