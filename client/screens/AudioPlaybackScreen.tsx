@@ -228,6 +228,153 @@ export default function AudioPlaybackScreen() {
           },
         ]}
       >
+        <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+          <ThemedText style={styles.sectionTitle}>再生</ThemedText>
+
+          {isPlaying && currentWord ? (
+            <View style={styles.nowPlaying}>
+              <View style={[styles.playingIndicator, { backgroundColor: Colors.light.primary }]}>
+                <Feather name="volume-2" size={20} color="#FFFFFF" />
+              </View>
+              <View style={styles.playingInfo}>
+                <ThemedText style={styles.playingWord}>{currentWord.word}</ThemedText>
+                <ThemedText style={[styles.playingPhase, { color: theme.textSecondary }]}>
+                  {currentPhase}
+                </ThemedText>
+                <ThemedText style={[styles.playingProgress, { color: theme.textSecondary }]}>
+                  {currentWordIndex + 1} / {playableWords.length}
+                </ThemedText>
+              </View>
+            </View>
+          ) : null}
+
+          {isPlaying && currentWord && showSpokenText && currentSpokenText ? (
+            <View style={[styles.spokenTextCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
+              <ThemedText style={[styles.spokenTextLabel, { color: theme.textSecondary }]}>
+                {currentPhase}
+              </ThemedText>
+              <ThemedText style={styles.spokenText}>
+                {currentSpokenText}
+              </ThemedText>
+            </View>
+          ) : null}
+
+          {!isPlaying ? (
+            <View style={styles.readyState}>
+              <Feather name="headphones" size={48} color={theme.textSecondary} />
+              <ThemedText style={[styles.readyText, { color: theme.textSecondary }]}>
+                {playableWords.length > 0 
+                  ? `${playableWords.length}語の単語を再生できます`
+                  : "再生できる単語がありません"
+                }
+              </ThemedText>
+            </View>
+          ) : null}
+
+          <View style={styles.controls}>
+            {isPlaying ? (
+              <View style={styles.playingControls}>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.controlButton, styles.unmemorizedButton, { backgroundColor: Colors.light.alert }]}
+                >
+                  <Feather name="flag" size={20} color="#FFFFFF" />
+                  <ThemedText style={styles.controlButtonText}>覚えてない</ThemedText>
+                </Pressable>
+                <Pressable
+                  onPress={stopPlayback}
+                  style={[styles.controlButton, styles.stopButton]}
+                >
+                  <Feather name="square" size={20} color="#FFFFFF" />
+                  <ThemedText style={styles.controlButtonText}>停止</ThemedText>
+                </Pressable>
+              </View>
+            ) : (
+              <Pressable
+                onPress={startPlayback}
+                style={[
+                  styles.controlButton, 
+                  styles.playButton,
+                  playableWords.length === 0 && styles.disabledButton,
+                ]}
+                disabled={playableWords.length === 0 || loading}
+              >
+                <Feather name="play" size={24} color="#FFFFFF" />
+                <ThemedText style={styles.controlButtonText}>再生開始</ThemedText>
+              </Pressable>
+            )}
+          </View>
+        </View>
+
+        {markedWords.length > 0 ? (
+          <Animated.View style={[styles.markedListCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+            <View style={styles.markedListHeader}>
+              <Feather name="flag" size={16} color={Colors.light.alert} />
+              <ThemedText style={[styles.sectionTitle, { flex: 1 }]}>
+                覚えてない単語 ({markedWords.length})
+              </ThemedText>
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setMarkedWords([]);
+                }}
+              >
+                <ThemedText style={[styles.clearButton, { color: theme.textSecondary }]}>クリア</ThemedText>
+              </Pressable>
+            </View>
+            {markedWords.map((w, idx) => {
+              const wordData = words.find(wd => wd.id === w.id);
+              const textNeedsWork = wordData ? (wordData.textUnmemorizedCount || 0) > 0 : false;
+              const audioNeedsWork = wordData ? (wordData.audioUnmemorizedCount || 0) > 0 : false;
+              return (
+                <Animated.View
+                  key={w.id}
+                  style={[
+                    styles.markedWordItem,
+                    { borderTopColor: theme.border },
+                    idx === markedWords.length - 1 ? { opacity: flashAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] }) } : null,
+                  ]}
+                >
+                  <View style={styles.markedWordLeft}>
+                    <ThemedText style={styles.markedWordChinese}>{w.word}</ThemedText>
+                    <ThemedText style={[styles.markedWordPinyin, { color: theme.textSecondary }]}>{w.pinyin}</ThemedText>
+                  </View>
+                  <View style={styles.markedWordRight}>
+                    <View style={styles.markedBadges}>
+                      {textNeedsWork ? (
+                        <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.secondary}20` }]}>
+                          <Feather name="book-open" size={10} color={Colors.light.secondary} />
+                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.secondary }]}>読</ThemedText>
+                        </View>
+                      ) : null}
+                      {audioNeedsWork ? (
+                        <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.alert}20` }]}>
+                          <Feather name="headphones" size={10} color={Colors.light.alert} />
+                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>音</ThemedText>
+                        </View>
+                      ) : null}
+                    </View>
+                    <ThemedText style={[styles.markedWordTranslation, { color: theme.textSecondary }]}>{w.translation}</ThemedText>
+                  </View>
+                </Animated.View>
+              );
+            })}
+          </Animated.View>
+        ) : null}
+
+        {!isPremium ? (
+          <Pressable
+            onPress={() => navigation.navigate("Paywall")}
+            style={[styles.premiumBanner, { backgroundColor: `${theme.primary}15`, borderColor: theme.primary }]}
+          >
+            <Feather name="lock" size={16} color={theme.primary} />
+            <ThemedText style={[styles.premiumBannerText, { color: theme.primary }]}>
+              無料版は最初の{freeWordsLimit}語のみ再生可能です
+            </ThemedText>
+            <Feather name="chevron-right" size={16} color={theme.primary} />
+          </Pressable>
+        ) : null}
+
         <View style={[styles.settingsCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
           <ThemedText style={styles.sectionTitle}>再生設定</ThemedText>
 
@@ -384,153 +531,6 @@ export default function AudioPlaybackScreen() {
             </ThemedText>
           </View>
         </View>
-
-        {!isPremium ? (
-          <Pressable
-            onPress={() => navigation.navigate("Paywall")}
-            style={[styles.premiumBanner, { backgroundColor: `${theme.primary}15`, borderColor: theme.primary }]}
-          >
-            <Feather name="lock" size={16} color={theme.primary} />
-            <ThemedText style={[styles.premiumBannerText, { color: theme.primary }]}>
-              無料版は最初の{freeWordsLimit}語のみ再生可能です
-            </ThemedText>
-            <Feather name="chevron-right" size={16} color={theme.primary} />
-          </Pressable>
-        ) : null}
-
-        <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
-          <ThemedText style={styles.sectionTitle}>再生</ThemedText>
-
-          {isPlaying && currentWord ? (
-            <View style={styles.nowPlaying}>
-              <View style={[styles.playingIndicator, { backgroundColor: Colors.light.primary }]}>
-                <Feather name="volume-2" size={20} color="#FFFFFF" />
-              </View>
-              <View style={styles.playingInfo}>
-                <ThemedText style={styles.playingWord}>{currentWord.word}</ThemedText>
-                <ThemedText style={[styles.playingPhase, { color: theme.textSecondary }]}>
-                  {currentPhase}
-                </ThemedText>
-                <ThemedText style={[styles.playingProgress, { color: theme.textSecondary }]}>
-                  {currentWordIndex + 1} / {playableWords.length}
-                </ThemedText>
-              </View>
-            </View>
-          ) : null}
-
-          {isPlaying && currentWord && showSpokenText && currentSpokenText ? (
-            <View style={[styles.spokenTextCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
-              <ThemedText style={[styles.spokenTextLabel, { color: theme.textSecondary }]}>
-                {currentPhase}
-              </ThemedText>
-              <ThemedText style={styles.spokenText}>
-                {currentSpokenText}
-              </ThemedText>
-            </View>
-          ) : null}
-
-          {!isPlaying ? (
-            <View style={styles.readyState}>
-              <Feather name="headphones" size={48} color={theme.textSecondary} />
-              <ThemedText style={[styles.readyText, { color: theme.textSecondary }]}>
-                {playableWords.length > 0 
-                  ? `${playableWords.length}語の単語を再生できます`
-                  : "再生できる単語がありません"
-                }
-              </ThemedText>
-            </View>
-          ) : null}
-
-          <View style={styles.controls}>
-            {isPlaying ? (
-              <View style={styles.playingControls}>
-                <Pressable
-                  onPress={handleMarkUnmemorized}
-                  style={[styles.controlButton, styles.unmemorizedButton, { backgroundColor: Colors.light.alert }]}
-                >
-                  <Feather name="flag" size={20} color="#FFFFFF" />
-                  <ThemedText style={styles.controlButtonText}>覚えてない</ThemedText>
-                </Pressable>
-                <Pressable
-                  onPress={stopPlayback}
-                  style={[styles.controlButton, styles.stopButton]}
-                >
-                  <Feather name="square" size={20} color="#FFFFFF" />
-                  <ThemedText style={styles.controlButtonText}>停止</ThemedText>
-                </Pressable>
-              </View>
-            ) : (
-              <Pressable
-                onPress={startPlayback}
-                style={[
-                  styles.controlButton, 
-                  styles.playButton,
-                  playableWords.length === 0 && styles.disabledButton,
-                ]}
-                disabled={playableWords.length === 0 || loading}
-              >
-                <Feather name="play" size={24} color="#FFFFFF" />
-                <ThemedText style={styles.controlButtonText}>再生開始</ThemedText>
-              </Pressable>
-            )}
-          </View>
-        </View>
-
-        {markedWords.length > 0 ? (
-          <Animated.View style={[styles.markedListCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
-            <View style={styles.markedListHeader}>
-              <Feather name="flag" size={16} color={Colors.light.alert} />
-              <ThemedText style={[styles.sectionTitle, { flex: 1 }]}>
-                覚えてない単語 ({markedWords.length})
-              </ThemedText>
-              <Pressable
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  setMarkedWords([]);
-                }}
-              >
-                <ThemedText style={[styles.clearButton, { color: theme.textSecondary }]}>クリア</ThemedText>
-              </Pressable>
-            </View>
-            {markedWords.map((w, idx) => {
-              const wordData = words.find(wd => wd.id === w.id);
-              const textNeedsWork = wordData ? (wordData.textUnmemorizedCount || 0) > 0 : false;
-              const audioNeedsWork = wordData ? (wordData.audioUnmemorizedCount || 0) > 0 : false;
-              return (
-                <Animated.View
-                  key={w.id}
-                  style={[
-                    styles.markedWordItem,
-                    { borderTopColor: theme.border },
-                    idx === markedWords.length - 1 ? { opacity: flashAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 0.3] }) } : null,
-                  ]}
-                >
-                  <View style={styles.markedWordLeft}>
-                    <ThemedText style={styles.markedWordChinese}>{w.word}</ThemedText>
-                    <ThemedText style={[styles.markedWordPinyin, { color: theme.textSecondary }]}>{w.pinyin}</ThemedText>
-                  </View>
-                  <View style={styles.markedWordRight}>
-                    <View style={styles.markedBadges}>
-                      {textNeedsWork ? (
-                        <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.secondary}20` }]}>
-                          <Feather name="book-open" size={10} color={Colors.light.secondary} />
-                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.secondary }]}>読</ThemedText>
-                        </View>
-                      ) : null}
-                      {audioNeedsWork ? (
-                        <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.alert}20` }]}>
-                          <Feather name="headphones" size={10} color={Colors.light.alert} />
-                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>音</ThemedText>
-                        </View>
-                      ) : null}
-                    </View>
-                    <ThemedText style={[styles.markedWordTranslation, { color: theme.textSecondary }]}>{w.translation}</ThemedText>
-                  </View>
-                </Animated.View>
-              );
-            })}
-          </Animated.View>
-        ) : null}
       </ScrollView>
     </View>
   );
