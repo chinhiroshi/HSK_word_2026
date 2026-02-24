@@ -186,13 +186,10 @@ export default function AudioLearningScreen() {
     const memorized = words.filter(
       (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
     ).length;
-    const textNeedsWork = words.filter(
-      (w) => (w.textUnmemorizedCount || 0) > 0
-    ).length;
-    const audioNeedsWork = words.filter(
+    const needsWork = words.filter(
       (w) => (w.audioUnmemorizedCount || 0) > 0
     ).length;
-    return { total: words.length, memorized, textNeedsWork, audioNeedsWork };
+    return { total: words.length, memorized, needsWork };
   }, [words]);
 
   const handleGroupPress = (group: GroupInfo, groupIndex: number) => {
@@ -253,52 +250,16 @@ export default function AudioLearningScreen() {
               暗記済み
             </ThemedText>
           </View>
+          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
+          <View style={styles.summaryItem}>
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.secondary }]}>
+              {totalStats.needsWork}
+            </ThemedText>
+            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+              暗記必要
+            </ThemedText>
+          </View>
         </View>
-      </View>
-
-      <View style={[styles.needsWorkRow, { marginHorizontal: Spacing.lg, marginBottom: Spacing.md }]}>
-        <Pressable
-          style={[styles.needsWorkCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}
-          onPress={() => {
-            if (totalStats.textNeedsWork > 0) {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("UnmemorizedList", { type: "text" });
-            }
-          }}
-          testID="text-needs-work-button"
-        >
-          <Feather name="book-open" size={14} color={Colors.light.secondary} />
-          <ThemedText style={[styles.needsWorkValue, { color: Colors.light.secondary }]}>
-            {totalStats.textNeedsWork}
-          </ThemedText>
-          <ThemedText style={[styles.needsWorkLabel, { color: theme.textSecondary }]}>
-            文字暗記必要
-          </ThemedText>
-          {totalStats.textNeedsWork > 0 ? (
-            <Feather name="chevron-right" size={14} color={Colors.light.secondary} />
-          ) : null}
-        </Pressable>
-        <Pressable
-          style={[styles.needsWorkCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}
-          onPress={() => {
-            if (totalStats.audioNeedsWork > 0) {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("UnmemorizedList", { type: "audio" });
-            }
-          }}
-          testID="audio-needs-work-button"
-        >
-          <Feather name="headphones" size={14} color={Colors.light.alert} />
-          <ThemedText style={[styles.needsWorkValue, { color: Colors.light.alert }]}>
-            {totalStats.audioNeedsWork}
-          </ThemedText>
-          <ThemedText style={[styles.needsWorkLabel, { color: theme.textSecondary }]}>
-            音暗記必要
-          </ThemedText>
-          {totalStats.audioNeedsWork > 0 ? (
-            <Feather name="chevron-right" size={14} color={Colors.light.alert} />
-          ) : null}
-        </Pressable>
       </View>
 
       <FlatList
@@ -358,29 +319,6 @@ const styles = StyleSheet.create({
   summaryDivider: {
     width: 1,
     height: 40,
-  },
-  needsWorkRow: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-  },
-  needsWorkCard: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-  },
-  needsWorkValue: {
-    fontSize: 18,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-  },
-  needsWorkLabel: {
-    fontSize: 11,
-    fontFamily: "Nunito_400Regular",
-    flex: 1,
   },
   list: {
     flex: 1,
