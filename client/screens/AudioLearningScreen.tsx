@@ -247,7 +247,7 @@ export default function AudioLearningScreen() {
               {totalStats.memorized}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              暗記済み
+              音声暗記
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
