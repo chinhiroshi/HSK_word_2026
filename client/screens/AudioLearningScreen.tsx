@@ -118,6 +118,8 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
   );
 }
 
+type MemoTab = "text" | "audio";
+
 export default function AudioLearningScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -129,6 +131,7 @@ export default function AudioLearningScreen() {
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<MemoTab>("audio");
 
   const loadWords = useCallback(async () => {
     await initializeData();
@@ -163,12 +166,12 @@ export default function AudioLearningScreen() {
       const endIndex = Math.min(i + GROUP_SIZE, totalWords);
       const groupWords = words.slice(i, endIndex);
       
-      const memorizedCount = groupWords.filter(
-        (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
-      ).length;
-      const needsWorkCount = groupWords.filter(
-        (w) => (w.audioUnmemorizedCount || 0) > 0
-      ).length;
+      const memorizedCount = activeTab === "audio"
+        ? groupWords.filter((w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0).length
+        : groupWords.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0).length;
+      const needsWorkCount = activeTab === "audio"
+        ? groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length
+        : groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0).length;
       
       result.push({
         startIndex,
@@ -180,16 +183,22 @@ export default function AudioLearningScreen() {
     }
     
     return result;
-  }, [words]);
+  }, [words, activeTab]);
 
   const totalStats = useMemo(() => {
-    const memorized = words.filter(
+    const textMemorized = words.filter(
+      (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
+    ).length;
+    const textNeedsWork = words.filter(
+      (w) => (w.textUnmemorizedCount || 0) > 0
+    ).length;
+    const audioMemorized = words.filter(
       (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
     ).length;
-    const needsWork = words.filter(
+    const audioNeedsWork = words.filter(
       (w) => (w.audioUnmemorizedCount || 0) > 0
     ).length;
-    return { total: words.length, memorized, needsWork };
+    return { total: words.length, textMemorized, textNeedsWork, audioMemorized, audioNeedsWork };
   }, [words]);
 
   const handleGroupPress = (group: GroupInfo, groupIndex: number) => {
@@ -243,23 +252,50 @@ export default function AudioLearningScreen() {
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
           <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: Colors.light.success }]}>
-              {totalStats.memorized}
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.secondary }]}>
+              {totalStats.textNeedsWork}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              暗記済み
+              読み暗記
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
           <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: Colors.light.secondary }]}>
-              {totalStats.needsWork}
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.alert }]}>
+              {totalStats.audioNeedsWork}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              暗記必要
+              音暗記
             </ThemedText>
           </View>
         </View>
+      </View>
+
+      <View style={styles.tabContainer}>
+        <Pressable
+          style={[
+            styles.tab,
+            activeTab === "text" && [styles.activeTab, { borderBottomColor: theme.primary }],
+          ]}
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActiveTab("text"); }}
+        >
+          <Feather name="book-open" size={14} color={activeTab === "text" ? theme.primary : theme.textSecondary} />
+          <ThemedText style={[styles.tabText, { color: activeTab === "text" ? theme.primary : theme.textSecondary }]}>
+            読み暗記
+          </ThemedText>
+        </Pressable>
+        <Pressable
+          style={[
+            styles.tab,
+            activeTab === "audio" && [styles.activeTab, { borderBottomColor: theme.primary }],
+          ]}
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActiveTab("audio"); }}
+        >
+          <Feather name="headphones" size={14} color={activeTab === "audio" ? theme.primary : theme.textSecondary} />
+          <ThemedText style={[styles.tabText, { color: activeTab === "audio" ? theme.primary : theme.textSecondary }]}>
+            音暗記
+          </ThemedText>
+        </Pressable>
       </View>
 
       <FlatList
@@ -319,6 +355,29 @@ const styles = StyleSheet.create({
   summaryDivider: {
     width: 1,
     height: 40,
+  },
+  tabContainer: {
+    flexDirection: "row",
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+  tab: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
   list: {
     flex: 1,
