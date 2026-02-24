@@ -217,7 +217,7 @@ export default function StudyScreen() {
               {totalStats.memorized}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              文字暗記
+              暗記済み
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
