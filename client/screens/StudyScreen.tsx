@@ -231,7 +231,7 @@ export default function StudyScreen() {
             </ThemedText>
             <View style={styles.summaryLabelRow}>
               <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-                暗記必要
+                文字暗記必要
               </ThemedText>
               {totalStats.needsWork > 0 ? (
                 <Feather name="chevron-right" size={14} color={Colors.light.secondary} />

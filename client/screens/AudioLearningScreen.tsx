@@ -256,7 +256,7 @@ export default function AudioLearningScreen() {
               {totalStats.needsWork}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              暗記必要
+              音声暗記必要
             </ThemedText>
           </View>
         </View>
