@@ -42,7 +42,7 @@ export default function UnmemorizedListScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: type === "text" ? "暗記必要な単語" : "暗記必要な単語（音声）",
+      headerTitle: type === "text" ? "文字暗記必要な単語" : "音暗記必要な単語",
     });
   }, [navigation, type]);
 
