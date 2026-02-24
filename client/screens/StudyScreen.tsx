@@ -30,6 +30,8 @@ interface WordGroup {
   unmemorizedCount: number;
 }
 
+type MemoTab = "text" | "audio";
+
 export default function StudyScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -41,6 +43,7 @@ export default function StudyScreen() {
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<MemoTab>("text");
 
   const loadWords = useCallback(async () => {
     await initializeData();
@@ -67,25 +70,31 @@ export default function StudyScreen() {
   };
 
   const totalStats = useMemo(() => {
-    const memorized = words.filter(
+    const textMemorized = words.filter(
       (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
     ).length;
-    const needsWork = words.filter(
+    const textNeedsWork = words.filter(
       (w) => (w.textUnmemorizedCount || 0) > 0
     ).length;
-    return { total: words.length, memorized, needsWork };
+    const audioMemorized = words.filter(
+      (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
+    ).length;
+    const audioNeedsWork = words.filter(
+      (w) => (w.audioUnmemorizedCount || 0) > 0
+    ).length;
+    return { total: words.length, textMemorized, textNeedsWork, audioMemorized, audioNeedsWork };
   }, [words]);
 
   const groups = useMemo(() => {
     const result: WordGroup[] = [];
     for (let i = 0; i < words.length; i += GROUP_SIZE) {
       const groupWords = words.slice(i, Math.min(i + GROUP_SIZE, words.length));
-      const memorizedCount = groupWords.filter(
-        (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
-      ).length;
-      const unmemorizedCount = groupWords.filter(
-        (w) => (w.textUnmemorizedCount || 0) > 0
-      ).length;
+      const memorizedCount = activeTab === "text"
+        ? groupWords.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0).length
+        : groupWords.filter((w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0).length;
+      const unmemorizedCount = activeTab === "text"
+        ? groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0).length
+        : groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length;
 
       result.push({
         id: `group-${i}`,
@@ -97,7 +106,7 @@ export default function StudyScreen() {
       });
     }
     return result;
-  }, [words]);
+  }, [words, activeTab]);
 
   const handleGroupPress = (group: WordGroup, groupIndex: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -111,10 +120,11 @@ export default function StudyScreen() {
     });
   };
 
-  const handleNeedsWorkPress = () => {
-    if (totalStats.needsWork > 0) {
+  const handleNeedsWorkPress = (type: MemoTab) => {
+    const count = type === "text" ? totalStats.textNeedsWork : totalStats.audioNeedsWork;
+    if (count > 0) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      navigation.navigate("UnmemorizedList", { type: "text" });
+      navigation.navigate("UnmemorizedList", { type });
     }
   };
 
@@ -212,33 +222,69 @@ export default function StudyScreen() {
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
-          <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: Colors.light.success }]}>
-              {totalStats.memorized}
-            </ThemedText>
-            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              暗記済み
-            </ThemedText>
-          </View>
-          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
           <Pressable
             style={styles.summaryItem}
-            onPress={handleNeedsWorkPress}
-            testID="needs-work-button"
+            onPress={() => handleNeedsWorkPress("text")}
+            testID="text-needs-work-button"
           >
             <ThemedText style={[styles.summaryValue, { color: Colors.light.secondary }]}>
-              {totalStats.needsWork}
+              {totalStats.textNeedsWork}
             </ThemedText>
             <View style={styles.summaryLabelRow}>
               <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-                暗記必要
+                読み暗記
               </ThemedText>
-              {totalStats.needsWork > 0 ? (
+              {totalStats.textNeedsWork > 0 ? (
                 <Feather name="chevron-right" size={14} color={Colors.light.secondary} />
               ) : null}
             </View>
           </Pressable>
+          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
+          <Pressable
+            style={styles.summaryItem}
+            onPress={() => handleNeedsWorkPress("audio")}
+            testID="audio-needs-work-button"
+          >
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.alert }]}>
+              {totalStats.audioNeedsWork}
+            </ThemedText>
+            <View style={styles.summaryLabelRow}>
+              <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+                音暗記
+              </ThemedText>
+              {totalStats.audioNeedsWork > 0 ? (
+                <Feather name="chevron-right" size={14} color={Colors.light.alert} />
+              ) : null}
+            </View>
+          </Pressable>
         </View>
+      </View>
+
+      <View style={styles.tabContainer}>
+        <Pressable
+          style={[
+            styles.tab,
+            activeTab === "text" && [styles.activeTab, { borderBottomColor: theme.primary }],
+          ]}
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActiveTab("text"); }}
+        >
+          <Feather name="book-open" size={14} color={activeTab === "text" ? theme.primary : theme.textSecondary} />
+          <ThemedText style={[styles.tabText, { color: activeTab === "text" ? theme.primary : theme.textSecondary }]}>
+            読み暗記
+          </ThemedText>
+        </Pressable>
+        <Pressable
+          style={[
+            styles.tab,
+            activeTab === "audio" && [styles.activeTab, { borderBottomColor: theme.primary }],
+          ]}
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setActiveTab("audio"); }}
+        >
+          <Feather name="headphones" size={14} color={activeTab === "audio" ? theme.primary : theme.textSecondary} />
+          <ThemedText style={[styles.tabText, { color: activeTab === "audio" ? theme.primary : theme.textSecondary }]}>
+            音暗記
+          </ThemedText>
+        </Pressable>
       </View>
 
       <FlatList
@@ -302,6 +348,29 @@ const styles = StyleSheet.create({
   summaryDivider: {
     width: 1,
     height: 40,
+  },
+  tabContainer: {
+    flexDirection: "row",
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+  tab: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 2,
+    borderBottomColor: "transparent",
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+  },
+  tabText: {
+    fontSize: 14,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
   list: {
     flex: 1,
