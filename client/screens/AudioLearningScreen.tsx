@@ -124,7 +124,7 @@ export default function AudioLearningScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const { isGroupLocked } = useSubscription();
+  const { isGroupLocked, isFreeLevel } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -192,9 +192,11 @@ export default function AudioLearningScreen() {
     return { total: words.length, memorized, needsWork };
   }, [words]);
 
+  const currentHskLevel = words.length > 0 ? words[0].hskLevel : undefined;
+
   const handleGroupPress = (group: GroupInfo, groupIndex: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (isGroupLocked(groupIndex)) {
+    if (isGroupLocked(groupIndex, currentHskLevel)) {
       navigation.navigate("Paywall");
       return;
     }
@@ -208,7 +210,7 @@ export default function AudioLearningScreen() {
     <GroupCard 
       group={item} 
       groupIndex={index}
-      locked={isGroupLocked(index)}
+      locked={isGroupLocked(index, currentHskLevel)}
       onPress={() => handleGroupPress(item, index)} 
     />
   );

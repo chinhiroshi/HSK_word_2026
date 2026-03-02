@@ -21,10 +21,10 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Sequence: Chinese 1x → Japanese 1x → Chinese example 2x → Japanese example 1x → Chinese example 2x → English 1x
   - Filter for unmemorized words only
   - Set start AND end position for playback range
-  - Free users limited to first 50 words; premium banner links to Paywall
+  - Free users limited to first 50 words (except HSK1 which is fully free); premium banner links to Paywall
 - **Subscription (Freemium Model)**:
-  - First 50 words per level are free (Group 1)
-  - Groups 2+ require ¥380/month subscription
+  - HSK1 is completely free (all groups accessible)
+  - HSK2-6: First 50 words per level are free (Group 1), Groups 2+ require ¥380/month subscription
   - Locked groups show lock icon + "プレミアムで解放" text
   - Tapping locked group opens Paywall modal
   - SubscriptionContext manages state via RevenueCat SDK (react-native-purchases)

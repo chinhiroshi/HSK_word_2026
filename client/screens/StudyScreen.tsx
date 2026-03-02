@@ -36,7 +36,7 @@ export default function StudyScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
-  const { isGroupLocked } = useSubscription();
+  const { isGroupLocked, isFreeLevel } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,9 +99,11 @@ export default function StudyScreen() {
     return result;
   }, [words]);
 
+  const currentHskLevel = words.length > 0 ? words[0].hskLevel : undefined;
+
   const handleGroupPress = (group: WordGroup, groupIndex: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (isGroupLocked(groupIndex)) {
+    if (isGroupLocked(groupIndex, currentHskLevel)) {
       navigation.navigate("Paywall");
       return;
     }
@@ -121,7 +123,7 @@ export default function StudyScreen() {
   const renderGroupItem = ({ item, index }: { item: WordGroup; index: number }) => {
     const totalInGroup = item.words.length;
     const neutralCount = totalInGroup - item.memorizedCount - item.unmemorizedCount;
-    const locked = isGroupLocked(index);
+    const locked = isGroupLocked(index, currentHskLevel);
 
     return (
       <Pressable

@@ -24,7 +24,7 @@ export default function AudioPlaybackScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { isPremium, freeWordsLimit } = useSubscription();
+  const { isPremium, freeWordsLimit, isFreeLevel } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -63,16 +63,19 @@ export default function AudioPlaybackScreen() {
     return unsubscribe;
   }, [navigation, loadWords]);
 
+  const currentHskLevel = words.length > 0 ? words[0].hskLevel : undefined;
+  const isCurrentLevelFree = currentHskLevel !== undefined && isFreeLevel(currentHskLevel);
+
   const playableWords = useMemo(() => {
     let filtered = words;
-    if (!isPremium) {
+    if (!isPremium && !isCurrentLevelFree) {
       filtered = filtered.slice(0, freeWordsLimit);
     }
     if (filterUnmemorized) {
       filtered = filtered.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
     }
     return filtered;
-  }, [words, filterUnmemorized, isPremium, freeWordsLimit]);
+  }, [words, filterUnmemorized, isPremium, freeWordsLimit, isCurrentLevelFree]);
 
   const prevWordsLenRef = useRef(0);
   useEffect(() => {
@@ -362,7 +365,7 @@ export default function AudioPlaybackScreen() {
           </Animated.View>
         ) : null}
 
-        {!isPremium ? (
+        {!isPremium && !isCurrentLevelFree ? (
           <Pressable
             onPress={() => navigation.navigate("Paywall")}
             style={[styles.premiumBanner, { backgroundColor: `${theme.primary}15`, borderColor: theme.primary }]}

@@ -17,9 +17,10 @@ interface SubscriptionState {
 }
 
 interface SubscriptionContextType extends SubscriptionState {
-  isGroupLocked: (groupIndex: number) => boolean;
-  isWordIndexLocked: (wordIndex: number) => boolean;
+  isGroupLocked: (groupIndex: number, hskLevel?: number) => boolean;
+  isWordIndexLocked: (wordIndex: number, hskLevel?: number) => boolean;
   freeWordsLimit: number;
+  isFreeLevel: (hskLevel: number) => boolean;
   restorePurchase: () => Promise<{ success: boolean; error?: string }>;
   purchaseSubscription: (pkg?: PurchasesPackage) => Promise<{ success: boolean; error?: string; cancelled?: boolean }>;
   availablePackages: PurchasesPackage[];
@@ -33,6 +34,7 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   isGroupLocked: () => false,
   isWordIndexLocked: () => false,
   freeWordsLimit: FREE_WORDS_LIMIT,
+  isFreeLevel: () => false,
   restorePurchase: async () => ({ success: false }),
   purchaseSubscription: async () => ({ success: false }),
   availablePackages: [],
@@ -129,20 +131,29 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     }
   };
 
+  const isFreeLevel = useCallback(
+    (hskLevel: number) => {
+      return hskLevel === 1;
+    },
+    []
+  );
+
   const isGroupLocked = useCallback(
-    (groupIndex: number) => {
+    (groupIndex: number, hskLevel?: number) => {
       if (isPremium) return false;
+      if (hskLevel !== undefined && isFreeLevel(hskLevel)) return false;
       return groupIndex > 0;
     },
-    [isPremium]
+    [isPremium, isFreeLevel]
   );
 
   const isWordIndexLocked = useCallback(
-    (wordIndex: number) => {
+    (wordIndex: number, hskLevel?: number) => {
       if (isPremium) return false;
+      if (hskLevel !== undefined && isFreeLevel(hskLevel)) return false;
       return wordIndex >= FREE_WORDS_LIMIT;
     },
-    [isPremium]
+    [isPremium, isFreeLevel]
   );
 
   const purchaseSubscription = async (pkg?: PurchasesPackage): Promise<{ success: boolean; error?: string; cancelled?: boolean }> => {
@@ -217,6 +228,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         isGroupLocked,
         isWordIndexLocked,
         freeWordsLimit: FREE_WORDS_LIMIT,
+        isFreeLevel,
         restorePurchase,
         purchaseSubscription,
         availablePackages,
