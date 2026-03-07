@@ -5,11 +5,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import * as WebBrowser from "expo-web-browser";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { getApiUrl } from "@/lib/query-client";
 
 const FEATURES = [
   { icon: "book-open" as const, title: "全HSK級の全単語", desc: "1級〜6級の全単語にアクセス" },
@@ -170,6 +172,36 @@ export default function PaywallScreen() {
       <ThemedText style={[styles.disclaimer, { color: theme.textSecondary }]}>
         サブスクリプションは自動更新されます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。
       </ThemedText>
+
+      <View style={styles.legalLinks}>
+        <Pressable
+          testID="link-privacy-policy"
+          onPress={async () => {
+            try {
+              const url = new URL("/privacy-policy", getApiUrl()).toString();
+              await WebBrowser.openBrowserAsync(url);
+            } catch {}
+          }}
+        >
+          <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
+            プライバシーポリシー
+          </ThemedText>
+        </Pressable>
+        <ThemedText style={[styles.legalSeparator, { color: theme.textSecondary }]}>|</ThemedText>
+        <Pressable
+          testID="link-terms-of-use"
+          onPress={async () => {
+            try {
+              const url = new URL("/terms", getApiUrl()).toString();
+              await WebBrowser.openBrowserAsync(url);
+            } catch {}
+          }}
+        >
+          <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
+            利用規約
+          </ThemedText>
+        </Pressable>
+      </View>
 
       <Modal
         visible={errorMessage !== null}
@@ -359,6 +391,22 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
     lineHeight: 16,
+  },
+  legalLinks: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  legalLinkText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    textDecorationLine: "underline" as const,
+  },
+  legalSeparator: {
+    fontSize: 13,
+    marginHorizontal: Spacing.sm,
   },
   modalOverlay: {
     flex: 1,

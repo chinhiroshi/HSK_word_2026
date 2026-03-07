@@ -177,13 +177,37 @@ function configureExpoAndLanding(app: express.Application) {
       return next();
     }
 
-    if (req.path !== "/" && req.path !== "/manifest" && req.path !== "/support" && req.path !== "/privacy") {
+    if (req.path !== "/" && req.path !== "/manifest" && req.path !== "/support" && req.path !== "/privacy" && req.path !== "/privacy-policy" && req.path !== "/terms") {
       return next();
     }
 
     const platform = req.header("expo-platform");
     if (platform && (platform === "ios" || platform === "android")) {
       return serveExpoManifest(platform, res);
+    }
+
+    if (req.path === "/privacy-policy") {
+      const privacyPath = path.resolve(
+        process.cwd(),
+        "server",
+        "templates",
+        "privacy-policy.html",
+      );
+      const privacyHtml = fs.readFileSync(privacyPath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(privacyHtml);
+    }
+
+    if (req.path === "/terms") {
+      const termsPath = path.resolve(
+        process.cwd(),
+        "server",
+        "templates",
+        "terms-of-use.html",
+      );
+      const termsHtml = fs.readFileSync(termsPath, "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(termsHtml);
     }
 
     if (req.path === "/support" || req.path === "/privacy") {
