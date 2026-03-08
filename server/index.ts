@@ -193,21 +193,40 @@ function configureExpoAndLanding(app: express.Application) {
     }
 
     if (req.path === "/privacy-policy") {
-      const privacyHtml = fs.readFileSync(resolveTemplatePath("privacy-policy.html"), "utf-8");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      return res.status(200).send(privacyHtml);
+      try {
+        const templateFile = resolveTemplatePath("privacy-policy.html");
+        log(`Serving privacy-policy from: ${templateFile}`);
+        const privacyHtml = fs.readFileSync(templateFile, "utf-8");
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        return res.status(200).send(privacyHtml);
+      } catch (e) {
+        log(`Error serving privacy-policy: ${e}`);
+        return res.status(500).send("Template not found");
+      }
     }
 
     if (req.path === "/terms") {
-      const termsHtml = fs.readFileSync(resolveTemplatePath("terms-of-use.html"), "utf-8");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      return res.status(200).send(termsHtml);
+      try {
+        const templateFile = resolveTemplatePath("terms-of-use.html");
+        log(`Serving terms from: ${templateFile}`);
+        const termsHtml = fs.readFileSync(templateFile, "utf-8");
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        return res.status(200).send(termsHtml);
+      } catch (e) {
+        log(`Error serving terms: ${e}`);
+        return res.status(500).send("Template not found");
+      }
     }
 
     if (req.path === "/support" || req.path === "/privacy") {
-      const supportHtml = fs.readFileSync(resolveTemplatePath("support.html"), "utf-8");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      return res.status(200).send(supportHtml);
+      try {
+        const supportHtml = fs.readFileSync(resolveTemplatePath("support.html"), "utf-8");
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+        return res.status(200).send(supportHtml);
+      } catch (e) {
+        log(`Error serving support: ${e}`);
+        return res.status(500).send("Template not found");
+      }
     }
 
     if (req.path === "/") {
@@ -253,6 +272,39 @@ function setupErrorHandler(app: express.Application) {
   setupCors(app);
   setupBodyParsing(app);
   setupRequestLogging(app);
+
+  app.get("/privacy-policy", (_req: Request, res: Response) => {
+    try {
+      const html = fs.readFileSync(resolveTemplatePath("privacy-policy.html"), "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.status(200).send(html);
+    } catch (e) {
+      log(`Error serving privacy-policy: ${e}`);
+      res.status(500).send("Page not available");
+    }
+  });
+
+  app.get("/terms", (_req: Request, res: Response) => {
+    try {
+      const html = fs.readFileSync(resolveTemplatePath("terms-of-use.html"), "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.status(200).send(html);
+    } catch (e) {
+      log(`Error serving terms: ${e}`);
+      res.status(500).send("Page not available");
+    }
+  });
+
+  app.get("/support", (_req: Request, res: Response) => {
+    try {
+      const html = fs.readFileSync(resolveTemplatePath("support.html"), "utf-8");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.status(200).send(html);
+    } catch (e) {
+      log(`Error serving support: ${e}`);
+      res.status(500).send("Page not available");
+    }
+  });
 
   configureExpoAndLanding(app);
 
