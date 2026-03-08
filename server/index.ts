@@ -3,7 +3,6 @@ import type { Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import * as fs from "fs";
 import * as path from "path";
-import { landingPageHtml, privacyPolicyHtml, termsOfUseHtml, supportHtml } from "./templates";
 
 const app = express();
 const log = console.log;
@@ -162,6 +161,13 @@ function serveLandingPage({
 }
 
 function configureExpoAndLanding(app: express.Application) {
+  const templatePath = path.resolve(
+    process.cwd(),
+    "server",
+    "templates",
+    "landing-page.html",
+  );
+  const landingPageTemplate = fs.readFileSync(templatePath, "utf-8");
   const appName = getAppName();
 
   log("Serving static Expo files with dynamic manifest routing");
@@ -181,16 +187,37 @@ function configureExpoAndLanding(app: express.Application) {
     }
 
     if (req.path === "/privacy-policy") {
+      const privacyPath = path.resolve(
+        process.cwd(),
+        "server",
+        "templates",
+        "privacy-policy.html",
+      );
+      const privacyHtml = fs.readFileSync(privacyPath, "utf-8");
       res.setHeader("Content-Type", "text/html; charset=utf-8");
-      return res.status(200).send(privacyPolicyHtml);
+      return res.status(200).send(privacyHtml);
     }
 
     if (req.path === "/terms") {
+      const termsPath = path.resolve(
+        process.cwd(),
+        "server",
+        "templates",
+        "terms-of-use.html",
+      );
+      const termsHtml = fs.readFileSync(termsPath, "utf-8");
       res.setHeader("Content-Type", "text/html; charset=utf-8");
-      return res.status(200).send(termsOfUseHtml);
+      return res.status(200).send(termsHtml);
     }
 
     if (req.path === "/support" || req.path === "/privacy") {
+      const supportPath = path.resolve(
+        process.cwd(),
+        "server",
+        "templates",
+        "support.html",
+      );
+      const supportHtml = fs.readFileSync(supportPath, "utf-8");
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       return res.status(200).send(supportHtml);
     }
@@ -199,7 +226,7 @@ function configureExpoAndLanding(app: express.Application) {
       return serveLandingPage({
         req,
         res,
-        landingPageTemplate: landingPageHtml,
+        landingPageTemplate,
         appName,
       });
     }
@@ -238,21 +265,6 @@ function setupErrorHandler(app: express.Application) {
   setupCors(app);
   setupBodyParsing(app);
   setupRequestLogging(app);
-
-  app.get("/privacy-policy", (_req: Request, res: Response) => {
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.status(200).send(privacyPolicyHtml);
-  });
-
-  app.get("/terms", (_req: Request, res: Response) => {
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.status(200).send(termsOfUseHtml);
-  });
-
-  app.get("/support", (_req: Request, res: Response) => {
-    res.setHeader("Content-Type", "text/html; charset=utf-8");
-    res.status(200).send(supportHtml);
-  });
 
   configureExpoAndLanding(app);
 
