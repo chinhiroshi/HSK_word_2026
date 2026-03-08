@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import * as fs from "fs";
 import * as path from "path";
+import { landingPageHtml, privacyPolicyHtml, termsOfUseHtml, supportHtml } from "./templates";
 
 const app = express();
 const log = console.log;
@@ -160,20 +161,7 @@ function serveLandingPage({
   res.status(200).send(html);
 }
 
-function resolveTemplatePath(filename: string): string {
-  const devPath = path.resolve(process.cwd(), "server", "templates", filename);
-  if (fs.existsSync(devPath)) return devPath;
-  const prodPath = path.resolve(process.cwd(), "server_dist", "templates", filename);
-  if (fs.existsSync(prodPath)) return prodPath;
-  const scriptDir = path.dirname(new URL(import.meta.url).pathname);
-  const relPath = path.resolve(scriptDir, "templates", filename);
-  if (fs.existsSync(relPath)) return relPath;
-  return devPath;
-}
-
 function configureExpoAndLanding(app: express.Application) {
-  const templatePath = resolveTemplatePath("landing-page.html");
-  const landingPageTemplate = fs.readFileSync(templatePath, "utf-8");
   const appName = getAppName();
 
   log("Serving static Expo files with dynamic manifest routing");
@@ -193,47 +181,25 @@ function configureExpoAndLanding(app: express.Application) {
     }
 
     if (req.path === "/privacy-policy") {
-      try {
-        const templateFile = resolveTemplatePath("privacy-policy.html");
-        log(`Serving privacy-policy from: ${templateFile}`);
-        const privacyHtml = fs.readFileSync(templateFile, "utf-8");
-        res.setHeader("Content-Type", "text/html; charset=utf-8");
-        return res.status(200).send(privacyHtml);
-      } catch (e) {
-        log(`Error serving privacy-policy: ${e}`);
-        return res.status(500).send("Template not found");
-      }
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(privacyPolicyHtml);
     }
 
     if (req.path === "/terms") {
-      try {
-        const templateFile = resolveTemplatePath("terms-of-use.html");
-        log(`Serving terms from: ${templateFile}`);
-        const termsHtml = fs.readFileSync(templateFile, "utf-8");
-        res.setHeader("Content-Type", "text/html; charset=utf-8");
-        return res.status(200).send(termsHtml);
-      } catch (e) {
-        log(`Error serving terms: ${e}`);
-        return res.status(500).send("Template not found");
-      }
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(termsOfUseHtml);
     }
 
     if (req.path === "/support" || req.path === "/privacy") {
-      try {
-        const supportHtml = fs.readFileSync(resolveTemplatePath("support.html"), "utf-8");
-        res.setHeader("Content-Type", "text/html; charset=utf-8");
-        return res.status(200).send(supportHtml);
-      } catch (e) {
-        log(`Error serving support: ${e}`);
-        return res.status(500).send("Template not found");
-      }
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      return res.status(200).send(supportHtml);
     }
 
     if (req.path === "/") {
       return serveLandingPage({
         req,
         res,
-        landingPageTemplate,
+        landingPageTemplate: landingPageHtml,
         appName,
       });
     }
@@ -274,36 +240,18 @@ function setupErrorHandler(app: express.Application) {
   setupRequestLogging(app);
 
   app.get("/privacy-policy", (_req: Request, res: Response) => {
-    try {
-      const html = fs.readFileSync(resolveTemplatePath("privacy-policy.html"), "utf-8");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.status(200).send(html);
-    } catch (e) {
-      log(`Error serving privacy-policy: ${e}`);
-      res.status(500).send("Page not available");
-    }
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send(privacyPolicyHtml);
   });
 
   app.get("/terms", (_req: Request, res: Response) => {
-    try {
-      const html = fs.readFileSync(resolveTemplatePath("terms-of-use.html"), "utf-8");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.status(200).send(html);
-    } catch (e) {
-      log(`Error serving terms: ${e}`);
-      res.status(500).send("Page not available");
-    }
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send(termsOfUseHtml);
   });
 
   app.get("/support", (_req: Request, res: Response) => {
-    try {
-      const html = fs.readFileSync(resolveTemplatePath("support.html"), "utf-8");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
-      res.status(200).send(html);
-    } catch (e) {
-      log(`Error serving support: ${e}`);
-      res.status(500).send("Page not available");
-    }
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send(supportHtml);
   });
 
   configureExpoAndLanding(app);

@@ -7,7 +7,7 @@ packages = ["libuuid"]
 
 [deployment]
 deploymentTarget = "autoscale"
-build = ["sh", "-c", "npm run expo:static:build && npm run server:build && cp -r server/templates server_dist/templates"]
+build = ["sh", "-c", "npm run expo:static:build && npm run server:build"]
 run = ["npm", "run", "server:prod"]
 
 [[ports]]
