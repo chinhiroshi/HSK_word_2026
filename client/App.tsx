@@ -21,6 +21,7 @@ import RootStackNavigator from "@/navigation/RootStackNavigator";
 import OnboardingScreen from "@/screens/OnboardingScreen";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
+import { SprintProvider } from "@/contexts/SprintContext";
 
 const ONBOARDING_KEY = "@chinese_master_onboarding_complete";
 
@@ -72,13 +73,15 @@ export default function App() {
           <GestureHandlerRootView style={styles.root}>
             <KeyboardProvider>
               <SubscriptionProvider>
-                {showOnboarding ? (
-                  <OnboardingScreen onComplete={handleOnboardingComplete} />
-                ) : (
-                  <NavigationContainer>
-                    <RootStackNavigator />
-                  </NavigationContainer>
-                )}
+                <SprintProvider>
+                  {showOnboarding ? (
+                    <OnboardingScreen onComplete={handleOnboardingComplete} />
+                  ) : (
+                    <NavigationContainer>
+                      <RootStackNavigator />
+                    </NavigationContainer>
+                  )}
+                </SprintProvider>
               </SubscriptionProvider>
               <StatusBar style="auto" />
             </KeyboardProvider>

@@ -34,6 +34,15 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - On iOS/Android via Expo Go: Full RevenueCat Preview API Mode with mock purchases
   - PaywallScreen shows real pricing from RevenueCat offerings, with loading states
   - ProfileScreen shows premium upgrade card or active subscription badge
+- **Sprint (スプリント)**: Stamp-rally style 7-day learning cycle with snake grid map
+  - 29-cell snake grid (4 columns) showing learning progress as a map
+  - Setup: Choose daily study time (15/30/45 min or custom) to determine words/day
+  - 7-day cycle: Day 1,2 = study; Day 3 = review; Day 4,5 = study; Day 6 = review; Day 7 = test
+  - Study session: Show word cards, mark as memorized/unmemorized
+  - Test session: Multiple-choice quiz; ≥70% correct = clear + special stamp
+  - Skip: If ≥70% of session words already labeled, user can skip with auto-stamp
+  - Streak tracking across days; special stamp for Day 7 test clear
+  - SprintContext manages state; stored at `@chinese_master_sprint`
 - **Word Detail**: View word details with example sentences
 - **Profile**: Track learning progress with separate statistics
   - HSK級セレクター (1〜6級): 学習する単語レベルを切り替え
@@ -91,8 +100,8 @@ server/
 ```
 
 ## Navigation Structure
-- **4 Bottom Tabs**: 学習, 音声学習, 音声再生, プロフィール
-- **Stack Screens**: WordDetail, WordList (from Study), AudioWordList (from Audio Learning)
+- **5 Bottom Tabs**: 文字学習, 音声学習, 音声再生, スプリント, プロフィール
+- **Stack Screens**: WordDetail, WordList (from Study), AudioWordList (from Audio Learning), SprintSetup, SprintStudySession, SprintTest (from Sprint)
 
 ## Color Palette
 - Primary: #5B8C85 (Calming teal)

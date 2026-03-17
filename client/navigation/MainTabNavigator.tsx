@@ -8,6 +8,7 @@ import StudyStackNavigator from "@/navigation/StudyStackNavigator";
 import AudioLearningStackNavigator from "@/navigation/AudioLearningStackNavigator";
 import AudioPlaybackStackNavigator from "@/navigation/AudioPlaybackStackNavigator";
 import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
+import SprintStackNavigator from "@/navigation/SprintStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { Colors } from "@/constants/theme";
 
@@ -15,6 +16,7 @@ export type MainTabParamList = {
   StudyTab: undefined;
   AudioLearningTab: undefined;
   AudioPlaybackTab: undefined;
+  SprintTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -80,6 +82,16 @@ export default function MainTabNavigator() {
           title: "音声再生",
           tabBarIcon: ({ color, size }) => (
             <Feather name="play-circle" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="SprintTab"
+        component={SprintStackNavigator}
+        options={{
+          title: "スプリント",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="map" size={size} color={color} />
           ),
         }}
       />

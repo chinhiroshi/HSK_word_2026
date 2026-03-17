@@ -43,3 +43,17 @@ export interface TestQuestion {
   options: string[];
   correctAnswer: string;
 }
+
+export type SprintSessionType = "flag" | "study" | "review" | "test";
+
+export interface SprintData {
+  hasSetup: boolean;
+  studyMinutes: number;
+  wordsPerDay: number;
+  reviewCount: number;
+  currentPosition: number;
+  studiedWordCount: number;
+  lastStudyDate: string | null;
+  streakCount: number;
+  specialStamps: number[];
+}

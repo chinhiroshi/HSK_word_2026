@@ -1,6 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Word, HskLevel } from "@/types";
+import { Word, HskLevel, SprintData } from "@/types";
 import { mockWords } from "@/data/mockData";
+
+const SPRINT_KEY = "@chinese_master_sprint";
 
 const HSK_LEVEL_KEY = "@chinese_master_hsk_level";
 const DATA_VERSION_PREFIX = "@chinese_master_data_version_hsk";
@@ -218,4 +220,23 @@ export async function resetProgress(): Promise<void> {
     audioUnmemorizedCount: 0,
   }));
   await saveWords(resetWords);
+  await resetSprintData();
+}
+
+export async function getSprintData(): Promise<SprintData | null> {
+  try {
+    const data = await AsyncStorage.getItem(SPRINT_KEY);
+    if (data) return JSON.parse(data) as SprintData;
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveSprintData(data: SprintData): Promise<void> {
+  await AsyncStorage.setItem(SPRINT_KEY, JSON.stringify(data));
+}
+
+export async function resetSprintData(): Promise<void> {
+  await AsyncStorage.removeItem(SPRINT_KEY);
 }
