@@ -22,6 +22,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/lib/storage";
+import { speakChinese } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 
@@ -46,6 +47,7 @@ export default function SprintStudySessionScreen() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [studyChoices, setStudyChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [allChoices, setAllChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
+  const [isRevealed, setIsRevealed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
 
@@ -54,6 +56,8 @@ export default function SprintStudySessionScreen() {
   const currentWords = phase === "study" ? studyWords : reviewWords;
   const currentWord = currentWords[currentIndex] ?? null;
   const progress = currentWords.length > 0 ? (currentIndex / currentWords.length) * 100 : 0;
+
+  const isAudioMode = currentIndex % 2 === 1 && phase === "study";
 
   const loadWords = useCallback(async () => {
     setLoading(true);
@@ -73,6 +77,13 @@ export default function SprintStudySessionScreen() {
   useEffect(() => {
     loadWords();
   }, [loadWords]);
+
+  useEffect(() => {
+    setIsRevealed(false);
+    if (isAudioMode && currentWord) {
+      speakChinese(currentWord.word);
+    }
+  }, [currentIndex, phase]);
 
   const buildReviewFromStudyPhase = useCallback(
     (choices: Record<string, "memorized" | "unmemorized">): Word[] => {
@@ -94,10 +105,12 @@ export default function SprintStudySessionScreen() {
         : Haptics.ImpactFeedbackStyle.Medium
     );
 
+    const memType = isAudioMode ? "audio" : "text";
+
     if (choice === "memorized") {
-      await markAsMemorized(currentWord.id, "text");
+      await markAsMemorized(currentWord.id, memType);
     } else {
-      await markAsUnmemorized(currentWord.id, "text");
+      await markAsUnmemorized(currentWord.id, memType);
     }
 
     const newStudyChoices =
@@ -208,6 +221,17 @@ export default function SprintStudySessionScreen() {
     );
   }
 
+  const modeBadgeColor = isAudioMode ? Colors.light.secondary : theme.primary;
+  const modeBadgeBg = isAudioMode ? Colors.light.secondary + "20" : theme.primary + "20";
+  const modeIcon: keyof typeof Feather.glyphMap = isAudioMode ? "headphones" : "book-open";
+  const modeLabel = isAudioMode ? "音声モード" : "文字モード";
+
+  const phaseBadgeColor = phase === "study" ? modeBadgeColor : Colors.light.secondary;
+  const phaseBadgeBg = phase === "study" ? modeBadgeBg : Colors.light.secondary + "20";
+  const phaseIcon: keyof typeof Feather.glyphMap =
+    phase === "study" ? modeIcon : "refresh-cw";
+  const phaseLabel = phase === "study" ? modeLabel : "復習フェーズ";
+
   return (
     <ThemedView style={styles.container}>
       <ScrollView
@@ -221,28 +245,11 @@ export default function SprintStudySessionScreen() {
       >
         <View style={styles.phaseHeader}>
           <View
-            style={[
-              styles.phaseBadge,
-              {
-                backgroundColor:
-                  phase === "study"
-                    ? theme.primary + "20"
-                    : Colors.light.secondary + "20",
-              },
-            ]}
+            style={[styles.phaseBadge, { backgroundColor: phaseBadgeBg }]}
           >
-            <Feather
-              name={phase === "study" ? "book-open" : "refresh-cw"}
-              size={14}
-              color={phase === "study" ? theme.primary : Colors.light.secondary}
-            />
-            <ThemedText
-              style={[
-                styles.phaseLabel,
-                { color: phase === "study" ? theme.primary : Colors.light.secondary },
-              ]}
-            >
-              {phase === "study" ? "学習フェーズ" : "復習フェーズ"}
+            <Feather name={phaseIcon} size={14} color={phaseBadgeColor} />
+            <ThemedText style={[styles.phaseLabel, { color: phaseBadgeColor }]}>
+              {phaseLabel}
             </ThemedText>
           </View>
           <ThemedText style={[styles.progress, { color: theme.textSecondary }]}>
@@ -263,67 +270,105 @@ export default function SprintStudySessionScreen() {
             { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
           ]}
         >
-          <View style={styles.wordHeader}>
-            <ThemedText style={styles.wordText}>{currentWord.word}</ThemedText>
-            <SpeakButton text={currentWord.word} size="medium" />
-          </View>
-          <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
-            {currentWord.pinyin}
-          </ThemedText>
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
-          <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
-            {currentWord.translation}
-          </ThemedText>
-          {currentWord.exampleSentence ? (
-            <View style={styles.exampleSection}>
-              <View style={styles.exampleRow}>
-                <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
-                  {currentWord.exampleSentence}
-                </ThemedText>
-                <SpeakButton text={currentWord.exampleSentence} size="small" />
+          {isAudioMode && !isRevealed ? (
+            <Pressable
+              testID="button-reveal-word"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsRevealed(true);
+              }}
+              style={styles.audioModeContent}
+            >
+              <View
+                style={[
+                  styles.audioPlayContainer,
+                  { backgroundColor: Colors.light.secondary + "15" },
+                ]}
+              >
+                <SpeakButton text={currentWord.word} size="large" />
               </View>
-              <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
-                {currentWord.exampleTranslation}
+              <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
+                {currentWord.pinyin}
               </ThemedText>
-            </View>
-          ) : null}
+              <View
+                style={[
+                  styles.revealHint,
+                  { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
+                ]}
+              >
+                <Feather name="eye" size={14} color={theme.textSecondary} />
+                <ThemedText style={[styles.revealHintText, { color: theme.textSecondary }]}>
+                  タップして表示
+                </ThemedText>
+              </View>
+            </Pressable>
+          ) : (
+            <>
+              <View style={styles.wordHeader}>
+                <ThemedText style={styles.wordText}>{currentWord.word}</ThemedText>
+                <SpeakButton text={currentWord.word} size="medium" />
+              </View>
+              <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
+                {currentWord.pinyin}
+              </ThemedText>
+              <View style={[styles.divider, { backgroundColor: theme.border }]} />
+              <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
+                {currentWord.translation}
+              </ThemedText>
+              {currentWord.exampleSentence ? (
+                <View style={styles.exampleSection}>
+                  <View style={styles.exampleRow}>
+                    <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
+                      {currentWord.exampleSentence}
+                    </ThemedText>
+                    <SpeakButton text={currentWord.exampleSentence} size="small" />
+                  </View>
+                  <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
+                    {currentWord.exampleTranslation}
+                  </ThemedText>
+                </View>
+              ) : null}
+            </>
+          )}
         </Animated.View>
 
-        <View style={styles.choiceButtons}>
-          <Pressable
-            testID="button-unmemorized"
-            onPress={() => handleChoice("unmemorized")}
-            style={[
-              styles.choiceButton,
-              {
-                backgroundColor: Colors.light.alert + "15",
-                borderColor: Colors.light.alert,
-              },
-            ]}
-          >
-            <Feather name="flag" size={22} color={Colors.light.alert} />
-            <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
-              覚えていない
-            </ThemedText>
-          </Pressable>
+        {!isAudioMode || isRevealed ? (
+          <View style={styles.choiceButtons}>
+            <Pressable
+              testID="button-unmemorized"
+              onPress={() => handleChoice("unmemorized")}
+              style={[
+                styles.choiceButton,
+                {
+                  backgroundColor: Colors.light.alert + "15",
+                  borderColor: Colors.light.alert,
+                },
+              ]}
+            >
+              <Feather name="flag" size={22} color={Colors.light.alert} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
+                覚えていない
+              </ThemedText>
+            </Pressable>
 
-          <Pressable
-            testID="button-memorized"
-            onPress={() => handleChoice("memorized")}
-            style={[
-              styles.choiceButton,
-              {
-                backgroundColor: Colors.light.success + "15",
-                borderColor: Colors.light.success,
-              },
-            ]}
-          >
-            <Feather name="check" size={22} color={Colors.light.success} />
-            <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
-              覚えた
-            </ThemedText>
-          </Pressable>
-        </View>
+            <Pressable
+              testID="button-memorized"
+              onPress={() => handleChoice("memorized")}
+              style={[
+                styles.choiceButton,
+                {
+                  backgroundColor: Colors.light.success + "15",
+                  borderColor: Colors.light.success,
+                },
+              ]}
+            >
+              <Feather name="check" size={22} color={Colors.light.success} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
+                覚えた
+              </ThemedText>
+            </Pressable>
+          </View>
+        ) : null}
       </ScrollView>
     </ThemedView>
   );
@@ -368,7 +413,31 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: Spacing.xl,
     marginBottom: Spacing.xl,
+    minHeight: 200,
   },
+  audioModeContent: {
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  audioPlayContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  revealHint: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  revealHintText: { fontSize: 13, fontFamily: "Nunito_400Regular" },
   wordHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -385,6 +454,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: "Nunito_400Regular",
     marginBottom: Spacing.md,
+    textAlign: "center",
   },
   divider: { height: 1, marginBottom: Spacing.md },
   translationText: {
