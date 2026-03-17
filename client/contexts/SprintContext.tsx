@@ -147,7 +147,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         ? sprintData.studiedWordCount + sprintData.wordsPerDay
         : sprintData.studiedWordCount;
 
-      const newPosition = Math.min(sprintData.currentPosition + 1, TOTAL_CELLS - 1);
+      const nextPosition = sprintData.currentPosition + 1;
+      const newPosition = nextPosition >= TOTAL_CELLS ? 1 : nextPosition;
       const newSpecialStamps = isSpecial
         ? [...sprintData.specialStamps, sprintData.currentPosition]
         : sprintData.specialStamps;

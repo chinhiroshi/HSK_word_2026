@@ -309,9 +309,7 @@ export default function SprintScreen() {
             if (cellIndex === -1) {
               return <View key={`empty-${gridPos}`} style={[styles.cell, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: "transparent", borderWidth: 0 }]} />;
             }
-            const sessionType = isSetup || cellIndex === 0
-              ? getSessionType(cellIndex)
-              : getSessionType(cellIndex);
+            const sessionType = getSessionType(cellIndex);
             const isCurrent = isSetup && cellIndex === currentPosition;
             const isCompleted = isSetup ? cellIndex < currentPosition : false;
             const isSpecialStamp = specialStamps.includes(cellIndex);
