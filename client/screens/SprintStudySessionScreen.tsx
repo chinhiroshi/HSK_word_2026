@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -36,7 +36,7 @@ export default function SprintStudySessionScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { sprintData, completeSession, getStudyWords, getReviewWords, getSessionType } = useSprint();
+  const { sprintData, completeSession, getStudyWords, getReviewWords } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
 
@@ -44,13 +44,16 @@ export default function SprintStudySessionScreen() {
   const [studyWords, setStudyWords] = useState<Word[]>([]);
   const [reviewWords, setReviewWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [choices, setChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
+  const [studyChoices, setStudyChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
+  const [allChoices, setAllChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
 
+  const loadedStudyWords = useRef<Word[]>([]);
+
   const currentWords = phase === "study" ? studyWords : reviewWords;
   const currentWord = currentWords[currentIndex] ?? null;
-  const progress = currentWords.length > 0 ? ((currentIndex) / currentWords.length) * 100 : 0;
+  const progress = currentWords.length > 0 ? (currentIndex / currentWords.length) * 100 : 0;
 
   const loadWords = useCallback(async () => {
     setLoading(true);
@@ -58,12 +61,11 @@ export default function SprintStudySessionScreen() {
     const allWords = await getWords();
     if (sessionMode === "review") {
       const rev = getReviewWords(allWords);
-      setReviewWords(rev.length > 0 ? rev : []);
+      setReviewWords(rev);
     } else {
       const study = getStudyWords(allWords);
+      loadedStudyWords.current = study;
       setStudyWords(study);
-      const rev = getReviewWords(allWords);
-      setReviewWords(rev);
     }
     setLoading(false);
   }, [sessionMode, getStudyWords, getReviewWords]);
@@ -71,6 +73,18 @@ export default function SprintStudySessionScreen() {
   useEffect(() => {
     loadWords();
   }, [loadWords]);
+
+  const buildReviewFromStudyPhase = useCallback(
+    (choices: Record<string, "memorized" | "unmemorized">): Word[] => {
+      if (!sprintData) return [];
+      const failedInStudy = loadedStudyWords.current.filter(
+        (w) => choices[w.id] === "unmemorized"
+      );
+      const shuffled = [...failedInStudy].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, sprintData.reviewCount);
+    },
+    [sprintData]
+  );
 
   const handleChoice = async (choice: "memorized" | "unmemorized") => {
     if (!currentWord) return;
@@ -80,21 +94,35 @@ export default function SprintStudySessionScreen() {
         : Haptics.ImpactFeedbackStyle.Medium
     );
 
-    const memType = phase === "study" ? "text" : "audio";
     if (choice === "memorized") {
-      await markAsMemorized(currentWord.id, memType);
+      await markAsMemorized(currentWord.id, "text");
     } else {
-      await markAsUnmemorized(currentWord.id, memType);
+      await markAsUnmemorized(currentWord.id, "text");
     }
 
-    setChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
+    const newStudyChoices =
+      phase === "study"
+        ? { ...studyChoices, [currentWord.id]: choice }
+        : studyChoices;
+
+    if (phase === "study") {
+      setStudyChoices(newStudyChoices);
+    }
+    setAllChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
 
     if (currentIndex < currentWords.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      if (phase === "study" && reviewWords.length > 0) {
-        setPhase("review");
-        setCurrentIndex(0);
+      if (phase === "study") {
+        const finalStudyChoices = { ...studyChoices, [currentWord.id]: choice };
+        const reviewPool = buildReviewFromStudyPhase(finalStudyChoices);
+        if (reviewPool.length > 0) {
+          setReviewWords(reviewPool);
+          setPhase("review");
+          setCurrentIndex(0);
+        } else {
+          setPhase("complete");
+        }
       } else {
         setPhase("complete");
       }
@@ -119,8 +147,8 @@ export default function SprintStudySessionScreen() {
   }
 
   if (phase === "complete") {
-    const memorizedCount = Object.values(choices).filter((c) => c === "memorized").length;
-    const total = Object.keys(choices).length;
+    const memorizedCount = Object.values(allChoices).filter((c) => c === "memorized").length;
+    const total = Object.keys(allChoices).length;
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
         <Animated.View entering={FadeIn} style={styles.completeContainer}>
