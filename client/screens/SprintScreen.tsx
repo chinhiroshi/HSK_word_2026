@@ -115,7 +115,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, onPr
         {
           backgroundColor: bgColor,
           borderColor,
-          opacity: isFuture ? 0.45 : 1,
+          opacity: 1,
           width: CELL_SIZE,
           height: CELL_SIZE,
         },
@@ -197,16 +197,16 @@ export default function SprintScreen() {
       return;
     }
 
-    if (index === sprintData.currentPosition) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      const sessionType = getSessionType(index);
-      if (sessionType === "test") {
-        navigation.navigate("SprintTest");
-      } else if (sessionType === "review") {
-        navigation.navigate("SprintStudySession", { mode: "review" });
-      } else {
-        navigation.navigate("SprintStudySession", { mode: "study" });
-      }
+    if (index === 0) return;
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const sessionType = getSessionType(index);
+    if (sessionType === "test") {
+      navigation.navigate("SprintTest");
+    } else if (sessionType === "review") {
+      navigation.navigate("SprintStudySession", { mode: "review" });
+    } else {
+      navigation.navigate("SprintStudySession", { mode: "study" });
     }
   };
 
