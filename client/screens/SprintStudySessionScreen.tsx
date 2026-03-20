@@ -312,9 +312,39 @@ interface CardProps {
   theme: ReturnType<typeof useTheme>["theme"];
 }
 
+function MemoBadge({ word, mode, theme }: { word: Word; mode: "text" | "audio"; theme: ReturnType<typeof useTheme>["theme"] }) {
+  const isMemorized = mode === "text" ? word.textMemorized : word.audioMemorized;
+  const unmemorizedCount = mode === "text" ? (word.textUnmemorizedCount ?? 0) : (word.audioUnmemorizedCount ?? 0);
+
+  if (isMemorized) {
+    return (
+      <View style={[styles.memoBadge, { backgroundColor: Colors.light.success + "20" }]}>
+        <Feather name="check" size={11} color={Colors.light.success} />
+        <ThemedText style={[styles.memoBadgeText, { color: Colors.light.success }]}>覚えた</ThemedText>
+      </View>
+    );
+  }
+  if (unmemorizedCount > 0) {
+    return (
+      <View style={[styles.memoBadge, { backgroundColor: Colors.light.alert + "20" }]}>
+        <Feather name="flag" size={11} color={Colors.light.alert} />
+        <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>覚えていない</ThemedText>
+      </View>
+    );
+  }
+  return (
+    <View style={[styles.memoBadge, { backgroundColor: theme.backgroundSecondary }]}>
+      <ThemedText style={[styles.memoBadgeText, { color: theme.textSecondary }]}>未学習</ThemedText>
+    </View>
+  );
+}
+
 function TextCard({ word, isRevealed, onReveal, theme }: CardProps) {
   return (
     <>
+      <View style={styles.memoBadgeRow}>
+        <MemoBadge word={word} mode="text" theme={theme} />
+      </View>
       <View style={styles.wordHeader}>
         <ThemedText style={styles.wordText}>{word.word}</ThemedText>
         <SpeakButton text={word.word} size="medium" />
@@ -365,6 +395,9 @@ function TextCard({ word, isRevealed, onReveal, theme }: CardProps) {
 function AudioCard({ word, isRevealed, onReveal, theme }: CardProps) {
   return (
     <>
+      <View style={styles.memoBadgeRow}>
+        <MemoBadge word={word} mode="audio" theme={theme} />
+      </View>
       {isRevealed ? (
         <Animated.View entering={FadeIn.duration(180)}>
           <View style={styles.wordHeader}>
@@ -460,6 +493,9 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   revealButtonText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
+  memoBadgeRow: { marginBottom: Spacing.xs },
+  memoBadge: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.full },
+  memoBadgeText: { fontSize: 11, fontFamily: "Nunito_600SemiBold" },
   audioHiddenContent: { alignItems: "center", justifyContent: "center", gap: Spacing.lg, paddingVertical: Spacing.lg },
   audioIconContainer: { width: 80, height: 80, borderRadius: 40, justifyContent: "center", alignItems: "center" },
   revealHint: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full, borderWidth: 1 },

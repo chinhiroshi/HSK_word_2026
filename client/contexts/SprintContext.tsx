@@ -106,6 +106,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   const setupSprint = useCallback(async (minutes: number) => {
     const wordsPerDay = calcWordsPerDay(minutes);
     const reviewCount = calcReviewCount(wordsPerDay);
+    const today = getTodayString();
     const newData: SprintData = {
       hasSetup: true,
       studyMinutes: minutes,
@@ -116,6 +117,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       lastStudyDate: null,
       streakCount: 0,
       specialStamps: [],
+      setupDate: today,
+      completedDates: {},
     };
     await saveSprintData(newData);
     setSprintData(newData);
@@ -153,6 +156,11 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         ? [...sprintData.specialStamps, sprintData.currentPosition]
         : sprintData.specialStamps;
 
+      const newCompletedDates = {
+        ...(sprintData.completedDates ?? {}),
+        [sprintData.currentPosition]: today,
+      };
+
       const updated: SprintData = {
         ...sprintData,
         currentPosition: newPosition,
@@ -160,6 +168,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         lastStudyDate: today,
         streakCount: newStreak,
         specialStamps: newSpecialStamps,
+        setupDate: sprintData.setupDate ?? today,
+        completedDates: newCompletedDates,
       };
       await saveSprintData(updated);
       setSprintData(updated);

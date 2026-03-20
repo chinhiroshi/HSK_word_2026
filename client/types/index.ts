@@ -56,4 +56,6 @@ export interface SprintData {
   lastStudyDate: string | null;
   streakCount: number;
   specialStamps: number[];
+  setupDate: string | null;
+  completedDates: Record<number, string>;
 }
