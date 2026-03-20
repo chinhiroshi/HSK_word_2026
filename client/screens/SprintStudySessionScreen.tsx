@@ -11,7 +11,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
+import Animated, { FadeIn } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -29,7 +29,7 @@ import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-type Phase = "study" | "review" | "complete";
+type Phase = "text" | "audio" | "review" | "complete";
 
 export default function SprintStudySessionScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -41,23 +41,17 @@ export default function SprintStudySessionScreen() {
 
   const sessionMode = route.params?.mode ?? "study";
 
-  const [phase, setPhase] = useState<Phase>(sessionMode === "review" ? "review" : "study");
-  const [studyWords, setStudyWords] = useState<Word[]>([]);
-  const [reviewWords, setReviewWords] = useState<Word[]>([]);
+  const [phase, setPhase] = useState<Phase>(sessionMode === "review" ? "review" : "text");
+  const [words, setWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [studyChoices, setStudyChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
-  const [allChoices, setAllChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [isRevealed, setIsRevealed] = useState(false);
+  const [textChoices, setTextChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
+  const [audioChoices, setAudioChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
 
-  const loadedStudyWords = useRef<Word[]>([]);
-
-  const currentWords = phase === "study" ? studyWords : reviewWords;
-  const currentWord = currentWords[currentIndex] ?? null;
-  const progress = currentWords.length > 0 ? (currentIndex / currentWords.length) * 100 : 0;
-
-  const isAudioMode = currentIndex % 2 === 1 && phase === "study";
+  const currentWord = words[currentIndex] ?? null;
+  const progress = words.length > 0 ? (currentIndex / words.length) * 100 : 0;
 
   const loadWords = useCallback(async () => {
     setLoading(true);
@@ -65,11 +59,10 @@ export default function SprintStudySessionScreen() {
     const allWords = await getWords();
     if (sessionMode === "review") {
       const rev = getReviewWords(allWords);
-      setReviewWords(rev);
+      setWords(rev);
     } else {
       const study = getStudyWords(allWords);
-      loadedStudyWords.current = study;
-      setStudyWords(study);
+      setWords(study);
     }
     setLoading(false);
   }, [sessionMode, getStudyWords, getReviewWords]);
@@ -80,22 +73,26 @@ export default function SprintStudySessionScreen() {
 
   useEffect(() => {
     setIsRevealed(false);
-    if (isAudioMode && currentWord) {
+    if (!currentWord) return;
+    if (phase === "audio") {
+      speakChinese(currentWord.word);
+    } else if (phase === "text") {
       speakChinese(currentWord.word);
     }
   }, [currentIndex, phase]);
 
-  const buildReviewFromStudyPhase = useCallback(
-    (choices: Record<string, "memorized" | "unmemorized">): Word[] => {
-      if (!sprintData) return [];
-      const failedInStudy = loadedStudyWords.current.filter(
-        (w) => choices[w.id] === "unmemorized"
-      );
-      const shuffled = [...failedInStudy].sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, sprintData.reviewCount);
-    },
-    [sprintData]
-  );
+  const advanceOrFinish = (currentPhase: Phase, newIndex: number) => {
+    if (newIndex < words.length) {
+      setCurrentIndex(newIndex);
+    } else {
+      if (currentPhase === "text" && sessionMode === "study") {
+        setPhase("audio");
+        setCurrentIndex(0);
+      } else {
+        setPhase("complete");
+      }
+    }
+  };
 
   const handleChoice = async (choice: "memorized" | "unmemorized") => {
     if (!currentWord) return;
@@ -105,41 +102,19 @@ export default function SprintStudySessionScreen() {
         : Haptics.ImpactFeedbackStyle.Medium
     );
 
-    const memType = isAudioMode ? "audio" : "text";
-
-    if (choice === "memorized") {
-      await markAsMemorized(currentWord.id, memType);
+    if (phase === "text" || phase === "review") {
+      await (choice === "memorized"
+        ? markAsMemorized(currentWord.id, "text")
+        : markAsUnmemorized(currentWord.id, "text"));
+      setTextChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
     } else {
-      await markAsUnmemorized(currentWord.id, memType);
+      await (choice === "memorized"
+        ? markAsMemorized(currentWord.id, "audio")
+        : markAsUnmemorized(currentWord.id, "audio"));
+      setAudioChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
     }
 
-    const newStudyChoices =
-      phase === "study"
-        ? { ...studyChoices, [currentWord.id]: choice }
-        : studyChoices;
-
-    if (phase === "study") {
-      setStudyChoices(newStudyChoices);
-    }
-    setAllChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
-
-    if (currentIndex < currentWords.length - 1) {
-      setCurrentIndex((prev) => prev + 1);
-    } else {
-      if (phase === "study") {
-        const finalStudyChoices = { ...studyChoices, [currentWord.id]: choice };
-        const reviewPool = buildReviewFromStudyPhase(finalStudyChoices);
-        if (reviewPool.length > 0) {
-          setReviewWords(reviewPool);
-          setPhase("review");
-          setCurrentIndex(0);
-        } else {
-          setPhase("complete");
-        }
-      } else {
-        setPhase("complete");
-      }
-    }
+    advanceOrFinish(phase, currentIndex + 1);
   };
 
   const handleComplete = async () => {
@@ -149,19 +124,21 @@ export default function SprintStudySessionScreen() {
     navigation.navigate("SprintHome");
   };
 
+  const totalChoices = { ...textChoices, ...audioChoices };
+  const memorizedCount = Object.values(totalChoices).filter((c) => c === "memorized").length;
+  const totalCount = Object.keys(totalChoices).length;
+
   if (loading) {
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
         <View style={styles.centered}>
-          <ThemedText style={styles.loadingText}>準備中...</ThemedText>
+          <ThemedText style={{ color: theme.textSecondary }}>準備中...</ThemedText>
         </View>
       </ThemedView>
     );
   }
 
   if (phase === "complete") {
-    const memorizedCount = Object.values(allChoices).filter((c) => c === "memorized").length;
-    const total = Object.keys(allChoices).length;
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
         <Animated.View entering={FadeIn} style={styles.completeContainer}>
@@ -170,7 +147,7 @@ export default function SprintStudySessionScreen() {
           </View>
           <ThemedText style={styles.completeTitle}>セッション完了！</ThemedText>
           <ThemedText style={[styles.completeSub, { color: theme.textSecondary }]}>
-            {total}語を学習しました
+            {words.length}語を学習しました
           </ThemedText>
           <View style={styles.resultStats}>
             <View style={styles.resultStat}>
@@ -182,11 +159,9 @@ export default function SprintStudySessionScreen() {
             <View style={[styles.resultDivider, { backgroundColor: theme.border }]} />
             <View style={styles.resultStat}>
               <ThemedText style={[styles.resultValue, { color: Colors.light.alert }]}>
-                {total - memorizedCount}
+                {totalCount - memorizedCount}
               </ThemedText>
-              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>
-                覚えていない
-              </ThemedText>
+              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>覚えていない</ThemedText>
             </View>
           </View>
           <Button
@@ -208,7 +183,7 @@ export default function SprintStudySessionScreen() {
         <View style={styles.centered}>
           <Feather name="check-circle" size={56} color={Colors.light.success} />
           <ThemedText style={[styles.emptyTitle, { marginTop: Spacing.lg }]}>
-            {phase === "review" ? "復習する単語がありません" : "学習する単語がありません"}
+            学習する単語がありません
           </ThemedText>
           <ThemedText style={[styles.emptySub, { color: theme.textSecondary }]}>
             すべての単語が学習済みです
@@ -221,16 +196,14 @@ export default function SprintStudySessionScreen() {
     );
   }
 
-  const modeBadgeColor = isAudioMode ? Colors.light.secondary : theme.primary;
-  const modeBadgeBg = isAudioMode ? Colors.light.secondary + "20" : theme.primary + "20";
-  const modeIcon: keyof typeof Feather.glyphMap = isAudioMode ? "headphones" : "book-open";
-  const modeLabel = isAudioMode ? "音声モード" : "文字モード";
+  const isAudioPhase = phase === "audio";
+  const badgeColor = isAudioPhase ? Colors.light.secondary : theme.primary;
+  const badgeBg = isAudioPhase ? Colors.light.secondary + "20" : theme.primary + "20";
+  const badgeIcon: keyof typeof Feather.glyphMap = isAudioPhase ? "headphones" : "book-open";
+  const badgeLabel = isAudioPhase ? "音声学習" : (phase === "review" ? "復習" : "文字学習");
 
-  const phaseBadgeColor = phase === "study" ? modeBadgeColor : Colors.light.secondary;
-  const phaseBadgeBg = phase === "study" ? modeBadgeBg : Colors.light.secondary + "20";
-  const phaseIcon: keyof typeof Feather.glyphMap =
-    phase === "study" ? modeIcon : "refresh-cw";
-  const phaseLabel = phase === "study" ? modeLabel : "復習フェーズ";
+  const phaseTotal = sessionMode === "study" ? 2 : 1;
+  const phaseNum = isAudioPhase ? 2 : 1;
 
   return (
     <ThemedView style={styles.container}>
@@ -244,16 +217,21 @@ export default function SprintStudySessionScreen() {
         ]}
       >
         <View style={styles.phaseHeader}>
-          <View
-            style={[styles.phaseBadge, { backgroundColor: phaseBadgeBg }]}
-          >
-            <Feather name={phaseIcon} size={14} color={phaseBadgeColor} />
-            <ThemedText style={[styles.phaseLabel, { color: phaseBadgeColor }]}>
-              {phaseLabel}
-            </ThemedText>
+          <View style={styles.phaseLeft}>
+            <View style={[styles.phaseBadge, { backgroundColor: badgeBg }]}>
+              <Feather name={badgeIcon} size={13} color={badgeColor} />
+              <ThemedText style={[styles.phaseBadgeText, { color: badgeColor }]}>
+                {badgeLabel}
+              </ThemedText>
+            </View>
+            {sessionMode === "study" ? (
+              <ThemedText style={[styles.phaseStep, { color: theme.textSecondary }]}>
+                {phaseNum}/{phaseTotal}
+              </ThemedText>
+            ) : null}
           </View>
           <ThemedText style={[styles.progress, { color: theme.textSecondary }]}>
-            {currentIndex + 1} / {currentWords.length}
+            {currentIndex + 1} / {words.length}
           </ThemedText>
         </View>
 
@@ -263,86 +241,43 @@ export default function SprintStudySessionScreen() {
 
         <Animated.View
           key={`${phase}-${currentIndex}`}
-          entering={FadeIn.duration(200)}
-          exiting={FadeOut.duration(150)}
+          entering={FadeIn.duration(180)}
           style={[
             styles.wordCard,
             { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
           ]}
         >
-          {isAudioMode && !isRevealed ? (
-            <Pressable
-              testID="button-reveal-word"
-              onPress={() => {
+          {isAudioPhase ? (
+            <AudioCard
+              word={currentWord}
+              isRevealed={isRevealed}
+              onReveal={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setIsRevealed(true);
               }}
-              style={styles.audioModeContent}
-            >
-              <View
-                style={[
-                  styles.audioPlayContainer,
-                  { backgroundColor: Colors.light.secondary + "15" },
-                ]}
-              >
-                <SpeakButton text={currentWord.word} size="large" />
-              </View>
-              <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
-                {currentWord.pinyin}
-              </ThemedText>
-              <View
-                style={[
-                  styles.revealHint,
-                  { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
-                ]}
-              >
-                <Feather name="eye" size={14} color={theme.textSecondary} />
-                <ThemedText style={[styles.revealHintText, { color: theme.textSecondary }]}>
-                  タップして表示
-                </ThemedText>
-              </View>
-            </Pressable>
+              theme={theme}
+            />
           ) : (
-            <>
-              <View style={styles.wordHeader}>
-                <ThemedText style={styles.wordText}>{currentWord.word}</ThemedText>
-                <SpeakButton text={currentWord.word} size="medium" />
-              </View>
-              <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
-                {currentWord.pinyin}
-              </ThemedText>
-              <View style={[styles.divider, { backgroundColor: theme.border }]} />
-              <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
-                {currentWord.translation}
-              </ThemedText>
-              {currentWord.exampleSentence ? (
-                <View style={styles.exampleSection}>
-                  <View style={styles.exampleRow}>
-                    <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
-                      {currentWord.exampleSentence}
-                    </ThemedText>
-                    <SpeakButton text={currentWord.exampleSentence} size="small" />
-                  </View>
-                  <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
-                    {currentWord.exampleTranslation}
-                  </ThemedText>
-                </View>
-              ) : null}
-            </>
+            <TextCard
+              word={currentWord}
+              isRevealed={isRevealed}
+              onReveal={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsRevealed(true);
+              }}
+              theme={theme}
+            />
           )}
         </Animated.View>
 
-        {!isAudioMode || isRevealed ? (
-          <View style={styles.choiceButtons}>
+        {isRevealed ? (
+          <Animated.View entering={FadeIn.duration(150)} style={styles.choiceButtons}>
             <Pressable
               testID="button-unmemorized"
               onPress={() => handleChoice("unmemorized")}
               style={[
                 styles.choiceButton,
-                {
-                  backgroundColor: Colors.light.alert + "15",
-                  borderColor: Colors.light.alert,
-                },
+                { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
               ]}
             >
               <Feather name="flag" size={22} color={Colors.light.alert} />
@@ -350,16 +285,12 @@ export default function SprintStudySessionScreen() {
                 覚えていない
               </ThemedText>
             </Pressable>
-
             <Pressable
               testID="button-memorized"
               onPress={() => handleChoice("memorized")}
               style={[
                 styles.choiceButton,
-                {
-                  backgroundColor: Colors.light.success + "15",
-                  borderColor: Colors.light.success,
-                },
+                { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
               ]}
             >
               <Feather name="check" size={22} color={Colors.light.success} />
@@ -367,197 +298,185 @@ export default function SprintStudySessionScreen() {
                 覚えた
               </ThemedText>
             </Pressable>
-          </View>
+          </Animated.View>
         ) : null}
       </ScrollView>
     </ThemedView>
   );
 }
 
+interface CardProps {
+  word: Word;
+  isRevealed: boolean;
+  onReveal: () => void;
+  theme: ReturnType<typeof useTheme>["theme"];
+}
+
+function TextCard({ word, isRevealed, onReveal, theme }: CardProps) {
+  return (
+    <>
+      <View style={styles.wordHeader}>
+        <ThemedText style={styles.wordText}>{word.word}</ThemedText>
+        <SpeakButton text={word.word} size="medium" />
+      </View>
+      <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
+        {word.pinyin}
+      </ThemedText>
+
+      {isRevealed ? (
+        <Animated.View entering={FadeIn.duration(200)}>
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
+            {word.translation}
+          </ThemedText>
+          {word.exampleSentence ? (
+            <View style={styles.exampleSection}>
+              <View style={styles.exampleRow}>
+                <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
+                  {word.exampleSentence}
+                </ThemedText>
+                <SpeakButton text={word.exampleSentence} size="small" />
+              </View>
+              <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
+                {word.exampleTranslation}
+              </ThemedText>
+            </View>
+          ) : null}
+        </Animated.View>
+      ) : (
+        <Pressable
+          testID="button-reveal-meaning"
+          onPress={onReveal}
+          style={[
+            styles.revealButton,
+            { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
+          ]}
+        >
+          <Feather name="eye" size={15} color={theme.textSecondary} />
+          <ThemedText style={[styles.revealButtonText, { color: theme.textSecondary }]}>
+            意味を確認する
+          </ThemedText>
+        </Pressable>
+      )}
+    </>
+  );
+}
+
+function AudioCard({ word, isRevealed, onReveal, theme }: CardProps) {
+  return (
+    <>
+      {isRevealed ? (
+        <Animated.View entering={FadeIn.duration(180)}>
+          <View style={styles.wordHeader}>
+            <ThemedText style={styles.wordText}>{word.word}</ThemedText>
+            <SpeakButton text={word.word} size="medium" />
+          </View>
+          <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
+            {word.pinyin}
+          </ThemedText>
+          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
+            {word.translation}
+          </ThemedText>
+          {word.exampleSentence ? (
+            <View style={styles.exampleSection}>
+              <View style={styles.exampleRow}>
+                <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
+                  {word.exampleSentence}
+                </ThemedText>
+                <SpeakButton text={word.exampleSentence} size="small" />
+              </View>
+              <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
+                {word.exampleTranslation}
+              </ThemedText>
+            </View>
+          ) : null}
+        </Animated.View>
+      ) : (
+        <Pressable
+          testID="button-reveal-word"
+          onPress={onReveal}
+          style={styles.audioHiddenContent}
+        >
+          <View
+            style={[
+              styles.audioIconContainer,
+              { backgroundColor: Colors.light.secondary + "18" },
+            ]}
+          >
+            <SpeakButton text={word.word} size="large" />
+          </View>
+          <ThemedText style={[styles.pinyinTextCenter, { color: theme.primary }]}>
+            {word.pinyin}
+          </ThemedText>
+          <View
+            style={[
+              styles.revealHint,
+              { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
+            ]}
+          >
+            <Feather name="eye" size={14} color={theme.textSecondary} />
+            <ThemedText style={[styles.revealHintText, { color: theme.textSecondary }]}>
+              タップして表示
+            </ThemedText>
+          </View>
+        </Pressable>
+      )}
+    </>
+  );
+}
+
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: Spacing.lg },
-  centered: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Spacing["3xl"],
-  },
-  loadingText: { fontSize: 16, fontFamily: "Nunito_400Regular" },
-  phaseHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: Spacing.sm,
-  },
-  phaseBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-  },
-  phaseLabel: {
-    fontSize: 13,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-  },
-  progress: {
-    fontSize: 13,
-    fontFamily: "Nunito_600SemiBold",
-  },
+  centered: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing["3xl"] },
+  phaseHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.sm },
+  phaseLeft: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
+  phaseBadge: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
+  phaseBadgeText: { fontSize: 13, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
+  phaseStep: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  progress: { fontSize: 13, fontFamily: "Nunito_600SemiBold" },
   progressBarWrapper: { marginBottom: Spacing.xl },
-  wordCard: {
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    padding: Spacing.xl,
-    marginBottom: Spacing.xl,
-    minHeight: 200,
-  },
-  audioModeContent: {
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.lg,
-    paddingVertical: Spacing.md,
-  },
-  audioPlayContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  revealHint: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-  },
-  revealHintText: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  wordHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: Spacing.sm,
-  },
-  wordText: {
-    fontSize: 42,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-    flex: 1,
-  },
-  pinyinText: {
-    fontSize: 17,
-    fontFamily: "Nunito_400Regular",
-    marginBottom: Spacing.md,
-    textAlign: "center",
-  },
+  wordCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.xl, marginBottom: Spacing.xl, minHeight: 160 },
+  wordHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.sm },
+  wordText: { fontSize: 42, fontWeight: "700", fontFamily: "Nunito_700Bold", flex: 1 },
+  pinyinText: { fontSize: 17, fontFamily: "Nunito_400Regular", marginBottom: Spacing.md },
+  pinyinTextCenter: { fontSize: 20, fontFamily: "Nunito_400Regular", textAlign: "center" },
   divider: { height: 1, marginBottom: Spacing.md },
-  translationText: {
-    fontSize: 16,
-    fontFamily: "Nunito_600SemiBold",
-    marginBottom: Spacing.md,
-  },
+  translationText: { fontSize: 16, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.md },
   exampleSection: { gap: Spacing.xs },
-  exampleRow: {
+  exampleRow: { flexDirection: "row", alignItems: "flex-start", gap: Spacing.sm },
+  exampleChinese: { fontSize: 15, fontFamily: "Nunito_400Regular", lineHeight: 22, flex: 1 },
+  exampleJp: { fontSize: 13, fontFamily: "Nunito_400Regular", lineHeight: 20 },
+  revealButton: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: Spacing.sm,
-  },
-  exampleChinese: {
-    fontSize: 15,
-    fontFamily: "Nunito_400Regular",
-    lineHeight: 22,
-    flex: 1,
-  },
-  exampleJp: {
-    fontSize: 13,
-    fontFamily: "Nunito_400Regular",
-    lineHeight: 20,
-  },
-  choiceButtons: {
-    flexDirection: "row",
-    gap: Spacing.md,
-  },
-  choiceButton: {
-    flex: 1,
-    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.sm,
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 2,
-    minHeight: 80,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    marginTop: Spacing.sm,
   },
-  choiceLabel: {
-    fontSize: 15,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-  },
-  completeContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: Spacing["3xl"],
-  },
-  completeIcon: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: Spacing.xl,
-  },
-  completeTitle: {
-    fontSize: 26,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-    marginBottom: Spacing.sm,
-    textAlign: "center",
-  },
-  completeSub: {
-    fontSize: 15,
-    fontFamily: "Nunito_400Regular",
-    marginBottom: Spacing.xl,
-    textAlign: "center",
-  },
-  resultStats: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Spacing["2xl"],
-    width: "100%",
-    justifyContent: "center",
-    gap: Spacing.xl,
-  },
+  revealButtonText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
+  audioHiddenContent: { alignItems: "center", justifyContent: "center", gap: Spacing.lg, paddingVertical: Spacing.lg },
+  audioIconContainer: { width: 80, height: 80, borderRadius: 40, justifyContent: "center", alignItems: "center" },
+  revealHint: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full, borderWidth: 1 },
+  revealHintText: { fontSize: 13, fontFamily: "Nunito_400Regular" },
+  choiceButtons: { flexDirection: "row", gap: Spacing.md },
+  choiceButton: { flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: Spacing.sm, padding: Spacing.lg, borderRadius: BorderRadius.lg, borderWidth: 2, minHeight: 80 },
+  choiceLabel: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  completeContainer: { flex: 1, justifyContent: "center", alignItems: "center", padding: Spacing["3xl"] },
+  completeIcon: { width: 100, height: 100, borderRadius: 50, justifyContent: "center", alignItems: "center", marginBottom: Spacing.xl },
+  completeTitle: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: Spacing.sm, textAlign: "center" },
+  completeSub: { fontSize: 15, fontFamily: "Nunito_400Regular", marginBottom: Spacing.xl, textAlign: "center" },
+  resultStats: { flexDirection: "row", alignItems: "center", marginBottom: Spacing["2xl"], width: "100%", justifyContent: "center", gap: Spacing.xl },
   resultStat: { alignItems: "center", flex: 1 },
-  resultValue: {
-    fontSize: 36,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-  },
-  resultLabel: {
-    fontSize: 13,
-    fontFamily: "Nunito_400Regular",
-    marginTop: Spacing.xs,
-  },
+  resultValue: { fontSize: 36, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  resultLabel: { fontSize: 13, fontFamily: "Nunito_400Regular", marginTop: Spacing.xs },
   resultDivider: { width: 1, height: 40 },
   completeButton: { width: "100%" },
-  emptyTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-    textAlign: "center",
-    marginBottom: Spacing.sm,
-  },
-  emptySub: {
-    fontSize: 14,
-    fontFamily: "Nunito_400Regular",
-    textAlign: "center",
-    marginBottom: Spacing.xl,
-  },
+  emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", textAlign: "center", marginBottom: Spacing.sm },
+  emptySub: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
 });
