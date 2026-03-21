@@ -58,4 +58,5 @@ export interface SprintData {
   specialStamps: number[];
   setupDate: string | null;
   completedDates: Record<number, string>;
+  cellPhaseProgress?: Record<number, { text: boolean; audio: boolean }>;
 }

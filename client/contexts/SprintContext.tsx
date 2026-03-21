@@ -64,12 +64,14 @@ interface SprintContextType {
   loadSprint: () => Promise<void>;
   setupSprint: (minutes: number) => Promise<void>;
   completeSession: (isSpecial?: boolean) => Promise<void>;
+  completePhase: (phase: "text" | "audio" | "both") => Promise<boolean>;
   skipSession: () => Promise<void>;
   resetSprint: () => Promise<void>;
   getSessionType: (position: number) => SprintSessionType;
   canSkipCurrentSession: (words: Word[]) => boolean;
   getStudyWords: (words: Word[]) => Word[];
   getReviewWords: (words: Word[]) => Word[];
+  getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean };
   totalCells: number;
 }
 
@@ -79,12 +81,14 @@ const SprintContext = createContext<SprintContextType>({
   loadSprint: async () => {},
   setupSprint: async () => {},
   completeSession: async () => {},
+  completePhase: async () => false,
   skipSession: async () => {},
   resetSprint: async () => {},
   getSessionType,
   canSkipCurrentSession: () => false,
   getStudyWords: () => [],
   getReviewWords: () => [],
+  getCellPhaseProgress: () => ({ text: false, audio: false }),
   totalCells: TOTAL_CELLS,
 });
 
@@ -177,6 +181,75 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
+  const completePhase = useCallback(
+    async (phase: "text" | "audio" | "both"): Promise<boolean> => {
+      if (!sprintData) return false;
+
+      const position = sprintData.currentPosition;
+      const phaseProgress = sprintData.cellPhaseProgress ?? {};
+      const current = phaseProgress[position] ?? { text: false, audio: false };
+
+      const newText = phase === "text" || phase === "both" ? true : current.text;
+      const newAudio = phase === "audio" || phase === "both" ? true : current.audio;
+      const bothDone = newText && newAudio;
+
+      const newPhaseProgress = {
+        ...phaseProgress,
+        [position]: { text: newText, audio: newAudio },
+      };
+
+      if (bothDone) {
+        const today = getTodayString();
+        const yesterday = (() => {
+          const d = new Date();
+          d.setDate(d.getDate() - 1);
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        })();
+        let newStreak = sprintData.streakCount;
+        if (sprintData.lastStudyDate === today) {
+          // same day, no change
+        } else if (sprintData.lastStudyDate === yesterday) {
+          newStreak = sprintData.streakCount + 1;
+        } else {
+          newStreak = 1;
+        }
+        const sessionType = getSessionType(position);
+        const newStudiedWordCount =
+          sessionType === "study"
+            ? sprintData.studiedWordCount + sprintData.wordsPerDay
+            : sprintData.studiedWordCount;
+        const nextPosition = position + 1;
+        const newPosition = nextPosition >= TOTAL_CELLS ? 1 : nextPosition;
+        const newCompletedDates = {
+          ...(sprintData.completedDates ?? {}),
+          [position]: today,
+        };
+        const updated: SprintData = {
+          ...sprintData,
+          currentPosition: newPosition,
+          studiedWordCount: newStudiedWordCount,
+          lastStudyDate: today,
+          streakCount: newStreak,
+          setupDate: sprintData.setupDate ?? today,
+          completedDates: newCompletedDates,
+          cellPhaseProgress: newPhaseProgress,
+        };
+        await saveSprintData(updated);
+        setSprintData(updated);
+        return true;
+      } else {
+        const updated: SprintData = {
+          ...sprintData,
+          cellPhaseProgress: newPhaseProgress,
+        };
+        await saveSprintData(updated);
+        setSprintData(updated);
+        return false;
+      }
+    },
+    [sprintData]
+  );
+
   const skipSession = useCallback(async () => {
     await completeSession(false);
   }, [completeSession]);
@@ -215,6 +288,14 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
+  const getCellPhaseProgress = useCallback(
+    (position: number): { text: boolean; audio: boolean } => {
+      if (!sprintData) return { text: false, audio: false };
+      return (sprintData.cellPhaseProgress ?? {})[position] ?? { text: false, audio: false };
+    },
+    [sprintData]
+  );
+
   return (
     <SprintContext.Provider
       value={{
@@ -223,12 +304,14 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         loadSprint,
         setupSprint,
         completeSession,
+        completePhase,
         skipSession,
         resetSprint,
         getSessionType,
         canSkipCurrentSession,
         getStudyWords,
         getReviewWords,
+        getCellPhaseProgress,
         totalCells: TOTAL_CELLS,
       }}
     >

@@ -1,5 +1,5 @@
 import React from "react";
-import Svg, { Circle, Ellipse, Path, Rect, Polygon, G } from "react-native-svg";
+import Svg, { Circle, Ellipse, Path, Rect, Polygon, G, Line } from "react-native-svg";
 
 interface IconProps {
   size: number;
@@ -110,6 +110,41 @@ export function MonsterIcon({ size, color = "#7C3AED" }: IconProps) {
       <Polygon points="6,6 8,2 10,6" fill={skinColor} />
       <Polygon points="14,4 16,0 18,4" fill={skinColor} />
       <Polygon points="22,6 24,2 26,6" fill={skinColor} />
+    </Svg>
+  );
+}
+
+export function TreeIcon({ size, color = "#6EAF6E" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.55}>
+      <Rect x="14" y="23" width="4" height="6" fill="#9B6B3A" rx="1" />
+      <Polygon points="16,3 24,16 8,16" fill={color} />
+      <Polygon points="16,9 25,22 7,22" fill={color} opacity="0.85" />
+      <Polygon points="16,15 26,28 6,28" fill={color} opacity="0.7" />
+    </Svg>
+  );
+}
+
+export function CloudIcon({ size, color = "#7BB3D4" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.5}>
+      <Ellipse cx="16" cy="20" rx="12" ry="7" fill={color} />
+      <Ellipse cx="10" cy="18" rx="7" ry="6" fill={color} />
+      <Ellipse cx="22" cy="17" rx="6" ry="5" fill={color} />
+      <Ellipse cx="16" cy="14" rx="7" ry="6" fill={color} />
+    </Svg>
+  );
+}
+
+export function MountainIcon({ size, color = "#8BA8BE" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.5}>
+      <Polygon points="16,4 30,28 2,28" fill={color} />
+      <Polygon points="8,14 20,28 -4,28" fill={color} opacity="0.7" />
+      <Polygon points="16,4 23,16 9,16" fill="white" opacity="0.35" />
     </Svg>
   );
 }

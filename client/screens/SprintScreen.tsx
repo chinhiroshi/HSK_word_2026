@@ -24,16 +24,56 @@ import { getWords, initializeData } from "@/lib/storage";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
-import { PlantIcon, FlowerIcon, MonsterIcon } from "@/components/SprintCellIcons";
+import { PlantIcon, FlowerIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "review";
+type CellDir = "right" | "left" | "down" | "up" | null;
 
-const GRID_COLS = 4;
+const NUM_GRID_COLS = 5;
+const NUM_GRID_ROWS = 12;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ROW_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
-const ARROW_WIDTH = 22;
-const CELL_SIZE = Math.floor((ROW_WIDTH - ARROW_WIDTH * (GRID_COLS - 1)) / GRID_COLS);
+const CELL_SIZE = Math.floor(ROW_WIDTH / NUM_GRID_COLS);
+
+const CELL_POSITIONS: [number, number][] = [
+  [0, 1], [0, 2], [0, 3],
+  [1, 3],
+  [2, 3], [2, 4],
+  [3, 4], [3, 3], [3, 2],
+  [4, 2], [4, 1], [4, 0],
+  [5, 0], [5, 1], [5, 2],
+  [6, 2], [6, 1],
+  [7, 1], [7, 2], [7, 3],
+  [8, 3], [8, 4],
+  [9, 4], [9, 3], [9, 2],
+  [10, 2], [10, 3],
+  [11, 3], [11, 4],
+];
+
+const pathGrid: number[][] = Array.from({ length: NUM_GRID_ROWS }, () =>
+  Array(NUM_GRID_COLS).fill(-1)
+);
+CELL_POSITIONS.forEach(([row, col], i) => {
+  pathGrid[row][col] = i;
+});
+
+function getCellArrowDir(index: number): CellDir {
+  if (index >= CELL_POSITIONS.length - 1) return null;
+  const [r1, c1] = CELL_POSITIONS[index];
+  const [r2, c2] = CELL_POSITIONS[index + 1];
+  if (c2 > c1) return "right";
+  if (c2 < c1) return "left";
+  if (r2 > r1) return "down";
+  if (r2 < r1) return "up";
+  return null;
+}
+
+const DECO_TYPES = ["tree", "cloud", "mountain"] as const;
+type DecoType = (typeof DECO_TYPES)[number];
+function getDecoType(row: number, col: number): DecoType {
+  return DECO_TYPES[(row * 7 + col * 3) % 3];
+}
 
 function getDaysElapsed(setupDate: string | null): number {
   if (!setupDate) return 0;
@@ -57,11 +97,12 @@ interface CellProps {
   isCompleted: boolean;
   isSpecialStamp: boolean;
   completedDate?: string;
+  direction: CellDir;
   onPress: () => void;
   theme: ReturnType<typeof useTheme>["theme"];
 }
 
-function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, onPress, theme }: CellProps) {
+function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme }: CellProps) {
   const isFlag = index === 0;
 
   let bgColor = theme.backgroundDefault;
@@ -143,7 +184,51 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
           {formatShortDate(completedDate)}
         </ThemedText>
       ) : null}
+      {direction ? (
+        <View
+          style={[
+            styles.cellArrow,
+            direction === "right"
+              ? { right: 1, top: Math.floor(CELL_SIZE / 2) - 6 }
+              : direction === "left"
+              ? { left: 1, top: Math.floor(CELL_SIZE / 2) - 6 }
+              : direction === "down"
+              ? { bottom: 1, left: Math.floor(CELL_SIZE / 2) - 6 }
+              : { top: 1, left: Math.floor(CELL_SIZE / 2) - 6 },
+          ]}
+        >
+          <Feather
+            name={
+              direction === "right"
+                ? "arrow-right"
+                : direction === "left"
+                ? "arrow-left"
+                : direction === "down"
+                ? "arrow-down"
+                : "arrow-up"
+            }
+            size={10}
+            color={isCurrent ? "rgba(255,255,255,0.65)" : isCompleted ? theme.primary + "55" : theme.textSecondary + "35"}
+          />
+        </View>
+      ) : null}
     </Pressable>
+  );
+}
+
+function DecoCell({ row, col, theme }: { row: number; col: number; theme: ReturnType<typeof useTheme>["theme"] }) {
+  const decoType = getDecoType(row, col);
+  const iconSize = CELL_SIZE * 0.6;
+  return (
+    <View style={[styles.decoCell, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: theme.backgroundSecondary + "50" }]}>
+      {decoType === "tree" ? (
+        <TreeIcon size={iconSize} />
+      ) : decoType === "cloud" ? (
+        <CloudIcon size={iconSize} />
+      ) : (
+        <MountainIcon size={iconSize} />
+      )}
+    </View>
   );
 }
 
@@ -345,16 +430,6 @@ export default function SprintScreen() {
   const completedCount = Object.keys(completedDates).length;
   const currentSessionType = isSetup ? getSessionType(currentPosition) : "flag";
 
-  // Build rows for snake grid
-  const rows: number[][] = [];
-  for (let i = 0; i < totalCells; i++) {
-    const rowIdx = Math.floor(i / GRID_COLS);
-    if (!rows[rowIdx]) rows[rowIdx] = [];
-    rows[rowIdx].push(i);
-  }
-  // Odd rows are displayed right-to-left
-  const displayRows = rows.map((row, i) => i % 2 === 1 ? [...row].reverse() : row);
-
   const getSessionTypeLabel = (type: SprintSessionType) => {
     switch (type) {
       case "study": return "学習";
@@ -437,50 +512,34 @@ export default function SprintScreen() {
           </Pressable>
         ) : null}
 
-        {/* Snake grid with arrows */}
+        {/* Free-form path grid */}
         <View style={styles.gridWrapper}>
-          {displayRows.map((row, rowIdx) => {
-            const isEvenRow = rowIdx % 2 === 0;
-            return (
-              <View key={rowIdx}>
-                <View style={styles.gridRow}>
-                  {row.map((cellIndex, colIdx) => {
-                    const isCurrent = isSetup && cellIndex === currentPosition;
-                    const isCompleted = isSetup && !isCurrent && (completedDates[cellIndex] != null || cellIndex < currentPosition);
-                    const isSpecialStamp = specialStamps.includes(cellIndex);
-                    return (
-                      <React.Fragment key={cellIndex}>
-                        <Cell
-                          index={cellIndex}
-                          sessionType={getSessionType(cellIndex)}
-                          isCurrent={isCurrent}
-                          isCompleted={isCompleted}
-                          isSpecialStamp={isSpecialStamp}
-                          completedDate={completedDates[cellIndex]}
-                          onPress={() => handleCellPress(cellIndex)}
-                          theme={theme}
-                        />
-                        {colIdx < row.length - 1 ? (
-                          <View style={styles.arrowH}>
-                            <Feather
-                              name={isEvenRow ? "arrow-right" : "arrow-left"}
-                              size={14}
-                              color={theme.textSecondary + "55"}
-                            />
-                          </View>
-                        ) : null}
-                      </React.Fragment>
-                    );
-                  })}
-                </View>
-                {rowIdx < displayRows.length - 1 ? (
-                  <View style={[styles.arrowV, { alignItems: isEvenRow ? "flex-end" : "flex-start" }]}>
-                    <Feather name="arrow-down" size={14} color={theme.textSecondary + "55"} />
-                  </View>
-                ) : null}
-              </View>
-            );
-          })}
+          {pathGrid.map((rowSlots, rowIdx) => (
+            <View key={rowIdx} style={styles.gridRow}>
+              {rowSlots.map((cellIndex, colIdx) => {
+                if (cellIndex >= 0) {
+                  const isCurrent = isSetup && cellIndex === currentPosition;
+                  const isCompleted = isSetup && !isCurrent && (completedDates[cellIndex] != null || cellIndex < currentPosition);
+                  const isSpecialStamp = specialStamps.includes(cellIndex);
+                  return (
+                    <Cell
+                      key={colIdx}
+                      index={cellIndex}
+                      sessionType={getSessionType(cellIndex)}
+                      isCurrent={isCurrent}
+                      isCompleted={isCompleted}
+                      isSpecialStamp={isSpecialStamp}
+                      completedDate={completedDates[cellIndex]}
+                      direction={getCellArrowDir(cellIndex)}
+                      onPress={() => handleCellPress(cellIndex)}
+                      theme={theme}
+                    />
+                  );
+                }
+                return <DecoCell key={colIdx} row={rowIdx} col={colIdx} theme={theme} />;
+              })}
+            </View>
+          ))}
         </View>
 
         <View style={styles.legend}>
@@ -551,12 +610,12 @@ const styles = StyleSheet.create({
   skipBanner: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, padding: Spacing.md, borderRadius: BorderRadius.sm, borderWidth: 1, marginBottom: Spacing.lg },
   skipText: { fontSize: 13, fontFamily: "Nunito_600SemiBold", flex: 1 },
   gridWrapper: { marginBottom: Spacing.xl },
-  gridRow: { flexDirection: "row", alignItems: "center" },
-  cell: { borderRadius: BorderRadius.sm, borderWidth: 1.5, justifyContent: "center", alignItems: "center", gap: 1 },
+  gridRow: { flexDirection: "row" },
+  cell: { borderRadius: 6, borderWidth: 1.5, justifyContent: "center", alignItems: "center", gap: 1, position: "relative" },
   cellNumber: { fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 15 },
   cellDate: { fontFamily: "Nunito_400Regular", lineHeight: 12 },
-  arrowH: { width: ARROW_WIDTH, alignItems: "center", justifyContent: "center" },
-  arrowV: { height: 18, paddingHorizontal: 0, justifyContent: "center", width: "100%" },
+  cellArrow: { position: "absolute" },
+  decoCell: { justifyContent: "center", alignItems: "center", borderRadius: 6 },
   legend: { marginBottom: Spacing.xl },
   legendTitle: { fontSize: 11, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.sm, textTransform: "uppercase", letterSpacing: 0.5 },
   legendItems: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.md },
