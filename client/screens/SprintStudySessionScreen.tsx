@@ -64,6 +64,8 @@ export default function SprintStudySessionScreen() {
   const [completing, setCompleting] = useState(false);
   const [isPartialComplete, setIsPartialComplete] = useState(false);
   const [stampVisible, setStampVisible] = useState(false);
+  // Tracks whether we've already auto-saved this phase so we don't double-fire.
+  const autoSavedPhase = useRef<string | null>(null);
 
   const stampScale = useSharedValue(0);
   const stampOpacity = useSharedValue(0);
@@ -111,6 +113,21 @@ export default function SprintStudySessionScreen() {
   useEffect(() => {
     loadWords();
   }, [loadWords]);
+
+  // Auto-save the phase as soon as all words are finished.
+  // This guarantees the record is written even if the user presses the header
+  // back arrow instead of the completion button.
+  useEffect(() => {
+    if (phase !== "complete" || sessionMode === "review") return;
+    const key = `${sessionMode}-${cellIndex ?? "default"}`;
+    if (autoSavedPhase.current === key) return;
+    autoSavedPhase.current = key;
+    const phaseArg =
+      sessionMode === "text-only" ? "text" :
+      sessionMode === "audio-only" ? "audio" : "both";
+    completePhase(phaseArg, cellIndex);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   useEffect(() => {
     setIsRevealed(false);
