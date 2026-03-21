@@ -391,22 +391,6 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             <Feather name="chevron-right" size={18} color={phaseProgress.audio ? Colors.light.success : Colors.light.secondary} />
           </Pressable>
 
-          <Pressable
-            testID="modal-both-study"
-            onPress={() => onSelect("study")}
-            style={[styles.modalOption, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}
-          >
-            <View style={[styles.modalOptionIcon, { backgroundColor: theme.border + "40" }]}>
-              <Feather name="layers" size={22} color={theme.textSecondary} />
-            </View>
-            <View style={styles.modalOptionText}>
-              <ThemedText style={[styles.modalOptionTitle, { color: theme.text }]}>両方やる</ThemedText>
-              <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
-                文字 → 音声の順に一気に学習
-              </ThemedText>
-            </View>
-            <Feather name="chevron-right" size={18} color={theme.textSecondary} />
-          </Pressable>
         </Pressable>
       </Pressable>
     </Modal>

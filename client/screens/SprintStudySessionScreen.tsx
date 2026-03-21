@@ -220,13 +220,6 @@ export default function SprintStudySessionScreen() {
               スタンプは{nextPhase}も完了すると獲得できます
             </ThemedText>
           </View>
-          <Button
-            testID="button-session-partial-back"
-            onPress={() => navigation.navigate("SprintHome")}
-            style={styles.completeButton}
-          >
-            マップに戻る
-          </Button>
         </Animated.View>
       </ThemedView>
     );
@@ -300,7 +293,7 @@ export default function SprintStudySessionScreen() {
             disabled={completing}
             style={styles.completeButton}
           >
-            {completing ? "保存中..." : willGetStamp ? "スタンプをもらう" : "マップに戻る"}
+            {completing ? "保存中..." : willGetStamp ? "スタンプをもらう" : "完了"}
           </Button>
           {sessionMode === "text-only" && !savedProgress.audio ? (
             <Pressable
