@@ -26,10 +26,10 @@ import { getWords, initializeData } from "@/lib/storage";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-const TIME_OPTIONS = [
-  { label: "15分", minutes: 15, description: "約10単語/日" },
-  { label: "30分", minutes: 30, description: "約20単語/日" },
-  { label: "45分", minutes: 45, description: "約30単語/日" },
+const WORD_OPTIONS = [
+  { label: "20語", words: 20, description: "初級・コツコツペース" },
+  { label: "30語", words: 30, description: "標準ペース" },
+  { label: "50語", words: 50, description: "集中ペース" },
 ];
 
 export default function SprintSetupScreen() {
@@ -39,7 +39,7 @@ export default function SprintSetupScreen() {
   const { theme } = useTheme();
   const { setupSprint } = useSprint();
 
-  const [selectedMinutes, setSelectedMinutes] = useState<number | null>(null);
+  const [selectedWords, setSelectedWords] = useState<number | null>(null);
   const [customInput, setCustomInput] = useState("");
   const [showCustom, setShowCustom] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -51,34 +51,33 @@ export default function SprintSetupScreen() {
     );
   }, []);
 
-  const handleSelectPreset = (minutes: number) => {
+  const handleSelectPreset = (words: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedMinutes(minutes);
+    setSelectedWords(words);
     setShowCustom(false);
   };
 
   const handleSelectCustom = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setSelectedMinutes(null);
+    setSelectedWords(null);
     setShowCustom(true);
   };
 
-  const effectiveMinutes = showCustom
-    ? parseInt(customInput, 10) || 0
-    : selectedMinutes || 0;
+  const wordsPerDay = showCustom
+    ? Math.max(5, parseInt(customInput, 10) || 0)
+    : selectedWords || 0;
 
-  const wordsPerDay = Math.max(5, Math.floor(effectiveMinutes * (2 / 3)));
   const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
   const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
   const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / N));
   const expectedCells = 1 + fullCycles * (N + 1);
-  const canStart = effectiveMinutes >= 5;
+  const canStart = wordsPerDay >= 5;
 
   const handleStart = async () => {
     if (!canStart) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
-    await setupSprint(effectiveMinutes, totalWords);
+    await setupSprint(wordsPerDay, totalWords);
     setLoading(false);
     navigation.goBack();
   };
@@ -103,23 +102,23 @@ export default function SprintSetupScreen() {
             </View>
             <ThemedText style={styles.title}>スプリント設定</ThemedText>
             <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
-              1日の勉強時間を選択してください。{"\n"}
-              学習量が自動で決まります。
+              1日で覚える語数を選択してください。{"\n"}
+              学習マスが自動で作られます。
             </ThemedText>
           </View>
 
           <ThemedText style={[styles.sectionLabel, { color: theme.textSecondary }]}>
-            勉強時間を選ぶ
+            1日で覚える語数を選ぶ
           </ThemedText>
 
           <View style={styles.optionsContainer}>
-            {TIME_OPTIONS.map((opt) => {
-              const isSelected = !showCustom && selectedMinutes === opt.minutes;
+            {WORD_OPTIONS.map((opt) => {
+              const isSelected = !showCustom && selectedWords === opt.words;
               return (
                 <Pressable
-                  key={opt.minutes}
-                  testID={`button-time-${opt.minutes}`}
-                  onPress={() => handleSelectPreset(opt.minutes)}
+                  key={opt.words}
+                  testID={`button-words-${opt.words}`}
+                  onPress={() => handleSelectPreset(opt.words)}
                   style={[
                     styles.optionCard,
                     {
@@ -198,14 +197,14 @@ export default function SprintSetupScreen() {
               <TextInput
                 testID="input-custom-minutes"
                 style={[styles.customInput, { color: theme.text }]}
-                placeholder="分数を入力 (例: 20)"
+                placeholder="語数を入力 (例: 40)"
                 placeholderTextColor={theme.textSecondary}
                 keyboardType="number-pad"
                 value={customInput}
                 onChangeText={setCustomInput}
                 autoFocus
               />
-              <ThemedText style={[styles.customUnit, { color: theme.textSecondary }]}>分</ThemedText>
+              <ThemedText style={[styles.customUnit, { color: theme.textSecondary }]}>語</ThemedText>
             </View>
           ) : null}
 
@@ -219,7 +218,7 @@ export default function SprintSetupScreen() {
               <View style={styles.summaryRow}>
                 <Feather name="book-open" size={16} color={theme.primary} />
                 <ThemedText style={[styles.summaryText, { color: theme.primary }]}>
-                  1日の学習単語: {wordsPerDay}語
+                  1日の学習語数: {wordsPerDay}語
                 </ThemedText>
               </View>
               <View style={styles.summaryRow}>

@@ -73,7 +73,7 @@ interface SprintContextType {
   sprintData: SprintData | null;
   loading: boolean;
   loadSprint: () => Promise<void>;
-  setupSprint: (minutes: number, totalWords?: number) => Promise<void>;
+  setupSprint: (wordsPerDay: number, totalWords?: number) => Promise<void>;
   completeSession: (isSpecial?: boolean) => Promise<void>;
   completePhase: (phase: "text" | "audio" | "both", targetCell?: number) => Promise<boolean>;
   skipSession: () => Promise<void>;
@@ -120,13 +120,12 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  const setupSprint = useCallback(async (minutes: number, totalWords: number = 150) => {
-    const wordsPerDay = calcWordsPerDay(minutes);
+  const setupSprint = useCallback(async (wordsPerDay: number, totalWords: number = 150) => {
     const totalCells = calcTotalCells(totalWords, wordsPerDay);
     const today = getTodayString();
     const newData: SprintData = {
       hasSetup: true,
-      studyMinutes: minutes,
+      studyMinutes: Math.round(wordsPerDay * 1.5),
       wordsPerDay,
       reviewCount: 0,
       currentPosition: 1,

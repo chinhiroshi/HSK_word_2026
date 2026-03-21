@@ -499,6 +499,16 @@ export default function SprintStudySessionScreen() {
                     <View style={styles.wordInfoCol}>
                       <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
                       <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
+                      {item.exampleSentence ? (
+                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={2}>
+                          {item.exampleSentence}
+                        </ThemedText>
+                      ) : null}
+                      {item.exampleTranslation ? (
+                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary, fontSize: 11 }]} numberOfLines={2}>
+                          {item.exampleTranslation}
+                        </ThemedText>
+                      ) : null}
                     </View>
                   ) : (
                     <View style={{ flex: 1 }} />
