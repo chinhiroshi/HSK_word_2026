@@ -653,34 +653,46 @@ export default function SprintStudySessionScreen() {
 
         {/* Progressive choice buttons */}
         {revealLevel < 2 ? (
-          <View style={styles.choiceButtons}>
+          <View style={styles.choiceButtonsWrapper}>
+            <View style={styles.choiceButtons}>
+              <Pressable
+                testID="button-memorized"
+                onPress={() => handleCardChoice("memorized")}
+                style={[
+                  styles.choiceButton,
+                  { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
+                ]}
+              >
+                <Feather name="check" size={20} color={Colors.light.success} />
+                <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
+                  覚えた
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                testID="button-reveal-next"
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setRevealLevel((prev) => (prev < 2 ? ((prev + 1) as RevealLevel) : 2));
+                }}
+                style={[
+                  styles.choiceButton,
+                  { backgroundColor: Colors.light.alert + "10", borderColor: Colors.light.alert + "60" },
+                ]}
+              >
+                <Feather name="eye" size={20} color={Colors.light.alert} />
+                <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
+                  {revealLevel === 0 ? "文字を見る" : "意味を見る"}
+                </ThemedText>
+              </Pressable>
+            </View>
             <Pressable
-              testID="button-memorized"
-              onPress={() => handleCardChoice("memorized")}
-              style={[
-                styles.choiceButton,
-                { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
-              ]}
+              testID="button-unmemorized-early"
+              onPress={() => handleCardChoice("unmemorized")}
+              style={[styles.earlyUnmemorizedButton, { borderColor: theme.border, backgroundColor: theme.backgroundSecondary }]}
             >
-              <Feather name="check" size={20} color={Colors.light.success} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
-                覚えた
-              </ThemedText>
-            </Pressable>
-            <Pressable
-              testID="button-reveal-next"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setRevealLevel((prev) => (prev < 2 ? ((prev + 1) as RevealLevel) : 2));
-              }}
-              style={[
-                styles.choiceButton,
-                { backgroundColor: Colors.light.alert + "10", borderColor: Colors.light.alert + "60" },
-              ]}
-            >
-              <Feather name="eye" size={20} color={Colors.light.alert} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
-                {revealLevel === 0 ? "文字を見る" : "意味を見る"}
+              <Feather name="flag" size={14} color={theme.textSecondary} />
+              <ThemedText style={[styles.earlyUnmemorizedLabel, { color: theme.textSecondary }]}>
+                初めから覚えていない
               </ThemedText>
             </Pressable>
           </View>
@@ -944,9 +956,21 @@ const styles = StyleSheet.create({
   audioHiddenContent: { alignItems: "center", justifyContent: "center", gap: Spacing.lg, paddingVertical: Spacing.xl },
   audioIconContainer: { width: 90, height: 90, borderRadius: 45, justifyContent: "center", alignItems: "center" },
   audioPrompt: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
+  choiceButtonsWrapper: { gap: Spacing.sm },
   choiceButtons: { flexDirection: "row", gap: Spacing.md },
   choiceButton: { flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: Spacing.sm, padding: Spacing.lg, borderRadius: BorderRadius.lg, borderWidth: 2, minHeight: 80 },
   choiceLabel: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  earlyUnmemorizedButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  earlyUnmemorizedLabel: { fontSize: 13, fontFamily: "Nunito_400Regular" },
   stampOverlay: {
     position: "absolute",
     top: 0, left: 0, right: 0, bottom: 0,
