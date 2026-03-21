@@ -40,8 +40,7 @@ import { PlantIcon } from "@/components/SprintCellIcons";
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-// text-cards removed: flow is now text-list → audio-list → audio-cards → complete
-type Phase = "text-list" | "text-review" | "audio-list" | "audio-review" | "audio-cards" | "complete";
+type Phase = "text-list" | "text-review" | "audio-cards" | "complete";
 // 0 = audio only, 1 = kanji revealed, 2 = meaning revealed
 type RevealLevel = 0 | 1 | 2;
 type ListFilter = "all" | "memorized" | "unmemorized" | "struggled";
@@ -59,8 +58,7 @@ export default function SprintStudySessionScreen() {
   const cellIndex = route.params?.cellIndex;
 
   const initialPhase: Phase =
-    sessionMode === "audio-cards-only" ? "audio-cards" :
-    sessionMode === "audio-only" ? "audio-list" :
+    sessionMode === "audio-cards-only" || sessionMode === "audio-only" ? "audio-cards" :
     "text-list";
 
   const [phase, setPhase] = useState<Phase>(initialPhase);
@@ -71,7 +69,8 @@ export default function SprintStudySessionScreen() {
   const [textChoices, setTextChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [audioChoices, setAudioChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
-  const [allRevealed, setAllRevealed] = useState(false);
+  const [allRevealed, setAllRevealed] = useState(false); // true = hide Chinese characters in text-list
+  const [translationRevealedIds, setTranslationRevealedIds] = useState<Set<string>>(new Set());
   const [listFilter, setListFilter] = useState<ListFilter>("all");
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
@@ -103,15 +102,11 @@ export default function SprintStudySessionScreen() {
     );
   };
 
-  const isAudioPhase = phase === "audio-list" || phase === "audio-review" || phase === "audio-cards";
-  const choices = isAudioPhase ? audioChoices : textChoices;
+  const isAudioPhase = phase === "audio-cards";
 
   const currentCardWord = cardWords[currentIndex] ?? null;
   const cardProgress = cardWords.length > 0 ? (currentIndex / cardWords.length) * 100 : 0;
 
-  // Study = text-list + audio-list+cards; audio-only / text-only = just one phase
-  const phaseTotal = sessionMode === "study" ? 2 : 1;
-  const phaseNum = isAudioPhase && sessionMode === "study" ? 2 : 1;
   const badgeLabel = isAudioPhase ? "音声学習" : "文字学習";
   const badgeColor = isAudioPhase ? Colors.light.secondary : theme.primary;
   const badgeBg = isAudioPhase ? Colors.light.secondary + "20" : theme.primary + "20";
@@ -148,8 +143,7 @@ export default function SprintStudySessionScreen() {
     if (autoSavedPhase.current === key) return;
     autoSavedPhase.current = key;
     const phaseArg =
-      sessionMode === "text-only" ? "text" :
-      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "both";
+      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "text";
     completePhase(phaseArg, cellIndex);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -159,20 +153,21 @@ export default function SprintStudySessionScreen() {
     if (phase !== "audio-cards") return;
     setRevealLevel(0);
     if (!currentCardWord) return;
-    let cancelled = false;
     const speak = async () => {
-      await speakChinese(currentCardWord.word);
+      const text = currentCardWord.exampleSentence
+        ? `${currentCardWord.word}。${currentCardWord.exampleSentence}`
+        : currentCardWord.word;
+      await speakChinese(text);
     };
     speak();
     return () => {
-      cancelled = true;
       stopSpeaking().catch(() => {});
     };
   }, [currentIndex, phase]);
 
-  // Dynamic header: eye-off button for audio list
+  // Dynamic header: eye button for text-list → toggle hide Chinese characters
   useEffect(() => {
-    if (phase === "audio-list") {
+    if (phase === "text-list" || phase === "text-review") {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity
@@ -180,7 +175,7 @@ export default function SprintStudySessionScreen() {
             style={{ marginRight: 4, padding: 8 }}
           >
             <Feather
-              name={allRevealed ? "eye" : "eye-off"}
+              name={allRevealed ? "eye-off" : "eye"}
               size={22}
               color={theme.text}
             />
@@ -198,7 +193,6 @@ export default function SprintStudySessionScreen() {
         ? Haptics.ImpactFeedbackStyle.Light
         : Haptics.ImpactFeedbackStyle.Medium
     );
-    // Always use "audio" type for audio-list, "text" for text-list
     const type = isAudioPhase ? "audio" : "text";
     await (choice === "memorized"
       ? markAsMemorized(wordId, type)
@@ -211,41 +205,17 @@ export default function SprintStudySessionScreen() {
   };
 
   const handleListNext = () => {
-    const currentChoices = isAudioPhase ? audioChoices : textChoices;
-    const hasUnmemorized = words.some((w) => currentChoices[w.id] === "unmemorized");
+    const hasUnmemorized = words.some((w) => textChoices[w.id] === "unmemorized");
 
     if (phase === "text-list") {
-      // Enter text-review if any words are marked unmemorized
       if (hasUnmemorized) {
         setListFilter("unmemorized");
         setPhase("text-review");
-      } else if (sessionMode === "study") {
-        setAllRevealed(false);
-        setRevealedIds(new Set());
-        setListFilter("all");
-        setPhase("audio-list");
       } else {
         setPhase("complete");
       }
     } else if (phase === "text-review") {
-      // From text-review, proceed to audio-list or complete
-      setAllRevealed(false);
-      setRevealedIds(new Set());
       setListFilter("all");
-      if (sessionMode === "study") {
-        setPhase("audio-list");
-      } else {
-        setPhase("complete");
-      }
-    } else if (phase === "audio-list") {
-      // Enter audio-review if any words are marked unmemorized
-      if (hasUnmemorized) {
-        setListFilter("unmemorized");
-        setPhase("audio-review");
-      } else {
-        setPhase("complete");
-      }
-    } else if (phase === "audio-review") {
       setPhase("complete");
     }
   };
@@ -276,8 +246,7 @@ export default function SprintStudySessionScreen() {
   const handleComplete = async () => {
     setCompleting(true);
     const phaseArg =
-      sessionMode === "text-only" ? "text" :
-      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "both";
+      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "text";
     const advanced = await completePhase(phaseArg, cellIndex);
     setCompleting(false);
     if (advanced) {
@@ -407,36 +376,26 @@ export default function SprintStudySessionScreen() {
     );
   }
 
-  // ----- LIST PHASE (text-list, text-review, audio-list, audio-review) -----
-  const isReviewPhase = phase === "text-review" || phase === "audio-review";
-  if (phase === "text-list" || phase === "text-review" || phase === "audio-list" || phase === "audio-review") {
-    const memorizedInList = Object.values(choices).filter((v) => v === "memorized").length;
-    const unmemorizedInList = Object.values(choices).filter((v) => v === "unmemorized").length;
+  // ----- LIST PHASE (text-list, text-review) -----
+  const isReviewPhase = phase === "text-review";
+  if (phase === "text-list" || phase === "text-review") {
+    const memorizedInList = Object.values(textChoices).filter((v) => v === "memorized").length;
+    const unmemorizedInList = Object.values(textChoices).filter((v) => v === "unmemorized").length;
 
-    // "struggled" uses stored history counts per phase type
-    const struggledInList = words.filter((w) =>
-      isAudioPhase
-        ? (w.audioUnmemorizedCount ?? 0) > 0
-        : (w.textUnmemorizedCount ?? 0) > 0
-    ).length;
+    // "struggled" = words that had previous difficulty (stored count)
+    const struggledInList = words.filter((w) => (w.textUnmemorizedCount ?? 0) > 0).length;
 
-    const allMarked = words.every((w) => choices[w.id]);
-    const unmarkedCount = words.filter((w) => !choices[w.id]).length;
+    const allMarked = words.every((w) => textChoices[w.id]);
+    const unmarkedCount = words.filter((w) => !textChoices[w.id]).length;
 
     const filteredWords = words.filter((w) => {
-      if (listFilter === "memorized") return choices[w.id] === "memorized";
-      if (listFilter === "unmemorized") return choices[w.id] === "unmemorized";
-      if (listFilter === "struggled") {
-        return isAudioPhase
-          ? (w.audioUnmemorizedCount ?? 0) > 0
-          : (w.textUnmemorizedCount ?? 0) > 0;
-      }
+      if (listFilter === "memorized") return textChoices[w.id] === "memorized";
+      if (listFilter === "unmemorized") return textChoices[w.id] === "unmemorized";
+      if (listFilter === "struggled") return (w.textUnmemorizedCount ?? 0) > 0;
       return true;
     });
 
-    const nextButtonLabel = isReviewPhase
-      ? "完了"
-      : (phase === "text-list" && sessionMode === "study") ? "音声学習へ" : "完了";
+    const nextButtonLabel = "完了";
 
     return (
       <ThemedView style={styles.container}>
@@ -497,50 +456,50 @@ export default function SprintStudySessionScreen() {
           contentContainerStyle={{ paddingBottom: 90 + tabBarHeight }}
           renderItem={({ item }) => {
             const globalIdx = words.indexOf(item) + 1;
-            const choice = choices[item.id];
-            const isMemorized = choice === "memorized";
-            const isUnmemorized = choice === "unmemorized";
+            const textChoice = textChoices[item.id];
+            const isMemorized = textChoice === "memorized";
+            const isUnmemorized = textChoice === "unmemorized";
+            const isTranslationRevealed = translationRevealedIds.has(item.id);
+            const charsHidden = allRevealed; // allRevealed = "hide characters" toggle
+            const speakText = item.exampleSentence
+              ? `${item.word}。${item.exampleSentence}`
+              : item.word;
 
-            if (phase === "audio-list") {
-              const isWordRevealed = allRevealed || revealedIds.has(item.id);
-              return (
-                <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isMemorized ? Colors.light.success + "14" : theme.backgroundDefault }]}>
+            return (
+              <View style={[styles.wordRow, styles.wordRowVertical, { borderBottomColor: theme.border, backgroundColor: isMemorized ? Colors.light.success + "14" : theme.backgroundDefault }]}>
+                {/* Top row: num + word info + actions */}
+                <View style={styles.wordRowMain}>
                   <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
                     <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
                       {globalIdx}
                     </ThemedText>
                   </View>
-                  <Pressable
-                    onPress={() => speakChinese(item.word)}
-                    style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
-                  >
-                    <Feather name="volume-2" size={20} color="#fff" />
-                  </Pressable>
-                  {isWordRevealed ? (
-                    <View style={styles.wordInfoCol}>
-                      <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
+                  <View style={styles.wordInfoCol}>
+                    <View style={styles.wordRowHeaderLine}>
+                      {charsHidden ? (
+                        <ThemedText style={[styles.wordRowText, { color: theme.textSecondary, letterSpacing: 4 }]}>{"●●●"}</ThemedText>
+                      ) : (
+                        <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
+                      )}
                       <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
+                      <SpeakButton text={speakText} size="small" />
                     </View>
-                  ) : (
-                    <View style={{ flex: 1 }} />
-                  )}
+                    {item.exampleSentence ? (
+                      <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={2}>
+                        {item.exampleSentence}
+                      </ThemedText>
+                    ) : null}
+                  </View>
                   <View style={styles.rowActions}>
                     <Pressable
-                      onPress={() => {
-                        setRevealedIds((prev) => {
-                          const next = new Set(prev);
-                          if (next.has(item.id)) next.delete(item.id);
-                          else next.add(item.id);
-                          return next;
-                        });
-                      }}
+                      onPress={() => setTranslationRevealedIds((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(item.id)) next.delete(item.id); else next.add(item.id);
+                        return next;
+                      })}
                       style={styles.actionIconBtn}
                     >
-                      <Feather
-                        name={isWordRevealed ? "eye" : "eye-off"}
-                        size={18}
-                        color={isWordRevealed ? theme.primary : theme.textSecondary}
-                      />
+                      <Feather name={isTranslationRevealed ? "eye" : "eye-off"} size={18} color={isTranslationRevealed ? theme.primary : theme.textSecondary} />
                     </Pressable>
                     <Pressable onPress={() => handleChoiceList(item.id, "unmemorized")} style={styles.actionIconBtn}>
                       <Feather name="flag" size={18} color={isUnmemorized ? Colors.light.alert : theme.textSecondary} />
@@ -549,49 +508,21 @@ export default function SprintStudySessionScreen() {
                       onPress={() => handleChoiceList(item.id, "memorized")}
                       style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
                     >
-                      <Feather
-                        name="check"
-                        size={18}
-                        color={isMemorized ? "#fff" : theme.textSecondary}
-                      />
+                      <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
                     </Pressable>
                   </View>
                 </View>
-              );
-            }
-
-            // text-list
-            return (
-              <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isMemorized ? Colors.light.success + "14" : theme.backgroundDefault }]}>
-                <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
-                  <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
-                    {globalIdx}
-                  </ThemedText>
-                </View>
-                <View style={styles.wordInfoCol}>
-                  <View style={styles.wordRowHeaderLine}>
-                    <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
-                    <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
-                    <SpeakButton text={item.word} size="small" />
+                {/* Translation row (revealed on demand) */}
+                {isTranslationRevealed ? (
+                  <View style={[styles.translationRow, { borderTopColor: theme.border + "60" }]}>
+                    <ThemedText style={[styles.listTranslationText, { color: theme.text }]}>{item.translation}</ThemedText>
+                    {item.exampleTranslation ? (
+                      <ThemedText style={[styles.listTranslationExample, { color: theme.textSecondary }]}>
+                        {item.exampleTranslation}
+                      </ThemedText>
+                    ) : null}
                   </View>
-                  {item.exampleSentence ? (
-                    <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={1}>
-                      {item.exampleSentence}
-                    </ThemedText>
-                  ) : null}
-                </View>
-                <View style={styles.rowActions}>
-                  <Pressable onPress={() => handleChoiceList(item.id, "unmemorized")} style={styles.actionIconBtn}>
-                    <Feather name="flag" size={18} color={isUnmemorized ? Colors.light.alert : theme.textSecondary} />
-                  </Pressable>
-                  <Pressable
-                    onPress={() => handleChoiceList(item.id, "memorized")}
-                    style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
-                  >
-                    <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
-                  </Pressable>
-                  <Feather name="chevron-right" size={16} color={theme.textSecondary} />
-                </View>
+                ) : null}
               </View>
             );
           }}
@@ -661,11 +592,6 @@ export default function SprintStudySessionScreen() {
                 {badgeLabel}
               </ThemedText>
             </View>
-            {sessionMode === "study" ? (
-              <ThemedText style={[styles.phaseStep, { color: theme.textSecondary }]}>
-                {phaseNum}/{phaseTotal}
-              </ThemedText>
-            ) : null}
           </View>
           <ThemedText style={[styles.progress, { color: theme.textSecondary }]}>
             {currentIndex + 1} / {cardWords.length}
@@ -961,6 +887,24 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.success,
     borderRadius: 20,
   },
+  wordRowVertical: {
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: 0,
+  },
+  wordRowMain: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  translationRow: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    gap: 2,
+  },
+  listTranslationText: { fontSize: 14, fontFamily: "Nunito_700Bold" },
+  listTranslationExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
 
   // Review banner
   reviewBanner: {
