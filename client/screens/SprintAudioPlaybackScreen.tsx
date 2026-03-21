@@ -24,9 +24,7 @@ export default function SprintAudioPlaybackScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { getStudyWords } = useSprint();
-
-  const cellIndex = route.params?.cellIndex;
+  const { getTodayStudyWords } = useSprint();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,11 +38,11 @@ export default function SprintAudioPlaybackScreen() {
   const loadWords = useCallback(async () => {
     await initializeData();
     const all = await getWords();
-    const study = getStudyWords(all, cellIndex);
-    const unmemorized = study.filter((w) => !w.audioMemorized);
+    const todayWords = getTodayStudyWords(all);
+    const unmemorized = todayWords.filter((w) => !w.audioMemorized);
     setWords(unmemorized);
     setLoading(false);
-  }, [cellIndex, getStudyWords]);
+  }, [getTodayStudyWords]);
 
   useEffect(() => {
     loadWords();
@@ -139,8 +137,8 @@ export default function SprintAudioPlaybackScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     await markAsUnmemorized(word.id, "audio");
     const all = await getWords();
-    const study = getStudyWords(all, cellIndex);
-    const unmemorized = study.filter((w) => !w.audioMemorized);
+    const todayWords = getTodayStudyWords(all);
+    const unmemorized = todayWords.filter((w) => !w.audioMemorized);
     setWords(unmemorized);
   };
 
@@ -164,7 +162,7 @@ export default function SprintAudioPlaybackScreen() {
           <Feather name="check-circle" size={56} color={Colors.light.success} />
           <ThemedText style={styles.emptyTitle}>再生できる単語がありません</ThemedText>
           <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-            このセッションの単語がすでに覚えられています。
+            今日の単語がすべて音声暗記済みです。
           </ThemedText>
         </View>
       </ThemedView>
@@ -218,7 +216,7 @@ export default function SprintAudioPlaybackScreen() {
             <View style={styles.readyState}>
               <Feather name="headphones" size={48} color={theme.textSecondary} />
               <ThemedText style={[styles.readyText, { color: theme.textSecondary }]}>
-                このマスの音声未暗記 {words.length}語を連続再生します
+                今日の音声未暗記 {words.length}語を連続再生します
               </ThemedText>
               <ThemedText style={[styles.readySubText, { color: theme.textSecondary }]}>
                 中国語→日本語訳→例文×4→英語の順で再生

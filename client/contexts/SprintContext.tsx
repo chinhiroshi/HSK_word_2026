@@ -82,6 +82,7 @@ interface SprintContextType {
   canSkipCurrentSession: (words: Word[]) => boolean;
   getStudyWords: (words: Word[], cellIndex?: number) => Word[];
   getTestWords: (words: Word[]) => Word[];
+  getTodayStudyWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean };
   totalCells: number;
 }
@@ -99,6 +100,7 @@ const SprintContext = createContext<SprintContextType>({
   canSkipCurrentSession: () => false,
   getStudyWords: () => [],
   getTestWords: () => [],
+  getTodayStudyWords: () => [],
   getCellPhaseProgress: () => ({ text: false, audio: false }),
   totalCells: DEFAULT_TOTAL_CELLS,
 });
@@ -336,6 +338,49 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
+  const getTodayStudyWords = useCallback(
+    (words: Word[]): Word[] => {
+      if (!sprintData || words.length === 0) return [];
+      const today = getTodayString();
+      const completedDates = sprintData.completedDates ?? {};
+      const wPD = sprintData.wordsPerDay;
+      const seen = new Set<string>();
+      const result: Word[] = [];
+
+      const addCellWords = (pos: number) => {
+        const studyIdx = getStudyWordOffsetForCell(pos, wPD);
+        const wordOffset = (studyIdx * wPD) % Math.max(1, words.length);
+        const cellWords = getSessionWords(words, wordOffset, wPD);
+        for (const w of cellWords) {
+          if (!seen.has(w.id)) {
+            seen.add(w.id);
+            result.push(w);
+          }
+        }
+      };
+
+      // All study cells completed today
+      for (const posStr of Object.keys(completedDates)) {
+        const pos = Number(posStr);
+        if (completedDates[pos] === today && getSessionType(pos, wPD) === "study") {
+          addCellWords(pos);
+        }
+      }
+
+      // Current cell if it's a study cell and not yet completed today
+      const currentPos = sprintData.currentPosition;
+      if (
+        getSessionType(currentPos, wPD) === "study" &&
+        completedDates[currentPos] !== today
+      ) {
+        addCellWords(currentPos);
+      }
+
+      return result;
+    },
+    [sprintData]
+  );
+
   const getCellPhaseProgress = useCallback(
     (position: number): { text: boolean; audio: boolean } => {
       if (!sprintData) return { text: false, audio: false };
@@ -359,6 +404,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         canSkipCurrentSession,
         getStudyWords,
         getTestWords,
+        getTodayStudyWords,
         getCellPhaseProgress,
         totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,
       }}

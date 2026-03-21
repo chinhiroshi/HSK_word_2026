@@ -41,7 +41,7 @@ type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
 // text-cards removed: flow is now text-list → audio-list → audio-cards → complete
-type Phase = "text-list" | "audio-list" | "audio-cards" | "complete";
+type Phase = "text-list" | "text-review" | "audio-list" | "audio-review" | "audio-cards" | "complete";
 // 0 = audio only, 1 = kanji revealed, 2 = meaning revealed
 type RevealLevel = 0 | 1 | 2;
 type ListFilter = "all" | "memorized" | "unmemorized" | "struggled";
@@ -103,7 +103,7 @@ export default function SprintStudySessionScreen() {
     );
   };
 
-  const isAudioPhase = phase === "audio-list" || phase === "audio-cards";
+  const isAudioPhase = phase === "audio-list" || phase === "audio-review" || phase === "audio-cards";
   const choices = isAudioPhase ? audioChoices : textChoices;
 
   const currentCardWord = cardWords[currentIndex] ?? null;
@@ -210,22 +210,25 @@ export default function SprintStudySessionScreen() {
     }
   };
 
-  const handleListNext = async () => {
-    // Auto-mark any un-touched words as memorized
-    const type = isAudioPhase ? "audio" : "text";
+  const handleListNext = () => {
     const currentChoices = isAudioPhase ? audioChoices : textChoices;
-    const unmarked = words.filter((w) => !currentChoices[w.id]);
-    if (unmarked.length > 0) {
-      await Promise.all(unmarked.map((w) => markAsMemorized(w.id, type)));
-      const autoMarked = Object.fromEntries(unmarked.map((w) => [w.id, "memorized" as const]));
-      if (isAudioPhase) {
-        setAudioChoices((prev) => ({ ...prev, ...autoMarked }));
-      } else {
-        setTextChoices((prev) => ({ ...prev, ...autoMarked }));
-      }
-    }
+    const hasUnmemorized = words.some((w) => currentChoices[w.id] === "unmemorized");
 
     if (phase === "text-list") {
+      // Enter text-review if any words are marked unmemorized
+      if (hasUnmemorized) {
+        setListFilter("unmemorized");
+        setPhase("text-review");
+      } else if (sessionMode === "study") {
+        setAllRevealed(false);
+        setRevealedIds(new Set());
+        setListFilter("all");
+        setPhase("audio-list");
+      } else {
+        setPhase("complete");
+      }
+    } else if (phase === "text-review") {
+      // From text-review, proceed to audio-list or complete
       setAllRevealed(false);
       setRevealedIds(new Set());
       setListFilter("all");
@@ -235,6 +238,14 @@ export default function SprintStudySessionScreen() {
         setPhase("complete");
       }
     } else if (phase === "audio-list") {
+      // Enter audio-review if any words are marked unmemorized
+      if (hasUnmemorized) {
+        setListFilter("unmemorized");
+        setPhase("audio-review");
+      } else {
+        setPhase("complete");
+      }
+    } else if (phase === "audio-review") {
       setPhase("complete");
     }
   };
@@ -396,35 +407,51 @@ export default function SprintStudySessionScreen() {
     );
   }
 
-  // ----- LIST PHASE (text-list or audio-list) -----
-  if (phase === "text-list" || phase === "audio-list") {
+  // ----- LIST PHASE (text-list, text-review, audio-list, audio-review) -----
+  const isReviewPhase = phase === "text-review" || phase === "audio-review";
+  if (phase === "text-list" || phase === "text-review" || phase === "audio-list" || phase === "audio-review") {
     const memorizedInList = Object.values(choices).filter((v) => v === "memorized").length;
     const unmemorizedInList = Object.values(choices).filter((v) => v === "unmemorized").length;
 
     // "struggled" uses stored history counts per phase type
     const struggledInList = words.filter((w) =>
-      phase === "audio-list"
+      isAudioPhase
         ? (w.audioUnmemorizedCount ?? 0) > 0
         : (w.textUnmemorizedCount ?? 0) > 0
     ).length;
+
+    const allMarked = words.every((w) => choices[w.id]);
+    const unmarkedCount = words.filter((w) => !choices[w.id]).length;
 
     const filteredWords = words.filter((w) => {
       if (listFilter === "memorized") return choices[w.id] === "memorized";
       if (listFilter === "unmemorized") return choices[w.id] === "unmemorized";
       if (listFilter === "struggled") {
-        return phase === "audio-list"
+        return isAudioPhase
           ? (w.audioUnmemorizedCount ?? 0) > 0
           : (w.textUnmemorizedCount ?? 0) > 0;
       }
       return true;
     });
 
-    const nextButtonLabel = (phase === "text-list" && sessionMode === "study") ? "音声学習へ" : "完了";
+    const nextButtonLabel = isReviewPhase
+      ? "完了"
+      : (phase === "text-list" && sessionMode === "study") ? "音声学習へ" : "完了";
 
     return (
       <ThemedView style={styles.container}>
+        {/* Review phase banner */}
+        {isReviewPhase ? (
+          <View style={[styles.reviewBanner, { backgroundColor: Colors.light.alert + "18", borderBottomColor: Colors.light.alert + "40", paddingTop: headerHeight + Spacing.sm }]}>
+            <Feather name="alert-circle" size={14} color={Colors.light.alert} />
+            <ThemedText style={[styles.reviewBannerText, { color: Colors.light.alert }]}>
+              {"まだの単語を再確認してください。準備ができたら完了を押してください。"}
+            </ThemedText>
+          </View>
+        ) : null}
+
         {/* Filter tabs */}
-        <View style={[styles.filterRow, { paddingTop: headerHeight + Spacing.md, borderBottomColor: theme.border }]}>
+        <View style={[styles.filterRow, { paddingTop: isReviewPhase ? Spacing.md : headerHeight + Spacing.md, borderBottomColor: theme.border }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRowContent}>
             <Pressable
               onPress={() => setListFilter("all")}
@@ -572,9 +599,23 @@ export default function SprintStudySessionScreen() {
 
         {/* Next button */}
         <View style={[styles.listNextBar, { bottom: tabBarHeight, paddingBottom: Spacing.md, borderTopColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
-          <Button testID="button-list-next" onPress={handleListNext} style={{ flex: 1 }}>
-            {nextButtonLabel}
-          </Button>
+          {!isReviewPhase && !allMarked ? (
+            <View style={styles.listNextBarInner}>
+              <View style={[styles.unmarkedHint, { backgroundColor: theme.backgroundSecondary }]}>
+                <Feather name="info" size={13} color={theme.textSecondary} />
+                <ThemedText style={[styles.unmarkedHintText, { color: theme.textSecondary }]}>
+                  {`あと ${unmarkedCount} 語を判定してください`}
+                </ThemedText>
+              </View>
+              <Button testID="button-list-next" onPress={handleListNext} style={{ flex: 1 }} disabled>
+                {nextButtonLabel}
+              </Button>
+            </View>
+          ) : (
+            <Button testID="button-list-next" onPress={handleListNext} style={{ flex: 1 }}>
+              {nextButtonLabel}
+            </Button>
+          )}
         </View>
       </ThemedView>
     );
@@ -921,16 +962,47 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 
+  // Review banner
+  reviewBanner: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.sm,
+    borderBottomWidth: 1,
+  },
+  reviewBannerText: {
+    flex: 1,
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    lineHeight: 18,
+  },
+
   // List next button bar
   listNextBar: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: "row",
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
+  },
+  listNextBarInner: {
+    gap: Spacing.xs,
+  },
+  unmarkedHint: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    alignSelf: "center",
+  },
+  unmarkedHintText: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
   },
 
   // Card phase
