@@ -32,15 +32,27 @@ export default function SprintAudioPlaybackScreen() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentPhase, setCurrentPhase] = useState("");
   const [playbackRate] = useState(1.0);
+  const [isTextStruggleMode, setIsTextStruggleMode] = useState(false);
 
   const isCancelledRef = useRef(false);
+
+  // 文字学習で苦手フラグが立った単語を優先。なければ音声未暗記単語全体。
+  const applyPlaybackFilter = (todayWords: Word[]) => {
+    const textStruggled = todayWords.filter((w) => (w.textUnmemorizedCount ?? 0) > 0);
+    if (textStruggled.length > 0) {
+      setIsTextStruggleMode(true);
+      setWords(textStruggled);
+    } else {
+      setIsTextStruggleMode(false);
+      setWords(todayWords.filter((w) => !w.audioMemorized));
+    }
+  };
 
   const loadWords = useCallback(async () => {
     await initializeData();
     const all = await getWords();
     const todayWords = getTodayStudyWords(all);
-    const unmemorized = todayWords.filter((w) => !w.audioMemorized);
-    setWords(unmemorized);
+    applyPlaybackFilter(todayWords);
     setLoading(false);
   }, [getTodayStudyWords]);
 
@@ -138,8 +150,7 @@ export default function SprintAudioPlaybackScreen() {
     await markAsUnmemorized(word.id, "audio");
     const all = await getWords();
     const todayWords = getTodayStudyWords(all);
-    const unmemorized = todayWords.filter((w) => !w.audioMemorized);
-    setWords(unmemorized);
+    applyPlaybackFilter(todayWords);
   };
 
   const currentWord = words[currentWordIndex];
@@ -185,6 +196,16 @@ export default function SprintAudioPlaybackScreen() {
             </View>
             <ThemedText style={[styles.wordCount, { color: theme.textSecondary }]}>
               {words.length}語
+            </ThemedText>
+          </View>
+          <View style={[styles.filterBadge, { backgroundColor: isTextStruggleMode ? Colors.light.alert + "18" : theme.backgroundSecondary }]}>
+            <Feather
+              name={isTextStruggleMode ? "flag" : "book"}
+              size={12}
+              color={isTextStruggleMode ? Colors.light.alert : theme.textSecondary}
+            />
+            <ThemedText style={[styles.filterBadgeText, { color: isTextStruggleMode ? Colors.light.alert : theme.textSecondary }]}>
+              {isTextStruggleMode ? "文字学習の苦手単語" : "音声未暗記単語"}
             </ThemedText>
           </View>
 
@@ -297,6 +318,8 @@ const styles = StyleSheet.create({
   cardHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   badge: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: Spacing.md, paddingVertical: 4, borderRadius: BorderRadius.full },
   badgeText: { fontSize: 13, fontFamily: "Nunito_600SemiBold" },
+  filterBadge: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.full, alignSelf: "flex-start", marginBottom: Spacing.sm },
+  filterBadgeText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
   wordCount: { fontSize: 13, fontFamily: "Nunito_400Regular" },
   nowPlaying: { flexDirection: "row", gap: Spacing.md, alignItems: "center" },
   playingIcon: { width: 44, height: 44, borderRadius: 22, justifyContent: "center", alignItems: "center" },
