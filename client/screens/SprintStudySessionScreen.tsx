@@ -304,14 +304,16 @@ export default function SprintStudySessionScreen() {
               <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>覚えていない</ThemedText>
             </View>
           </View>
-          <Button
-            testID="button-session-complete"
-            onPress={handleComplete}
-            disabled={completing}
-            style={styles.completeButton}
-          >
-            {completing ? "保存中..." : willGetStamp ? "スタンプをもらう" : "完了"}
-          </Button>
+          {willGetStamp ? (
+            <Button
+              testID="button-session-complete"
+              onPress={handleComplete}
+              disabled={completing}
+              style={styles.completeButton}
+            >
+              {completing ? "保存中..." : "スタンプをもらう"}
+            </Button>
+          ) : null}
           {sessionMode === "text-only" && !savedProgress.audio ? (
             <Pressable
               testID="button-start-audio-study"
