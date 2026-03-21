@@ -59,4 +59,5 @@ export interface SprintData {
   setupDate: string | null;
   completedDates: Record<number, string>;
   cellPhaseProgress?: Record<number, { text: boolean; audio: boolean }>;
+  totalCells?: number;
 }

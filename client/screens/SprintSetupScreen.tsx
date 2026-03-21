@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -22,6 +22,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
+import { getWords, initializeData } from "@/lib/storage";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
@@ -42,6 +43,13 @@ export default function SprintSetupScreen() {
   const [customInput, setCustomInput] = useState("");
   const [showCustom, setShowCustom] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [totalWords, setTotalWords] = useState(150);
+
+  useEffect(() => {
+    initializeData().then(() =>
+      getWords().then((ws) => setTotalWords(Math.max(1, ws.length)))
+    );
+  }, []);
 
   const handleSelectPreset = (minutes: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -61,13 +69,16 @@ export default function SprintSetupScreen() {
 
   const wordsPerDay = Math.max(5, Math.floor(effectiveMinutes * (2 / 3)));
   const reviewCount = Math.max(3, Math.floor(wordsPerDay / 3));
+  const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
+  const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / 4));
+  const expectedCells = 1 + fullCycles * 7;
   const canStart = effectiveMinutes >= 5;
 
   const handleStart = async () => {
     if (!canStart) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
-    await setupSprint(effectiveMinutes);
+    await setupSprint(effectiveMinutes, totalWords);
     setLoading(false);
     navigation.goBack();
   };
@@ -221,6 +232,12 @@ export default function SprintSetupScreen() {
                 <Feather name="calendar" size={16} color={theme.primary} />
                 <ThemedText style={[styles.summaryText, { color: theme.primary }]}>
                   7日サイクル: 学習×4 + 復習×2 + テスト×1
+                </ThemedText>
+              </View>
+              <View style={styles.summaryRow}>
+                <Feather name="map" size={16} color={theme.primary} />
+                <ThemedText style={[styles.summaryText, { color: theme.primary }]}>
+                  マス数: {expectedCells - 1}マス（全{totalWords}語をカバー）
                 </ThemedText>
               </View>
             </View>

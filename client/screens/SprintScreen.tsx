@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -30,48 +30,41 @@ type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "review";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
-// Grid: 5 columns, 9 rows — horizontal snake
-// Row 0→4: cells going right / connector down / left / connector down / right
-// Pattern: row0 right (0-4), row1 connector↓ at col4 (5), row2 left (6-10)
-// row3 connector↓ at col0 (11), row4 right (12-16), ... row8 right (24-28)
+// Grid: 5 columns, dynamic rows — horizontal snake path
 const NUM_GRID_COLS = 5;
-const NUM_GRID_ROWS = 9;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ROW_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
 const CELL_SIZE = Math.floor(ROW_WIDTH / NUM_GRID_COLS) - 12;
 
-const CELL_POSITIONS: [number, number][] = [
-  // Row 0 → right (cells 0–4)
-  [0, 0], [0, 1], [0, 2], [0, 3], [0, 4],
-  // Row 1 ↓ connector at col 4 (cell 5)
-  [1, 4],
-  // Row 2 ← left (cells 6–10)
-  [2, 4], [2, 3], [2, 2], [2, 1], [2, 0],
-  // Row 3 ↓ connector at col 0 (cell 11)
-  [3, 0],
-  // Row 4 → right (cells 12–16)
-  [4, 0], [4, 1], [4, 2], [4, 3], [4, 4],
-  // Row 5 ↓ connector at col 4 (cell 17)
-  [5, 4],
-  // Row 6 ← left (cells 18–22)
-  [6, 4], [6, 3], [6, 2], [6, 1], [6, 0],
-  // Row 7 ↓ connector at col 0 (cell 23)
-  [7, 0],
-  // Row 8 → right (cells 24–28)
-  [8, 0], [8, 1], [8, 2], [8, 3], [8, 4],
-];
+function buildCellPositions(totalCells: number): [number, number][] {
+  const positions: [number, number][] = [];
+  let segIdx = 0;
+  while (positions.length < totalCells) {
+    const gridRow = segIdx * 2;
+    const isRight = segIdx % 2 === 0;
+    const remaining = totalCells - positions.length;
+    const count = Math.min(5, remaining);
+    for (let i = 0; i < count; i++) {
+      positions.push([gridRow, isRight ? i : 4 - i]);
+    }
+    if (positions.length < totalCells) {
+      positions.push([gridRow + 1, isRight ? 4 : 0]);
+    }
+    segIdx++;
+  }
+  return positions;
+}
 
-const pathGrid: number[][] = Array.from({ length: NUM_GRID_ROWS }, () =>
-  Array(NUM_GRID_COLS).fill(-1)
-);
-CELL_POSITIONS.forEach(([row, col], i) => {
-  pathGrid[row][col] = i;
-});
+function buildPathGrid(cellPositions: [number, number][], numRows: number): number[][] {
+  const grid = Array.from({ length: numRows }, () => Array(NUM_GRID_COLS).fill(-1));
+  cellPositions.forEach(([row, col], i) => { grid[row][col] = i; });
+  return grid;
+}
 
-function getCellArrowDir(index: number): CellDir {
-  if (index >= CELL_POSITIONS.length - 1) return null;
-  const [r1, c1] = CELL_POSITIONS[index];
-  const [r2, c2] = CELL_POSITIONS[index + 1];
+function getCellArrowDir(index: number, cellPositions: [number, number][]): CellDir {
+  if (index >= cellPositions.length - 1) return null;
+  const [r1, c1] = cellPositions[index];
+  const [r2, c2] = cellPositions[index + 1];
   if (r2 > r1) return "down";
   if (r2 < r1) return "up";
   if (c2 > c1) return "right";
@@ -138,11 +131,19 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     iconColor = "#fff";
     textColor = "#fff";
   } else if (isCompleted) {
-    bgColor = theme.primary + "20";
-    borderColor = theme.primary + "60";
-    featherIcon = "check-circle";
-    iconColor = theme.primary;
-    textColor = theme.primary;
+    if (sessionType === "test") {
+      bgColor = "#EDE9FE";
+      borderColor = "#7C3AED60";
+      textColor = "#7C3AED";
+    } else if (sessionType === "review") {
+      bgColor = Colors.light.secondary + "28";
+      borderColor = Colors.light.secondary + "70";
+      textColor = Colors.light.secondary;
+    } else {
+      bgColor = theme.primary + "20";
+      borderColor = theme.primary + "60";
+      textColor = theme.primary;
+    }
   } else if (isCurrent) {
     bgColor = Colors.light.secondary;
     borderColor = Colors.light.secondary;
@@ -478,6 +479,16 @@ export default function SprintScreen() {
   const streakCount = sprintData?.streakCount ?? 0;
   const specialStamps = sprintData?.specialStamps ?? [];
   const completedDates = sprintData?.completedDates ?? {};
+
+  const cellPositions = useMemo(() => buildCellPositions(totalCells), [totalCells]);
+  const numGridRows = useMemo(
+    () => cellPositions.reduce((max, [row]) => Math.max(max, row), 0) + 1,
+    [cellPositions]
+  );
+  const pathGrid = useMemo(
+    () => buildPathGrid(cellPositions, numGridRows),
+    [cellPositions, numGridRows]
+  );
   const completedCount = Object.keys(completedDates).length;
   const currentSessionType = isSetup ? getSessionType(currentPosition) : "flag";
 
@@ -570,7 +581,7 @@ export default function SprintScreen() {
               {rowSlots.map((cellIndex, colIdx) => {
                 if (cellIndex >= 0) {
                   const isCurrent = isSetup && cellIndex === currentPosition;
-                  const isCompleted = isSetup && !isCurrent && (completedDates[cellIndex] != null || cellIndex < currentPosition);
+                  const isCompleted = isSetup && !isCurrent && completedDates[cellIndex] != null;
                   const isSpecialStamp = specialStamps.includes(cellIndex);
                   return (
                     <Cell
@@ -581,7 +592,7 @@ export default function SprintScreen() {
                       isCompleted={isCompleted}
                       isSpecialStamp={isSpecialStamp}
                       completedDate={completedDates[cellIndex]}
-                      direction={getCellArrowDir(cellIndex)}
+                      direction={getCellArrowDir(cellIndex, cellPositions)}
                       onPress={() => handleCellPress(cellIndex)}
                       theme={theme}
                     />

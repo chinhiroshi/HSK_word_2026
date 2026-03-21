@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 import { SprintData, SprintSessionType, Word } from "@/types";
 import { getSprintData, saveSprintData, resetSprintData } from "@/lib/storage";
 
-const TOTAL_CELLS = 29;
+const DEFAULT_TOTAL_CELLS = 29;
 
 // Fixed cell types — each position's session type is explicitly declared.
 // Pattern per 7-cell cycle: study, study, review, study, study, review, test
@@ -25,6 +25,12 @@ function calcWordsPerDay(minutes: number): number {
 
 function calcReviewCount(wordsPerDay: number): number {
   return Math.max(3, Math.floor(wordsPerDay / 3));
+}
+
+function calcTotalCells(totalWords: number, wordsPerDay: number): number {
+  const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
+  const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / 4));
+  return 1 + fullCycles * 7;
 }
 
 function getTodayString(): string {
@@ -68,7 +74,7 @@ interface SprintContextType {
   sprintData: SprintData | null;
   loading: boolean;
   loadSprint: () => Promise<void>;
-  setupSprint: (minutes: number) => Promise<void>;
+  setupSprint: (minutes: number, totalWords?: number) => Promise<void>;
   completeSession: (isSpecial?: boolean) => Promise<void>;
   completePhase: (phase: "text" | "audio" | "both") => Promise<boolean>;
   skipSession: () => Promise<void>;
@@ -95,7 +101,7 @@ const SprintContext = createContext<SprintContextType>({
   getStudyWords: () => [],
   getReviewWords: () => [],
   getCellPhaseProgress: () => ({ text: false, audio: false }),
-  totalCells: TOTAL_CELLS,
+  totalCells: DEFAULT_TOTAL_CELLS,
 });
 
 export function useSprint() {
@@ -113,9 +119,10 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  const setupSprint = useCallback(async (minutes: number) => {
+  const setupSprint = useCallback(async (minutes: number, totalWords: number = 150) => {
     const wordsPerDay = calcWordsPerDay(minutes);
     const reviewCount = calcReviewCount(wordsPerDay);
+    const totalCells = calcTotalCells(totalWords, wordsPerDay);
     const today = getTodayString();
     const newData: SprintData = {
       hasSetup: true,
@@ -129,6 +136,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       specialStamps: [],
       setupDate: today,
       completedDates: {},
+      totalCells,
     };
     await saveSprintData(newData);
     setSprintData(newData);
@@ -160,8 +168,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         ? sprintData.studiedWordCount + sprintData.wordsPerDay
         : sprintData.studiedWordCount;
 
+      const dynTotal = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
       const nextPosition = sprintData.currentPosition + 1;
-      const newPosition = nextPosition >= TOTAL_CELLS ? 1 : nextPosition;
+      const newPosition = nextPosition >= dynTotal ? 1 : nextPosition;
       const newSpecialStamps = isSpecial
         ? [...sprintData.specialStamps, sprintData.currentPosition]
         : sprintData.specialStamps;
@@ -224,8 +233,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
           sessionType === "study"
             ? sprintData.studiedWordCount + sprintData.wordsPerDay
             : sprintData.studiedWordCount;
+        const dynTotal2 = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
         const nextPosition = position + 1;
-        const newPosition = nextPosition >= TOTAL_CELLS ? 1 : nextPosition;
+        const newPosition = nextPosition >= dynTotal2 ? 1 : nextPosition;
         const newCompletedDates = {
           ...(sprintData.completedDates ?? {}),
           [position]: today,
@@ -318,7 +328,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         getStudyWords,
         getReviewWords,
         getCellPhaseProgress,
-        totalCells: TOTAL_CELLS,
+        totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,
       }}
     >
       {children}

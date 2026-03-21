@@ -491,9 +491,11 @@ function TextCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: 
         <MemoBadge word={word} mode="text" theme={theme} />
         <View style={styles.wordNumBadgeGroup}>
           {origNum > 0 ? (
-            <ThemedText style={[styles.wordNumBadge, { color: theme.primary, fontFamily: "Nunito_700Bold" }]}>
-              #{origNum}
-            </ThemedText>
+            <View style={[styles.wordNumCircle, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}>
+              <ThemedText style={[styles.wordNumCircleText, { color: theme.primary }]}>
+                {origNum}
+              </ThemedText>
+            </View>
           ) : null}
           <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
             {wordIndex} / {totalWords}
@@ -555,9 +557,11 @@ function AudioCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }:
         <MemoBadge word={word} mode="audio" theme={theme} />
         <View style={styles.wordNumBadgeGroup}>
           {origNum > 0 ? (
-            <ThemedText style={[styles.wordNumBadge, { color: Colors.light.secondary, fontFamily: "Nunito_700Bold" }]}>
-              #{origNum}
-            </ThemedText>
+            <View style={[styles.wordNumCircle, { backgroundColor: Colors.light.secondary + "18", borderColor: Colors.light.secondary + "40" }]}>
+              <ThemedText style={[styles.wordNumCircleText, { color: Colors.light.secondary }]}>
+                {origNum}
+              </ThemedText>
+            </View>
           ) : null}
           <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
             {wordIndex} / {totalWords}
@@ -662,6 +666,11 @@ const styles = StyleSheet.create({
   memoBadgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.xs },
   wordNumBadge: { fontSize: 11, fontFamily: "Nunito_400Regular" },
   wordNumBadgeGroup: { flexDirection: "row", alignItems: "center", gap: 6 },
+  wordNumCircle: {
+    width: 26, height: 26, borderRadius: 13, borderWidth: 1,
+    justifyContent: "center", alignItems: "center",
+  },
+  wordNumCircleText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
   stampOverlay: {
     position: "absolute",
     top: 0, left: 0, right: 0, bottom: 0,
