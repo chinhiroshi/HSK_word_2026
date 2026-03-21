@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -39,8 +39,11 @@ import { PlantIcon } from "@/components/SprintCellIcons";
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-type Phase = "text-list" | "text-cards" | "audio-list" | "audio-cards" | "complete";
-type ListFilter = "all" | "memorized" | "unmemorized";
+// text-cards removed: flow is now text-list → audio-list → audio-cards → complete
+type Phase = "text-list" | "audio-list" | "audio-cards" | "complete";
+// 0 = audio only, 1 = kanji revealed, 2 = meaning revealed
+type RevealLevel = 0 | 1 | 2;
+type ListFilter = "all" | "memorized" | "unmemorized" | "struggled";
 
 export default function SprintStudySessionScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -57,13 +60,11 @@ export default function SprintStudySessionScreen() {
 
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [words, setWords] = useState<Word[]>([]);
-  // cardWords is frozen when transitioning from list → cards phase
   const [cardWords, setCardWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isRevealed, setIsRevealed] = useState(false);
+  const [revealLevel, setRevealLevel] = useState<RevealLevel>(0);
   const [textChoices, setTextChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [audioChoices, setAudioChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
-  // Audio list reveal state
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [allRevealed, setAllRevealed] = useState(false);
   const [listFilter, setListFilter] = useState<ListFilter>("all");
@@ -103,6 +104,7 @@ export default function SprintStudySessionScreen() {
   const currentCardWord = cardWords[currentIndex] ?? null;
   const cardProgress = cardWords.length > 0 ? (currentIndex / cardWords.length) * 100 : 0;
 
+  // Study = text-list + audio-list+cards; audio-only / text-only = just one phase
   const phaseTotal = sessionMode === "study" ? 2 : 1;
   const phaseNum = isAudioPhase && sessionMode === "study" ? 2 : 1;
   const badgeLabel = isAudioPhase ? "音声学習" : "文字学習";
@@ -140,20 +142,14 @@ export default function SprintStudySessionScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  // Auto-play audio in cards phase
+  // Auto-play audio in audio-cards and reset reveal level on card change
   useEffect(() => {
-    if (phase !== "text-cards" && phase !== "audio-cards") return;
-    setIsRevealed(false);
+    if (phase !== "audio-cards") return;
+    setRevealLevel(0);
     if (!currentCardWord) return;
     let cancelled = false;
     const speak = async () => {
       await speakChinese(currentCardWord.word);
-      if (cancelled) return;
-      if (isAudioPhase && currentCardWord.exampleSentence) {
-        await new Promise<void>((r) => setTimeout(r, 600));
-        if (cancelled) return;
-        await speakChinese(currentCardWord.exampleSentence);
-      }
     };
     speak();
     return () => {
@@ -190,6 +186,7 @@ export default function SprintStudySessionScreen() {
         ? Haptics.ImpactFeedbackStyle.Light
         : Haptics.ImpactFeedbackStyle.Medium
     );
+    // Always use "audio" type for audio-list, "text" for text-list
     const type = isAudioPhase ? "audio" : "text";
     await (choice === "memorized"
       ? markAsMemorized(wordId, type)
@@ -202,29 +199,23 @@ export default function SprintStudySessionScreen() {
   };
 
   const handleListNext = () => {
-    // Freeze the list of unmemorized words for the cards phase
-    const next = words.filter((w) => choices[w.id] !== "memorized");
-
     if (phase === "text-list") {
-      if (next.length > 0) {
-        setCardWords(next);
-        setCurrentIndex(0);
-        setIsRevealed(false);
-        setPhase("text-cards");
-      } else if (sessionMode === "study") {
-        // All text words memorized, skip to audio list
-        setAllRevealed(false);
-        setRevealedIds(new Set());
-        setListFilter("all");
+      // Transition directly to audio-list (no text-cards phase)
+      setAllRevealed(false);
+      setRevealedIds(new Set());
+      setListFilter("all");
+      if (sessionMode === "study") {
         setPhase("audio-list");
       } else {
         setPhase("complete");
       }
     } else if (phase === "audio-list") {
-      if (next.length > 0) {
-        setCardWords(next);
+      // Words not marked memorized in audio-list → audio-cards
+      const unmemorizedWords = words.filter((w) => audioChoices[w.id] !== "memorized");
+      if (unmemorizedWords.length > 0) {
+        setCardWords(unmemorizedWords);
         setCurrentIndex(0);
-        setIsRevealed(false);
+        setRevealLevel(0);
         setPhase("audio-cards");
       } else {
         setPhase("complete");
@@ -236,16 +227,7 @@ export default function SprintStudySessionScreen() {
     if (newIndex < cardWords.length) {
       setCurrentIndex(newIndex);
     } else {
-      if (phase === "text-cards" && sessionMode === "study") {
-        // Move to audio list
-        setAllRevealed(false);
-        setRevealedIds(new Set());
-        setListFilter("all");
-        setPhase("audio-list");
-        setCurrentIndex(0);
-      } else {
-        setPhase("complete");
-      }
+      setPhase("complete");
     }
   };
 
@@ -256,15 +238,11 @@ export default function SprintStudySessionScreen() {
         ? Haptics.ImpactFeedbackStyle.Light
         : Haptics.ImpactFeedbackStyle.Medium
     );
-    const type = isAudioPhase ? "audio" : "text";
+    // audio-cards always uses audio type
     await (choice === "memorized"
-      ? markAsMemorized(currentCardWord.id, type)
-      : markAsUnmemorized(currentCardWord.id, type));
-    if (isAudioPhase) {
-      setAudioChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
-    } else {
-      setTextChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
-    }
+      ? markAsMemorized(currentCardWord.id, "audio")
+      : markAsUnmemorized(currentCardWord.id, "audio"));
+    setAudioChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
     advanceOrFinish(currentIndex + 1);
   };
 
@@ -401,44 +379,73 @@ export default function SprintStudySessionScreen() {
     const memorizedInList = Object.values(choices).filter((v) => v === "memorized").length;
     const unmemorizedInList = Object.values(choices).filter((v) => v === "unmemorized").length;
 
+    // "struggled" uses stored history counts per phase type
+    const struggledInList = words.filter((w) =>
+      phase === "audio-list"
+        ? (w.audioUnmemorizedCount ?? 0) > 0
+        : (w.textUnmemorizedCount ?? 0) > 0
+    ).length;
+
     const filteredWords = words.filter((w) => {
       if (listFilter === "memorized") return choices[w.id] === "memorized";
       if (listFilter === "unmemorized") return choices[w.id] === "unmemorized";
+      if (listFilter === "struggled") {
+        return phase === "audio-list"
+          ? (w.audioUnmemorizedCount ?? 0) > 0
+          : (w.textUnmemorizedCount ?? 0) > 0;
+      }
       return true;
     });
 
-    const nextCardCount = words.filter((w) => choices[w.id] !== "memorized").length;
-    const nextButtonLabel =
-      nextCardCount > 0 ? `カード学習へ (${nextCardCount}語)` : "完了";
+    // audio-list → audio-cards; text-list → audio-list (no cards phase for text)
+    const nextCardCount = phase === "audio-list"
+      ? words.filter((w) => audioChoices[w.id] !== "memorized").length
+      : 0;
+    const nextButtonLabel = phase === "audio-list"
+      ? nextCardCount > 0 ? `カード練習へ (${nextCardCount}語)` : "完了"
+      : sessionMode === "study" ? "音声学習へ" : "完了";
 
     return (
       <ThemedView style={styles.container}>
         {/* Filter tabs */}
         <View style={[styles.filterRow, { paddingTop: headerHeight + Spacing.md, borderBottomColor: theme.border }]}>
-          <Pressable
-            onPress={() => setListFilter("all")}
-            style={[styles.filterTab, listFilter === "all" && { backgroundColor: theme.primary }]}
-          >
-            <ThemedText style={[styles.filterTabText, listFilter === "all" && styles.filterTabTextActive]}>
-              {`全部 (${words.length})`}
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            onPress={() => setListFilter("memorized")}
-            style={[styles.filterTab, listFilter === "memorized" && { backgroundColor: Colors.light.success }]}
-          >
-            <ThemedText style={[styles.filterTabText, listFilter === "memorized" && styles.filterTabTextActive]}>
-              {`覚えた (${memorizedInList})`}
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            onPress={() => setListFilter("unmemorized")}
-            style={[styles.filterTab, listFilter === "unmemorized" && { backgroundColor: Colors.light.alert }]}
-          >
-            <ThemedText style={[styles.filterTabText, listFilter === "unmemorized" && styles.filterTabTextActive]}>
-              {`まだ (${unmemorizedInList})`}
-            </ThemedText>
-          </Pressable>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRowContent}>
+            <Pressable
+              onPress={() => setListFilter("all")}
+              style={[styles.filterTab, listFilter === "all" && { backgroundColor: theme.primary }]}
+            >
+              <ThemedText style={[styles.filterTabText, listFilter === "all" && styles.filterTabTextActive]}>
+                {`全部 (${words.length})`}
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              onPress={() => setListFilter("memorized")}
+              style={[styles.filterTab, listFilter === "memorized" && { backgroundColor: Colors.light.success }]}
+            >
+              <ThemedText style={[styles.filterTabText, listFilter === "memorized" && styles.filterTabTextActive]}>
+                {`覚えた (${memorizedInList})`}
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              onPress={() => setListFilter("unmemorized")}
+              style={[styles.filterTab, listFilter === "unmemorized" && { backgroundColor: Colors.light.alert }]}
+            >
+              <ThemedText style={[styles.filterTabText, listFilter === "unmemorized" && styles.filterTabTextActive]}>
+                {`まだ (${unmemorizedInList})`}
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              onPress={() => setListFilter("struggled")}
+              style={[styles.filterTab, listFilter === "struggled" && { backgroundColor: Colors.light.alert }]}
+            >
+              <View style={styles.filterTabInner}>
+                <Feather name="flag" size={12} color={listFilter === "struggled" ? "#fff" : Colors.light.alert} />
+                <ThemedText style={[styles.filterTabText, listFilter === "struggled" && styles.filterTabTextActive, listFilter !== "struggled" && { color: Colors.light.alert }]}>
+                  {`苦手歴 (${struggledInList})`}
+                </ThemedText>
+              </View>
+            </Pressable>
+          </ScrollView>
         </View>
 
         <FlatList
@@ -555,7 +562,7 @@ export default function SprintStudySessionScreen() {
     );
   }
 
-  // ----- CARDS PHASE (text-cards or audio-cards) -----
+  // ----- AUDIO CARDS PHASE -----
   if (!currentCardWord) {
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
@@ -586,6 +593,7 @@ export default function SprintStudySessionScreen() {
           },
         ]}
       >
+        {/* Phase badge + progress */}
         <View style={styles.phaseHeader}>
           <View style={styles.phaseLeft}>
             <View style={[styles.phaseBadge, { backgroundColor: badgeBg }]}>
@@ -609,69 +617,87 @@ export default function SprintStudySessionScreen() {
           <ProgressBar progress={cardProgress} height={6} />
         </View>
 
+        {/* Audio card with progressive reveal */}
         <Animated.View
-          key={`${phase}-${currentIndex}`}
-          entering={FadeIn.duration(180)}
+          key={`audio-${currentIndex}-${revealLevel}`}
+          entering={revealLevel === 0 ? FadeIn.duration(180) : undefined}
           style={[
             styles.wordCard,
             { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
           ]}
         >
-          {isAudioPhase ? (
-            <AudioCard
-              word={currentCardWord}
-              isRevealed={isRevealed}
-              onReveal={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setIsRevealed(true);
-              }}
-              theme={theme}
-              wordIndex={currentIndex + 1}
-              totalWords={cardWords.length}
-            />
-          ) : (
-            <TextCard
-              word={currentCardWord}
-              isRevealed={isRevealed}
-              onReveal={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setIsRevealed(true);
-              }}
-              theme={theme}
-              wordIndex={currentIndex + 1}
-              totalWords={cardWords.length}
-            />
-          )}
+          <AudioCard
+            word={currentCardWord}
+            revealLevel={revealLevel}
+            theme={theme}
+            wordIndex={currentIndex + 1}
+            totalWords={cardWords.length}
+          />
         </Animated.View>
 
-        <View style={styles.choiceButtons}>
-          <Pressable
-            testID="button-unmemorized"
-            onPress={() => handleCardChoice("unmemorized")}
-            style={[
-              styles.choiceButton,
-              { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
-            ]}
-          >
-            <Feather name="flag" size={22} color={Colors.light.alert} />
-            <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
-              覚えていない
-            </ThemedText>
-          </Pressable>
-          <Pressable
-            testID="button-memorized"
-            onPress={() => handleCardChoice("memorized")}
-            style={[
-              styles.choiceButton,
-              { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
-            ]}
-          >
-            <Feather name="check" size={22} color={Colors.light.success} />
-            <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
-              覚えた
-            </ThemedText>
-          </Pressable>
-        </View>
+        {/* Progressive choice buttons */}
+        {revealLevel < 2 ? (
+          <View style={styles.choiceButtons}>
+            <Pressable
+              testID="button-memorized"
+              onPress={() => handleCardChoice("memorized")}
+              style={[
+                styles.choiceButton,
+                { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
+              ]}
+            >
+              <Feather name="check" size={20} color={Colors.light.success} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
+                覚えた
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              testID="button-reveal-next"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setRevealLevel((prev) => (prev < 2 ? ((prev + 1) as RevealLevel) : 2));
+              }}
+              style={[
+                styles.choiceButton,
+                { backgroundColor: Colors.light.alert + "10", borderColor: Colors.light.alert + "60" },
+              ]}
+            >
+              <Feather name="eye" size={20} color={Colors.light.alert} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
+                {revealLevel === 0 ? "文字を見る" : "意味を見る"}
+              </ThemedText>
+            </Pressable>
+          </View>
+        ) : (
+          <View style={styles.choiceButtons}>
+            <Pressable
+              testID="button-unmemorized"
+              onPress={() => handleCardChoice("unmemorized")}
+              style={[
+                styles.choiceButton,
+                { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
+              ]}
+            >
+              <Feather name="flag" size={20} color={Colors.light.alert} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
+                まだ
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              testID="button-memorized"
+              onPress={() => handleCardChoice("memorized")}
+              style={[
+                styles.choiceButton,
+                { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
+              ]}
+            >
+              <Feather name="check" size={20} color={Colors.light.success} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
+                覚えた
+              </ThemedText>
+            </Pressable>
+          </View>
+        )}
       </ScrollView>
     </ThemedView>
   );
@@ -680,15 +706,6 @@ export default function SprintStudySessionScreen() {
 function getOriginalWordNum(wordId: string): number {
   const parts = wordId.split("_");
   return parseInt(parts[parts.length - 1], 10) || 0;
-}
-
-interface CardProps {
-  word: Word;
-  isRevealed: boolean;
-  onReveal: () => void;
-  theme: ReturnType<typeof useTheme>["theme"];
-  wordIndex: number;
-  totalWords: number;
 }
 
 function MemoBadge({ word, mode, theme }: { word: Word; mode: "text" | "audio"; theme: ReturnType<typeof useTheme>["theme"] }) {
@@ -718,16 +735,24 @@ function MemoBadge({ word, mode, theme }: { word: Word; mode: "text" | "audio"; 
   );
 }
 
-function TextCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: CardProps) {
+interface AudioCardProps {
+  word: Word;
+  revealLevel: RevealLevel;
+  theme: ReturnType<typeof useTheme>["theme"];
+  wordIndex: number;
+  totalWords: number;
+}
+
+function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCardProps) {
   const origNum = getOriginalWordNum(word.id);
   return (
     <>
       <View style={styles.memoBadgeRow}>
-        <MemoBadge word={word} mode="text" theme={theme} />
+        <MemoBadge word={word} mode="audio" theme={theme} />
         <View style={styles.wordNumBadgeGroup}>
           {origNum > 0 ? (
-            <View style={[styles.wordNumCircle, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}>
-              <ThemedText style={[styles.wordNumCircleText, { color: theme.primary }]}>
+            <View style={[styles.wordNumCircle, { backgroundColor: Colors.light.secondary + "18", borderColor: Colors.light.secondary + "40" }]}>
+              <ThemedText style={[styles.wordNumCircleText, { color: Colors.light.secondary }]}>
                 {origNum}
               </ThemedText>
             </View>
@@ -737,15 +762,34 @@ function TextCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: 
           </ThemedText>
         </View>
       </View>
-      <View style={styles.wordHeader}>
-        <ThemedText style={styles.wordText}>{word.word}</ThemedText>
-        <SpeakButton text={word.word} size="medium" />
-      </View>
-      <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
-        {word.pinyin}
-      </ThemedText>
 
-      {isRevealed ? (
+      {/* Level 0: Audio only */}
+      {revealLevel === 0 ? (
+        <View style={styles.audioHiddenContent}>
+          <View style={[styles.audioIconContainer, { backgroundColor: Colors.light.secondary + "18" }]}>
+            <SpeakButton text={word.word} size="large" />
+          </View>
+          <ThemedText style={[styles.audioPrompt, { color: theme.textSecondary }]}>
+            音声を聴いて答えましょう
+          </ThemedText>
+        </View>
+      ) : null}
+
+      {/* Level 1+: Chinese characters + pinyin */}
+      {revealLevel >= 1 ? (
+        <Animated.View entering={FadeIn.duration(200)}>
+          <View style={styles.wordHeader}>
+            <ThemedText style={styles.wordText}>{word.word}</ThemedText>
+            <SpeakButton text={word.word} size="medium" />
+          </View>
+          <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
+            {word.pinyin}
+          </ThemedText>
+        </Animated.View>
+      ) : null}
+
+      {/* Level 2: meaning + example */}
+      {revealLevel >= 2 ? (
         <Animated.View entering={FadeIn.duration(200)}>
           <View style={[styles.divider, { backgroundColor: theme.border }]} />
           <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
@@ -765,101 +809,7 @@ function TextCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: 
             </View>
           ) : null}
         </Animated.View>
-      ) : (
-        <Pressable
-          testID="button-reveal-meaning"
-          onPress={onReveal}
-          style={[
-            styles.revealButton,
-            { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
-          ]}
-        >
-          <Feather name="eye" size={15} color={theme.textSecondary} />
-          <ThemedText style={[styles.revealButtonText, { color: theme.textSecondary }]}>
-            意味を確認する
-          </ThemedText>
-        </Pressable>
-      )}
-    </>
-  );
-}
-
-function AudioCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: CardProps) {
-  const origNum = getOriginalWordNum(word.id);
-  return (
-    <>
-      <View style={styles.memoBadgeRow}>
-        <MemoBadge word={word} mode="audio" theme={theme} />
-        <View style={styles.wordNumBadgeGroup}>
-          {origNum > 0 ? (
-            <View style={[styles.wordNumCircle, { backgroundColor: Colors.light.secondary + "18", borderColor: Colors.light.secondary + "40" }]}>
-              <ThemedText style={[styles.wordNumCircleText, { color: Colors.light.secondary }]}>
-                {origNum}
-              </ThemedText>
-            </View>
-          ) : null}
-          <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
-            {wordIndex} / {totalWords}
-          </ThemedText>
-        </View>
-      </View>
-      {isRevealed ? (
-        <Animated.View entering={FadeIn.duration(180)}>
-          <View style={styles.wordHeader}>
-            <ThemedText style={styles.wordText}>{word.word}</ThemedText>
-            <SpeakButton text={word.word} size="medium" />
-          </View>
-          <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
-            {word.pinyin}
-          </ThemedText>
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
-          <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
-            {word.translation}
-          </ThemedText>
-          {word.exampleSentence ? (
-            <View style={styles.exampleSection}>
-              <View style={styles.exampleRow}>
-                <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
-                  {word.exampleSentence}
-                </ThemedText>
-                <SpeakButton text={word.exampleSentence} size="small" />
-              </View>
-              <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
-                {word.exampleTranslation}
-              </ThemedText>
-            </View>
-          ) : null}
-        </Animated.View>
-      ) : (
-        <Pressable
-          testID="button-reveal-word"
-          onPress={onReveal}
-          style={styles.audioHiddenContent}
-        >
-          <View
-            style={[
-              styles.audioIconContainer,
-              { backgroundColor: Colors.light.secondary + "18" },
-            ]}
-          >
-            <SpeakButton text={word.word} size="large" />
-          </View>
-          <ThemedText style={[styles.pinyinTextCenter, { color: theme.primary }]}>
-            {word.pinyin}
-          </ThemedText>
-          <View
-            style={[
-              styles.revealHint,
-              { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
-            ]}
-          >
-            <Feather name="eye" size={14} color={theme.textSecondary} />
-            <ThemedText style={[styles.revealHintText, { color: theme.textSecondary }]}>
-              タップして表示
-            </ThemedText>
-          </View>
-        </Pressable>
-      )}
+      ) : null}
     </>
   );
 }
@@ -871,20 +821,24 @@ const styles = StyleSheet.create({
 
   // Filter row
   filterRow: {
-    flexDirection: "row",
-    paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.sm,
-    gap: Spacing.sm,
     borderBottomWidth: 1,
   },
+  filterRowContent: {
+    flexDirection: "row",
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.sm,
+    gap: Spacing.sm,
+  },
   filterTab: {
-    flex: 1,
     alignItems: "center",
     paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,
   },
   filterTabText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
   filterTabTextActive: { color: "#fff" },
+  filterTabInner: { flexDirection: "row", alignItems: "center", gap: 4 },
 
   // Word list row
   wordRow: {
@@ -957,25 +911,12 @@ const styles = StyleSheet.create({
   wordHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.sm },
   wordText: { fontSize: 42, fontWeight: "700", fontFamily: "Nunito_700Bold", flex: 1 },
   pinyinText: { fontSize: 17, fontFamily: "Nunito_400Regular", marginBottom: Spacing.md },
-  pinyinTextCenter: { fontSize: 20, fontFamily: "Nunito_400Regular", textAlign: "center" },
   divider: { height: 1, marginBottom: Spacing.md },
   translationText: { fontSize: 16, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.md },
   exampleSection: { gap: Spacing.xs },
   exampleRow: { flexDirection: "row", alignItems: "flex-start", gap: Spacing.sm },
   exampleChinese: { fontSize: 15, fontFamily: "Nunito_400Regular", lineHeight: 22, flex: 1 },
   exampleJp: { fontSize: 13, fontFamily: "Nunito_400Regular", lineHeight: 20 },
-  revealButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    marginTop: Spacing.sm,
-  },
-  revealButtonText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
   memoBadgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.xs },
   wordNumBadge: { fontSize: 11, fontFamily: "Nunito_400Regular" },
   wordNumBadgeGroup: { flexDirection: "row", alignItems: "center", gap: 6 },
@@ -984,6 +925,12 @@ const styles = StyleSheet.create({
     justifyContent: "center", alignItems: "center",
   },
   wordNumCircleText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
+  audioHiddenContent: { alignItems: "center", justifyContent: "center", gap: Spacing.lg, paddingVertical: Spacing.xl },
+  audioIconContainer: { width: 90, height: 90, borderRadius: 45, justifyContent: "center", alignItems: "center" },
+  audioPrompt: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
+  choiceButtons: { flexDirection: "row", gap: Spacing.md },
+  choiceButton: { flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: Spacing.sm, padding: Spacing.lg, borderRadius: BorderRadius.lg, borderWidth: 2, minHeight: 80 },
+  choiceLabel: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold" },
   stampOverlay: {
     position: "absolute",
     top: 0, left: 0, right: 0, bottom: 0,
@@ -1017,13 +964,6 @@ const styles = StyleSheet.create({
   partialNoticeText: { fontSize: 13, fontFamily: "Nunito_400Regular", flex: 1, lineHeight: 20 },
   memoBadge: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.full },
   memoBadgeText: { fontSize: 11, fontFamily: "Nunito_600SemiBold" },
-  audioHiddenContent: { alignItems: "center", justifyContent: "center", gap: Spacing.lg, paddingVertical: Spacing.lg },
-  audioIconContainer: { width: 80, height: 80, borderRadius: 40, justifyContent: "center", alignItems: "center" },
-  revealHint: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full, borderWidth: 1 },
-  revealHintText: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  choiceButtons: { flexDirection: "row", gap: Spacing.md },
-  choiceButton: { flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: Spacing.sm, padding: Spacing.lg, borderRadius: BorderRadius.lg, borderWidth: 2, minHeight: 80 },
-  choiceLabel: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold" },
   completeContainer: { flex: 1, justifyContent: "center", alignItems: "center", padding: Spacing["3xl"] },
   completeIcon: { width: 100, height: 100, borderRadius: 50, justifyContent: "center", alignItems: "center", marginBottom: Spacing.xl },
   completeTitle: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: Spacing.sm, textAlign: "center" },
