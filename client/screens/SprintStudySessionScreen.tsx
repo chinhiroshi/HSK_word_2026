@@ -58,7 +58,8 @@ export default function SprintStudySessionScreen() {
   const cellIndex = route.params?.cellIndex;
 
   const initialPhase: Phase =
-    sessionMode === "audio-cards-only" ? "audio-cards" : "text-list";
+    sessionMode === "audio-cards-only" || sessionMode === "audio-only" ? "audio-cards" :
+    "text-list";
 
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [words, setWords] = useState<Word[]>([]);
@@ -142,7 +143,7 @@ export default function SprintStudySessionScreen() {
     if (autoSavedPhase.current === key) return;
     autoSavedPhase.current = key;
     const phaseArg =
-      sessionMode === "audio-cards-only" ? "audio" : "text";
+      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "text";
     completePhase(phaseArg, cellIndex);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -245,7 +246,7 @@ export default function SprintStudySessionScreen() {
   const handleComplete = async () => {
     setCompleting(true);
     const phaseArg =
-      sessionMode === "audio-cards-only" ? "audio" : "text";
+      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "text";
     const advanced = await completePhase(phaseArg, cellIndex);
     setCompleting(false);
     if (advanced) {
@@ -270,7 +271,7 @@ export default function SprintStudySessionScreen() {
   if (phase === "complete" && isPartialComplete) {
     const donePhase =
       sessionMode === "text-only" ? "文字リスト" :
-      "音声カード";
+      sessionMode === "audio-only" ? "音声リスト" : "音声カード";
     const nextPhase = sessionMode === "text-only" ? "音声学習" : "文字学習";
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
@@ -300,9 +301,11 @@ export default function SprintStudySessionScreen() {
     const willGetStamp =
       sessionMode === "study" ||
       (sessionMode === "text-only" && savedProgress.audio) ||
+      (sessionMode === "audio-only" && savedProgress.text) ||
       (sessionMode === "audio-cards-only" && savedProgress.text);
     const phaseDoneLabel =
       sessionMode === "text-only" ? "文字リスト" :
+      sessionMode === "audio-only" ? "音声リスト" :
       sessionMode === "audio-cards-only" ? "音声カード" : "";
 
     return (
@@ -361,7 +364,7 @@ export default function SprintStudySessionScreen() {
           {sessionMode === "text-only" && !savedProgress.audio ? (
             <Pressable
               testID="button-start-audio-study"
-              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-cards-only", cellIndex: cellIndex ?? (sprintData?.currentPosition ?? 1) })}
+              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-only", cellIndex: cellIndex ?? (sprintData?.currentPosition ?? 1) })}
               style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
             >
               <Feather name="headphones" size={16} color={theme.primary} />
@@ -761,10 +764,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
       {revealLevel === 0 ? (
         <View style={styles.audioHiddenContent}>
           <View style={[styles.audioIconContainer, { backgroundColor: Colors.light.secondary + "18" }]}>
-            <SpeakButton
-              text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
-              size="large"
-            />
+            <SpeakButton text={word.word} size="large" />
           </View>
           <ThemedText style={[styles.audioPrompt, { color: theme.textSecondary }]}>
             音声を聴いて答えましょう
@@ -777,10 +777,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
         <Animated.View entering={FadeIn.duration(200)}>
           <View style={styles.wordHeader}>
             <ThemedText style={styles.wordText}>{word.word}</ThemedText>
-            <SpeakButton
-              text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
-              size="medium"
-            />
+            <SpeakButton text={word.word} size="medium" />
           </View>
           <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
             {word.pinyin}
