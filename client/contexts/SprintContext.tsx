@@ -2,15 +2,21 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 import { SprintData, SprintSessionType, Word } from "@/types";
 import { getSprintData, saveSprintData, resetSprintData } from "@/lib/storage";
 
-const CYCLE_LENGTH = 7;
 const TOTAL_CELLS = 29;
 
+// Fixed cell types — each position's session type is explicitly declared.
+// Pattern per 7-cell cycle: study, study, review, study, study, review, test
+const CELL_SESSION_TYPES: SprintSessionType[] = [
+  "flag",                                                                    // 0
+  "study", "study", "review", "study", "study", "review", "test",           // 1–7
+  "study", "study", "review", "study", "study", "review", "test",           // 8–14
+  "study", "study", "review", "study", "study", "review", "test",           // 15–21
+  "study", "study", "review", "study", "study", "review", "test",           // 22–28
+];
+
 function getSessionType(position: number): SprintSessionType {
-  if (position === 0) return "flag";
-  const cycleDay = ((position - 1) % CYCLE_LENGTH) + 1;
-  if (cycleDay === 3 || cycleDay === 6) return "review";
-  if (cycleDay === 7) return "test";
-  return "study";
+  if (position < 0 || position >= CELL_SESSION_TYPES.length) return "study";
+  return CELL_SESSION_TYPES[position];
 }
 
 function calcWordsPerDay(minutes: number): number {

@@ -277,12 +277,14 @@ function ProgressChart({ setupDate, completedCount, totalCells, theme }: Progres
 interface SessionModalProps {
   visible: boolean;
   cellIndex: number;
+  phaseProgress: { text: boolean; audio: boolean };
   onClose: () => void;
   onSelect: (mode: SessionMode) => void;
   theme: ReturnType<typeof useTheme>["theme"];
 }
 
-function SessionModal({ visible, cellIndex, onClose, onSelect, theme }: SessionModalProps) {
+function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, theme }: SessionModalProps) {
+  const bothDone = phaseProgress.text && phaseProgress.audio;
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
@@ -294,42 +296,77 @@ function SessionModal({ visible, cellIndex, onClose, onSelect, theme }: SessionM
           <ThemedText style={[styles.modalTitle, { color: theme.text }]}>
             学習モードを選択
           </ThemedText>
-          <ThemedText style={[styles.modalSub, { color: theme.textSecondary }]}>
-            マス {cellIndex} の学習方法を選んでください
-          </ThemedText>
+          {bothDone ? (
+            <ThemedText style={[styles.modalSub, { color: Colors.light.success }]}>
+              マス {cellIndex} — 両方完了済み！スタンプ獲得
+            </ThemedText>
+          ) : (phaseProgress.text || phaseProgress.audio) ? (
+            <View style={[styles.modalProgressHint, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "40" }]}>
+              <Feather name="info" size={13} color={Colors.light.alert} />
+              <ThemedText style={[styles.modalProgressHintText, { color: Colors.light.alert }]}>
+                {phaseProgress.text ? "文字学習済み — 音声学習でスタンプ獲得" : "音声学習済み — 文字学習でスタンプ獲得"}
+              </ThemedText>
+            </View>
+          ) : (
+            <ThemedText style={[styles.modalSub, { color: theme.textSecondary }]}>
+              両方完了でスタンプ獲得（順番は自由）
+            </ThemedText>
+          )}
 
           <Pressable
             testID="modal-text-study"
             onPress={() => onSelect("text-only")}
-            style={[styles.modalOption, { backgroundColor: theme.primary + "12", borderColor: theme.primary + "40" }]}
+            style={[
+              styles.modalOption,
+              phaseProgress.text
+                ? { backgroundColor: Colors.light.success + "12", borderColor: Colors.light.success + "40" }
+                : { backgroundColor: theme.primary + "12", borderColor: theme.primary + "40" },
+            ]}
           >
-            <View style={[styles.modalOptionIcon, { backgroundColor: theme.primary + "20" }]}>
-              <Feather name="book-open" size={22} color={theme.primary} />
+            <View style={[styles.modalOptionIcon, { backgroundColor: phaseProgress.text ? Colors.light.success + "20" : theme.primary + "20" }]}>
+              {phaseProgress.text ? (
+                <Feather name="check-circle" size={22} color={Colors.light.success} />
+              ) : (
+                <Feather name="book-open" size={22} color={theme.primary} />
+              )}
             </View>
             <View style={styles.modalOptionText}>
-              <ThemedText style={[styles.modalOptionTitle, { color: theme.primary }]}>文字学習</ThemedText>
+              <ThemedText style={[styles.modalOptionTitle, { color: phaseProgress.text ? Colors.light.success : theme.primary }]}>
+                文字学習{phaseProgress.text ? "（完了）" : ""}
+              </ThemedText>
               <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
                 文字を見て意味を覚える
               </ThemedText>
             </View>
-            <Feather name="chevron-right" size={18} color={theme.primary} />
+            <Feather name="chevron-right" size={18} color={phaseProgress.text ? Colors.light.success : theme.primary} />
           </Pressable>
 
           <Pressable
             testID="modal-audio-study"
             onPress={() => onSelect("audio-only")}
-            style={[styles.modalOption, { backgroundColor: Colors.light.secondary + "12", borderColor: Colors.light.secondary + "40" }]}
+            style={[
+              styles.modalOption,
+              phaseProgress.audio
+                ? { backgroundColor: Colors.light.success + "12", borderColor: Colors.light.success + "40" }
+                : { backgroundColor: Colors.light.secondary + "12", borderColor: Colors.light.secondary + "40" },
+            ]}
           >
-            <View style={[styles.modalOptionIcon, { backgroundColor: Colors.light.secondary + "20" }]}>
-              <Feather name="headphones" size={22} color={Colors.light.secondary} />
+            <View style={[styles.modalOptionIcon, { backgroundColor: phaseProgress.audio ? Colors.light.success + "20" : Colors.light.secondary + "20" }]}>
+              {phaseProgress.audio ? (
+                <Feather name="check-circle" size={22} color={Colors.light.success} />
+              ) : (
+                <Feather name="headphones" size={22} color={Colors.light.secondary} />
+              )}
             </View>
             <View style={styles.modalOptionText}>
-              <ThemedText style={[styles.modalOptionTitle, { color: Colors.light.secondary }]}>音声学習</ThemedText>
+              <ThemedText style={[styles.modalOptionTitle, { color: phaseProgress.audio ? Colors.light.success : Colors.light.secondary }]}>
+                音声学習{phaseProgress.audio ? "（完了）" : ""}
+              </ThemedText>
               <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
                 音声を聞いて意味を覚える
               </ThemedText>
             </View>
-            <Feather name="chevron-right" size={18} color={Colors.light.secondary} />
+            <Feather name="chevron-right" size={18} color={phaseProgress.audio ? Colors.light.success : Colors.light.secondary} />
           </Pressable>
 
           <Pressable
@@ -343,7 +380,7 @@ function SessionModal({ visible, cellIndex, onClose, onSelect, theme }: SessionM
             <View style={styles.modalOptionText}>
               <ThemedText style={[styles.modalOptionTitle, { color: theme.text }]}>両方やる</ThemedText>
               <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
-                文字 → 音声の順に学習
+                文字 → 音声の順に一気に学習
               </ThemedText>
             </View>
             <Feather name="chevron-right" size={18} color={theme.textSecondary} />
@@ -359,7 +396,7 @@ export default function SprintScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession } = useSprint();
+  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress } = useSprint();
 
   const [words, setWords] = useState<Word[]>([]);
   const [canSkip, setCanSkip] = useState(false);
@@ -578,6 +615,7 @@ export default function SprintScreen() {
       <SessionModal
         visible={modalVisible}
         cellIndex={selectedCell}
+        phaseProgress={getCellPhaseProgress(selectedCell)}
         onClose={() => setModalVisible(false)}
         onSelect={handleModeSelect}
         theme={theme}
@@ -627,6 +665,8 @@ const styles = StyleSheet.create({
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "flex-end" },
   modalSheet: { borderTopLeftRadius: BorderRadius.xl, borderTopRightRadius: BorderRadius.xl, padding: Spacing.xl, paddingBottom: Spacing["3xl"], gap: Spacing.md },
   modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: "center", marginBottom: Spacing.sm },
+  modalProgressHint: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: BorderRadius.sm, borderWidth: 1 },
+  modalProgressHintText: { fontSize: 12, fontFamily: "Nunito_600SemiBold", flex: 1 },
   modalTitle: { fontSize: 18, fontWeight: "700", fontFamily: "Nunito_700Bold", textAlign: "center" },
   modalSub: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xs },
   modalOption: { flexDirection: "row", alignItems: "center", borderRadius: BorderRadius.md, borderWidth: 1, padding: Spacing.md, gap: Spacing.md },
