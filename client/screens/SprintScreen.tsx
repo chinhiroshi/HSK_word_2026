@@ -27,7 +27,7 @@ import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
-type SessionMode = "study" | "text-only" | "audio-only" | "audio-cards-only";
+type SessionMode = "study" | "text-only" | "audio-only" | "audio-cards-only" | "audio-playback";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
 // Grid: 5 columns, dynamic rows — horizontal snake path
@@ -404,6 +404,29 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             <Feather name="chevron-right" size={18} color={Colors.light.alert} />
           </Pressable>
 
+          {/* 4: 音声連続再生 */}
+          <Pressable
+            testID="modal-audio-playback"
+            onPress={() => onSelect("audio-playback")}
+            style={[
+              styles.modalOption,
+              { backgroundColor: "#7C3AED12", borderColor: "#7C3AED40" },
+            ]}
+          >
+            <View style={[styles.modalOptionIcon, { backgroundColor: "#7C3AED20" }]}>
+              <Feather name="play-circle" size={22} color="#7C3AED" />
+            </View>
+            <View style={styles.modalOptionText}>
+              <ThemedText style={[styles.modalOptionTitle, { color: "#7C3AED" }]}>
+                音声連続再生
+              </ThemedText>
+              <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
+                音声未暗記の単語を連続で再生
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={18} color="#7C3AED" />
+          </Pressable>
+
         </Pressable>
       </Pressable>
     </Modal>
@@ -462,7 +485,11 @@ export default function SprintScreen() {
 
   const handleModeSelect = (mode: SessionMode) => {
     setModalVisible(false);
-    navigation.navigate("SprintStudySession", { mode, cellIndex: selectedCell });
+    if (mode === "audio-playback") {
+      navigation.navigate("SprintAudioPlayback", { cellIndex: selectedCell });
+    } else {
+      navigation.navigate("SprintStudySession", { mode, cellIndex: selectedCell });
+    }
   };
 
   const handleSkip = async () => {

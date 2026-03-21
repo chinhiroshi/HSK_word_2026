@@ -81,6 +81,7 @@ interface SprintContextType {
   getSessionType: (position: number) => SprintSessionType;
   canSkipCurrentSession: (words: Word[]) => boolean;
   getStudyWords: (words: Word[], cellIndex?: number) => Word[];
+  getTestWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean };
   totalCells: number;
 }
@@ -97,6 +98,7 @@ const SprintContext = createContext<SprintContextType>({
   getSessionType: (pos) => getSessionType(pos, 10),
   canSkipCurrentSession: () => false,
   getStudyWords: () => [],
+  getTestWords: () => [],
   getCellPhaseProgress: () => ({ text: false, audio: false }),
   totalCells: DEFAULT_TOTAL_CELLS,
 });
@@ -305,6 +307,35 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
+  // Collect words from the N preceding study cells (same cycle), filtered to audio-struggled words.
+  const getTestWords = useCallback(
+    (words: Word[]): Word[] => {
+      if (!sprintData || words.length === 0) return [];
+      const pos = sprintData.currentPosition;
+      const wPD = sprintData.wordsPerDay;
+      const N = Math.max(1, Math.ceil(50 / Math.max(1, wPD)));
+      const collected: Word[] = [];
+      const seen = new Set<string>();
+      for (let studyPos = Math.max(1, pos - N); studyPos < pos; studyPos++) {
+        if (getSessionType(studyPos, wPD) === "study") {
+          const studyIdx = getStudyWordOffsetForCell(studyPos, wPD);
+          const offset = (studyIdx * wPD) % Math.max(1, words.length);
+          const cellWords = getSessionWords(words, offset, wPD);
+          for (const w of cellWords) {
+            if (!seen.has(w.id)) {
+              seen.add(w.id);
+              collected.push(w);
+            }
+          }
+        }
+      }
+      if (collected.length === 0) return [];
+      const struggled = collected.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
+      return struggled.length > 0 ? struggled : collected;
+    },
+    [sprintData]
+  );
+
   const getCellPhaseProgress = useCallback(
     (position: number): { text: boolean; audio: boolean } => {
       if (!sprintData) return { text: false, audio: false };
@@ -327,6 +358,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         getSessionType: boundGetSessionType,
         canSkipCurrentSession,
         getStudyWords,
+        getTestWords,
         getCellPhaseProgress,
         totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,
       }}

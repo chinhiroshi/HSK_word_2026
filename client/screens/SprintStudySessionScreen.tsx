@@ -656,19 +656,6 @@ export default function SprintStudySessionScreen() {
           <View style={styles.choiceButtonsWrapper}>
             <View style={styles.choiceButtons}>
               <Pressable
-                testID="button-memorized"
-                onPress={() => handleCardChoice("memorized")}
-                style={[
-                  styles.choiceButton,
-                  { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
-                ]}
-              >
-                <Feather name="check" size={20} color={Colors.light.success} />
-                <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
-                  覚えた
-                </ThemedText>
-              </Pressable>
-              <Pressable
                 testID="button-reveal-next"
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -682,6 +669,19 @@ export default function SprintStudySessionScreen() {
                 <Feather name="eye" size={20} color={Colors.light.alert} />
                 <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
                   {revealLevel === 0 ? "文字を見る" : "意味を見る"}
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                testID="button-memorized"
+                onPress={() => handleCardChoice("memorized")}
+                style={[
+                  styles.choiceButton,
+                  { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
+                ]}
+              >
+                <Feather name="check" size={20} color={Colors.light.success} />
+                <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
+                  覚えた
                 </ThemedText>
               </Pressable>
             </View>
@@ -699,19 +699,6 @@ export default function SprintStudySessionScreen() {
         ) : (
           <View style={styles.choiceButtons}>
             <Pressable
-              testID="button-unmemorized"
-              onPress={() => handleCardChoice("unmemorized")}
-              style={[
-                styles.choiceButton,
-                { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
-              ]}
-            >
-              <Feather name="flag" size={20} color={Colors.light.alert} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
-                まだ
-              </ThemedText>
-            </Pressable>
-            <Pressable
               testID="button-memorized"
               onPress={() => handleCardChoice("memorized")}
               style={[
@@ -722,6 +709,19 @@ export default function SprintStudySessionScreen() {
               <Feather name="check" size={20} color={Colors.light.success} />
               <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
                 覚えた
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              testID="button-unmemorized"
+              onPress={() => handleCardChoice("unmemorized")}
+              style={[
+                styles.choiceButton,
+                { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
+              ]}
+            >
+              <Feather name="flag" size={20} color={Colors.light.alert} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
+                まだ
               </ThemedText>
             </Pressable>
           </View>
