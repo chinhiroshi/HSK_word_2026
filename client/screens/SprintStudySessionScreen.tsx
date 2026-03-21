@@ -10,6 +10,7 @@ import {
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -50,6 +51,7 @@ export default function SprintStudySessionScreen() {
   const route = useRoute<RouteProps>();
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { sprintData, completePhase, getStudyWords, getCellPhaseProgress } = useSprint();
 
@@ -208,9 +210,22 @@ export default function SprintStudySessionScreen() {
     }
   };
 
-  const handleListNext = () => {
+  const handleListNext = async () => {
+    // Auto-mark any un-touched words as memorized
+    const type = isAudioPhase ? "audio" : "text";
+    const currentChoices = isAudioPhase ? audioChoices : textChoices;
+    const unmarked = words.filter((w) => !currentChoices[w.id]);
+    if (unmarked.length > 0) {
+      await Promise.all(unmarked.map((w) => markAsMemorized(w.id, type)));
+      const autoMarked = Object.fromEntries(unmarked.map((w) => [w.id, "memorized" as const]));
+      if (isAudioPhase) {
+        setAudioChoices((prev) => ({ ...prev, ...autoMarked }));
+      } else {
+        setTextChoices((prev) => ({ ...prev, ...autoMarked }));
+      }
+    }
+
     if (phase === "text-list") {
-      // Transition directly to audio-list (no text-cards phase)
       setAllRevealed(false);
       setRevealedIds(new Set());
       setListFilter("all");
@@ -404,13 +419,7 @@ export default function SprintStudySessionScreen() {
       return true;
     });
 
-    // audio-list → audio-cards; text-list → audio-list (no cards phase for text)
-    const nextCardCount = phase === "audio-list"
-      ? words.filter((w) => audioChoices[w.id] !== "memorized").length
-      : 0;
-    const nextButtonLabel = phase === "audio-list"
-      ? nextCardCount > 0 ? `カード練習へ (${nextCardCount}語)` : "完了"
-      : sessionMode === "study" ? "音声学習へ" : "完了";
+    const nextButtonLabel = (phase === "text-list" && sessionMode === "study") ? "音声学習へ" : "完了";
 
     return (
       <ThemedView style={styles.container}>
@@ -458,7 +467,7 @@ export default function SprintStudySessionScreen() {
         <FlatList
           data={filteredWords}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}
+          contentContainerStyle={{ paddingBottom: 90 + tabBarHeight }}
           renderItem={({ item }) => {
             const globalIdx = words.indexOf(item) + 1;
             const choice = choices[item.id];
@@ -468,7 +477,7 @@ export default function SprintStudySessionScreen() {
             if (phase === "audio-list") {
               const isWordRevealed = allRevealed || revealedIds.has(item.id);
               return (
-                <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
+                <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isMemorized ? Colors.light.success + "14" : theme.backgroundDefault }]}>
                   <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
                     <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
                       {globalIdx}
@@ -509,11 +518,14 @@ export default function SprintStudySessionScreen() {
                     <Pressable onPress={() => handleChoiceList(item.id, "unmemorized")} style={styles.actionIconBtn}>
                       <Feather name="flag" size={18} color={isUnmemorized ? Colors.light.alert : theme.textSecondary} />
                     </Pressable>
-                    <Pressable onPress={() => handleChoiceList(item.id, "memorized")} style={styles.actionIconBtn}>
+                    <Pressable
+                      onPress={() => handleChoiceList(item.id, "memorized")}
+                      style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
+                    >
                       <Feather
                         name="check"
                         size={18}
-                        color={isMemorized ? Colors.light.success : theme.textSecondary}
+                        color={isMemorized ? "#fff" : theme.textSecondary}
                       />
                     </Pressable>
                   </View>
@@ -523,7 +535,7 @@ export default function SprintStudySessionScreen() {
 
             // text-list
             return (
-              <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
+              <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isMemorized ? Colors.light.success + "14" : theme.backgroundDefault }]}>
                 <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
                   <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
                     {globalIdx}
@@ -545,12 +557,11 @@ export default function SprintStudySessionScreen() {
                   <Pressable onPress={() => handleChoiceList(item.id, "unmemorized")} style={styles.actionIconBtn}>
                     <Feather name="flag" size={18} color={isUnmemorized ? Colors.light.alert : theme.textSecondary} />
                   </Pressable>
-                  <Pressable onPress={() => handleChoiceList(item.id, "memorized")} style={styles.actionIconBtn}>
-                    <Feather
-                      name="check"
-                      size={18}
-                      color={isMemorized ? Colors.light.success : theme.textSecondary}
-                    />
+                  <Pressable
+                    onPress={() => handleChoiceList(item.id, "memorized")}
+                    style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
+                  >
+                    <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
                   </Pressable>
                   <Feather name="chevron-right" size={16} color={theme.textSecondary} />
                 </View>
@@ -560,7 +571,7 @@ export default function SprintStudySessionScreen() {
         />
 
         {/* Next button */}
-        <View style={[styles.listNextBar, { paddingBottom: insets.bottom + Spacing.md, borderTopColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
+        <View style={[styles.listNextBar, { bottom: tabBarHeight, paddingBottom: Spacing.md, borderTopColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
           <Button testID="button-list-next" onPress={handleListNext} style={{ flex: 1 }}>
             {nextButtonLabel}
           </Button>
@@ -904,7 +915,11 @@ const styles = StyleSheet.create({
     gap: 2,
     flexShrink: 0,
   },
-  actionIconBtn: { padding: 6 },
+  actionIconBtn: { padding: 6, borderRadius: 20 },
+  checkBtnActive: {
+    backgroundColor: Colors.light.success,
+    borderRadius: 20,
+  },
 
   // List next button bar
   listNextBar: {
