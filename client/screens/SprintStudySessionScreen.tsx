@@ -220,16 +220,7 @@ export default function SprintStudySessionScreen() {
         setPhase("complete");
       }
     } else if (phase === "audio-list") {
-      // Words not marked memorized in audio-list → audio-cards
-      const unmemorizedWords = words.filter((w) => audioChoices[w.id] !== "memorized");
-      if (unmemorizedWords.length > 0) {
-        setCardWords(unmemorizedWords);
-        setCurrentIndex(0);
-        setRevealLevel(0);
-        setPhase("audio-cards");
-      } else {
-        setPhase("complete");
-      }
+      setPhase("complete");
     }
   };
 

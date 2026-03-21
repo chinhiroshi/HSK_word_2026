@@ -421,7 +421,7 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
                 音声連続再生
               </ThemedText>
               <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
-                音声未暗記の単語を連続で再生
+                このマスの音声未暗記単語を連続再生
               </ThemedText>
             </View>
             <Feather name="chevron-right" size={18} color="#7C3AED" />

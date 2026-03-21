@@ -42,7 +42,7 @@ export default function SprintAudioPlaybackScreen() {
     const all = await getWords();
     const study = getStudyWords(all, cellIndex);
     const unmemorized = study.filter((w) => !w.audioMemorized);
-    setWords(unmemorized.length > 0 ? unmemorized : study);
+    setWords(unmemorized);
     setLoading(false);
   }, [cellIndex, getStudyWords]);
 
@@ -141,7 +141,7 @@ export default function SprintAudioPlaybackScreen() {
     const all = await getWords();
     const study = getStudyWords(all, cellIndex);
     const unmemorized = study.filter((w) => !w.audioMemorized);
-    setWords(unmemorized.length > 0 ? unmemorized : study);
+    setWords(unmemorized);
   };
 
   const currentWord = words[currentWordIndex];
@@ -218,7 +218,7 @@ export default function SprintAudioPlaybackScreen() {
             <View style={styles.readyState}>
               <Feather name="headphones" size={48} color={theme.textSecondary} />
               <ThemedText style={[styles.readyText, { color: theme.textSecondary }]}>
-                音声覚えていない {words.length}語を連続再生します
+                このマスの音声未暗記 {words.length}語を連続再生します
               </ThemedText>
               <ThemedText style={[styles.readySubText, { color: theme.textSecondary }]}>
                 中国語→日本語訳→例文×4→英語の順で再生
