@@ -27,7 +27,7 @@ import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
-type SessionMode = "study" | "text-only" | "audio-only";
+type SessionMode = "study" | "text-only" | "audio-only" | "audio-cards-only";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
 // Grid: 5 columns, dynamic rows — horizontal snake path
@@ -319,10 +319,11 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             </View>
           ) : (
             <ThemedText style={[styles.modalSub, { color: theme.textSecondary }]}>
-              両方完了でスタンプ獲得（順番は自由）
+              文字・音声リストを確認し、音声カードで仕上げよう
             </ThemedText>
           )}
 
+          {/* 1: 文字リスト */}
           <Pressable
             testID="modal-text-study"
             onPress={() => onSelect("text-only")}
@@ -342,17 +343,18 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             </View>
             <View style={styles.modalOptionText}>
               <ThemedText style={[styles.modalOptionTitle, { color: phaseProgress.text ? Colors.light.success : theme.primary }]}>
-                文字学習{phaseProgress.text ? "（完了）" : ""}
+                文字リスト{phaseProgress.text ? "（完了）" : ""}
               </ThemedText>
               <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
-                文字を見て意味を覚える
+                文字を見て覚えた／まだをマーク
               </ThemedText>
             </View>
             <Feather name="chevron-right" size={18} color={phaseProgress.text ? Colors.light.success : theme.primary} />
           </Pressable>
 
+          {/* 2: 音声リスト */}
           <Pressable
-            testID="modal-audio-study"
+            testID="modal-audio-list"
             onPress={() => onSelect("audio-only")}
             style={[
               styles.modalOption,
@@ -370,13 +372,36 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             </View>
             <View style={styles.modalOptionText}>
               <ThemedText style={[styles.modalOptionTitle, { color: phaseProgress.audio ? Colors.light.success : Colors.light.secondary }]}>
-                音声学習{phaseProgress.audio ? "（完了）" : ""}
+                音声リスト{phaseProgress.audio ? "（完了）" : ""}
               </ThemedText>
               <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
-                音声を聞いて意味を覚える
+                音声を聴いて覚えた／まだをマーク
               </ThemedText>
             </View>
             <Feather name="chevron-right" size={18} color={phaseProgress.audio ? Colors.light.success : Colors.light.secondary} />
+          </Pressable>
+
+          {/* 3: 音声カード */}
+          <Pressable
+            testID="modal-audio-cards"
+            onPress={() => onSelect("audio-cards-only")}
+            style={[
+              styles.modalOption,
+              { backgroundColor: Colors.light.alert + "12", borderColor: Colors.light.alert + "40" },
+            ]}
+          >
+            <View style={[styles.modalOptionIcon, { backgroundColor: Colors.light.alert + "20" }]}>
+              <Feather name="layers" size={22} color={Colors.light.alert} />
+            </View>
+            <View style={styles.modalOptionText}>
+              <ThemedText style={[styles.modalOptionTitle, { color: Colors.light.alert }]}>
+                音声カード
+              </ThemedText>
+              <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
+                音声→文字→意味の順で3段階確認
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={18} color={Colors.light.alert} />
           </Pressable>
 
         </Pressable>

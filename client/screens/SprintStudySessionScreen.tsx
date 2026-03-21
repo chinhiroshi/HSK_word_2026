@@ -56,7 +56,10 @@ export default function SprintStudySessionScreen() {
   const sessionMode = route.params?.mode ?? "study";
   const cellIndex = route.params?.cellIndex;
 
-  const initialPhase: Phase = sessionMode === "audio-only" ? "audio-list" : "text-list";
+  const initialPhase: Phase =
+    sessionMode === "audio-cards-only" ? "audio-cards" :
+    sessionMode === "audio-only" ? "audio-list" :
+    "text-list";
 
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [words, setWords] = useState<Word[]>([]);
@@ -122,6 +125,13 @@ export default function SprintStudySessionScreen() {
     const allWords = await getWords();
     const study = getStudyWords(allWords, cellIndex);
     setWords(study);
+    if (sessionMode === "audio-cards-only") {
+      // Start directly at audio-cards with words not yet audio-memorized
+      const unmemorized = study.filter((w) => !w.audioMemorized);
+      setCardWords(unmemorized);
+      setCurrentIndex(0);
+      setRevealLevel(0);
+    }
     setLoading(false);
   }, [sessionMode, cellIndex, getStudyWords]);
 
@@ -137,7 +147,7 @@ export default function SprintStudySessionScreen() {
     autoSavedPhase.current = key;
     const phaseArg =
       sessionMode === "text-only" ? "text" :
-      sessionMode === "audio-only" ? "audio" : "both";
+      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "both";
     completePhase(phaseArg, cellIndex);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -248,7 +258,9 @@ export default function SprintStudySessionScreen() {
 
   const handleComplete = async () => {
     setCompleting(true);
-    const phaseArg = sessionMode === "text-only" ? "text" : sessionMode === "audio-only" ? "audio" : "both";
+    const phaseArg =
+      sessionMode === "text-only" ? "text" :
+      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "both";
     const advanced = await completePhase(phaseArg, cellIndex);
     setCompleting(false);
     if (advanced) {
@@ -271,7 +283,9 @@ export default function SprintStudySessionScreen() {
 
   // ----- COMPLETE (partial) -----
   if (phase === "complete" && isPartialComplete) {
-    const donePhase = sessionMode === "text-only" ? "文字学習" : "音声学習";
+    const donePhase =
+      sessionMode === "text-only" ? "文字リスト" :
+      sessionMode === "audio-only" ? "音声リスト" : "音声カード";
     const nextPhase = sessionMode === "text-only" ? "音声学習" : "文字学習";
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
@@ -301,10 +315,12 @@ export default function SprintStudySessionScreen() {
     const willGetStamp =
       sessionMode === "study" ||
       (sessionMode === "text-only" && savedProgress.audio) ||
-      (sessionMode === "audio-only" && savedProgress.text);
+      (sessionMode === "audio-only" && savedProgress.text) ||
+      (sessionMode === "audio-cards-only" && savedProgress.text);
     const phaseDoneLabel =
-      sessionMode === "text-only" ? "文字学習" :
-      sessionMode === "audio-only" ? "音声学習" : "";
+      sessionMode === "text-only" ? "文字リスト" :
+      sessionMode === "audio-only" ? "音声リスト" :
+      sessionMode === "audio-cards-only" ? "音声カード" : "";
 
     return (
       <ThemedView style={styles.container}>
