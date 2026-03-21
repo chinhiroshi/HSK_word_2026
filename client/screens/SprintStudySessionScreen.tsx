@@ -32,12 +32,12 @@ import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
-import { PlantIcon, FlowerIcon } from "@/components/SprintCellIcons";
+import { PlantIcon } from "@/components/SprintCellIcons";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-type Phase = "text" | "audio" | "review" | "complete";
+type Phase = "text" | "audio" | "complete";
 
 export default function SprintStudySessionScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -45,14 +45,12 @@ export default function SprintStudySessionScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { sprintData, completeSession, completePhase, getStudyWords, getReviewWords, getCellPhaseProgress } = useSprint();
+  const { sprintData, completeSession, completePhase, getStudyWords, getCellPhaseProgress } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
   const cellIndex = route.params?.cellIndex;
 
-  const initialPhase: Phase =
-    sessionMode === "review" ? "review" :
-    sessionMode === "audio-only" ? "audio" : "text";
+  const initialPhase: Phase = sessionMode === "audio-only" ? "audio" : "text";
 
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [words, setWords] = useState<Word[]>([]);
@@ -98,17 +96,12 @@ export default function SprintStudySessionScreen() {
     setLoading(true);
     await initializeData();
     const allWords = await getWords();
-    if (sessionMode === "review") {
-      const rev = getReviewWords(allWords);
-      setWords(rev);
-    } else {
-      // Pass cellIndex so words are calculated from this cell's position,
-      // not from the global studiedWordCount (which reflects currentPosition).
-      const study = getStudyWords(allWords, cellIndex);
-      setWords(study);
-    }
+    // Pass cellIndex so words are calculated from this cell's position,
+    // not from the global studiedWordCount (which reflects currentPosition).
+    const study = getStudyWords(allWords, cellIndex);
+    setWords(study);
     setLoading(false);
-  }, [sessionMode, cellIndex, getStudyWords, getReviewWords]);
+  }, [sessionMode, cellIndex, getStudyWords]);
 
   useEffect(() => {
     loadWords();
@@ -118,7 +111,7 @@ export default function SprintStudySessionScreen() {
   // This guarantees the record is written even if the user presses the header
   // back arrow instead of the completion button.
   useEffect(() => {
-    if (phase !== "complete" || sessionMode === "review") return;
+    if (phase !== "complete") return;
     const key = `${sessionMode}-${cellIndex ?? "default"}`;
     if (autoSavedPhase.current === key) return;
     autoSavedPhase.current = key;
@@ -170,7 +163,7 @@ export default function SprintStudySessionScreen() {
         : Haptics.ImpactFeedbackStyle.Medium
     );
 
-    if (phase === "text" || phase === "review") {
+    if (phase === "text") {
       await (choice === "memorized"
         ? markAsMemorized(currentWord.id, "text")
         : markAsUnmemorized(currentWord.id, "text"));
@@ -187,20 +180,14 @@ export default function SprintStudySessionScreen() {
 
   const handleComplete = async () => {
     setCompleting(true);
-    if (sessionMode === "review") {
-      await completeSession(false);
-      setCompleting(false);
+    const phaseArg = sessionMode === "text-only" ? "text" : sessionMode === "audio-only" ? "audio" : "both";
+    // Pass cellIndex so this specific cell gets marked, not whatever currentPosition happens to be.
+    const advanced = await completePhase(phaseArg, cellIndex);
+    setCompleting(false);
+    if (advanced) {
       triggerStamp(() => navigation.navigate("SprintHome"));
     } else {
-      const phaseArg = sessionMode === "text-only" ? "text" : sessionMode === "audio-only" ? "audio" : "both";
-      // Pass cellIndex so this specific cell gets marked, not whatever currentPosition happens to be.
-      const advanced = await completePhase(phaseArg, cellIndex);
-      setCompleting(false);
-      if (advanced) {
-        triggerStamp(() => navigation.navigate("SprintHome"));
-      } else {
-        setIsPartialComplete(true);
-      }
+      setIsPartialComplete(true);
     }
   };
 
@@ -248,7 +235,6 @@ export default function SprintStudySessionScreen() {
     const targetPos = cellIndex ?? sprintData?.currentPosition ?? -1;
     const savedProgress = targetPos >= 0 ? getCellPhaseProgress(targetPos) : { text: false, audio: false };
     const willGetStamp =
-      sessionMode === "review" ||
       sessionMode === "study" ||
       (sessionMode === "text-only" && savedProgress.audio) ||
       (sessionMode === "audio-only" && savedProgress.text);
@@ -260,13 +246,8 @@ export default function SprintStudySessionScreen() {
       <ThemedView style={styles.container}>
         {stampVisible && (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
-            <View style={[
-              styles.stampCircle,
-              { backgroundColor: sessionMode === "review" ? Colors.light.secondary : Colors.light.success }
-            ]}>
-              {sessionMode === "review"
-                ? <FlowerIcon size={80} color="#fff" />
-                : <PlantIcon size={80} color="#fff" />}
+            <View style={[styles.stampCircle, { backgroundColor: Colors.light.success }]}>
+              <PlantIcon size={80} color="#fff" />
             </View>
             <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
           </Animated.View>
@@ -352,7 +333,7 @@ export default function SprintStudySessionScreen() {
   const badgeColor = isAudioPhase ? Colors.light.secondary : theme.primary;
   const badgeBg = isAudioPhase ? Colors.light.secondary + "20" : theme.primary + "20";
   const badgeIcon: keyof typeof Feather.glyphMap = isAudioPhase ? "headphones" : "book-open";
-  const badgeLabel = isAudioPhase ? "音声学習" : (phase === "review" ? "復習" : "文字学習");
+  const badgeLabel = isAudioPhase ? "音声学習" : "文字学習";
 
   const phaseTotal = sessionMode === "study" ? 2 : 1;
   const phaseNum = isAudioPhase && sessionMode === "study" ? 2 : 1;

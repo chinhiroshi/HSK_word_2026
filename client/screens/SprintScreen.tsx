@@ -24,10 +24,10 @@ import { getWords, initializeData } from "@/lib/storage";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
-import { PlantIcon, FlowerIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
+import { PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
-type SessionMode = "study" | "text-only" | "audio-only" | "review";
+type SessionMode = "study" | "text-only" | "audio-only";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
 // Grid: 5 columns, dynamic rows — horizontal snake path
@@ -136,11 +136,6 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       borderColor = "#7C3AED";
       iconColor = "#fff";
       textColor = "rgba(255,255,255,0.85)";
-    } else if (sessionType === "review") {
-      bgColor = Colors.light.secondary;
-      borderColor = Colors.light.secondary;
-      iconColor = "#fff";
-      textColor = "rgba(255,255,255,0.85)";
     } else {
       bgColor = theme.primary;
       borderColor = theme.primary;
@@ -157,10 +152,6 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     bgColor = "#EDE9FE";
     borderColor = "#C4B5FD";
     textColor = "#7C3AED";
-  } else if (sessionType === "review") {
-    bgColor = Colors.light.secondary + "18";
-    borderColor = Colors.light.secondary + "50";
-    textColor = Colors.light.secondary;
   } else {
     bgColor = theme.primary + "12";
     borderColor = theme.primary + "40";
@@ -179,9 +170,6 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     }
     if (sessionType === "test") {
       return <MonsterIcon size={iconSize} color={stampColor ?? "#7C3AED"} />;
-    }
-    if (sessionType === "review") {
-      return <FlowerIcon size={iconSize} color={stampColor ?? Colors.light.secondary} />;
     }
     return <PlantIcon size={iconSize} color={stampColor ?? theme.primary} />;
   };
@@ -441,8 +429,6 @@ export default function SprintScreen() {
     const sessionType = getSessionType(index);
     if (sessionType === "test") {
       navigation.navigate("SprintTest");
-    } else if (sessionType === "review") {
-      navigation.navigate("SprintStudySession", { mode: "review", cellIndex: index });
     } else {
       setSelectedCell(index);
       setModalVisible(true);
@@ -451,12 +437,7 @@ export default function SprintScreen() {
 
   const handleModeSelect = (mode: SessionMode) => {
     setModalVisible(false);
-    const cellIdx = selectedCell;
-    if (mode === "review") {
-      navigation.navigate("SprintStudySession", { mode: "review", cellIndex: cellIdx });
-    } else {
-      navigation.navigate("SprintStudySession", { mode, cellIndex: cellIdx });
-    }
+    navigation.navigate("SprintStudySession", { mode, cellIndex: selectedCell });
   };
 
   const handleSkip = async () => {
@@ -487,7 +468,6 @@ export default function SprintScreen() {
   const getSessionTypeLabel = (type: SprintSessionType) => {
     switch (type) {
       case "study": return "学習";
-      case "review": return "復習";
       case "test": return "テスト";
       default: return "";
     }
@@ -496,7 +476,6 @@ export default function SprintScreen() {
   const getSessionTypeColor = (type: SprintSessionType) => {
     switch (type) {
       case "study": return theme.primary;
-      case "review": return Colors.light.secondary;
       case "test": return "#7C3AED";
       default: return theme.textSecondary;
     }

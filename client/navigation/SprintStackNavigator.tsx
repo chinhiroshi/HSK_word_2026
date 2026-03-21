@@ -10,7 +10,7 @@ import SprintTestScreen from "@/screens/SprintTestScreen";
 export type SprintStackParamList = {
   SprintHome: undefined;
   SprintSetup: undefined;
-  SprintStudySession: { mode: "study" | "text-only" | "audio-only" | "review"; cellIndex: number };
+  SprintStudySession: { mode: "study" | "text-only" | "audio-only"; cellIndex: number };
   SprintTest: undefined;
 };
 
@@ -36,7 +36,6 @@ export default function SprintStackNavigator() {
         component={SprintStudySessionScreen}
         options={({ route }) => ({
           headerTitle:
-            route.params?.mode === "review" ? "復習セッション" :
             route.params?.mode === "audio-only" ? "音声学習" :
             route.params?.mode === "text-only" ? "文字学習" : "学習セッション",
         })}

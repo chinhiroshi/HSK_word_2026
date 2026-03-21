@@ -68,10 +68,10 @@ export default function SprintSetupScreen() {
     : selectedMinutes || 0;
 
   const wordsPerDay = Math.max(5, Math.floor(effectiveMinutes * (2 / 3)));
-  const reviewCount = Math.max(3, Math.floor(wordsPerDay / 3));
+  const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
   const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
-  const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / 4));
-  const expectedCells = 1 + fullCycles * 7;
+  const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / N));
+  const expectedCells = 1 + fullCycles * (N + 1);
   const canStart = effectiveMinutes >= 5;
 
   const handleStart = async () => {
@@ -223,15 +223,9 @@ export default function SprintSetupScreen() {
                 </ThemedText>
               </View>
               <View style={styles.summaryRow}>
-                <Feather name="refresh-cw" size={16} color={theme.primary} />
+                <Feather name="repeat" size={16} color={theme.primary} />
                 <ThemedText style={[styles.summaryText, { color: theme.primary }]}>
-                  復習単語数: {reviewCount}語
-                </ThemedText>
-              </View>
-              <View style={styles.summaryRow}>
-                <Feather name="calendar" size={16} color={theme.primary} />
-                <ThemedText style={[styles.summaryText, { color: theme.primary }]}>
-                  7日サイクル: 学習×4 + 復習×2 + テスト×1
+                  サイクル: 学習×{N} + テスト×1（50語ごと）
                 </ThemedText>
               </View>
               <View style={styles.summaryRow}>

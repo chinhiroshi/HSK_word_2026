@@ -44,7 +44,7 @@ export interface TestQuestion {
   correctAnswer: string;
 }
 
-export type SprintSessionType = "flag" | "study" | "review" | "test";
+export type SprintSessionType = "flag" | "study" | "test";
 
 export interface SprintData {
   hasSetup: boolean;

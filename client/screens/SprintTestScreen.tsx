@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -19,7 +19,6 @@ import { MonsterIcon } from "@/components/SprintCellIcons";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ProgressBar } from "@/components/ProgressBar";
-import { SpeakButton } from "@/components/SpeakButton";
 import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
@@ -27,11 +26,12 @@ import { Word, TestQuestion } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
+import * as Speech from "expo-speech";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-const QUESTION_COUNT = 10;
-const PASS_PERCENTAGE = 70;
+const MAX_TEST_WORDS = 50;
+const PASS_PERCENTAGE = 85;
 
 function shuffleArray<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -42,20 +42,18 @@ function shuffleArray<T>(arr: T[]): T[] {
   return a;
 }
 
-function generateSprintQuestions(words: Word[], count: number): TestQuestion[] {
-  const sorted = [...words].sort(
-    (a, b) =>
-      (b.textUnmemorizedCount + b.audioUnmemorizedCount) -
-      (a.textUnmemorizedCount + a.audioUnmemorizedCount)
-  );
-  const pool = sorted.slice(0, Math.max(count * 2, 20));
-  const selected = shuffleArray(pool).slice(0, count);
-  return selected.map((word) => {
+// Build audio-format questions: hear Chinese, choose Japanese meaning.
+// Uses unmemorized (audio) words, up to MAX_TEST_WORDS.
+function generateAudioQuestions(words: Word[]): TestQuestion[] {
+  const unmemorized = words.filter((w) => !w.audioMemorized);
+  const pool = shuffleArray(unmemorized).slice(0, MAX_TEST_WORDS);
+  if (pool.length === 0) return [];
+  return pool.map((word) => {
     const correctAnswer = word.translation;
-    const others = shuffleArray(words.filter((w) => w.id !== word.id))
+    const distractors = shuffleArray(words.filter((w) => w.id !== word.id))
       .slice(0, 3)
       .map((w) => w.translation);
-    const options = shuffleArray([correctAnswer, ...others]);
+    const options = shuffleArray([correctAnswer, ...distractors]);
     return { word, type: "word", options, correctAnswer };
   });
 }
@@ -64,6 +62,11 @@ interface Answer {
   questionIndex: number;
   answer: string;
   isCorrect: boolean;
+}
+
+function speakChinese(text: string) {
+  Speech.stop();
+  Speech.speak(text, { language: "zh-CN", rate: 0.9 });
 }
 
 export default function SprintTestScreen() {
@@ -110,7 +113,7 @@ export default function SprintTestScreen() {
   const loadQuestions = useCallback(async () => {
     await initializeData();
     const words = await getWords();
-    const q = generateSprintQuestions(words, QUESTION_COUNT);
+    const q = generateAudioQuestions(words);
     setQuestions(q);
     setLoading(false);
   }, []);
@@ -119,7 +122,21 @@ export default function SprintTestScreen() {
     loadQuestions();
   }, [loadQuestions]);
 
+  // Auto-play audio when question changes
   const currentQuestion = questions[currentIndex];
+  const lastSpokenIndex = useRef(-1);
+  useEffect(() => {
+    if (!loading && currentQuestion && !isCompleted && lastSpokenIndex.current !== currentIndex) {
+      lastSpokenIndex.current = currentIndex;
+      speakChinese(currentQuestion.word.word);
+    }
+  }, [currentIndex, loading, currentQuestion, isCompleted]);
+
+  // Stop speech on unmount
+  useEffect(() => {
+    return () => { Speech.stop(); };
+  }, []);
+
   const progress = questions.length > 0 ? ((currentIndex + 1) / questions.length) * 100 : 0;
 
   const handleAnswer = (answer: string) => {
@@ -201,14 +218,14 @@ export default function SprintTestScreen() {
 
     return (
       <ThemedView style={styles.container}>
-        {stampVisible && (
+        {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
             <View style={[styles.stampCircle, { backgroundColor: "#7C3AED" }]}>
               <MonsterIcon size={80} color="#fff" />
             </View>
             <ThemedText style={styles.stampLabel}>特別スタンプ獲得！</ThemedText>
           </Animated.View>
-        )}
+        ) : null}
         <Animated.View entering={FadeIn} style={[styles.resultContainer, { paddingTop: headerHeight + Spacing.xl }]}>
           <View
             style={[
@@ -232,7 +249,9 @@ export default function SprintTestScreen() {
           <ThemedText style={styles.resultTitle}>
             {cleared ? "テストクリア！" : "もう少し頑張りましょう！"}
           </ThemedText>
-
+          <ThemedText style={[styles.passInfo, { color: theme.textSecondary }]}>
+            合格ライン: {PASS_PERCENTAGE}%
+          </ThemedText>
           <ThemedText style={[styles.resultStats, { color: theme.textSecondary }]}>
             {correct} / {total} 問正解
           </ThemedText>
@@ -269,15 +288,18 @@ export default function SprintTestScreen() {
         </View>
 
         <View style={styles.questionSection}>
-          <View style={styles.wordRow}>
-            <ThemedText style={styles.questionWord}>{currentQuestion.word.word}</ThemedText>
-            <SpeakButton text={currentQuestion.word.word} size="medium" />
-          </View>
-          <ThemedText style={[styles.questionPinyin, { color: theme.primary }]}>
-            {currentQuestion.word.pinyin}
+          <Pressable
+            testID="button-replay-audio"
+            onPress={() => speakChinese(currentQuestion.word.word)}
+            style={[styles.speakerButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
+          >
+            <Feather name="volume-2" size={36} color={theme.primary} />
+          </Pressable>
+          <ThemedText style={[styles.replayHint, { color: theme.textSecondary }]}>
+            タップして再生
           </ThemedText>
           <ThemedText style={[styles.questionLabel, { color: theme.textSecondary }]}>
-            この単語の意味は？
+            この音声の意味は？
           </ThemedText>
         </View>
 
@@ -303,6 +325,16 @@ export default function SprintTestScreen() {
 
         {showResult ? (
           <Animated.View entering={FadeIn} style={styles.feedbackSection}>
+            {showResult ? (
+              <View style={[styles.answerReveal, { backgroundColor: theme.card }]}>
+                <ThemedText style={[styles.answerRevealWord, { color: theme.primary }]}>
+                  {currentQuestion.word.word}
+                </ThemedText>
+                <ThemedText style={[styles.answerRevealPinyin, { color: theme.textSecondary }]}>
+                  {currentQuestion.word.pinyin}
+                </ThemedText>
+              </View>
+            ) : null}
             <Button onPress={handleNext} style={styles.actionButton}>
               {currentIndex < questions.length - 1 ? "次の問題" : "結果を見る"}
             </Button>
@@ -320,9 +352,16 @@ const styles = StyleSheet.create({
   progressSection: { marginBottom: Spacing.xl },
   progressText: { fontSize: 14, fontFamily: "Nunito_600SemiBold", textAlign: "right", marginBottom: Spacing.sm },
   questionSection: { alignItems: "center", marginBottom: Spacing["2xl"] },
-  wordRow: { flexDirection: "row", alignItems: "center", gap: Spacing.md },
-  questionWord: { fontSize: 48, fontWeight: "700", fontFamily: "Nunito_700Bold" },
-  questionPinyin: { fontSize: 18, fontFamily: "Nunito_400Regular", marginTop: Spacing.sm, marginBottom: Spacing.lg },
+  speakerButton: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  replayHint: { fontSize: 13, fontFamily: "Nunito_400Regular", marginBottom: Spacing.lg },
   questionLabel: { fontSize: 16, fontFamily: "Nunito_400Regular" },
   optionsSection: { gap: Spacing.md, marginBottom: Spacing.xl },
   optionButton: {
@@ -334,7 +373,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   optionText: { fontSize: 16, fontFamily: "Nunito_600SemiBold", flex: 1 },
-  feedbackSection: { alignItems: "center" },
+  feedbackSection: { gap: Spacing.md },
+  answerReveal: {
+    alignItems: "center",
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    gap: Spacing.xs,
+  },
+  answerRevealWord: { fontSize: 28, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  answerRevealPinyin: { fontSize: 15, fontFamily: "Nunito_400Regular" },
   actionButton: { width: "100%" },
   resultContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing["3xl"] },
   scoreCircle: {
@@ -359,6 +406,7 @@ const styles = StyleSheet.create({
   },
   specialStampText: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold" },
   resultTitle: { fontSize: 22, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: Spacing.sm, textAlign: "center" },
+  passInfo: { fontSize: 13, fontFamily: "Nunito_400Regular", marginBottom: Spacing.sm },
   resultStats: { fontSize: 16, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.xl },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },

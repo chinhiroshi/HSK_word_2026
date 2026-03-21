@@ -4,33 +4,25 @@ import { getSprintData, saveSprintData, resetSprintData } from "@/lib/storage";
 
 const DEFAULT_TOTAL_CELLS = 29;
 
-// Fixed cell types — each position's session type is explicitly declared.
-// Pattern per 7-cell cycle: study, study, review, study, study, review, test
-const CELL_SESSION_TYPES: SprintSessionType[] = [
-  "flag",                                                                    // 0
-  "study", "study", "review", "study", "study", "review", "test",           // 1–7
-  "study", "study", "review", "study", "study", "review", "test",           // 8–14
-  "study", "study", "review", "study", "study", "review", "test",           // 15–21
-  "study", "study", "review", "study", "study", "review", "test",           // 22–28
-];
-
-function getSessionType(position: number): SprintSessionType {
-  if (position < 0 || position >= CELL_SESSION_TYPES.length) return "study";
-  return CELL_SESSION_TYPES[position];
+// Dynamic cell type: position 0 = flag, then cycles of N study cells + 1 test.
+// N = ceil(50 / wordsPerDay) — i.e., test appears after every 50 words studied.
+export function getSessionType(position: number, wordsPerDay: number = 10): SprintSessionType {
+  if (position <= 0) return "flag";
+  const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
+  const cycleLen = N + 1; // N study + 1 test
+  const posInCycle = (position - 1) % cycleLen;
+  return posInCycle < N ? "study" : "test";
 }
 
 function calcWordsPerDay(minutes: number): number {
   return Math.max(5, Math.floor(minutes * (2 / 3)));
 }
 
-function calcReviewCount(wordsPerDay: number): number {
-  return Math.max(3, Math.floor(wordsPerDay / 3));
-}
-
 function calcTotalCells(totalWords: number, wordsPerDay: number): number {
+  const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
   const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
-  const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / 4));
-  return 1 + fullCycles * 7;
+  const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / N));
+  return 1 + fullCycles * (N + 1); // flag + (N study + 1 test) × cycles
 }
 
 function getTodayString(): string {
@@ -48,10 +40,10 @@ function getSessionWords(words: Word[], studiedWordCount: number, count: number)
 }
 
 // Count how many STUDY cells come before `position` to derive that cell's word offset.
-function getStudyWordOffsetForCell(position: number): number {
+function getStudyWordOffsetForCell(position: number, wordsPerDay: number): number {
   let count = 0;
   for (let i = 1; i < position; i++) {
-    if (CELL_SESSION_TYPES[i % CELL_SESSION_TYPES.length] === "study") count++;
+    if (getSessionType(i, wordsPerDay) === "study") count++;
   }
   return count;
 }
@@ -62,10 +54,8 @@ function canSkipSession(
   sessionType: SprintSessionType
 ): boolean {
   if (sessionType === "flag") return false;
-  if (sessionType === "review" || sessionType === "test") {
-    const unmemorized = words.filter(
-      (w) => (w.textUnmemorizedCount || 0) > 0 || (w.audioUnmemorizedCount || 0) > 0
-    );
+  if (sessionType === "test") {
+    const unmemorized = words.filter((w) => !w.audioMemorized);
     return unmemorized.length === 0;
   }
   const sessionWords = getSessionWords(words, sprintData.studiedWordCount, sprintData.wordsPerDay);
@@ -91,7 +81,6 @@ interface SprintContextType {
   getSessionType: (position: number) => SprintSessionType;
   canSkipCurrentSession: (words: Word[]) => boolean;
   getStudyWords: (words: Word[], cellIndex?: number) => Word[];
-  getReviewWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean };
   totalCells: number;
 }
@@ -105,10 +94,9 @@ const SprintContext = createContext<SprintContextType>({
   completePhase: async (_p, _t) => false,
   skipSession: async () => {},
   resetSprint: async () => {},
-  getSessionType,
+  getSessionType: (pos) => getSessionType(pos, 10),
   canSkipCurrentSession: () => false,
   getStudyWords: () => [],
-  getReviewWords: () => [],
   getCellPhaseProgress: () => ({ text: false, audio: false }),
   totalCells: DEFAULT_TOTAL_CELLS,
 });
@@ -130,14 +118,13 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
 
   const setupSprint = useCallback(async (minutes: number, totalWords: number = 150) => {
     const wordsPerDay = calcWordsPerDay(minutes);
-    const reviewCount = calcReviewCount(wordsPerDay);
     const totalCells = calcTotalCells(totalWords, wordsPerDay);
     const today = getTodayString();
     const newData: SprintData = {
       hasSetup: true,
       studyMinutes: minutes,
       wordsPerDay,
-      reviewCount,
+      reviewCount: 0,
       currentPosition: 1,
       studiedWordCount: 0,
       lastStudyDate: null,
@@ -171,7 +158,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         newStreak = 1;
       }
 
-      const sessionType = getSessionType(sprintData.currentPosition);
+      const sessionType = getSessionType(sprintData.currentPosition, sprintData.wordsPerDay);
       const isStudySession = sessionType === "study";
       const newStudiedWordCount = isStudySession
         ? sprintData.studiedWordCount + sprintData.wordsPerDay
@@ -209,7 +196,6 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     async (phase: "text" | "audio" | "both", targetCell?: number): Promise<boolean> => {
       if (!sprintData) return false;
 
-      // Use the explicitly-provided cell index, or fall back to currentPosition.
       const position = targetCell ?? sprintData.currentPosition;
       const phaseProgress = sprintData.cellPhaseProgress ?? {};
       const current = phaseProgress[position] ?? { text: false, audio: false };
@@ -244,9 +230,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
           [position]: today,
         };
 
-        // Only advance the sprint pointer when the user finishes the CURRENT cell.
         const isCurrentCell = position === sprintData.currentPosition;
-        const sessionType = getSessionType(position);
+        const sessionType = getSessionType(position, sprintData.wordsPerDay);
         const newStudiedWordCount =
           isCurrentCell && sessionType === "study"
             ? sprintData.studiedWordCount + sprintData.wordsPerDay
@@ -291,10 +276,17 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     setSprintData(null);
   }, []);
 
+  const boundGetSessionType = useCallback(
+    (position: number): SprintSessionType => {
+      return getSessionType(position, sprintData?.wordsPerDay ?? 10);
+    },
+    [sprintData]
+  );
+
   const canSkipCurrentSession = useCallback(
     (words: Word[]) => {
       if (!sprintData) return false;
-      const sessionType = getSessionType(sprintData.currentPosition);
+      const sessionType = getSessionType(sprintData.currentPosition, sprintData.wordsPerDay);
       return canSkipSession(words, sprintData, sessionType);
     },
     [sprintData]
@@ -303,26 +295,12 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   const getStudyWords = useCallback(
     (words: Word[], cellIndex?: number) => {
       if (!sprintData) return [];
-      // If a specific cell is provided, derive its word offset from its position
-      // in the study-cell sequence (independent of studiedWordCount).
       if (cellIndex !== undefined) {
-        const studyIndex = getStudyWordOffsetForCell(cellIndex);
+        const studyIndex = getStudyWordOffsetForCell(cellIndex, sprintData.wordsPerDay);
         const wordOffset = (studyIndex * sprintData.wordsPerDay) % Math.max(1, words.length);
         return getSessionWords(words, wordOffset, sprintData.wordsPerDay);
       }
       return getSessionWords(words, sprintData.studiedWordCount, sprintData.wordsPerDay);
-    },
-    [sprintData]
-  );
-
-  const getReviewWords = useCallback(
-    (words: Word[]) => {
-      if (!sprintData) return [];
-      const unmemorized = words.filter(
-        (w) => (w.textUnmemorizedCount || 0) > 0 || (w.audioUnmemorizedCount || 0) > 0
-      );
-      const shuffled = [...unmemorized].sort(() => Math.random() - 0.5);
-      return shuffled.slice(0, sprintData.reviewCount);
     },
     [sprintData]
   );
@@ -346,10 +324,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         completePhase,
         skipSession,
         resetSprint,
-        getSessionType,
+        getSessionType: boundGetSessionType,
         canSkipCurrentSession,
         getStudyWords,
-        getReviewWords,
         getCellPhaseProgress,
         totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,
       }}
