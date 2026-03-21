@@ -6,7 +6,15 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSequence,
+  runOnJS,
+} from "react-native-reanimated";
+import { MonsterIcon } from "@/components/SprintCellIcons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -73,6 +81,31 @@ export default function SprintTestScreen() {
   const [isCompleted, setIsCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
+  const [stampVisible, setStampVisible] = useState(false);
+
+  const stampScale = useSharedValue(0);
+  const stampOpacity = useSharedValue(0);
+  const stampStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: stampScale.value }],
+    opacity: stampOpacity.value,
+  }));
+
+  const triggerStamp = (onDone: () => void) => {
+    setStampVisible(true);
+    stampScale.value = 0;
+    stampOpacity.value = 0;
+    stampScale.value = withSequence(
+      withTiming(1.25, { duration: 280 }),
+      withTiming(1.0, { duration: 140 })
+    );
+    stampOpacity.value = withSequence(
+      withTiming(1, { duration: 200 }),
+      withTiming(1, { duration: 1100 }),
+      withTiming(0, { duration: 300 }, (finished) => {
+        if (finished) runOnJS(onDone)();
+      })
+    );
+  };
 
   const loadQuestions = useCallback(async () => {
     await initializeData();
@@ -116,7 +149,11 @@ export default function SprintTestScreen() {
     setCompleting(true);
     await completeSession(cleared);
     setCompleting(false);
-    navigation.navigate("SprintHome");
+    if (cleared) {
+      triggerStamp(() => navigation.navigate("SprintHome"));
+    } else {
+      navigation.navigate("SprintHome");
+    }
   };
 
   const getOptionStyle = (option: string) => {
@@ -163,8 +200,16 @@ export default function SprintTestScreen() {
     const cleared = percentage >= PASS_PERCENTAGE;
 
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
-        <Animated.View entering={FadeIn} style={styles.resultContainer}>
+      <ThemedView style={styles.container}>
+        {stampVisible && (
+          <Animated.View style={[styles.stampOverlay, stampStyle]}>
+            <View style={[styles.stampCircle, { backgroundColor: "#7C3AED" }]}>
+              <MonsterIcon size={80} color="#fff" />
+            </View>
+            <ThemedText style={styles.stampLabel}>特別スタンプ獲得！</ThemedText>
+          </Animated.View>
+        )}
+        <Animated.View entering={FadeIn} style={[styles.resultContainer, { paddingTop: headerHeight + Spacing.xl }]}>
           <View
             style={[
               styles.scoreCircle,
@@ -317,4 +362,20 @@ const styles = StyleSheet.create({
   resultStats: { fontSize: 16, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.xl },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
+  stampOverlay: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    zIndex: 100,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: Spacing.xl,
+  },
+  stampCircle: {
+    width: 160, height: 160,
+    borderRadius: 80,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  stampLabel: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", color: "#fff" },
 });

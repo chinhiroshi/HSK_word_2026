@@ -32,6 +32,7 @@ import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
+import { PlantIcon, FlowerIcon } from "@/components/SprintCellIcons";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -244,8 +245,13 @@ export default function SprintStudySessionScreen() {
       <ThemedView style={styles.container}>
         {stampVisible && (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
-            <View style={[styles.stampCircle, { backgroundColor: Colors.light.success }]}>
-              <Feather name="award" size={80} color="#fff" />
+            <View style={[
+              styles.stampCircle,
+              { backgroundColor: sessionMode === "review" ? Colors.light.secondary : Colors.light.success }
+            ]}>
+              {sessionMode === "review"
+                ? <FlowerIcon size={80} color="#fff" />
+                : <PlantIcon size={80} color="#fff" />}
             </View>
             <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
           </Animated.View>
@@ -291,6 +297,16 @@ export default function SprintStudySessionScreen() {
           >
             {completing ? "保存中..." : willGetStamp ? "スタンプをもらう" : "マップに戻る"}
           </Button>
+          {sessionMode === "text-only" && !savedProgress.audio ? (
+            <Pressable
+              testID="button-start-audio-study"
+              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-only" })}
+              style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
+            >
+              <Feather name="headphones" size={16} color={theme.primary} />
+              <ThemedText style={[styles.audioStudyText, { color: theme.primary }]}>音声学習を始める</ThemedText>
+            </Pressable>
+          ) : null}
         </Animated.View>
       </ThemedView>
     );
@@ -696,6 +712,8 @@ const styles = StyleSheet.create({
   resultLabel: { fontSize: 13, fontFamily: "Nunito_400Regular", marginTop: Spacing.xs },
   resultDivider: { width: 1, height: 40 },
   completeButton: { width: "100%" },
+  audioStudyButton: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: Spacing.sm, borderRadius: 999, borderWidth: 1.5, paddingVertical: Spacing.md, marginTop: Spacing.sm },
+  audioStudyText: { fontSize: 15, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", textAlign: "center", marginBottom: Spacing.sm },
   emptySub: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
 });

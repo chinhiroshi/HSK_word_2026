@@ -30,29 +30,35 @@ type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "review";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
-// Grid: 5 columns, 9 rows
-// Col 0: cells 0-8 going DOWN
-// Col 1: cell 9 (single connector, same row as cell 8)
-// Col 2: cells 10-18 going UP
-// Col 3: cell 19 (single connector, same row as cell 18 = row 0)
-// Col 4: cells 20-28 going DOWN
+// Grid: 5 columns, 9 rows — horizontal snake
+// Row 0→4: cells going right / connector down / left / connector down / right
+// Pattern: row0 right (0-4), row1 connector↓ at col4 (5), row2 left (6-10)
+// row3 connector↓ at col0 (11), row4 right (12-16), ... row8 right (24-28)
 const NUM_GRID_COLS = 5;
 const NUM_GRID_ROWS = 9;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const ROW_WIDTH = SCREEN_WIDTH - Spacing.sm * 2;
-const CELL_SIZE = Math.floor(ROW_WIDTH / NUM_GRID_COLS);
+const ROW_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
+const CELL_SIZE = Math.floor(ROW_WIDTH / NUM_GRID_COLS) - 12;
 
 const CELL_POSITIONS: [number, number][] = [
-  // Col 0 — going down (cells 0–8)
-  [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0],
-  // Col 1 — single connector (cell 9)
-  [8, 1],
-  // Col 2 — going up (cells 10–18)
-  [8, 2], [7, 2], [6, 2], [5, 2], [4, 2], [3, 2], [2, 2], [1, 2], [0, 2],
-  // Col 3 — single connector (cell 19)
-  [0, 3],
-  // Col 4 — going down (cells 20–28)
-  [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4], [8, 4],
+  // Row 0 → right (cells 0–4)
+  [0, 0], [0, 1], [0, 2], [0, 3], [0, 4],
+  // Row 1 ↓ connector at col 4 (cell 5)
+  [1, 4],
+  // Row 2 ← left (cells 6–10)
+  [2, 4], [2, 3], [2, 2], [2, 1], [2, 0],
+  // Row 3 ↓ connector at col 0 (cell 11)
+  [3, 0],
+  // Row 4 → right (cells 12–16)
+  [4, 0], [4, 1], [4, 2], [4, 3], [4, 4],
+  // Row 5 ↓ connector at col 4 (cell 17)
+  [5, 4],
+  // Row 6 ← left (cells 18–22)
+  [6, 4], [6, 3], [6, 2], [6, 1], [6, 0],
+  // Row 7 ↓ connector at col 0 (cell 23)
+  [7, 0],
+  // Row 8 → right (cells 24–28)
+  [8, 0], [8, 1], [8, 2], [8, 3], [8, 4],
 ];
 
 const pathGrid: number[][] = Array.from({ length: NUM_GRID_ROWS }, () =>
@@ -197,12 +203,12 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
           style={[
             styles.cellArrow,
             direction === "right"
-              ? { right: 1, top: Math.floor(CELL_SIZE / 2) - 6 }
+              ? { right: -8, top: Math.floor(CELL_SIZE / 2) - 8 }
               : direction === "left"
-              ? { left: 1, top: Math.floor(CELL_SIZE / 2) - 6 }
+              ? { left: -8, top: Math.floor(CELL_SIZE / 2) - 8 }
               : direction === "down"
-              ? { bottom: 1, left: Math.floor(CELL_SIZE / 2) - 6 }
-              : { top: 1, left: Math.floor(CELL_SIZE / 2) - 6 },
+              ? { bottom: -8, left: Math.floor(CELL_SIZE / 2) - 8 }
+              : { top: -8, left: Math.floor(CELL_SIZE / 2) - 8 },
           ]}
         >
           <Feather
@@ -215,8 +221,8 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
                 ? "arrow-down"
                 : "arrow-up"
             }
-            size={10}
-            color={isCurrent ? "rgba(255,255,255,0.65)" : isCompleted ? theme.primary + "55" : theme.textSecondary + "35"}
+            size={16}
+            color={isCurrent ? "rgba(255,255,255,0.7)" : isCompleted ? theme.primary + "70" : theme.textSecondary + "50"}
           />
         </View>
       ) : null}
@@ -634,7 +640,7 @@ export default function SprintScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { paddingHorizontal: Spacing.sm },
+  content: { paddingHorizontal: Spacing.lg },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.lg },
   streakBadge: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, backgroundColor: Colors.light.secondary + "15", paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
@@ -656,8 +662,8 @@ const styles = StyleSheet.create({
   skipBanner: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, padding: Spacing.md, borderRadius: BorderRadius.sm, borderWidth: 1, marginBottom: Spacing.lg },
   skipText: { fontSize: 13, fontFamily: "Nunito_600SemiBold", flex: 1 },
   gridWrapper: { marginBottom: Spacing.xl },
-  gridRow: { flexDirection: "row" },
-  cell: { borderRadius: 6, borderWidth: 1.5, justifyContent: "center", alignItems: "center", gap: 1, position: "relative" },
+  gridRow: { flexDirection: "row", justifyContent: "space-between", overflow: "visible" },
+  cell: { borderRadius: 6, borderWidth: 1.5, justifyContent: "center", alignItems: "center", gap: 1, position: "relative", overflow: "visible" },
   cellNumber: { fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 15 },
   cellDate: { fontFamily: "Nunito_400Regular", lineHeight: 12 },
   cellArrow: { position: "absolute" },
