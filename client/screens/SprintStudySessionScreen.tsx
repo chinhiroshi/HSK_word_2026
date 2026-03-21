@@ -40,7 +40,7 @@ import { PlantIcon } from "@/components/SprintCellIcons";
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-type Phase = "text-list" | "text-review" | "audio-cards" | "complete";
+type Phase = "text-list" | "text-review" | "audio-list" | "audio-review" | "audio-cards" | "complete";
 // 0 = audio only, 1 = kanji revealed, 2 = meaning revealed
 type RevealLevel = 0 | 1 | 2;
 type ListFilter = "all" | "memorized" | "unmemorized" | "struggled";
@@ -58,7 +58,8 @@ export default function SprintStudySessionScreen() {
   const cellIndex = route.params?.cellIndex;
 
   const initialPhase: Phase =
-    sessionMode === "audio-cards-only" || sessionMode === "audio-only" ? "audio-cards" :
+    sessionMode === "audio-cards-only" ? "audio-cards" :
+    sessionMode === "audio-only" ? "audio-list" :
     "text-list";
 
   const [phase, setPhase] = useState<Phase>(initialPhase);
@@ -102,7 +103,7 @@ export default function SprintStudySessionScreen() {
     );
   };
 
-  const isAudioPhase = phase === "audio-cards";
+  const isAudioPhase = phase === "audio-cards" || phase === "audio-list" || phase === "audio-review";
 
   const currentCardWord = cardWords[currentIndex] ?? null;
   const cardProgress = cardWords.length > 0 ? (currentIndex / cardWords.length) * 100 : 0;
@@ -165,9 +166,9 @@ export default function SprintStudySessionScreen() {
     };
   }, [currentIndex, phase]);
 
-  // Dynamic header: eye button for text-list → toggle hide Chinese characters
+  // Dynamic header: eye button for list phases → toggle hide/show Chinese characters
   useEffect(() => {
-    if (phase === "text-list" || phase === "text-review") {
+    if (phase === "text-list" || phase === "text-review" || phase === "audio-list" || phase === "audio-review") {
       navigation.setOptions({
         headerRight: () => (
           <TouchableOpacity
@@ -205,9 +206,8 @@ export default function SprintStudySessionScreen() {
   };
 
   const handleListNext = () => {
-    const hasUnmemorized = words.some((w) => textChoices[w.id] === "unmemorized");
-
     if (phase === "text-list") {
+      const hasUnmemorized = words.some((w) => textChoices[w.id] === "unmemorized");
       if (hasUnmemorized) {
         setListFilter("unmemorized");
         setPhase("text-review");
@@ -215,6 +215,17 @@ export default function SprintStudySessionScreen() {
         setPhase("complete");
       }
     } else if (phase === "text-review") {
+      setListFilter("all");
+      setPhase("complete");
+    } else if (phase === "audio-list") {
+      const hasUnmemorized = words.some((w) => audioChoices[w.id] === "unmemorized");
+      if (hasUnmemorized) {
+        setListFilter("unmemorized");
+        setPhase("audio-review");
+      } else {
+        setPhase("complete");
+      }
+    } else if (phase === "audio-review") {
       setListFilter("all");
       setPhase("complete");
     }
@@ -376,22 +387,27 @@ export default function SprintStudySessionScreen() {
     );
   }
 
-  // ----- LIST PHASE (text-list, text-review) -----
-  const isReviewPhase = phase === "text-review";
-  if (phase === "text-list" || phase === "text-review") {
-    const memorizedInList = Object.values(textChoices).filter((v) => v === "memorized").length;
-    const unmemorizedInList = Object.values(textChoices).filter((v) => v === "unmemorized").length;
+  // ----- LIST PHASE (text-list, text-review, audio-list, audio-review) -----
+  const isAudioListPhase = phase === "audio-list" || phase === "audio-review";
+  const isReviewPhase = phase === "text-review" || phase === "audio-review";
+  if (phase === "text-list" || phase === "text-review" || phase === "audio-list" || phase === "audio-review") {
+    const listChoices = isAudioListPhase ? audioChoices : textChoices;
+    const memorizedInList = Object.values(listChoices).filter((v) => v === "memorized").length;
+    const unmemorizedInList = Object.values(listChoices).filter((v) => v === "unmemorized").length;
 
-    // "struggled" = words that had previous difficulty (stored count)
-    const struggledInList = words.filter((w) => (w.textUnmemorizedCount ?? 0) > 0).length;
+    const struggledInList = isAudioListPhase
+      ? words.filter((w) => (w.audioUnmemorizedCount ?? 0) > 0).length
+      : words.filter((w) => (w.textUnmemorizedCount ?? 0) > 0).length;
 
-    const allMarked = words.every((w) => textChoices[w.id]);
-    const unmarkedCount = words.filter((w) => !textChoices[w.id]).length;
+    const allMarked = words.every((w) => listChoices[w.id]);
+    const unmarkedCount = words.filter((w) => !listChoices[w.id]).length;
 
     const filteredWords = words.filter((w) => {
-      if (listFilter === "memorized") return textChoices[w.id] === "memorized";
-      if (listFilter === "unmemorized") return textChoices[w.id] === "unmemorized";
-      if (listFilter === "struggled") return (w.textUnmemorizedCount ?? 0) > 0;
+      if (listFilter === "memorized") return listChoices[w.id] === "memorized";
+      if (listFilter === "unmemorized") return listChoices[w.id] === "unmemorized";
+      if (listFilter === "struggled") return isAudioListPhase
+        ? (w.audioUnmemorizedCount ?? 0) > 0
+        : (w.textUnmemorizedCount ?? 0) > 0;
       return true;
     });
 
@@ -456,18 +472,69 @@ export default function SprintStudySessionScreen() {
           contentContainerStyle={{ paddingBottom: 90 + tabBarHeight }}
           renderItem={({ item }) => {
             const globalIdx = words.indexOf(item) + 1;
-            const textChoice = textChoices[item.id];
-            const isMemorized = textChoice === "memorized";
-            const isUnmemorized = textChoice === "unmemorized";
-            const isTranslationRevealed = translationRevealedIds.has(item.id);
-            const charsHidden = allRevealed; // allRevealed = "hide characters" toggle
+            const choice = isAudioListPhase ? audioChoices[item.id] : textChoices[item.id];
+            const isMemorized = choice === "memorized";
+            const isUnmemorized = choice === "unmemorized";
             const speakText = item.exampleSentence
               ? `${item.word}。${item.exampleSentence}`
               : item.word;
 
+            // --- Audio-list row (word hidden by default, revealed by per-row eye toggle or global eye) ---
+            if (isAudioListPhase) {
+              const isWordRevealed = allRevealed || revealedIds.has(item.id);
+              return (
+                <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isMemorized ? Colors.light.success + "14" : theme.backgroundDefault }]}>
+                  <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
+                    <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
+                      {globalIdx}
+                    </ThemedText>
+                  </View>
+                  <Pressable
+                    onPress={() => speakChinese(speakText)}
+                    style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
+                  >
+                    <Feather name="volume-2" size={20} color="#fff" />
+                  </Pressable>
+                  {isWordRevealed ? (
+                    <View style={styles.wordInfoCol}>
+                      <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
+                      <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
+                    </View>
+                  ) : (
+                    <View style={{ flex: 1 }} />
+                  )}
+                  <View style={styles.rowActions}>
+                    <Pressable
+                      onPress={() => {
+                        setRevealedIds((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(item.id)) next.delete(item.id); else next.add(item.id);
+                          return next;
+                        });
+                      }}
+                      style={styles.actionIconBtn}
+                    >
+                      <Feather name={isWordRevealed ? "eye" : "eye-off"} size={18} color={isWordRevealed ? theme.primary : theme.textSecondary} />
+                    </Pressable>
+                    <Pressable onPress={() => handleChoiceList(item.id, "unmemorized")} style={styles.actionIconBtn}>
+                      <Feather name="flag" size={18} color={isUnmemorized ? Colors.light.alert : theme.textSecondary} />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => handleChoiceList(item.id, "memorized")}
+                      style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
+                    >
+                      <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
+                    </Pressable>
+                  </View>
+                </View>
+              );
+            }
+
+            // --- Text-list row (characters hidden by header toggle, per-row translation reveal) ---
+            const isTranslationRevealed = translationRevealedIds.has(item.id);
+            const charsHidden = allRevealed;
             return (
               <View style={[styles.wordRow, styles.wordRowVertical, { borderBottomColor: theme.border, backgroundColor: isMemorized ? Colors.light.success + "14" : theme.backgroundDefault }]}>
-                {/* Top row: num + word info + actions */}
                 <View style={styles.wordRowMain}>
                   <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
                     <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
@@ -512,7 +579,6 @@ export default function SprintStudySessionScreen() {
                     </Pressable>
                   </View>
                 </View>
-                {/* Translation row (revealed on demand) */}
                 {isTranslationRevealed ? (
                   <View style={[styles.translationRow, { borderTopColor: theme.border + "60" }]}>
                     <ThemedText style={[styles.listTranslationText, { color: theme.text }]}>{item.translation}</ThemedText>
