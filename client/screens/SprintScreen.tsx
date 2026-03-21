@@ -132,17 +132,20 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     textColor = "#fff";
   } else if (isCompleted) {
     if (sessionType === "test") {
-      bgColor = "#EDE9FE";
-      borderColor = "#7C3AED60";
-      textColor = "#7C3AED";
+      bgColor = "#7C3AED";
+      borderColor = "#7C3AED";
+      iconColor = "#fff";
+      textColor = "rgba(255,255,255,0.85)";
     } else if (sessionType === "review") {
-      bgColor = Colors.light.secondary + "28";
-      borderColor = Colors.light.secondary + "70";
-      textColor = Colors.light.secondary;
+      bgColor = Colors.light.secondary;
+      borderColor = Colors.light.secondary;
+      iconColor = "#fff";
+      textColor = "rgba(255,255,255,0.85)";
     } else {
-      bgColor = theme.primary + "20";
-      borderColor = theme.primary + "60";
-      textColor = theme.primary;
+      bgColor = theme.primary;
+      borderColor = theme.primary;
+      iconColor = "#fff";
+      textColor = "rgba(255,255,255,0.85)";
     }
   } else if (isCurrent) {
     bgColor = Colors.light.secondary;
@@ -166,17 +169,21 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
 
   const iconSize = CELL_SIZE * 0.38;
 
+  const stampColor = isCompleted || isSpecialStamp || isCurrent || isFlag
+    ? iconColor
+    : undefined;
+
   const renderIcon = () => {
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
     if (sessionType === "test") {
-      return <MonsterIcon size={iconSize} color="#7C3AED" />;
+      return <MonsterIcon size={iconSize} color={stampColor ?? "#7C3AED"} />;
     }
     if (sessionType === "review") {
-      return <FlowerIcon size={iconSize} color={Colors.light.secondary} />;
+      return <FlowerIcon size={iconSize} color={stampColor ?? Colors.light.secondary} />;
     }
-    return <PlantIcon size={iconSize} color={theme.primary} />;
+    return <PlantIcon size={iconSize} color={stampColor ?? theme.primary} />;
   };
 
   return (
@@ -195,7 +202,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </ThemedText>
       ) : null}
       {isCompleted && completedDate ? (
-        <ThemedText style={[styles.cellDate, { color: theme.primary + "CC", fontSize: CELL_SIZE * 0.14 }]}>
+        <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.14 }]}>
           {formatShortDate(completedDate)}
         </ThemedText>
       ) : null}
