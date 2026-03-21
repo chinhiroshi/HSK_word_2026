@@ -30,25 +30,29 @@ type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "review";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
+// Grid: 5 columns, 9 rows
+// Col 0: cells 0-8 going DOWN
+// Col 1: cell 9 (single connector, same row as cell 8)
+// Col 2: cells 10-18 going UP
+// Col 3: cell 19 (single connector, same row as cell 18 = row 0)
+// Col 4: cells 20-28 going DOWN
 const NUM_GRID_COLS = 5;
-const NUM_GRID_ROWS = 12;
+const NUM_GRID_ROWS = 9;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const ROW_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
+const ROW_WIDTH = SCREEN_WIDTH - Spacing.sm * 2;
 const CELL_SIZE = Math.floor(ROW_WIDTH / NUM_GRID_COLS);
 
 const CELL_POSITIONS: [number, number][] = [
-  [0, 1], [0, 2], [0, 3],
-  [1, 3],
-  [2, 3], [2, 4],
-  [3, 4], [3, 3], [3, 2],
-  [4, 2], [4, 1], [4, 0],
-  [5, 0], [5, 1], [5, 2],
-  [6, 2], [6, 1],
-  [7, 1], [7, 2], [7, 3],
-  [8, 3], [8, 4],
-  [9, 4], [9, 3], [9, 2],
-  [10, 2], [10, 3],
-  [11, 3], [11, 4],
+  // Col 0 — going down (cells 0–8)
+  [0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [5, 0], [6, 0], [7, 0], [8, 0],
+  // Col 1 — single connector (cell 9)
+  [8, 1],
+  // Col 2 — going up (cells 10–18)
+  [8, 2], [7, 2], [6, 2], [5, 2], [4, 2], [3, 2], [2, 2], [1, 2], [0, 2],
+  // Col 3 — single connector (cell 19)
+  [0, 3],
+  // Col 4 — going down (cells 20–28)
+  [0, 4], [1, 4], [2, 4], [3, 4], [4, 4], [5, 4], [6, 4], [7, 4], [8, 4],
 ];
 
 const pathGrid: number[][] = Array.from({ length: NUM_GRID_ROWS }, () =>
@@ -62,17 +66,21 @@ function getCellArrowDir(index: number): CellDir {
   if (index >= CELL_POSITIONS.length - 1) return null;
   const [r1, c1] = CELL_POSITIONS[index];
   const [r2, c2] = CELL_POSITIONS[index + 1];
-  if (c2 > c1) return "right";
-  if (c2 < c1) return "left";
   if (r2 > r1) return "down";
   if (r2 < r1) return "up";
+  if (c2 > c1) return "right";
+  if (c2 < c1) return "left";
   return null;
 }
 
 const DECO_TYPES = ["tree", "cloud", "mountain"] as const;
 type DecoType = (typeof DECO_TYPES)[number];
 function getDecoType(row: number, col: number): DecoType {
-  return DECO_TYPES[(row * 7 + col * 3) % 3];
+  // Mostly trees in empty columns (col 1 and col 3), occasional variety
+  const seed = row * 13 + col * 7;
+  if (seed % 5 === 3) return "cloud";
+  if (seed % 9 === 7) return "mountain";
+  return "tree";
 }
 
 function getDaysElapsed(setupDate: string | null): number {
@@ -626,7 +634,7 @@ export default function SprintScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { paddingHorizontal: Spacing.lg },
+  content: { paddingHorizontal: Spacing.sm },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.lg },
   streakBadge: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, backgroundColor: Colors.light.secondary + "15", paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },

@@ -11,7 +11,14 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import Animated, { FadeIn } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withSequence,
+  runOnJS,
+} from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -37,7 +44,7 @@ export default function SprintStudySessionScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { sprintData, completeSession, completePhase, getStudyWords, getReviewWords } = useSprint();
+  const { sprintData, completeSession, completePhase, getStudyWords, getReviewWords, getCellPhaseProgress } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
 
@@ -54,6 +61,31 @@ export default function SprintStudySessionScreen() {
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [isPartialComplete, setIsPartialComplete] = useState(false);
+  const [stampVisible, setStampVisible] = useState(false);
+
+  const stampScale = useSharedValue(0);
+  const stampOpacity = useSharedValue(0);
+  const stampStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: stampScale.value }],
+    opacity: stampOpacity.value,
+  }));
+
+  const triggerStamp = (onDone: () => void) => {
+    setStampVisible(true);
+    stampScale.value = 0;
+    stampOpacity.value = 0;
+    stampScale.value = withSequence(
+      withTiming(1.25, { duration: 280 }),
+      withTiming(1.0, { duration: 140 })
+    );
+    stampOpacity.value = withSequence(
+      withTiming(1, { duration: 200 }),
+      withTiming(1, { duration: 1000 }),
+      withTiming(0, { duration: 300 }, (finished) => {
+        if (finished) runOnJS(onDone)();
+      })
+    );
+  };
 
   const currentWord = words[currentIndex] ?? null;
   const progress = words.length > 0 ? (currentIndex / words.length) * 100 : 0;
@@ -137,13 +169,13 @@ export default function SprintStudySessionScreen() {
     if (sessionMode === "review") {
       await completeSession(false);
       setCompleting(false);
-      navigation.navigate("SprintHome");
+      triggerStamp(() => navigation.navigate("SprintHome"));
     } else {
       const phaseArg = sessionMode === "text-only" ? "text" : sessionMode === "audio-only" ? "audio" : "both";
       const advanced = await completePhase(phaseArg);
       setCompleting(false);
       if (advanced) {
-        navigation.navigate("SprintHome");
+        triggerStamp(() => navigation.navigate("SprintHome"));
       } else {
         setIsPartialComplete(true);
       }
@@ -196,16 +228,46 @@ export default function SprintStudySessionScreen() {
   }
 
   if (phase === "complete") {
+    // Determine whether this session will actually award a stamp
+    const currentPos = sprintData?.currentPosition ?? -1;
+    const savedProgress = currentPos >= 0 ? getCellPhaseProgress(currentPos) : { text: false, audio: false };
+    const willGetStamp =
+      sessionMode === "review" ||
+      sessionMode === "study" ||
+      (sessionMode === "text-only" && savedProgress.audio) ||
+      (sessionMode === "audio-only" && savedProgress.text);
+    const phaseDoneLabel =
+      sessionMode === "text-only" ? "文字学習" :
+      sessionMode === "audio-only" ? "音声学習" : "";
+
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
-        <Animated.View entering={FadeIn} style={styles.completeContainer}>
-          <View style={[styles.completeIcon, { backgroundColor: Colors.light.success + "20" }]}>
-            <Feather name="award" size={48} color={Colors.light.success} />
+      <ThemedView style={styles.container}>
+        {stampVisible && (
+          <Animated.View style={[styles.stampOverlay, stampStyle]}>
+            <View style={[styles.stampCircle, { backgroundColor: Colors.light.success }]}>
+              <Feather name="award" size={80} color="#fff" />
+            </View>
+            <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
+          </Animated.View>
+        )}
+        <Animated.View entering={FadeIn} style={[styles.completeContainer, { paddingTop: headerHeight + Spacing.xl }]}>
+          <View style={[styles.completeIcon, { backgroundColor: (willGetStamp ? Colors.light.success : theme.primary) + "20" }]}>
+            <Feather name={willGetStamp ? "award" : "check-circle"} size={48} color={willGetStamp ? Colors.light.success : theme.primary} />
           </View>
-          <ThemedText style={styles.completeTitle}>セッション完了！</ThemedText>
+          <ThemedText style={styles.completeTitle}>
+            {phaseDoneLabel ? `${phaseDoneLabel}完了！` : "セッション完了！"}
+          </ThemedText>
           <ThemedText style={[styles.completeSub, { color: theme.textSecondary }]}>
             {words.length}語を学習しました
           </ThemedText>
+          {!willGetStamp ? (
+            <View style={[styles.partialNotice, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "40" }]}>
+              <Feather name="info" size={15} color={Colors.light.alert} />
+              <ThemedText style={[styles.partialNoticeText, { color: Colors.light.alert }]}>
+                {sessionMode === "text-only" ? "音声学習" : "文字学習"}も完了するとスタンプ獲得！
+              </ThemedText>
+            </View>
+          ) : null}
           <View style={styles.resultStats}>
             <View style={styles.resultStat}>
               <ThemedText style={[styles.resultValue, { color: Colors.light.success }]}>
@@ -227,7 +289,7 @@ export default function SprintStudySessionScreen() {
             disabled={completing}
             style={styles.completeButton}
           >
-            {completing ? "保存中..." : "スタンプをもらう"}
+            {completing ? "保存中..." : willGetStamp ? "スタンプをもらう" : "マップに戻る"}
           </Button>
         </Animated.View>
       </ThemedView>
@@ -364,6 +426,11 @@ export default function SprintStudySessionScreen() {
   );
 }
 
+function getOriginalWordNum(wordId: string): number {
+  const parts = wordId.split("_");
+  return parseInt(parts[parts.length - 1], 10) || 0;
+}
+
 interface CardProps {
   word: Word;
   isRevealed: boolean;
@@ -401,13 +468,21 @@ function MemoBadge({ word, mode, theme }: { word: Word; mode: "text" | "audio"; 
 }
 
 function TextCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: CardProps) {
+  const origNum = getOriginalWordNum(word.id);
   return (
     <>
       <View style={styles.memoBadgeRow}>
         <MemoBadge word={word} mode="text" theme={theme} />
-        <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
-          No.{wordIndex} / {totalWords}
-        </ThemedText>
+        <View style={styles.wordNumBadgeGroup}>
+          {origNum > 0 ? (
+            <ThemedText style={[styles.wordNumBadge, { color: theme.primary, fontFamily: "Nunito_700Bold" }]}>
+              #{origNum}
+            </ThemedText>
+          ) : null}
+          <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
+            {wordIndex} / {totalWords}
+          </ThemedText>
+        </View>
       </View>
       <View style={styles.wordHeader}>
         <ThemedText style={styles.wordText}>{word.word}</ThemedText>
@@ -457,13 +532,21 @@ function TextCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: 
 }
 
 function AudioCard({ word, isRevealed, onReveal, theme, wordIndex, totalWords }: CardProps) {
+  const origNum = getOriginalWordNum(word.id);
   return (
     <>
       <View style={styles.memoBadgeRow}>
         <MemoBadge word={word} mode="audio" theme={theme} />
-        <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
-          No.{wordIndex} / {totalWords}
-        </ThemedText>
+        <View style={styles.wordNumBadgeGroup}>
+          {origNum > 0 ? (
+            <ThemedText style={[styles.wordNumBadge, { color: Colors.light.secondary, fontFamily: "Nunito_700Bold" }]}>
+              #{origNum}
+            </ThemedText>
+          ) : null}
+          <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
+            {wordIndex} / {totalWords}
+          </ThemedText>
+        </View>
       </View>
       {isRevealed ? (
         <Animated.View entering={FadeIn.duration(180)}>
@@ -562,6 +645,36 @@ const styles = StyleSheet.create({
   revealButtonText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
   memoBadgeRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.xs },
   wordNumBadge: { fontSize: 11, fontFamily: "Nunito_400Regular" },
+  wordNumBadgeGroup: { flexDirection: "row", alignItems: "center", gap: 6 },
+  stampOverlay: {
+    position: "absolute",
+    top: 0, left: 0, right: 0, bottom: 0,
+    zIndex: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.45)",
+  },
+  stampCircle: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
+    elevation: 12,
+  },
+  stampLabel: {
+    fontSize: 22,
+    fontFamily: "Nunito_700Bold",
+    color: "#fff",
+    marginTop: 20,
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+  },
   partialNotice: { flexDirection: "row", alignItems: "flex-start", gap: Spacing.sm, padding: Spacing.md, borderRadius: BorderRadius.md, borderWidth: 1, marginBottom: Spacing.xl, width: "100%" },
   partialNoticeText: { fontSize: 13, fontFamily: "Nunito_400Regular", flex: 1, lineHeight: 20 },
   memoBadge: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.full },
