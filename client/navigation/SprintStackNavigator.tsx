@@ -10,7 +10,7 @@ import SprintTestScreen from "@/screens/SprintTestScreen";
 export type SprintStackParamList = {
   SprintHome: undefined;
   SprintSetup: undefined;
-  SprintStudySession: { mode: "study" | "text-only" | "audio-only" | "review" };
+  SprintStudySession: { mode: "study" | "text-only" | "audio-only" | "review"; cellIndex: number };
   SprintTest: undefined;
 };
 

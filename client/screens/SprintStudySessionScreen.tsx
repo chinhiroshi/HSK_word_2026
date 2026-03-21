@@ -48,6 +48,7 @@ export default function SprintStudySessionScreen() {
   const { sprintData, completeSession, completePhase, getStudyWords, getReviewWords, getCellPhaseProgress } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
+  const cellIndex = route.params?.cellIndex;
 
   const initialPhase: Phase =
     sessionMode === "review" ? "review" :
@@ -99,11 +100,13 @@ export default function SprintStudySessionScreen() {
       const rev = getReviewWords(allWords);
       setWords(rev);
     } else {
-      const study = getStudyWords(allWords);
+      // Pass cellIndex so words are calculated from this cell's position,
+      // not from the global studiedWordCount (which reflects currentPosition).
+      const study = getStudyWords(allWords, cellIndex);
       setWords(study);
     }
     setLoading(false);
-  }, [sessionMode, getStudyWords, getReviewWords]);
+  }, [sessionMode, cellIndex, getStudyWords, getReviewWords]);
 
   useEffect(() => {
     loadWords();
@@ -173,7 +176,8 @@ export default function SprintStudySessionScreen() {
       triggerStamp(() => navigation.navigate("SprintHome"));
     } else {
       const phaseArg = sessionMode === "text-only" ? "text" : sessionMode === "audio-only" ? "audio" : "both";
-      const advanced = await completePhase(phaseArg);
+      // Pass cellIndex so this specific cell gets marked, not whatever currentPosition happens to be.
+      const advanced = await completePhase(phaseArg, cellIndex);
       setCompleting(false);
       if (advanced) {
         triggerStamp(() => navigation.navigate("SprintHome"));
@@ -229,9 +233,10 @@ export default function SprintStudySessionScreen() {
   }
 
   if (phase === "complete") {
-    // Determine whether this session will actually award a stamp
-    const currentPos = sprintData?.currentPosition ?? -1;
-    const savedProgress = currentPos >= 0 ? getCellPhaseProgress(currentPos) : { text: false, audio: false };
+    // Determine whether this session will actually award a stamp.
+    // Use the explicit cellIndex so we check the right cell's progress.
+    const targetPos = cellIndex ?? sprintData?.currentPosition ?? -1;
+    const savedProgress = targetPos >= 0 ? getCellPhaseProgress(targetPos) : { text: false, audio: false };
     const willGetStamp =
       sessionMode === "review" ||
       sessionMode === "study" ||
@@ -300,7 +305,7 @@ export default function SprintStudySessionScreen() {
           {sessionMode === "text-only" && !savedProgress.audio ? (
             <Pressable
               testID="button-start-audio-study"
-              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-only" })}
+              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-only", cellIndex: cellIndex ?? (sprintData?.currentPosition ?? 1) })}
               style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
             >
               <Feather name="headphones" size={16} color={theme.primary} />

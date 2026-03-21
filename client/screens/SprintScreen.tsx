@@ -458,7 +458,7 @@ export default function SprintScreen() {
     if (sessionType === "test") {
       navigation.navigate("SprintTest");
     } else if (sessionType === "review") {
-      navigation.navigate("SprintStudySession", { mode: "review" });
+      navigation.navigate("SprintStudySession", { mode: "review", cellIndex: index });
     } else {
       setSelectedCell(index);
       setModalVisible(true);
@@ -467,10 +467,11 @@ export default function SprintScreen() {
 
   const handleModeSelect = (mode: SessionMode) => {
     setModalVisible(false);
+    const cellIdx = selectedCell;
     if (mode === "review") {
-      navigation.navigate("SprintStudySession", { mode: "review" });
+      navigation.navigate("SprintStudySession", { mode: "review", cellIndex: cellIdx });
     } else {
-      navigation.navigate("SprintStudySession", { mode });
+      navigation.navigate("SprintStudySession", { mode, cellIndex: cellIdx });
     }
   };
 

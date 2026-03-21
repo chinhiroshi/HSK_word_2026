@@ -47,6 +47,15 @@ function getSessionWords(words: Word[], studiedWordCount: number, count: number)
   return result;
 }
 
+// Count how many STUDY cells come before `position` to derive that cell's word offset.
+function getStudyWordOffsetForCell(position: number): number {
+  let count = 0;
+  for (let i = 1; i < position; i++) {
+    if (CELL_SESSION_TYPES[i % CELL_SESSION_TYPES.length] === "study") count++;
+  }
+  return count;
+}
+
 function canSkipSession(
   words: Word[],
   sprintData: SprintData,
@@ -76,12 +85,12 @@ interface SprintContextType {
   loadSprint: () => Promise<void>;
   setupSprint: (minutes: number, totalWords?: number) => Promise<void>;
   completeSession: (isSpecial?: boolean) => Promise<void>;
-  completePhase: (phase: "text" | "audio" | "both") => Promise<boolean>;
+  completePhase: (phase: "text" | "audio" | "both", targetCell?: number) => Promise<boolean>;
   skipSession: () => Promise<void>;
   resetSprint: () => Promise<void>;
   getSessionType: (position: number) => SprintSessionType;
   canSkipCurrentSession: (words: Word[]) => boolean;
-  getStudyWords: (words: Word[]) => Word[];
+  getStudyWords: (words: Word[], cellIndex?: number) => Word[];
   getReviewWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean };
   totalCells: number;
@@ -93,7 +102,7 @@ const SprintContext = createContext<SprintContextType>({
   loadSprint: async () => {},
   setupSprint: async () => {},
   completeSession: async () => {},
-  completePhase: async () => false,
+  completePhase: async (_p, _t) => false,
   skipSession: async () => {},
   resetSprint: async () => {},
   getSessionType,
@@ -197,10 +206,11 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   );
 
   const completePhase = useCallback(
-    async (phase: "text" | "audio" | "both"): Promise<boolean> => {
+    async (phase: "text" | "audio" | "both", targetCell?: number): Promise<boolean> => {
       if (!sprintData) return false;
 
-      const position = sprintData.currentPosition;
+      // Use the explicitly-provided cell index, or fall back to currentPosition.
+      const position = targetCell ?? sprintData.currentPosition;
       const phaseProgress = sprintData.cellPhaseProgress ?? {};
       const current = phaseProgress[position] ?? { text: false, audio: false };
 
@@ -228,21 +238,27 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         } else {
           newStreak = 1;
         }
-        const sessionType = getSessionType(position);
-        const newStudiedWordCount =
-          sessionType === "study"
-            ? sprintData.studiedWordCount + sprintData.wordsPerDay
-            : sprintData.studiedWordCount;
-        const dynTotal2 = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
-        const nextPosition = position + 1;
-        const newPosition = nextPosition >= dynTotal2 ? 1 : nextPosition;
+
         const newCompletedDates = {
           ...(sprintData.completedDates ?? {}),
           [position]: today,
         };
+
+        // Only advance the sprint pointer when the user finishes the CURRENT cell.
+        const isCurrentCell = position === sprintData.currentPosition;
+        const sessionType = getSessionType(position);
+        const newStudiedWordCount =
+          isCurrentCell && sessionType === "study"
+            ? sprintData.studiedWordCount + sprintData.wordsPerDay
+            : sprintData.studiedWordCount;
+        const dynTotal2 = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
+        const newCurrentPosition = isCurrentCell
+          ? (sprintData.currentPosition + 1 >= dynTotal2 ? 1 : sprintData.currentPosition + 1)
+          : sprintData.currentPosition;
+
         const updated: SprintData = {
           ...sprintData,
-          currentPosition: newPosition,
+          currentPosition: newCurrentPosition,
           studiedWordCount: newStudiedWordCount,
           lastStudyDate: today,
           streakCount: newStreak,
@@ -285,8 +301,15 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   );
 
   const getStudyWords = useCallback(
-    (words: Word[]) => {
+    (words: Word[], cellIndex?: number) => {
       if (!sprintData) return [];
+      // If a specific cell is provided, derive its word offset from its position
+      // in the study-cell sequence (independent of studiedWordCount).
+      if (cellIndex !== undefined) {
+        const studyIndex = getStudyWordOffsetForCell(cellIndex);
+        const wordOffset = (studyIndex * sprintData.wordsPerDay) % Math.max(1, words.length);
+        return getSessionWords(words, wordOffset, sprintData.wordsPerDay);
+      }
       return getSessionWords(words, sprintData.studiedWordCount, sprintData.wordsPerDay);
     },
     [sprintData]
