@@ -27,7 +27,7 @@ import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
-type SessionMode = "study" | "text-only" | "audio-only" | "audio-cards-only" | "audio-playback";
+type SessionMode = "study" | "text-only" | "audio-cards-only" | "audio-playback";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
 // Grid: 5 columns, dynamic rows — horizontal snake path
@@ -352,36 +352,7 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             <Feather name="chevron-right" size={18} color={phaseProgress.text ? Colors.light.success : theme.primary} />
           </Pressable>
 
-          {/* 2: 音声リスト */}
-          <Pressable
-            testID="modal-audio-list"
-            onPress={() => onSelect("audio-only")}
-            style={[
-              styles.modalOption,
-              phaseProgress.audio
-                ? { backgroundColor: Colors.light.success + "12", borderColor: Colors.light.success + "40" }
-                : { backgroundColor: Colors.light.secondary + "12", borderColor: Colors.light.secondary + "40" },
-            ]}
-          >
-            <View style={[styles.modalOptionIcon, { backgroundColor: phaseProgress.audio ? Colors.light.success + "20" : Colors.light.secondary + "20" }]}>
-              {phaseProgress.audio ? (
-                <Feather name="check-circle" size={22} color={Colors.light.success} />
-              ) : (
-                <Feather name="headphones" size={22} color={Colors.light.secondary} />
-              )}
-            </View>
-            <View style={styles.modalOptionText}>
-              <ThemedText style={[styles.modalOptionTitle, { color: phaseProgress.audio ? Colors.light.success : Colors.light.secondary }]}>
-                音声リスト{phaseProgress.audio ? "（完了）" : ""}
-              </ThemedText>
-              <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
-                音声を聴いて覚えた／まだをマーク
-              </ThemedText>
-            </View>
-            <Feather name="chevron-right" size={18} color={phaseProgress.audio ? Colors.light.success : Colors.light.secondary} />
-          </Pressable>
-
-          {/* 3: 音声カード */}
+          {/* 2: 音声カード */}
           <Pressable
             testID="modal-audio-cards"
             onPress={() => onSelect("audio-cards-only")}
