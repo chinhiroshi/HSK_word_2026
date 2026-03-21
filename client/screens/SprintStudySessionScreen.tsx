@@ -45,7 +45,7 @@ export default function SprintStudySessionScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { sprintData, completeSession, completePhase, getStudyWords, getCellPhaseProgress } = useSprint();
+  const { sprintData, completePhase, getStudyWords, getCellPhaseProgress } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
   const cellIndex = route.params?.cellIndex;

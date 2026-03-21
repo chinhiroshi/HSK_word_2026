@@ -326,7 +326,7 @@ export default function SprintTestScreen() {
         {showResult ? (
           <Animated.View entering={FadeIn} style={styles.feedbackSection}>
             {showResult ? (
-              <View style={[styles.answerReveal, { backgroundColor: theme.card }]}>
+              <View style={[styles.answerReveal, { backgroundColor: theme.backgroundSecondary }]}>
                 <ThemedText style={[styles.answerRevealWord, { color: theme.primary }]}>
                   {currentQuestion.word.word}
                 </ThemedText>
