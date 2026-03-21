@@ -20,7 +20,7 @@ import { RootStackParamList } from "@/navigation/RootStackNavigator";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type AudioWordListRouteProp = RouteProp<RootStackParamList, "AudioWordList">;
 
-type FilterType = "all" | "memorized" | "unmemorized";
+type FilterType = "all" | "memorized" | "unmemorized" | "struggled";
 
 interface AudioWordCardProps {
   word: Word;
@@ -262,11 +262,11 @@ export default function AudioWordListScreen() {
   const filteredWords = useMemo(() => {
     switch (filter) {
       case "memorized":
-        // Words currently memorized (including those with past struggle history)
         return groupWords.filter((w) => w.audioMemorized);
       case "unmemorized":
-        // Currently struggling: NOT memorized AND flagged at least once
         return groupWords.filter((w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0);
+      case "struggled":
+        return groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
       default:
         return groupWords;
     }
@@ -275,7 +275,8 @@ export default function AudioWordListScreen() {
   const stats = useMemo(() => {
     const memorized = groupWords.filter((w) => w.audioMemorized).length;
     const unmemorized = groupWords.filter((w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0).length;
-    return { total: groupWords.length, memorized, unmemorized };
+    const struggled = groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length;
+    return { total: groupWords.length, memorized, unmemorized, struggled };
   }, [groupWords]);
 
   const handleMarkUnmemorized = async (wordId: string) => {
@@ -364,6 +365,15 @@ export default function AudioWordListScreen() {
         </View>
       );
     }
+    if (filter === "struggled") {
+      return (
+        <View style={styles.emptyFilterState}>
+          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+            苦手歴のある単語がありません
+          </ThemedText>
+        </View>
+      );
+    }
     return null;
   };
 
@@ -427,6 +437,27 @@ export default function AudioWordListScreen() {
             >
               まだ ({stats.unmemorized})
             </ThemedText>
+          </Pressable>
+
+          <Pressable
+            onPress={() => handleFilterChange("struggled")}
+            style={[
+              styles.filterButton,
+              filter === "struggled" && { backgroundColor: Colors.light.alert },
+              filter !== "struggled" && { backgroundColor: theme.backgroundSecondary },
+            ]}
+          >
+            <View style={styles.filterButtonInner}>
+              <Feather name="flag" size={14} color={filter === "struggled" ? "#FFFFFF" : Colors.light.alert} />
+              <ThemedText
+                style={[
+                  styles.filterButtonText,
+                  { color: filter === "struggled" ? "#FFFFFF" : Colors.light.alert },
+                ]}
+              >
+                苦手歴 ({stats.struggled})
+              </ThemedText>
+            </View>
           </Pressable>
         </ScrollView>
       </View>
@@ -569,6 +600,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
+  },
+  filterButtonInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
   },
   historyBadge: {
     flexDirection: "row",

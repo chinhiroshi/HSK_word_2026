@@ -19,7 +19,7 @@ import { RootStackParamList } from "@/navigation/RootStackNavigator";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type WordListRouteProp = RouteProp<RootStackParamList, "WordList">;
 
-type FilterType = "all" | "memorized" | "unmemorized";
+type FilterType = "all" | "memorized" | "unmemorized" | "struggled";
 
 export default function WordListScreen() {
   const insets = useSafeAreaInsets();
@@ -65,11 +65,12 @@ export default function WordListScreen() {
   const filteredWords = useMemo(() => {
     switch (filter) {
       case "memorized":
-        // Words currently marked memorized (including those with past struggle history)
         return groupWords.filter((w) => w.textMemorized);
       case "unmemorized":
-        // Words currently struggling: NOT memorized AND have been flagged at least once
         return groupWords.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0);
+      case "struggled":
+        // Ever flagged at least once — memorized or not
+        return groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0);
       default:
         return groupWords;
     }
@@ -78,7 +79,8 @@ export default function WordListScreen() {
   const stats = useMemo(() => {
     const memorized = groupWords.filter((w) => w.textMemorized).length;
     const unmemorized = groupWords.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0).length;
-    return { total: groupWords.length, memorized, unmemorized };
+    const struggled = groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0).length;
+    return { total: groupWords.length, memorized, unmemorized, struggled };
   }, [groupWords]);
 
   const handleMarkUnmemorized = async (wordId: string) => {
@@ -151,6 +153,15 @@ export default function WordListScreen() {
         </View>
       );
     }
+    if (filter === "struggled") {
+      return (
+        <View style={styles.emptyFilterState}>
+          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+            苦手歴のある単語がありません
+          </ThemedText>
+        </View>
+      );
+    }
     return null;
   };
 
@@ -217,6 +228,28 @@ export default function WordListScreen() {
             >
               まだ ({stats.unmemorized})
             </ThemedText>
+          </Pressable>
+
+          <Pressable
+            onPress={() => handleFilterChange("struggled")}
+            style={[
+              styles.filterButton,
+              filter === "struggled" && { backgroundColor: Colors.light.alert },
+              filter !== "struggled" && { backgroundColor: theme.backgroundSecondary },
+            ]}
+            testID="filter-struggled"
+          >
+            <View style={styles.toggleContent}>
+              <Feather name="flag" size={14} color={filter === "struggled" ? "#FFFFFF" : Colors.light.alert} />
+              <ThemedText
+                style={[
+                  styles.filterButtonText,
+                  { color: filter === "struggled" ? "#FFFFFF" : Colors.light.alert },
+                ]}
+              >
+                苦手歴 ({stats.struggled})
+              </ThemedText>
+            </View>
           </Pressable>
 
           <Pressable
