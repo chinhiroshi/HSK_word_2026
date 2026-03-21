@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   View,
   StyleSheet,
   Pressable,
   ScrollView,
+  FlatList,
+  TouchableOpacity,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -37,7 +39,8 @@ import { PlantIcon } from "@/components/SprintCellIcons";
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
-type Phase = "text" | "audio" | "complete";
+type Phase = "text-list" | "text-cards" | "audio-list" | "audio-cards" | "complete";
+type ListFilter = "all" | "memorized" | "unmemorized";
 
 export default function SprintStudySessionScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -50,19 +53,24 @@ export default function SprintStudySessionScreen() {
   const sessionMode = route.params?.mode ?? "study";
   const cellIndex = route.params?.cellIndex;
 
-  const initialPhase: Phase = sessionMode === "audio-only" ? "audio" : "text";
+  const initialPhase: Phase = sessionMode === "audio-only" ? "audio-list" : "text-list";
 
   const [phase, setPhase] = useState<Phase>(initialPhase);
   const [words, setWords] = useState<Word[]>([]);
+  // cardWords is frozen when transitioning from list → cards phase
+  const [cardWords, setCardWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
   const [textChoices, setTextChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [audioChoices, setAudioChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
+  // Audio list reveal state
+  const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
+  const [allRevealed, setAllRevealed] = useState(false);
+  const [listFilter, setListFilter] = useState<ListFilter>("all");
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [isPartialComplete, setIsPartialComplete] = useState(false);
   const [stampVisible, setStampVisible] = useState(false);
-  // Tracks whether we've already auto-saved this phase so we don't double-fire.
   const autoSavedPhase = useRef<string | null>(null);
 
   const stampScale = useSharedValue(0);
@@ -89,15 +97,27 @@ export default function SprintStudySessionScreen() {
     );
   };
 
-  const currentWord = words[currentIndex] ?? null;
-  const progress = words.length > 0 ? (currentIndex / words.length) * 100 : 0;
+  const isAudioPhase = phase === "audio-list" || phase === "audio-cards";
+  const choices = isAudioPhase ? audioChoices : textChoices;
+
+  const currentCardWord = cardWords[currentIndex] ?? null;
+  const cardProgress = cardWords.length > 0 ? (currentIndex / cardWords.length) * 100 : 0;
+
+  const phaseTotal = sessionMode === "study" ? 2 : 1;
+  const phaseNum = isAudioPhase && sessionMode === "study" ? 2 : 1;
+  const badgeLabel = isAudioPhase ? "音声学習" : "文字学習";
+  const badgeColor = isAudioPhase ? Colors.light.secondary : theme.primary;
+  const badgeBg = isAudioPhase ? Colors.light.secondary + "20" : theme.primary + "20";
+  const badgeIcon: keyof typeof Feather.glyphMap = isAudioPhase ? "headphones" : "book-open";
+
+  const totalChoices = { ...textChoices, ...audioChoices };
+  const memorizedCount = Object.values(totalChoices).filter((c) => c === "memorized").length;
+  const totalCount = Object.keys(totalChoices).length;
 
   const loadWords = useCallback(async () => {
     setLoading(true);
     await initializeData();
     const allWords = await getWords();
-    // Pass cellIndex so words are calculated from this cell's position,
-    // not from the global studiedWordCount (which reflects currentPosition).
     const study = getStudyWords(allWords, cellIndex);
     setWords(study);
     setLoading(false);
@@ -107,9 +127,7 @@ export default function SprintStudySessionScreen() {
     loadWords();
   }, [loadWords]);
 
-  // Auto-save the phase as soon as all words are finished.
-  // This guarantees the record is written even if the user presses the header
-  // back arrow instead of the completion button.
+  // Auto-save when complete
   useEffect(() => {
     if (phase !== "complete") return;
     const key = `${sessionMode}-${cellIndex ?? "default"}`;
@@ -122,17 +140,19 @@ export default function SprintStudySessionScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
+  // Auto-play audio in cards phase
   useEffect(() => {
+    if (phase !== "text-cards" && phase !== "audio-cards") return;
     setIsRevealed(false);
-    if (!currentWord) return;
+    if (!currentCardWord) return;
     let cancelled = false;
     const speak = async () => {
-      await speakChinese(currentWord.word);
+      await speakChinese(currentCardWord.word);
       if (cancelled) return;
-      if (phase === "audio" && currentWord.exampleSentence) {
+      if (isAudioPhase && currentCardWord.exampleSentence) {
         await new Promise<void>((r) => setTimeout(r, 600));
         if (cancelled) return;
-        await speakChinese(currentWord.exampleSentence);
+        await speakChinese(currentCardWord.exampleSentence);
       }
     };
     speak();
@@ -142,12 +162,86 @@ export default function SprintStudySessionScreen() {
     };
   }, [currentIndex, phase]);
 
-  const advanceOrFinish = (currentPhase: Phase, newIndex: number) => {
-    if (newIndex < words.length) {
+  // Dynamic header: eye-off button for audio list
+  useEffect(() => {
+    if (phase === "audio-list") {
+      navigation.setOptions({
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => setAllRevealed((prev) => !prev)}
+            style={{ marginRight: 4, padding: 8 }}
+          >
+            <Feather
+              name={allRevealed ? "eye" : "eye-off"}
+              size={22}
+              color={theme.text}
+            />
+          </TouchableOpacity>
+        ),
+      });
+    } else {
+      navigation.setOptions({ headerRight: undefined });
+    }
+  }, [phase, allRevealed, theme, navigation]);
+
+  const handleChoiceList = async (wordId: string, choice: "memorized" | "unmemorized") => {
+    Haptics.impactAsync(
+      choice === "memorized"
+        ? Haptics.ImpactFeedbackStyle.Light
+        : Haptics.ImpactFeedbackStyle.Medium
+    );
+    const type = isAudioPhase ? "audio" : "text";
+    await (choice === "memorized"
+      ? markAsMemorized(wordId, type)
+      : markAsUnmemorized(wordId, type));
+    if (isAudioPhase) {
+      setAudioChoices((prev) => ({ ...prev, [wordId]: choice }));
+    } else {
+      setTextChoices((prev) => ({ ...prev, [wordId]: choice }));
+    }
+  };
+
+  const handleListNext = () => {
+    // Freeze the list of unmemorized words for the cards phase
+    const next = words.filter((w) => choices[w.id] !== "memorized");
+
+    if (phase === "text-list") {
+      if (next.length > 0) {
+        setCardWords(next);
+        setCurrentIndex(0);
+        setIsRevealed(false);
+        setPhase("text-cards");
+      } else if (sessionMode === "study") {
+        // All text words memorized, skip to audio list
+        setAllRevealed(false);
+        setRevealedIds(new Set());
+        setListFilter("all");
+        setPhase("audio-list");
+      } else {
+        setPhase("complete");
+      }
+    } else if (phase === "audio-list") {
+      if (next.length > 0) {
+        setCardWords(next);
+        setCurrentIndex(0);
+        setIsRevealed(false);
+        setPhase("audio-cards");
+      } else {
+        setPhase("complete");
+      }
+    }
+  };
+
+  const advanceOrFinish = (newIndex: number) => {
+    if (newIndex < cardWords.length) {
       setCurrentIndex(newIndex);
     } else {
-      if (currentPhase === "text" && (sessionMode === "study")) {
-        setPhase("audio");
+      if (phase === "text-cards" && sessionMode === "study") {
+        // Move to audio list
+        setAllRevealed(false);
+        setRevealedIds(new Set());
+        setListFilter("all");
+        setPhase("audio-list");
         setCurrentIndex(0);
       } else {
         setPhase("complete");
@@ -155,33 +249,28 @@ export default function SprintStudySessionScreen() {
     }
   };
 
-  const handleChoice = async (choice: "memorized" | "unmemorized") => {
-    if (!currentWord) return;
+  const handleCardChoice = async (choice: "memorized" | "unmemorized") => {
+    if (!currentCardWord) return;
     Haptics.impactAsync(
       choice === "memorized"
         ? Haptics.ImpactFeedbackStyle.Light
         : Haptics.ImpactFeedbackStyle.Medium
     );
-
-    if (phase === "text") {
-      await (choice === "memorized"
-        ? markAsMemorized(currentWord.id, "text")
-        : markAsUnmemorized(currentWord.id, "text"));
-      setTextChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
+    const type = isAudioPhase ? "audio" : "text";
+    await (choice === "memorized"
+      ? markAsMemorized(currentCardWord.id, type)
+      : markAsUnmemorized(currentCardWord.id, type));
+    if (isAudioPhase) {
+      setAudioChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
     } else {
-      await (choice === "memorized"
-        ? markAsMemorized(currentWord.id, "audio")
-        : markAsUnmemorized(currentWord.id, "audio"));
-      setAudioChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
+      setTextChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
     }
-
-    advanceOrFinish(phase, currentIndex + 1);
+    advanceOrFinish(currentIndex + 1);
   };
 
   const handleComplete = async () => {
     setCompleting(true);
     const phaseArg = sessionMode === "text-only" ? "text" : sessionMode === "audio-only" ? "audio" : "both";
-    // Pass cellIndex so this specific cell gets marked, not whatever currentPosition happens to be.
     const advanced = await completePhase(phaseArg, cellIndex);
     setCompleting(false);
     if (advanced) {
@@ -191,10 +280,7 @@ export default function SprintStudySessionScreen() {
     }
   };
 
-  const totalChoices = { ...textChoices, ...audioChoices };
-  const memorizedCount = Object.values(totalChoices).filter((c) => c === "memorized").length;
-  const totalCount = Object.keys(totalChoices).length;
-
+  // ----- LOADING -----
   if (loading) {
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
@@ -205,6 +291,7 @@ export default function SprintStudySessionScreen() {
     );
   }
 
+  // ----- COMPLETE (partial) -----
   if (phase === "complete" && isPartialComplete) {
     const donePhase = sessionMode === "text-only" ? "文字学習" : "音声学習";
     const nextPhase = sessionMode === "text-only" ? "音声学習" : "文字学習";
@@ -229,9 +316,8 @@ export default function SprintStudySessionScreen() {
     );
   }
 
+  // ----- COMPLETE (full) -----
   if (phase === "complete") {
-    // Determine whether this session will actually award a stamp.
-    // Use the explicit cellIndex so we check the right cell's progress.
     const targetPos = cellIndex ?? sprintData?.currentPosition ?? -1;
     const savedProgress = targetPos >= 0 ? getCellPhaseProgress(targetPos) : { text: false, audio: false };
     const willGetStamp =
@@ -244,14 +330,14 @@ export default function SprintStudySessionScreen() {
 
     return (
       <ThemedView style={styles.container}>
-        {stampVisible && (
+        {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
             <View style={[styles.stampCircle, { backgroundColor: Colors.light.success }]}>
               <PlantIcon size={80} color="#fff" />
             </View>
             <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
           </Animated.View>
-        )}
+        ) : null}
         <Animated.View entering={FadeIn} style={[styles.completeContainer, { paddingTop: headerHeight + Spacing.xl }]}>
           <View style={[styles.completeIcon, { backgroundColor: (willGetStamp ? Colors.light.success : theme.primary) + "20" }]}>
             <Feather name={willGetStamp ? "award" : "check-circle"} size={48} color={willGetStamp ? Colors.light.success : theme.primary} />
@@ -310,7 +396,167 @@ export default function SprintStudySessionScreen() {
     );
   }
 
-  if (!currentWord) {
+  // ----- LIST PHASE (text-list or audio-list) -----
+  if (phase === "text-list" || phase === "audio-list") {
+    const memorizedInList = Object.values(choices).filter((v) => v === "memorized").length;
+    const unmemorizedInList = Object.values(choices).filter((v) => v === "unmemorized").length;
+
+    const filteredWords = words.filter((w) => {
+      if (listFilter === "memorized") return choices[w.id] === "memorized";
+      if (listFilter === "unmemorized") return choices[w.id] === "unmemorized";
+      return true;
+    });
+
+    const nextCardCount = words.filter((w) => choices[w.id] !== "memorized").length;
+    const nextButtonLabel =
+      nextCardCount > 0 ? `カード学習へ (${nextCardCount}語)` : "完了";
+
+    return (
+      <ThemedView style={styles.container}>
+        {/* Filter tabs */}
+        <View style={[styles.filterRow, { paddingTop: headerHeight + Spacing.md, borderBottomColor: theme.border }]}>
+          <Pressable
+            onPress={() => setListFilter("all")}
+            style={[styles.filterTab, listFilter === "all" && { backgroundColor: theme.primary }]}
+          >
+            <ThemedText style={[styles.filterTabText, listFilter === "all" && styles.filterTabTextActive]}>
+              {`全部 (${words.length})`}
+            </ThemedText>
+          </Pressable>
+          <Pressable
+            onPress={() => setListFilter("memorized")}
+            style={[styles.filterTab, listFilter === "memorized" && { backgroundColor: Colors.light.success }]}
+          >
+            <ThemedText style={[styles.filterTabText, listFilter === "memorized" && styles.filterTabTextActive]}>
+              {`覚えた (${memorizedInList})`}
+            </ThemedText>
+          </Pressable>
+          <Pressable
+            onPress={() => setListFilter("unmemorized")}
+            style={[styles.filterTab, listFilter === "unmemorized" && { backgroundColor: Colors.light.alert }]}
+          >
+            <ThemedText style={[styles.filterTabText, listFilter === "unmemorized" && styles.filterTabTextActive]}>
+              {`まだ (${unmemorizedInList})`}
+            </ThemedText>
+          </Pressable>
+        </View>
+
+        <FlatList
+          data={filteredWords}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}
+          renderItem={({ item }) => {
+            const globalIdx = words.indexOf(item) + 1;
+            const choice = choices[item.id];
+            const isMemorized = choice === "memorized";
+            const isUnmemorized = choice === "unmemorized";
+
+            if (phase === "audio-list") {
+              const isWordRevealed = allRevealed || revealedIds.has(item.id);
+              return (
+                <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
+                  <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
+                    <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
+                      {globalIdx}
+                    </ThemedText>
+                  </View>
+                  <Pressable
+                    onPress={() => speakChinese(item.word)}
+                    style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
+                  >
+                    <Feather name="volume-2" size={20} color="#fff" />
+                  </Pressable>
+                  {isWordRevealed ? (
+                    <View style={styles.wordInfoCol}>
+                      <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
+                      <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
+                    </View>
+                  ) : (
+                    <View style={{ flex: 1 }} />
+                  )}
+                  <View style={styles.rowActions}>
+                    <Pressable
+                      onPress={() => {
+                        setRevealedIds((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(item.id)) next.delete(item.id);
+                          else next.add(item.id);
+                          return next;
+                        });
+                      }}
+                      style={styles.actionIconBtn}
+                    >
+                      <Feather
+                        name={isWordRevealed ? "eye" : "eye-off"}
+                        size={18}
+                        color={isWordRevealed ? theme.primary : theme.textSecondary}
+                      />
+                    </Pressable>
+                    <Pressable onPress={() => handleChoiceList(item.id, "unmemorized")} style={styles.actionIconBtn}>
+                      <Feather name="flag" size={18} color={isUnmemorized ? Colors.light.alert : theme.textSecondary} />
+                    </Pressable>
+                    <Pressable onPress={() => handleChoiceList(item.id, "memorized")} style={styles.actionIconBtn}>
+                      <Feather
+                        name="check"
+                        size={18}
+                        color={isMemorized ? Colors.light.success : theme.textSecondary}
+                      />
+                    </Pressable>
+                  </View>
+                </View>
+              );
+            }
+
+            // text-list
+            return (
+              <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
+                <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
+                  <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
+                    {globalIdx}
+                  </ThemedText>
+                </View>
+                <View style={styles.wordInfoCol}>
+                  <View style={styles.wordRowHeaderLine}>
+                    <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
+                    <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
+                    <SpeakButton text={item.word} size="small" />
+                  </View>
+                  {item.exampleSentence ? (
+                    <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={1}>
+                      {item.exampleSentence}
+                    </ThemedText>
+                  ) : null}
+                </View>
+                <View style={styles.rowActions}>
+                  <Pressable onPress={() => handleChoiceList(item.id, "unmemorized")} style={styles.actionIconBtn}>
+                    <Feather name="flag" size={18} color={isUnmemorized ? Colors.light.alert : theme.textSecondary} />
+                  </Pressable>
+                  <Pressable onPress={() => handleChoiceList(item.id, "memorized")} style={styles.actionIconBtn}>
+                    <Feather
+                      name="check"
+                      size={18}
+                      color={isMemorized ? Colors.light.success : theme.textSecondary}
+                    />
+                  </Pressable>
+                  <Feather name="chevron-right" size={16} color={theme.textSecondary} />
+                </View>
+              </View>
+            );
+          }}
+        />
+
+        {/* Next button */}
+        <View style={[styles.listNextBar, { paddingBottom: insets.bottom + Spacing.md, borderTopColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
+          <Button testID="button-list-next" onPress={handleListNext} style={{ flex: 1 }}>
+            {nextButtonLabel}
+          </Button>
+        </View>
+      </ThemedView>
+    );
+  }
+
+  // ----- CARDS PHASE (text-cards or audio-cards) -----
+  if (!currentCardWord) {
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
         <View style={styles.centered}>
@@ -319,7 +565,7 @@ export default function SprintStudySessionScreen() {
             学習する単語がありません
           </ThemedText>
           <ThemedText style={[styles.emptySub, { color: theme.textSecondary }]}>
-            すべての単語が学習済みです
+            すべての単語が覚えた済みです
           </ThemedText>
           <Button onPress={handleComplete} style={styles.completeButton}>
             完了する
@@ -328,15 +574,6 @@ export default function SprintStudySessionScreen() {
       </ThemedView>
     );
   }
-
-  const isAudioPhase = phase === "audio";
-  const badgeColor = isAudioPhase ? Colors.light.secondary : theme.primary;
-  const badgeBg = isAudioPhase ? Colors.light.secondary + "20" : theme.primary + "20";
-  const badgeIcon: keyof typeof Feather.glyphMap = isAudioPhase ? "headphones" : "book-open";
-  const badgeLabel = isAudioPhase ? "音声学習" : "文字学習";
-
-  const phaseTotal = sessionMode === "study" ? 2 : 1;
-  const phaseNum = isAudioPhase && sessionMode === "study" ? 2 : 1;
 
   return (
     <ThemedView style={styles.container}>
@@ -364,12 +601,12 @@ export default function SprintStudySessionScreen() {
             ) : null}
           </View>
           <ThemedText style={[styles.progress, { color: theme.textSecondary }]}>
-            {currentIndex + 1} / {words.length}
+            {currentIndex + 1} / {cardWords.length}
           </ThemedText>
         </View>
 
         <View style={styles.progressBarWrapper}>
-          <ProgressBar progress={progress} height={6} />
+          <ProgressBar progress={cardProgress} height={6} />
         </View>
 
         <Animated.View
@@ -382,7 +619,7 @@ export default function SprintStudySessionScreen() {
         >
           {isAudioPhase ? (
             <AudioCard
-              word={currentWord}
+              word={currentCardWord}
               isRevealed={isRevealed}
               onReveal={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -390,11 +627,11 @@ export default function SprintStudySessionScreen() {
               }}
               theme={theme}
               wordIndex={currentIndex + 1}
-              totalWords={words.length}
+              totalWords={cardWords.length}
             />
           ) : (
             <TextCard
-              word={currentWord}
+              word={currentCardWord}
               isRevealed={isRevealed}
               onReveal={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -402,7 +639,7 @@ export default function SprintStudySessionScreen() {
               }}
               theme={theme}
               wordIndex={currentIndex + 1}
-              totalWords={words.length}
+              totalWords={cardWords.length}
             />
           )}
         </Animated.View>
@@ -410,7 +647,7 @@ export default function SprintStudySessionScreen() {
         <View style={styles.choiceButtons}>
           <Pressable
             testID="button-unmemorized"
-            onPress={() => handleChoice("unmemorized")}
+            onPress={() => handleCardChoice("unmemorized")}
             style={[
               styles.choiceButton,
               { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
@@ -423,7 +660,7 @@ export default function SprintStudySessionScreen() {
           </Pressable>
           <Pressable
             testID="button-memorized"
-            onPress={() => handleChoice("memorized")}
+            onPress={() => handleCardChoice("memorized")}
             style={[
               styles.choiceButton,
               { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
@@ -631,6 +868,84 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: Spacing.lg },
   centered: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing["3xl"] },
+
+  // Filter row
+  filterRow: {
+    flexDirection: "row",
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.sm,
+    gap: Spacing.sm,
+    borderBottomWidth: 1,
+  },
+  filterTab: {
+    flex: 1,
+    alignItems: "center",
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+  },
+  filterTabText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
+  filterTabTextActive: { color: "#fff" },
+
+  // Word list row
+  wordRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    gap: Spacing.sm,
+  },
+  wordNumCircleSmall: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    justifyContent: "center",
+    alignItems: "center",
+    flexShrink: 0,
+  },
+  wordNumCircleTextSmall: { fontSize: 11, fontFamily: "Nunito_700Bold" },
+  speakCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    flexShrink: 0,
+  },
+  wordInfoCol: {
+    flex: 1,
+    gap: 2,
+  },
+  wordRowHeaderLine: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    flexWrap: "wrap",
+  },
+  wordRowText: { fontSize: 20, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  wordRowPinyin: { fontSize: 13, fontFamily: "Nunito_400Regular" },
+  wordRowExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  rowActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    flexShrink: 0,
+  },
+  actionIconBtn: { padding: 6 },
+
+  // List next button bar
+  listNextBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+  },
+
+  // Card phase
   phaseHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.sm },
   phaseLeft: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
   phaseBadge: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
