@@ -24,6 +24,7 @@ import { getWords, initializeData } from "@/lib/storage";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
+import { PlantIcon, FlowerIcon, MonsterIcon } from "@/components/SprintCellIcons";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "review";
@@ -31,7 +32,7 @@ type SessionMode = "study" | "text-only" | "audio-only" | "review";
 const GRID_COLS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const ROW_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
-const ARROW_WIDTH = 14;
+const ARROW_WIDTH = 22;
 const CELL_SIZE = Math.floor((ROW_WIDTH - ARROW_WIDTH * (GRID_COLS - 1)) / GRID_COLS);
 
 function getDaysElapsed(setupDate: string | null): number {
@@ -48,15 +49,6 @@ function formatShortDate(dateStr: string): string {
   return `${parseInt(month)}/${parseInt(day)}`;
 }
 
-function getStudyCellIcon(cycleDay: number): keyof typeof Feather.glyphMap {
-  switch (cycleDay) {
-    case 1: return "book-open";
-    case 2: return "book";
-    case 4: return "edit-2";
-    case 5: return "bookmark";
-    default: return "book-open";
-  }
-}
 
 interface CellProps {
   index: number;
@@ -71,55 +63,65 @@ interface CellProps {
 
 function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, onPress, theme }: CellProps) {
   const isFlag = index === 0;
-  const cycleDay = index > 0 ? ((index - 1) % 7) + 1 : 0;
 
   let bgColor = theme.backgroundDefault;
   let borderColor = theme.border;
-  let iconName: keyof typeof Feather.glyphMap = "book-open";
   let iconColor = theme.textSecondary + "80";
   let textColor: string = theme.textSecondary;
+  let featherIcon: keyof typeof Feather.glyphMap | null = null;
 
   if (isFlag) {
     bgColor = Colors.light.success;
     borderColor = Colors.light.success;
-    iconName = "flag";
+    featherIcon = "flag";
     iconColor = "#fff";
     textColor = "#fff";
   } else if (isSpecialStamp) {
     bgColor = Colors.light.alert;
     borderColor = Colors.light.alert;
-    iconName = "star";
+    featherIcon = "star";
     iconColor = "#fff";
     textColor = "#fff";
   } else if (isCompleted) {
     bgColor = theme.primary + "20";
     borderColor = theme.primary + "60";
-    iconName = "check-circle";
+    featherIcon = "check-circle";
     iconColor = theme.primary;
     textColor = theme.primary;
   } else if (isCurrent) {
     bgColor = Colors.light.secondary;
     borderColor = Colors.light.secondary;
-    iconName = "zap";
+    featherIcon = "zap";
     iconColor = "#fff";
     textColor = "#fff";
   } else if (sessionType === "test") {
     bgColor = "#EDE9FE";
     borderColor = "#C4B5FD";
-    iconName = "award";
-    iconColor = "#7C3AED";
     textColor = "#7C3AED";
   } else if (sessionType === "review") {
-    bgColor = theme.backgroundSecondary;
-    borderColor = theme.border;
-    iconName = "rotate-cw";
-    iconColor = theme.textSecondary + "90";
-    textColor = theme.textSecondary;
+    bgColor = Colors.light.secondary + "18";
+    borderColor = Colors.light.secondary + "50";
+    textColor = Colors.light.secondary;
   } else {
-    iconName = getStudyCellIcon(cycleDay);
-    iconColor = theme.textSecondary + "80";
-    textColor = theme.textSecondary;
+    bgColor = theme.primary + "12";
+    borderColor = theme.primary + "40";
+    textColor = theme.primary;
   }
+
+  const iconSize = CELL_SIZE * 0.38;
+
+  const renderIcon = () => {
+    if (featherIcon) {
+      return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
+    }
+    if (sessionType === "test") {
+      return <MonsterIcon size={iconSize} color="#7C3AED" />;
+    }
+    if (sessionType === "review") {
+      return <FlowerIcon size={iconSize} color={Colors.light.secondary} />;
+    }
+    return <PlantIcon size={iconSize} color={theme.primary} />;
+  };
 
   return (
     <Pressable
@@ -130,7 +132,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         { backgroundColor: bgColor, borderColor, width: CELL_SIZE, height: CELL_SIZE },
       ]}
     >
-      <Feather name={iconName} size={CELL_SIZE * 0.32} color={iconColor} />
+      {renderIcon()}
       {index > 0 ? (
         <ThemedText style={[styles.cellNumber, { color: textColor, fontSize: CELL_SIZE * 0.16 }]}>
           {index}
@@ -461,9 +463,9 @@ export default function SprintScreen() {
                         {colIdx < row.length - 1 ? (
                           <View style={styles.arrowH}>
                             <Feather
-                              name={isEvenRow ? "chevron-right" : "chevron-left"}
-                              size={12}
-                              color={theme.border}
+                              name={isEvenRow ? "arrow-right" : "arrow-left"}
+                              size={14}
+                              color={theme.textSecondary + "55"}
                             />
                           </View>
                         ) : null}
@@ -473,7 +475,7 @@ export default function SprintScreen() {
                 </View>
                 {rowIdx < displayRows.length - 1 ? (
                   <View style={[styles.arrowV, { alignItems: isEvenRow ? "flex-end" : "flex-start" }]}>
-                    <Feather name="chevron-down" size={12} color={theme.border} />
+                    <Feather name="arrow-down" size={14} color={theme.textSecondary + "55"} />
                   </View>
                 ) : null}
               </View>
@@ -554,7 +556,7 @@ const styles = StyleSheet.create({
   cellNumber: { fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 15 },
   cellDate: { fontFamily: "Nunito_400Regular", lineHeight: 12 },
   arrowH: { width: ARROW_WIDTH, alignItems: "center", justifyContent: "center" },
-  arrowV: { height: 14, paddingHorizontal: 0, justifyContent: "center", width: "100%" },
+  arrowV: { height: 18, paddingHorizontal: 0, justifyContent: "center", width: "100%" },
   legend: { marginBottom: Spacing.xl },
   legendTitle: { fontSize: 11, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.sm, textTransform: "uppercase", letterSpacing: 0.5 },
   legendItems: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.md },
