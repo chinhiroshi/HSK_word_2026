@@ -46,12 +46,13 @@ function AudioWordCard({
   const { theme } = useTheme();
 
   const unmemorizedCount = word.audioUnmemorizedCount || 0;
-  const isMarked = unmemorizedCount > 0;
-  const isMemorized = word.audioMemorized && !isMarked;
+  const isCurrentlyMemorized = word.audioMemorized;
+  const isCurrentlyStruggling = !isCurrentlyMemorized && unmemorizedCount > 0;
+  const hadDifficulty = unmemorizedCount > 0;
 
-  const borderLeftColor = isMarked
+  const borderLeftColor = isCurrentlyStruggling
     ? Colors.light.secondary
-    : isMemorized
+    : isCurrentlyMemorized
     ? Colors.light.success
     : "transparent";
 
@@ -85,7 +86,7 @@ function AudioWordCard({
           backgroundColor: theme.backgroundDefault,
           borderColor: theme.border,
           borderLeftColor: borderLeftColor,
-          borderLeftWidth: isMarked || isMemorized ? 3 : 1,
+          borderLeftWidth: isCurrentlyStruggling || isCurrentlyMemorized ? 3 : 1,
         },
       ]}
     >
@@ -117,7 +118,8 @@ function AudioWordCard({
           </Pressable>
 
           <View style={styles.markActions}>
-            {isMarked ? (
+            {isCurrentlyStruggling ? (
+              // Currently struggling: count + flag (increment) + check (mark memorized, keep history)
               <>
                 <View style={[styles.countBadge, { backgroundColor: Colors.light.secondary }]}>
                   <ThemedText style={styles.countText}>{unmemorizedCount}</ThemedText>
@@ -130,14 +132,32 @@ function AudioWordCard({
                   <Feather name="flag" size={16} color={Colors.light.secondary} />
                 </Pressable>
                 <Pressable
-                  onPress={handleClearMark}
+                  onPress={handleMarkMemorized}
                   style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
                   hitSlop={8}
                 >
                   <Feather name="check" size={16} color={Colors.light.success} />
                 </Pressable>
               </>
+            ) : isCurrentlyMemorized && hadDifficulty ? (
+              // Memorized with history: ghost badge + re-flag button
+              <>
+                <View style={[styles.historyBadge, { backgroundColor: `${Colors.light.alert}15`, borderColor: `${Colors.light.alert}50` }]}>
+                  <Feather name="flag" size={10} color={Colors.light.alert} />
+                  <ThemedText style={[styles.historyBadgeText, { color: Colors.light.alert }]}>
+                    {`×${unmemorizedCount}`}
+                  </ThemedText>
+                </View>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                >
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
+                </Pressable>
+              </>
             ) : (
+              // Not started or memorized cleanly: flag + optional check
               <>
                 <Pressable
                   onPress={handleMarkUnmemorized}
@@ -146,7 +166,7 @@ function AudioWordCard({
                 >
                   <Feather name="flag" size={16} color={theme.textSecondary} />
                 </Pressable>
-                {!isMemorized ? (
+                {!isCurrentlyMemorized ? (
                   <Pressable
                     onPress={handleMarkMemorized}
                     style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
@@ -242,17 +262,19 @@ export default function AudioWordListScreen() {
   const filteredWords = useMemo(() => {
     switch (filter) {
       case "memorized":
-        return groupWords.filter((w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0);
+        // Words currently memorized (including those with past struggle history)
+        return groupWords.filter((w) => w.audioMemorized);
       case "unmemorized":
-        return groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
+        // Currently struggling: NOT memorized AND flagged at least once
+        return groupWords.filter((w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0);
       default:
         return groupWords;
     }
   }, [groupWords, filter]);
 
   const stats = useMemo(() => {
-    const memorized = groupWords.filter((w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0).length;
-    const unmemorized = groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length;
+    const memorized = groupWords.filter((w) => w.audioMemorized).length;
+    const unmemorized = groupWords.filter((w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0).length;
     return { total: groupWords.length, memorized, unmemorized };
   }, [groupWords]);
 
@@ -547,6 +569,20 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
+  },
+  historyBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  historyBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   revealedContent: {
     marginTop: Spacing.md,

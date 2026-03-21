@@ -65,17 +65,19 @@ export default function WordListScreen() {
   const filteredWords = useMemo(() => {
     switch (filter) {
       case "memorized":
-        return groupWords.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0);
+        // Words currently marked memorized (including those with past struggle history)
+        return groupWords.filter((w) => w.textMemorized);
       case "unmemorized":
-        return groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0);
+        // Words currently struggling: NOT memorized AND have been flagged at least once
+        return groupWords.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0);
       default:
         return groupWords;
     }
   }, [groupWords, filter]);
 
   const stats = useMemo(() => {
-    const memorized = groupWords.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0).length;
-    const unmemorized = groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0).length;
+    const memorized = groupWords.filter((w) => w.textMemorized).length;
+    const unmemorized = groupWords.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0).length;
     return { total: groupWords.length, memorized, unmemorized };
   }, [groupWords]);
 

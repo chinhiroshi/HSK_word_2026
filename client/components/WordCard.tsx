@@ -91,12 +91,13 @@ export function WordCard({
   };
 
   const unmemorizedCount = word.textUnmemorizedCount || 0;
-  const isMarked = unmemorizedCount > 0;
-  const isMemorized = word.textMemorized && !isMarked;
+  const isCurrentlyMemorized = word.textMemorized;
+  const isCurrentlyStruggling = !isCurrentlyMemorized && unmemorizedCount > 0;
+  const hadDifficulty = unmemorizedCount > 0;
 
-  const borderLeftColor = isMarked
+  const borderLeftColor = isCurrentlyStruggling
     ? Colors.light.secondary
-    : isMemorized
+    : isCurrentlyMemorized
     ? Colors.light.success
     : "transparent";
 
@@ -111,7 +112,7 @@ export function WordCard({
           backgroundColor: theme.backgroundDefault,
           borderColor: theme.border,
           borderLeftColor: borderLeftColor,
-          borderLeftWidth: isMarked || isMemorized ? 3 : 1,
+          borderLeftWidth: isCurrentlyStruggling || isCurrentlyMemorized ? 3 : 1,
         },
         animatedStyle,
       ]}
@@ -145,7 +146,8 @@ export function WordCard({
           </View>
 
           <View style={styles.markActions}>
-            {isMarked ? (
+            {isCurrentlyStruggling ? (
+              // State: currently struggling — show count + flag (increment) + check (mark memorized, keep history)
               <>
                 <View style={[styles.countBadge, { backgroundColor: Colors.light.secondary }]}>
                   <ThemedText style={styles.countText}>{unmemorizedCount}</ThemedText>
@@ -161,15 +163,36 @@ export function WordCard({
                   </Animated.View>
                 </Pressable>
                 <Pressable
-                  onPress={handleClearMark}
+                  onPress={handleMarkMemorized}
                   style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
                   hitSlop={8}
-                  testID={`clear-mark-${word.id}`}
+                  testID={`mark-memorized-${word.id}`}
                 >
                   <Feather name="check" size={16} color={Colors.light.success} />
                 </Pressable>
               </>
+            ) : isCurrentlyMemorized && hadDifficulty ? (
+              // State: memorized but has struggle history — show ghost history badge + re-flag button
+              <>
+                <View style={[styles.historyBadge, { backgroundColor: `${Colors.light.alert}15`, borderColor: `${Colors.light.alert}50` }]}>
+                  <Feather name="flag" size={10} color={Colors.light.alert} />
+                  <ThemedText style={[styles.historyBadgeText, { color: Colors.light.alert }]}>
+                    {`×${unmemorizedCount}`}
+                  </ThemedText>
+                </View>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                  testID={`mark-unmemorized-${word.id}`}
+                >
+                  <Animated.View style={markAnimatedStyle}>
+                    <Feather name="flag" size={16} color={theme.textSecondary} />
+                  </Animated.View>
+                </Pressable>
+              </>
             ) : (
+              // State: not started or memorized cleanly — show flag (and check if not yet memorized)
               <>
                 <Pressable
                   onPress={handleMarkUnmemorized}
@@ -181,7 +204,7 @@ export function WordCard({
                     <Feather name="flag" size={16} color={theme.textSecondary} />
                   </Animated.View>
                 </Pressable>
-                {!isMemorized && onMarkMemorized ? (
+                {!isCurrentlyMemorized && onMarkMemorized ? (
                   <Pressable
                     onPress={handleMarkMemorized}
                     style={[styles.markButton, { backgroundColor: `${Colors.light.success}20` }]}
@@ -300,6 +323,20 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
+  },
+  historyBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  historyBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   exampleRow: {
     paddingLeft: 40,

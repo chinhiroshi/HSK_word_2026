@@ -195,13 +195,12 @@ export async function markAsMemorized(wordId: string, type: MemorizationType = "
   if (index !== -1) {
     if (type === "text") {
       words[index].textMemorized = true;
-      words[index].textUnmemorizedCount = 0;
+      // Keep textUnmemorizedCount so struggle history is preserved
     } else {
       words[index].audioMemorized = true;
-      words[index].audioUnmemorizedCount = 0;
+      // Keep audioUnmemorizedCount so struggle history is preserved
     }
     words[index].isMemorized = true;
-    words[index].unmemorizedCount = 0;
     await saveWords(words);
     return words[index];
   }
