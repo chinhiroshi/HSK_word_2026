@@ -41,7 +41,11 @@ export default function SprintStudySessionScreen() {
 
   const sessionMode = route.params?.mode ?? "study";
 
-  const [phase, setPhase] = useState<Phase>(sessionMode === "review" ? "review" : "text");
+  const initialPhase: Phase =
+    sessionMode === "review" ? "review" :
+    sessionMode === "audio-only" ? "audio" : "text";
+
+  const [phase, setPhase] = useState<Phase>(initialPhase);
   const [words, setWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -85,7 +89,7 @@ export default function SprintStudySessionScreen() {
     if (newIndex < words.length) {
       setCurrentIndex(newIndex);
     } else {
-      if (currentPhase === "text" && sessionMode === "study") {
+      if (currentPhase === "text" && (sessionMode === "study")) {
         setPhase("audio");
         setCurrentIndex(0);
       } else {
@@ -203,7 +207,7 @@ export default function SprintStudySessionScreen() {
   const badgeLabel = isAudioPhase ? "音声学習" : (phase === "review" ? "復習" : "文字学習");
 
   const phaseTotal = sessionMode === "study" ? 2 : 1;
-  const phaseNum = isAudioPhase ? 2 : 1;
+  const phaseNum = isAudioPhase && sessionMode === "study" ? 2 : 1;
 
   return (
     <ThemedView style={styles.container}>
@@ -270,36 +274,34 @@ export default function SprintStudySessionScreen() {
           )}
         </Animated.View>
 
-        {isRevealed ? (
-          <Animated.View entering={FadeIn.duration(150)} style={styles.choiceButtons}>
-            <Pressable
-              testID="button-unmemorized"
-              onPress={() => handleChoice("unmemorized")}
-              style={[
-                styles.choiceButton,
-                { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
-              ]}
-            >
-              <Feather name="flag" size={22} color={Colors.light.alert} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
-                覚えていない
-              </ThemedText>
-            </Pressable>
-            <Pressable
-              testID="button-memorized"
-              onPress={() => handleChoice("memorized")}
-              style={[
-                styles.choiceButton,
-                { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
-              ]}
-            >
-              <Feather name="check" size={22} color={Colors.light.success} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
-                覚えた
-              </ThemedText>
-            </Pressable>
-          </Animated.View>
-        ) : null}
+        <View style={styles.choiceButtons}>
+          <Pressable
+            testID="button-unmemorized"
+            onPress={() => handleChoice("unmemorized")}
+            style={[
+              styles.choiceButton,
+              { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
+            ]}
+          >
+            <Feather name="flag" size={22} color={Colors.light.alert} />
+            <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
+              覚えていない
+            </ThemedText>
+          </Pressable>
+          <Pressable
+            testID="button-memorized"
+            onPress={() => handleChoice("memorized")}
+            style={[
+              styles.choiceButton,
+              { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
+            ]}
+          >
+            <Feather name="check" size={22} color={Colors.light.success} />
+            <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
+              覚えた
+            </ThemedText>
+          </Pressable>
+        </View>
       </ScrollView>
     </ThemedView>
   );

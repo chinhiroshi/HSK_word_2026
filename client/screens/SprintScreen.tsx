@@ -5,6 +5,7 @@ import {
   Pressable,
   ScrollView,
   Dimensions,
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -25,34 +26,13 @@ import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
+type SessionMode = "study" | "text-only" | "audio-only" | "review";
 
 const GRID_COLS = 4;
-const CELL_GAP = 10;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const CELL_SIZE = (SCREEN_WIDTH - Spacing.lg * 2 - CELL_GAP * (GRID_COLS - 1)) / GRID_COLS;
-
-function getCellPosition(index: number): { row: number; col: number } {
-  const row = Math.floor(index / GRID_COLS);
-  const posInRow = index % GRID_COLS;
-  const col = row % 2 === 0 ? posInRow : GRID_COLS - 1 - posInRow;
-  return { row, col };
-}
-
-function buildGrid(totalCells: number): number[] {
-  const rows: number[][] = [];
-  for (let i = 0; i < totalCells; i++) {
-    const row = Math.floor(i / GRID_COLS);
-    if (!rows[row]) rows[row] = new Array(GRID_COLS).fill(-1);
-    const { col } = getCellPosition(i);
-    rows[row][col] = i;
-  }
-  return rows.flat();
-}
-
-function formatShortDate(dateStr: string): string {
-  const [, month, day] = dateStr.split("-");
-  return `${parseInt(month)}/${parseInt(day)}`;
-}
+const ROW_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
+const ARROW_WIDTH = 14;
+const CELL_SIZE = Math.floor((ROW_WIDTH - ARROW_WIDTH * (GRID_COLS - 1)) / GRID_COLS);
 
 function getDaysElapsed(setupDate: string | null): number {
   if (!setupDate) return 0;
@@ -60,8 +40,22 @@ function getDaysElapsed(setupDate: string | null): number {
   start.setHours(0, 0, 0, 0);
   const now = new Date();
   now.setHours(0, 0, 0, 0);
-  const diff = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-  return diff + 1;
+  return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+}
+
+function formatShortDate(dateStr: string): string {
+  const [, month, day] = dateStr.split("-");
+  return `${parseInt(month)}/${parseInt(day)}`;
+}
+
+function getStudyCellIcon(cycleDay: number): keyof typeof Feather.glyphMap {
+  switch (cycleDay) {
+    case 1: return "book-open";
+    case 2: return "book";
+    case 4: return "edit-2";
+    case 5: return "bookmark";
+    default: return "book-open";
+  }
 }
 
 interface CellProps {
@@ -77,50 +71,55 @@ interface CellProps {
 
 function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, onPress, theme }: CellProps) {
   const isFlag = index === 0;
+  const cycleDay = index > 0 ? ((index - 1) % 7) + 1 : 0;
 
   let bgColor = theme.backgroundDefault;
   let borderColor = theme.border;
-  let iconName: keyof typeof Feather.glyphMap = "user";
-  let iconColor = theme.border;
+  let iconName: keyof typeof Feather.glyphMap = "book-open";
+  let iconColor = theme.textSecondary + "80";
+  let textColor: string = theme.textSecondary;
 
   if (isFlag) {
     bgColor = Colors.light.success;
     borderColor = Colors.light.success;
     iconName = "flag";
     iconColor = "#fff";
+    textColor = "#fff";
   } else if (isSpecialStamp) {
     bgColor = Colors.light.alert;
     borderColor = Colors.light.alert;
     iconName = "star";
     iconColor = "#fff";
+    textColor = "#fff";
   } else if (isCompleted) {
-    bgColor = theme.primary + "25";
-    borderColor = theme.primary;
+    bgColor = theme.primary + "20";
+    borderColor = theme.primary + "60";
     iconName = "check-circle";
     iconColor = theme.primary;
+    textColor = theme.primary;
   } else if (isCurrent) {
     bgColor = Colors.light.secondary;
     borderColor = Colors.light.secondary;
-    iconName = "play-circle";
+    iconName = "zap";
     iconColor = "#fff";
+    textColor = "#fff";
   } else if (sessionType === "test") {
     bgColor = "#EDE9FE";
-    borderColor = "#7C3AED";
+    borderColor = "#C4B5FD";
     iconName = "award";
     iconColor = "#7C3AED";
+    textColor = "#7C3AED";
   } else if (sessionType === "review") {
     bgColor = theme.backgroundSecondary;
     borderColor = theme.border;
-    iconName = "refresh-cw";
-    iconColor = theme.textSecondary;
+    iconName = "rotate-cw";
+    iconColor = theme.textSecondary + "90";
+    textColor = theme.textSecondary;
   } else {
-    iconName = "book-open";
-    iconColor = theme.textSecondary;
+    iconName = getStudyCellIcon(cycleDay);
+    iconColor = theme.textSecondary + "80";
+    textColor = theme.textSecondary;
   }
-
-  const cellNumber = index > 0 ? index : null;
-  const textColor = (isCompleted || isSpecialStamp) ? theme.primary : isCurrent ? "#fff" : theme.textSecondary;
-  const specialTextColor = isSpecialStamp ? "#fff" : textColor;
 
   return (
     <Pressable
@@ -128,58 +127,22 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       onPress={onPress}
       style={[
         styles.cell,
-        {
-          backgroundColor: bgColor,
-          borderColor,
-          width: CELL_SIZE,
-          height: CELL_SIZE,
-        },
+        { backgroundColor: bgColor, borderColor, width: CELL_SIZE, height: CELL_SIZE },
       ]}
     >
       <Feather name={iconName} size={CELL_SIZE * 0.32} color={iconColor} />
-      {cellNumber !== null ? (
-        <ThemedText
-          style={[
-            styles.cellNumber,
-            {
-              color: isCurrent ? "#fff" : specialTextColor,
-              fontSize: CELL_SIZE * 0.16,
-            },
-          ]}
-        >
-          {cellNumber}
+      {index > 0 ? (
+        <ThemedText style={[styles.cellNumber, { color: textColor, fontSize: CELL_SIZE * 0.16 }]}>
+          {index}
         </ThemedText>
       ) : null}
       {isCompleted && completedDate ? (
-        <ThemedText
-          style={[
-            styles.cellDate,
-            { color: theme.primary, fontSize: CELL_SIZE * 0.14 },
-          ]}
-        >
+        <ThemedText style={[styles.cellDate, { color: theme.primary + "CC", fontSize: CELL_SIZE * 0.14 }]}>
           {formatShortDate(completedDate)}
         </ThemedText>
       ) : null}
     </Pressable>
   );
-}
-
-function getSessionTypeLabel(type: SprintSessionType): string {
-  switch (type) {
-    case "study": return "学習";
-    case "review": return "復習";
-    case "test": return "テスト";
-    default: return "";
-  }
-}
-
-function getSessionTypeColor(type: SprintSessionType, theme: ReturnType<typeof useTheme>["theme"]): string {
-  switch (type) {
-    case "study": return theme.primary;
-    case "review": return Colors.light.secondary;
-    case "test": return "#7C3AED";
-    default: return theme.textSecondary;
-  }
 }
 
 interface ProgressChartProps {
@@ -191,70 +154,116 @@ interface ProgressChartProps {
 
 function ProgressChart({ setupDate, completedCount, totalCells, theme }: ProgressChartProps) {
   const maxCells = totalCells - 1;
-  const daysElapsed = getDaysElapsed(setupDate);
-  const expected = Math.min(daysElapsed, maxCells);
+  const expected = Math.min(getDaysElapsed(setupDate), maxCells);
   const actual = Math.min(completedCount, maxCells);
-
   const diff = actual - expected;
-  const isAhead = diff >= 0;
-  const diffLabel = diff === 0
-    ? "予定通り"
-    : isAhead
-    ? `${diff}マス先行`
-    : `${Math.abs(diff)}マス遅れ`;
-  const diffColor = diff === 0 ? theme.textSecondary : isAhead ? Colors.light.success : Colors.light.alert;
-
-  const expectedRatio = maxCells > 0 ? expected / maxCells : 0;
-  const actualRatio = maxCells > 0 ? actual / maxCells : 0;
+  const diffColor = diff === 0 ? theme.textSecondary : diff > 0 ? Colors.light.success : Colors.light.alert;
+  const diffLabel = diff === 0 ? "予定通り" : diff > 0 ? `${diff}マス先行` : `${Math.abs(diff)}マス遅れ`;
 
   return (
     <View style={[styles.progressChart, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
       <View style={styles.progressChartHeader}>
-        <ThemedText style={[styles.progressChartTitle, { color: theme.text }]}>
-          スプリント進捗
-        </ThemedText>
+        <ThemedText style={[styles.progressChartTitle, { color: theme.text }]}>スプリント進捗</ThemedText>
         <View style={[styles.diffBadge, { backgroundColor: diffColor + "18" }]}>
-          <Feather
-            name={diff === 0 ? "minus" : isAhead ? "trending-up" : "trending-down"}
-            size={12}
-            color={diffColor}
-          />
-          <ThemedText style={[styles.diffLabel, { color: diffColor }]}>
-            {diffLabel}
-          </ThemedText>
+          <Feather name={diff === 0 ? "minus" : diff > 0 ? "trending-up" : "trending-down"} size={11} color={diffColor} />
+          <ThemedText style={[styles.diffLabel, { color: diffColor }]}>{diffLabel}</ThemedText>
         </View>
       </View>
-
       <View style={styles.barRow}>
         <ThemedText style={[styles.barLabel, { color: theme.textSecondary }]}>予定</ThemedText>
         <View style={[styles.barTrack, { backgroundColor: theme.backgroundSecondary }]}>
-          <View
-            style={[
-              styles.barFill,
-              { width: `${expectedRatio * 100}%`, backgroundColor: theme.textSecondary + "60" },
-            ]}
-          />
+          <View style={[styles.barFill, { width: `${(expected / maxCells) * 100}%`, backgroundColor: theme.textSecondary + "50" }]} />
         </View>
-        <ThemedText style={[styles.barCount, { color: theme.textSecondary }]}>
-          {expected}/{maxCells}
-        </ThemedText>
+        <ThemedText style={[styles.barCount, { color: theme.textSecondary }]}>{expected}/{maxCells}</ThemedText>
       </View>
-
       <View style={styles.barRow}>
         <ThemedText style={[styles.barLabel, { color: theme.textSecondary }]}>実績</ThemedText>
         <View style={[styles.barTrack, { backgroundColor: theme.backgroundSecondary }]}>
-          <View
-            style={[
-              styles.barFill,
-              { width: `${actualRatio * 100}%`, backgroundColor: isAhead ? Colors.light.success : Colors.light.alert },
-            ]}
-          />
+          <View style={[styles.barFill, { width: `${(actual / maxCells) * 100}%`, backgroundColor: diff >= 0 ? Colors.light.success : Colors.light.alert }]} />
         </View>
-        <ThemedText style={[styles.barCount, { color: theme.text }]}>
-          {actual}/{maxCells}
-        </ThemedText>
+        <ThemedText style={[styles.barCount, { color: theme.text }]}>{actual}/{maxCells}</ThemedText>
       </View>
     </View>
+  );
+}
+
+interface SessionModalProps {
+  visible: boolean;
+  cellIndex: number;
+  onClose: () => void;
+  onSelect: (mode: SessionMode) => void;
+  theme: ReturnType<typeof useTheme>["theme"];
+}
+
+function SessionModal({ visible, cellIndex, onClose, onSelect, theme }: SessionModalProps) {
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.modalOverlay} onPress={onClose}>
+        <Pressable
+          style={[styles.modalSheet, { backgroundColor: theme.backgroundDefault }]}
+          onPress={(e) => e.stopPropagation()}
+        >
+          <View style={[styles.modalHandle, { backgroundColor: theme.border }]} />
+          <ThemedText style={[styles.modalTitle, { color: theme.text }]}>
+            学習モードを選択
+          </ThemedText>
+          <ThemedText style={[styles.modalSub, { color: theme.textSecondary }]}>
+            マス {cellIndex} の学習方法を選んでください
+          </ThemedText>
+
+          <Pressable
+            testID="modal-text-study"
+            onPress={() => onSelect("text-only")}
+            style={[styles.modalOption, { backgroundColor: theme.primary + "12", borderColor: theme.primary + "40" }]}
+          >
+            <View style={[styles.modalOptionIcon, { backgroundColor: theme.primary + "20" }]}>
+              <Feather name="book-open" size={22} color={theme.primary} />
+            </View>
+            <View style={styles.modalOptionText}>
+              <ThemedText style={[styles.modalOptionTitle, { color: theme.primary }]}>文字学習</ThemedText>
+              <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
+                文字を見て意味を覚える
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={18} color={theme.primary} />
+          </Pressable>
+
+          <Pressable
+            testID="modal-audio-study"
+            onPress={() => onSelect("audio-only")}
+            style={[styles.modalOption, { backgroundColor: Colors.light.secondary + "12", borderColor: Colors.light.secondary + "40" }]}
+          >
+            <View style={[styles.modalOptionIcon, { backgroundColor: Colors.light.secondary + "20" }]}>
+              <Feather name="headphones" size={22} color={Colors.light.secondary} />
+            </View>
+            <View style={styles.modalOptionText}>
+              <ThemedText style={[styles.modalOptionTitle, { color: Colors.light.secondary }]}>音声学習</ThemedText>
+              <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
+                音声を聞いて意味を覚える
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={18} color={Colors.light.secondary} />
+          </Pressable>
+
+          <Pressable
+            testID="modal-both-study"
+            onPress={() => onSelect("study")}
+            style={[styles.modalOption, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}
+          >
+            <View style={[styles.modalOptionIcon, { backgroundColor: theme.border + "40" }]}>
+              <Feather name="layers" size={22} color={theme.textSecondary} />
+            </View>
+            <View style={styles.modalOptionText}>
+              <ThemedText style={[styles.modalOptionTitle, { color: theme.text }]}>両方やる</ThemedText>
+              <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
+                文字 → 音声の順に学習
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+          </Pressable>
+        </Pressable>
+      </Pressable>
+    </Modal>
   );
 }
 
@@ -267,6 +276,8 @@ export default function SprintScreen() {
 
   const [words, setWords] = useState<Word[]>([]);
   const [canSkip, setCanSkip] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCell, setSelectedCell] = useState(0);
 
   useFocusEffect(
     useCallback(() => {
@@ -294,7 +305,6 @@ export default function SprintScreen() {
       }
       return;
     }
-
     if (index === 0) return;
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -304,7 +314,17 @@ export default function SprintScreen() {
     } else if (sessionType === "review") {
       navigation.navigate("SprintStudySession", { mode: "review" });
     } else {
-      navigation.navigate("SprintStudySession", { mode: "study" });
+      setSelectedCell(index);
+      setModalVisible(true);
+    }
+  };
+
+  const handleModeSelect = (mode: SessionMode) => {
+    setModalVisible(false);
+    if (mode === "review") {
+      navigation.navigate("SprintStudySession", { mode: "review" });
+    } else {
+      navigation.navigate("SprintStudySession", { mode });
     }
   };
 
@@ -315,15 +335,41 @@ export default function SprintScreen() {
     setWords(allWords);
   };
 
-  const gridIndices = buildGrid(totalCells);
   const currentPosition = sprintData?.currentPosition ?? 0;
   const isSetup = sprintData?.hasSetup ?? false;
   const streakCount = sprintData?.streakCount ?? 0;
   const specialStamps = sprintData?.specialStamps ?? [];
   const completedDates = sprintData?.completedDates ?? {};
   const completedCount = Object.keys(completedDates).length;
-
   const currentSessionType = isSetup ? getSessionType(currentPosition) : "flag";
+
+  // Build rows for snake grid
+  const rows: number[][] = [];
+  for (let i = 0; i < totalCells; i++) {
+    const rowIdx = Math.floor(i / GRID_COLS);
+    if (!rows[rowIdx]) rows[rowIdx] = [];
+    rows[rowIdx].push(i);
+  }
+  // Odd rows are displayed right-to-left
+  const displayRows = rows.map((row, i) => i % 2 === 1 ? [...row].reverse() : row);
+
+  const getSessionTypeLabel = (type: SprintSessionType) => {
+    switch (type) {
+      case "study": return "学習";
+      case "review": return "復習";
+      case "test": return "テスト";
+      default: return "";
+    }
+  };
+
+  const getSessionTypeColor = (type: SprintSessionType) => {
+    switch (type) {
+      case "study": return theme.primary;
+      case "review": return Colors.light.secondary;
+      case "test": return "#7C3AED";
+      default: return theme.textSecondary;
+    }
+  };
 
   if (loading) {
     return (
@@ -340,33 +386,19 @@ export default function SprintScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          {
-            paddingTop: headerHeight + Spacing.lg,
-            paddingBottom: tabBarHeight + Spacing["3xl"],
-          },
+          { paddingTop: headerHeight + Spacing.lg, paddingBottom: tabBarHeight + Spacing["3xl"] },
         ]}
       >
         <View style={styles.topBar}>
           <View style={styles.streakBadge}>
-            <Feather name="zap" size={16} color={Colors.light.secondary} />
+            <Feather name="zap" size={15} color={Colors.light.secondary} />
             <ThemedText style={[styles.streakText, { color: Colors.light.secondary }]}>
               {streakCount}日連続
             </ThemedText>
           </View>
-
           {isSetup && currentSessionType !== "flag" ? (
-            <View
-              style={[
-                styles.todayBadge,
-                { backgroundColor: getSessionTypeColor(currentSessionType, theme) + "18" },
-              ]}
-            >
-              <ThemedText
-                style={[
-                  styles.todayText,
-                  { color: getSessionTypeColor(currentSessionType, theme) },
-                ]}
-              >
+            <View style={[styles.todayBadge, { backgroundColor: getSessionTypeColor(currentSessionType) + "18" }]}>
+              <ThemedText style={[styles.todayText, { color: getSessionTypeColor(currentSessionType) }]}>
                 今日: {getSessionTypeLabel(currentSessionType)}
               </ThemedText>
             </View>
@@ -383,12 +415,7 @@ export default function SprintScreen() {
         ) : null}
 
         {!isSetup ? (
-          <View
-            style={[
-              styles.setupPrompt,
-              { backgroundColor: Colors.light.success + "12", borderColor: Colors.light.success + "30" },
-            ]}
-          >
+          <View style={[styles.setupPrompt, { backgroundColor: Colors.light.success + "12", borderColor: Colors.light.success + "30" }]}>
             <Feather name="flag" size={20} color={Colors.light.success} />
             <ThemedText style={[styles.setupPromptText, { color: theme.text }]}>
               旗のマスをタップして学習を始めましょう
@@ -398,10 +425,7 @@ export default function SprintScreen() {
           <Pressable
             testID="button-skip-session"
             onPress={handleSkip}
-            style={[
-              styles.skipBanner,
-              { backgroundColor: theme.primary + "12", borderColor: theme.primary + "30" },
-            ]}
+            style={[styles.skipBanner, { backgroundColor: theme.primary + "12", borderColor: theme.primary + "30" }]}
           >
             <Feather name="check-circle" size={18} color={theme.primary} />
             <ThemedText style={[styles.skipText, { color: theme.primary }]}>
@@ -411,28 +435,48 @@ export default function SprintScreen() {
           </Pressable>
         ) : null}
 
-        <View style={styles.grid}>
-          {gridIndices.map((cellIndex, gridPos) => {
-            if (cellIndex === -1) {
-              return <View key={`empty-${gridPos}`} style={[styles.cell, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: "transparent", borderWidth: 0 }]} />;
-            }
-            const sessionType = getSessionType(cellIndex);
-            const isCurrent = isSetup && cellIndex === currentPosition;
-            const isCompleted = isSetup ? cellIndex < currentPosition || (completedDates[cellIndex] != null) : false;
-            const isSpecialStamp = specialStamps.includes(cellIndex);
-
+        {/* Snake grid with arrows */}
+        <View style={styles.gridWrapper}>
+          {displayRows.map((row, rowIdx) => {
+            const isEvenRow = rowIdx % 2 === 0;
             return (
-              <Cell
-                key={cellIndex}
-                index={cellIndex}
-                sessionType={sessionType}
-                isCurrent={isCurrent}
-                isCompleted={isCompleted && !isCurrent}
-                isSpecialStamp={isSpecialStamp}
-                completedDate={completedDates[cellIndex]}
-                onPress={() => handleCellPress(cellIndex)}
-                theme={theme}
-              />
+              <View key={rowIdx}>
+                <View style={styles.gridRow}>
+                  {row.map((cellIndex, colIdx) => {
+                    const isCurrent = isSetup && cellIndex === currentPosition;
+                    const isCompleted = isSetup && !isCurrent && (completedDates[cellIndex] != null || cellIndex < currentPosition);
+                    const isSpecialStamp = specialStamps.includes(cellIndex);
+                    return (
+                      <React.Fragment key={cellIndex}>
+                        <Cell
+                          index={cellIndex}
+                          sessionType={getSessionType(cellIndex)}
+                          isCurrent={isCurrent}
+                          isCompleted={isCompleted}
+                          isSpecialStamp={isSpecialStamp}
+                          completedDate={completedDates[cellIndex]}
+                          onPress={() => handleCellPress(cellIndex)}
+                          theme={theme}
+                        />
+                        {colIdx < row.length - 1 ? (
+                          <View style={styles.arrowH}>
+                            <Feather
+                              name={isEvenRow ? "chevron-right" : "chevron-left"}
+                              size={12}
+                              color={theme.border}
+                            />
+                          </View>
+                        ) : null}
+                      </React.Fragment>
+                    );
+                  })}
+                </View>
+                {rowIdx < displayRows.length - 1 ? (
+                  <View style={[styles.arrowV, { alignItems: isEvenRow ? "flex-end" : "flex-start" }]}>
+                    <Feather name="chevron-down" size={12} color={theme.border} />
+                  </View>
+                ) : null}
+              </View>
             );
           })}
         </View>
@@ -462,18 +506,21 @@ export default function SprintScreen() {
         {isSetup ? (
           <Pressable
             testID="button-reset-sprint"
-            onPress={async () => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              navigation.navigate("SprintSetup");
-            }}
-            style={[styles.resetLink]}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintSetup"); }}
+            style={styles.resetLink}
           >
-            <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>
-              設定を変更する
-            </ThemedText>
+            <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>設定を変更する</ThemedText>
           </Pressable>
         ) : null}
       </ScrollView>
+
+      <SessionModal
+        visible={modalVisible}
+        cellIndex={selectedCell}
+        onClose={() => setModalVisible(false)}
+        onSelect={handleModeSelect}
+        theme={theme}
+      />
     </ThemedView>
   );
 }
@@ -482,149 +529,48 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: Spacing.lg },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  topBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: Spacing.lg,
-  },
-  streakBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-    backgroundColor: Colors.light.secondary + "15",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-  },
-  streakText: {
-    fontSize: 14,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-  },
-  todayBadge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
-  },
-  todayText: { fontSize: 13, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
-  progressChart: {
-    borderRadius: BorderRadius.md,
-    borderWidth: 1,
-    padding: Spacing.md,
-    marginBottom: Spacing.lg,
-    gap: Spacing.sm,
-  },
-  progressChartHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: Spacing.xs,
-  },
-  progressChartTitle: {
-    fontSize: 13,
-    fontFamily: "Nunito_600SemiBold",
-  },
-  diffBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 3,
-    borderRadius: BorderRadius.full,
-  },
-  diffLabel: {
-    fontSize: 12,
-    fontFamily: "Nunito_600SemiBold",
-  },
-  barRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  barLabel: {
-    fontSize: 12,
-    fontFamily: "Nunito_400Regular",
-    width: 28,
-  },
-  barTrack: {
-    flex: 1,
-    height: 10,
-    borderRadius: 5,
-    overflow: "hidden",
-  },
-  barFill: {
-    height: "100%",
-    borderRadius: 5,
-  },
-  barCount: {
-    fontSize: 12,
-    fontFamily: "Nunito_600SemiBold",
-    width: 36,
-    textAlign: "right",
-  },
-  setupPrompt: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    marginBottom: Spacing.lg,
-  },
-  setupPromptText: {
-    fontSize: 14,
-    fontFamily: "Nunito_600SemiBold",
-    flex: 1,
-  },
-  skipBanner: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    marginBottom: Spacing.lg,
-  },
-  skipText: {
-    fontSize: 14,
-    fontFamily: "Nunito_600SemiBold",
-    flex: 1,
-  },
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: CELL_GAP,
-    marginBottom: Spacing.xl,
-  },
-  cell: {
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1.5,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 1,
-  },
-  cellNumber: {
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-    lineHeight: 16,
-  },
-  cellDate: {
-    fontFamily: "Nunito_400Regular",
-    lineHeight: 13,
-  },
+  topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.lg },
+  streakBadge: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, backgroundColor: Colors.light.secondary + "15", paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
+  streakText: { fontSize: 13, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  todayBadge: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
+  todayText: { fontSize: 12, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
+  progressChart: { borderRadius: BorderRadius.md, borderWidth: 1, padding: Spacing.md, marginBottom: Spacing.lg, gap: Spacing.sm },
+  progressChartHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.xs },
+  progressChartTitle: { fontSize: 13, fontFamily: "Nunito_600SemiBold" },
+  diffBadge: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.full },
+  diffLabel: { fontSize: 11, fontFamily: "Nunito_600SemiBold" },
+  barRow: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
+  barLabel: { fontSize: 11, fontFamily: "Nunito_400Regular", width: 26 },
+  barTrack: { flex: 1, height: 9, borderRadius: 5, overflow: "hidden" },
+  barFill: { height: "100%", borderRadius: 5 },
+  barCount: { fontSize: 11, fontFamily: "Nunito_600SemiBold", width: 34, textAlign: "right" },
+  setupPrompt: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, padding: Spacing.md, borderRadius: BorderRadius.sm, borderWidth: 1, marginBottom: Spacing.lg },
+  setupPromptText: { fontSize: 13, fontFamily: "Nunito_600SemiBold", flex: 1 },
+  skipBanner: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, padding: Spacing.md, borderRadius: BorderRadius.sm, borderWidth: 1, marginBottom: Spacing.lg },
+  skipText: { fontSize: 13, fontFamily: "Nunito_600SemiBold", flex: 1 },
+  gridWrapper: { marginBottom: Spacing.xl },
+  gridRow: { flexDirection: "row", alignItems: "center" },
+  cell: { borderRadius: BorderRadius.sm, borderWidth: 1.5, justifyContent: "center", alignItems: "center", gap: 1 },
+  cellNumber: { fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 15 },
+  cellDate: { fontFamily: "Nunito_400Regular", lineHeight: 12 },
+  arrowH: { width: ARROW_WIDTH, alignItems: "center", justifyContent: "center" },
+  arrowV: { height: 14, paddingHorizontal: 0, justifyContent: "center", width: "100%" },
   legend: { marginBottom: Spacing.xl },
-  legendTitle: {
-    fontSize: 12,
-    fontFamily: "Nunito_600SemiBold",
-    marginBottom: Spacing.sm,
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-  },
+  legendTitle: { fontSize: 11, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.sm, textTransform: "uppercase", letterSpacing: 0.5 },
   legendItems: { flexDirection: "row", flexWrap: "wrap", gap: Spacing.md },
   legendItem: { flexDirection: "row", alignItems: "center", gap: Spacing.xs },
-  legendDot: { width: 10, height: 10, borderRadius: 5 },
-  legendLabel: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  legendDot: { width: 9, height: 9, borderRadius: 5 },
+  legendLabel: { fontSize: 11, fontFamily: "Nunito_400Regular" },
   resetLink: { alignItems: "center", paddingVertical: Spacing.sm },
-  resetLinkText: { fontSize: 13, fontFamily: "Nunito_400Regular" },
+  resetLinkText: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "flex-end" },
+  modalSheet: { borderTopLeftRadius: BorderRadius.xl, borderTopRightRadius: BorderRadius.xl, padding: Spacing.xl, paddingBottom: Spacing["3xl"], gap: Spacing.md },
+  modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: "center", marginBottom: Spacing.sm },
+  modalTitle: { fontSize: 18, fontWeight: "700", fontFamily: "Nunito_700Bold", textAlign: "center" },
+  modalSub: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xs },
+  modalOption: { flexDirection: "row", alignItems: "center", borderRadius: BorderRadius.md, borderWidth: 1, padding: Spacing.md, gap: Spacing.md },
+  modalOptionIcon: { width: 44, height: 44, borderRadius: 12, justifyContent: "center", alignItems: "center" },
+  modalOptionText: { flex: 1 },
+  modalOptionTitle: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: 2 },
+  modalOptionDesc: { fontSize: 12, fontFamily: "Nunito_400Regular" },
 });
