@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { StyleSheet } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Notifications from "expo-notifications";
+import "@/lib/notifications"; // register notification handler early
 import {
   useFonts,
   Nunito_400Regular,
@@ -35,6 +37,7 @@ export default function App() {
   });
 
   const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);
+  const navigationRef = useRef<NavigationContainerRef<any>>(null);
 
   useEffect(() => {
     checkOnboardingStatus();
@@ -62,6 +65,17 @@ export default function App() {
     }
   }, [fontsLoaded, fontError, showOnboarding]);
 
+  // 通知タップ時にスプリントタブへ遷移
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
+      if (data?.screen === "sprint" && navigationRef.current) {
+        navigationRef.current.navigate("Main", { screen: "SprintTab" });
+      }
+    });
+    return () => subscription.remove();
+  }, []);
+
   if ((!fontsLoaded && !fontError) || showOnboarding === null) {
     return null;
   }
@@ -77,7 +91,7 @@ export default function App() {
                   {showOnboarding ? (
                     <OnboardingScreen onComplete={handleOnboardingComplete} />
                   ) : (
-                    <NavigationContainer>
+                    <NavigationContainer ref={navigationRef}>
                       <RootStackNavigator />
                     </NavigationContainer>
                   )}

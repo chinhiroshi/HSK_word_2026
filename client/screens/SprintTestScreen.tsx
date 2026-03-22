@@ -172,7 +172,10 @@ export default function SprintTestScreen() {
     if (loading || !currentWord || isCompleted) return;
     if (lastSpokenIndex.current === currentIndex) return;
     lastSpokenIndex.current = currentIndex;
-    speakChinese(currentWord.word);
+    const text = currentWord.exampleSentence
+      ? `${currentWord.word}。${currentWord.exampleSentence}`
+      : currentWord.word;
+    speakChinese(text);
   }, [currentIndex, loading, currentWord, isCompleted]);
 
   // Reset reveal when card changes
