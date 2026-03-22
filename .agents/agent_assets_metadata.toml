@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "25ttI0-awxEyfFdb-9QYb"
+uri = "file://assets/images/icon.png"
+type = "image"
+title = "新しいアプリアイコン（HSK入り）"
