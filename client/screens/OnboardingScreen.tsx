@@ -29,6 +29,19 @@ interface OnboardingPage {
 
 const PAGES: OnboardingPage[] = [
   {
+    id: "0",
+    image: require("../../assets/images/onboarding-6.png"),
+    title: "スプリント 大アップデート",
+    subtitle: "パンダのスタンプで学習をもっと楽しく！",
+    features: [
+      "12種類のパンダスタンプを集めよう",
+      "テスト合格で特別な王冠パンダをゲット",
+      "スタンプ帳でコレクションを管理",
+      "HSK級ごとに独立したスプリント進捗",
+    ],
+    icon: "award",
+  },
+  {
     id: "1",
     image: require("../../assets/images/onboarding-1.png"),
     title: "HSK全級を網羅",

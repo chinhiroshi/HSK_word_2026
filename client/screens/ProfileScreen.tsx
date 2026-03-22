@@ -124,17 +124,34 @@ export default function ProfileScreen() {
   const REVIEW_THRESHOLD = 10;
 
   const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
-    if (!isPremium) return;
     try {
       const alreadyPrompted = await AsyncStorage.getItem(REVIEW_PROMPTED_KEY);
       if (alreadyPrompted === "true") return;
 
+      // 条件1: プレミアム会員 + 10語以上暗記済み
       const totalMemorized = wordData.filter(
         (w) => (w.textMemorized && (w.textUnmemorizedCount || 0) === 0) ||
                (w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0)
       ).length;
+      const premiumCondition = isPremium && totalMemorized >= REVIEW_THRESHOLD;
 
-      if (totalMemorized >= REVIEW_THRESHOLD) {
+      // 条件2: 無料ユーザーでも 10語以上閲覧 + ボタン2回以上タップ
+      const interactedCount = wordData.filter(
+        (w) => w.textMemorized || w.audioMemorized ||
+               (w.textUnmemorizedCount || 0) > 0 || (w.audioUnmemorizedCount || 0) > 0
+      ).length;
+      const totalButtonPresses = wordData.reduce(
+        (acc, w) =>
+          acc +
+          (w.textMemorized ? 1 : 0) +
+          (w.textUnmemorizedCount || 0) +
+          (w.audioMemorized ? 1 : 0) +
+          (w.audioUnmemorizedCount || 0),
+        0
+      );
+      const freeCondition = interactedCount >= REVIEW_THRESHOLD && totalButtonPresses >= 2;
+
+      if (premiumCondition || freeCondition) {
         await AsyncStorage.setItem(REVIEW_PROMPTED_KEY, "true");
         setTimeout(async () => {
           try {
