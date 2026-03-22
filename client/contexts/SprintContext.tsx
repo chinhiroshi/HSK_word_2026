@@ -308,34 +308,25 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
-  // Collect words from the N preceding study cells (same cycle), filtered to audio-struggled words.
+  // テストセルの直前50語を取得し、苦手単語を優先して返す
   const getTestWords = useCallback(
     (words: Word[]): Word[] => {
       if (!sprintData || words.length === 0) return [];
-      const pos = sprintData.currentPosition;
-      const wPD = sprintData.wordsPerDay;
-      const N = Math.max(1, Math.ceil(50 / Math.max(1, wPD)));
-      const collected: Word[] = [];
-      const seen = new Set<string>();
-      for (let studyPos = Math.max(1, pos - N); studyPos < pos; studyPos++) {
-        if (getSessionType(studyPos, wPD) === "study") {
-          const studyIdx = getStudyWordOffsetForCell(studyPos, wPD);
-          const offset = (studyIdx * wPD) % Math.max(1, words.length);
-          const cellWords = getSessionWords(words, offset, wPD);
-          for (const w of cellWords) {
-            if (!seen.has(w.id)) {
-              seen.add(w.id);
-              collected.push(w);
-            }
-          }
-        }
+      const totalWords = words.length;
+      const studied = sprintData.studiedWordCount;
+      const count = Math.min(50, totalWords);
+      // studiedWordCount は次の学習開始位置を指すため、直前 count 語 = [studied-count, studied) の範囲
+      const recent: Word[] = [];
+      for (let i = count - 1; i >= 0; i--) {
+        const idx = ((studied - 1 - i) % totalWords + totalWords) % totalWords;
+        recent.push(words[idx]);
       }
-      if (collected.length === 0) return [];
+      if (recent.length === 0) return [];
       // テキストまたは音声のどちらかで苦手フラグが立っている単語を優先
-      const struggled = collected.filter(
+      const struggled = recent.filter(
         (w) => (w.textUnmemorizedCount || 0) > 0 || (w.audioUnmemorizedCount || 0) > 0
       );
-      return struggled.length > 0 ? struggled : collected;
+      return struggled.length > 0 ? struggled : recent;
     },
     [sprintData]
   );
