@@ -3,6 +3,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform } from "react-native";
 
 export const NOTIF_PREF_KEY = "@chinese_master_notifications_enabled";
+export const NOTIF_HOUR_KEY = "@chinese_master_notification_hour";
+export const NOTIF_MINUTE_KEY = "@chinese_master_notification_minute";
+
+export const DEFAULT_NOTIF_HOUR = 19;
+export const DEFAULT_NOTIF_MINUTE = 0;
 
 const MOTIVATING_MESSAGES = [
   "今日のマスをクリアして、一歩前に進もう！",
@@ -29,6 +34,19 @@ export async function getNotificationEnabled(): Promise<boolean> {
     return val === "true";
   } catch {
     return false;
+  }
+}
+
+export async function getNotificationTime(): Promise<{ hour: number; minute: number }> {
+  try {
+    const h = await AsyncStorage.getItem(NOTIF_HOUR_KEY);
+    const m = await AsyncStorage.getItem(NOTIF_MINUTE_KEY);
+    return {
+      hour: h !== null ? parseInt(h, 10) : DEFAULT_NOTIF_HOUR,
+      minute: m !== null ? parseInt(m, 10) : DEFAULT_NOTIF_MINUTE,
+    };
+  } catch {
+    return { hour: DEFAULT_NOTIF_HOUR, minute: DEFAULT_NOTIF_MINUTE };
   }
 }
 
@@ -62,6 +80,8 @@ export async function enableSprintNotification(hour = 19, minute = 0): Promise<b
     });
 
     await AsyncStorage.setItem(NOTIF_PREF_KEY, "true");
+    await AsyncStorage.setItem(NOTIF_HOUR_KEY, String(hour));
+    await AsyncStorage.setItem(NOTIF_MINUTE_KEY, String(minute));
     return true;
   } catch (e) {
     console.warn("通知のスケジュール設定に失敗しました:", e);

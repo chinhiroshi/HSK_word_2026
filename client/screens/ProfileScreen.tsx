@@ -4,9 +4,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
 import {
   getNotificationEnabled,
+  getNotificationTime,
   enableSprintNotification,
   disableSprintNotification,
+  DEFAULT_NOTIF_HOUR,
+  DEFAULT_NOTIF_MINUTE,
 } from "@/lib/notifications";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -118,6 +122,9 @@ export default function ProfileScreen() {
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(false);
+  const [notifHour, setNotifHour] = useState(DEFAULT_NOTIF_HOUR);
+  const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
   const REVIEW_DONE_KEY = "@chinese_master_review_done";
@@ -180,6 +187,9 @@ export default function ProfileScreen() {
     } catch {}
     const notifOn = await getNotificationEnabled();
     setNotifEnabled(notifOn);
+    const { hour, minute } = await getNotificationTime();
+    setNotifHour(hour);
+    setNotifMinute(minute);
   }, [checkAndPromptReview]);
 
   const handleNotifToggle = async (value: boolean) => {
@@ -189,10 +199,11 @@ export default function ProfileScreen() {
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (value) {
-      const ok = await enableSprintNotification(19, 0);
+      const ok = await enableSprintNotification(notifHour, notifMinute);
       if (ok) {
         setNotifEnabled(true);
-        Alert.alert("通知を設定しました", "毎日19:00にスプリント学習のリマインダーをお送りします。");
+        const timeStr = `${String(notifHour).padStart(2, "0")}:${String(notifMinute).padStart(2, "0")}`;
+        Alert.alert("通知を設定しました", `毎日${timeStr}にスプリント学習のリマインダーをお送りします。`);
       } else {
         Alert.alert(
           "通知を設定できませんでした",
@@ -202,6 +213,34 @@ export default function ProfileScreen() {
     } else {
       await disableSprintNotification();
       setNotifEnabled(false);
+    }
+  };
+
+  const handleTimeChange = async (_: any, selectedDate?: Date) => {
+    if (!selectedDate) {
+      if (Platform.OS === "android") setShowTimePicker(false);
+      return;
+    }
+    const newHour = selectedDate.getHours();
+    const newMinute = selectedDate.getMinutes();
+    setNotifHour(newHour);
+    setNotifMinute(newMinute);
+    // Android: dialog closes on confirm, save immediately
+    if (Platform.OS === "android") {
+      setShowTimePicker(false);
+      if (notifEnabled) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        await enableSprintNotification(newHour, newMinute);
+      }
+    }
+    // iOS: user taps 完了 button which calls handleIOSPickerDone
+  };
+
+  const handleIOSPickerDone = async () => {
+    setShowTimePicker(false);
+    if (notifEnabled) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      await enableSprintNotification(notifHour, notifMinute);
     }
   };
 
@@ -493,6 +532,7 @@ export default function ProfileScreen() {
           { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
         ]}
       >
+        {/* Toggle row */}
         <View style={styles.notifContent}>
           <View style={[styles.notifIcon, { backgroundColor: notifEnabled ? theme.primary + "15" : theme.textSecondary + "12" }]}>
             <Feather
@@ -504,7 +544,7 @@ export default function ProfileScreen() {
           <View style={styles.notifTextContainer}>
             <ThemedText style={styles.notifTitle}>毎日のリマインダー</ThemedText>
             <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
-              {notifEnabled ? "スプリント通知 毎日19:00" : "オフ"}
+              スプリント学習の時間をお知らせします
             </ThemedText>
           </View>
           <Switch
@@ -515,6 +555,65 @@ export default function ProfileScreen() {
             thumbColor={notifEnabled ? theme.primary : theme.textSecondary}
           />
         </View>
+
+        {/* Description (always visible) */}
+        <View style={[styles.notifInfoBox, { backgroundColor: theme.backgroundSubtle ?? theme.border + "30", borderColor: theme.border }]}>
+          <Feather name="info" size={13} color={theme.textSecondary} />
+          <ThemedText style={[styles.notifInfoText, { color: theme.textSecondary }]}>
+            毎日設定した時刻に「今日のスプリントを進めましょう」という通知が届きます。スプリントの学習習慣を維持するお手伝いをします。
+          </ThemedText>
+        </View>
+
+        {/* Time picker row — shown when enabled */}
+        {notifEnabled ? (
+          <>
+            <View style={[styles.notifDivider, { backgroundColor: theme.border }]} />
+            <Pressable
+              testID="button-notif-time"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setShowTimePicker(true);
+              }}
+              style={styles.notifTimeRow}
+            >
+              <Feather name="clock" size={16} color={theme.primary} />
+              <ThemedText style={[styles.notifTimeLabel, { color: theme.text }]}>通知時刻</ThemedText>
+              <ThemedText style={[styles.notifTimeValue, { color: theme.primary }]}>
+                {`${String(notifHour).padStart(2, "0")}:${String(notifMinute).padStart(2, "0")}`}
+              </ThemedText>
+              <Feather name="chevron-right" size={16} color={theme.textSecondary} />
+            </Pressable>
+
+            {/* iOS: inline picker inside the card */}
+            {showTimePicker && Platform.OS === "ios" ? (
+              <View style={styles.iOSPickerWrapper}>
+                <DateTimePicker
+                  value={(() => { const d = new Date(); d.setHours(notifHour, notifMinute, 0, 0); return d; })()}
+                  mode="time"
+                  display="spinner"
+                  onChange={handleTimeChange}
+                  locale="ja-JP"
+                />
+                <Pressable
+                  onPress={handleIOSPickerDone}
+                  style={[styles.iOSPickerDone, { backgroundColor: theme.primary }]}
+                >
+                  <ThemedText style={styles.iOSPickerDoneText}>完了</ThemedText>
+                </Pressable>
+              </View>
+            ) : null}
+
+            {/* Android: modal picker */}
+            {showTimePicker && Platform.OS === "android" ? (
+              <DateTimePicker
+                value={(() => { const d = new Date(); d.setHours(notifHour, notifMinute, 0, 0); return d; })()}
+                mode="time"
+                display="default"
+                onChange={handleTimeChange}
+              />
+            ) : null}
+          </>
+        ) : null}
       </View>
 
       {!hasReviewed ? (
@@ -868,14 +967,15 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.8)",
   },
   notifCard: {
-    padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     marginBottom: Spacing.lg,
+    overflow: "hidden",
   },
   notifContent: {
     flexDirection: "row",
     alignItems: "center",
+    padding: Spacing.lg,
   },
   notifIcon: {
     width: 40,
@@ -897,6 +997,60 @@ const styles = StyleSheet.create({
   notifDesc: {
     fontSize: 12,
     fontFamily: "Nunito_400Regular",
+  },
+  notifInfoBox: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: Spacing.xs,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+    padding: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+  },
+  notifInfoText: {
+    flex: 1,
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+    lineHeight: 16,
+  },
+  notifDivider: {
+    height: 1,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.sm,
+  },
+  notifTimeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  notifTimeLabel: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+  },
+  notifTimeValue: {
+    fontSize: 18,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    letterSpacing: 1,
+  },
+  iOSPickerWrapper: {
+    paddingBottom: Spacing.md,
+  },
+  iOSPickerDone: {
+    marginHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    alignItems: "center",
+  },
+  iOSPickerDoneText: {
+    fontSize: 14,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+    color: "#FFFFFF",
   },
   reviewCard: {
     padding: Spacing.lg,
