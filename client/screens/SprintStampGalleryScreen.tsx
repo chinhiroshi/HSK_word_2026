@@ -4,6 +4,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  Image,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -13,30 +14,53 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
-import { useSprint } from "@/contexts/SprintContext";
-import { getSessionType } from "@/contexts/SprintContext";
+import { useSprint, getSessionType } from "@/contexts/SprintContext";
 
-const NUM_COLS = 5;
+// Panda stamp images (12 variants + 1 special)
+const PANDA_STAMPS: Record<number, any> = {
+  1: require("../../assets/images/panda-stamp-1.png"),
+  2: require("../../assets/images/panda-stamp-2.png"),
+  3: require("../../assets/images/panda-stamp-3.png"),
+  4: require("../../assets/images/panda-stamp-4.png"),
+  5: require("../../assets/images/panda-stamp-5.png"),
+  6: require("../../assets/images/panda-stamp-6.png"),
+  7: require("../../assets/images/panda-stamp-7.png"),
+  8: require("../../assets/images/panda-stamp-8.png"),
+  9: require("../../assets/images/panda-stamp-9.png"),
+  10: require("../../assets/images/panda-stamp-10.png"),
+  11: require("../../assets/images/panda-stamp-11.png"),
+  12: require("../../assets/images/panda-stamp-12.png"),
+};
+const PANDA_SPECIAL = require("../../assets/images/panda-stamp-special.png");
+
+const NUM_COLS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const STAMP_SIZE = Math.floor((SCREEN_WIDTH - Spacing.lg * 2 - (NUM_COLS - 1) * Spacing.sm) / NUM_COLS);
+const STAMP_SIZE = Math.floor(
+  (SCREEN_WIDTH - Spacing.lg * 2 - (NUM_COLS - 1) * Spacing.md) / NUM_COLS
+);
 
 function formatDate(dateStr: string): string {
   const [, month, day] = dateStr.split("-");
   return `${parseInt(month)}/${parseInt(day)}`;
 }
 
+function getPandaImage(cellIndex: number, isSpecial: boolean) {
+  if (isSpecial) return PANDA_SPECIAL;
+  const variant = ((cellIndex - 1) % 12) + 1;
+  return PANDA_STAMPS[variant];
+}
+
 export default function SprintStampGalleryScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { sprintData, totalCells, getSessionType: boundGetSessionType } = useSprint();
+  const { sprintData, totalCells } = useSprint();
 
   const wordsPerDay = sprintData?.wordsPerDay ?? 10;
   const completedDates = sprintData?.completedDates ?? {};
   const specialStamps = sprintData?.specialStamps ?? [];
   const isSetup = sprintData?.hasSetup ?? false;
 
-  // Cells 1..totalCells-1 (skip flag cell at 0)
   const cells = useMemo(() => {
     const result = [];
     for (let i = 1; i < totalCells; i++) {
@@ -50,8 +74,12 @@ export default function SprintStampGalleryScreen() {
 
   const completedCount = cells.filter((c) => c.completedDate !== null).length;
   const specialCount = cells.filter((c) => c.isSpecial).length;
-  const studyCount = cells.filter((c) => c.sessionType === "study" && c.completedDate).length;
-  const testCount = cells.filter((c) => c.sessionType === "test" && c.completedDate).length;
+  const studyCount = cells.filter(
+    (c) => c.sessionType !== "test" && c.completedDate
+  ).length;
+  const testCount = cells.filter(
+    (c) => c.sessionType === "test" && c.completedDate
+  ).length;
 
   // Group into rows of NUM_COLS
   const rows: (typeof cells[0] | null)[][] = [];
@@ -61,17 +89,28 @@ export default function SprintStampGalleryScreen() {
     rows.push(row as any);
   }
 
+  const progressPercent =
+    cells.length > 0 ? Math.round((completedCount / cells.length) * 100) : 0;
+
   return (
     <ThemedView style={styles.container}>
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingTop: headerHeight + Spacing.lg, paddingBottom: tabBarHeight + Spacing["3xl"] },
+          {
+            paddingTop: headerHeight + Spacing.lg,
+            paddingBottom: tabBarHeight + Spacing["3xl"],
+          },
         ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Summary Card */}
-        <View style={[styles.summaryCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+        <View
+          style={[
+            styles.summaryCard,
+            { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+          ]}
+        >
           <View style={styles.summaryRow}>
             <View style={styles.summaryItem}>
               <ThemedText style={[styles.summaryValue, { color: theme.primary }]}>
@@ -100,19 +139,20 @@ export default function SprintStampGalleryScreen() {
               </ThemedText>
             </View>
           </View>
+
           <View style={[styles.progressTrack, { backgroundColor: theme.border }]}>
             <View
               style={[
                 styles.progressFill,
                 {
                   backgroundColor: theme.primary,
-                  width: cells.length > 0 ? `${(completedCount / cells.length) * 100}%` : "0%",
+                  width: `${progressPercent}%`,
                 },
               ]}
             />
           </View>
           <ThemedText style={[styles.progressLabel, { color: theme.textSecondary }]}>
-            {cells.length > 0 ? Math.round((completedCount / cells.length) * 100) : 0}% 達成
+            {progressPercent}% 達成
           </ThemedText>
         </View>
 
@@ -120,24 +160,35 @@ export default function SprintStampGalleryScreen() {
         <View style={styles.legend}>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
-            <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>学習</ThemedText>
+            <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>
+              学習
+            </ThemedText>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: "#7C3AED" }]} />
-            <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>テスト</ThemedText>
+            <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>
+              テスト
+            </ThemedText>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: Colors.light.alert }]} />
-            <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>特別</ThemedText>
+            <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>
+              特別パンダ
+            </ThemedText>
           </View>
         </View>
 
         {/* Stamp Grid */}
         {!isSetup ? (
-          <View style={[styles.emptyCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
-            <Feather name="map" size={32} color={theme.textSecondary} />
+          <View
+            style={[
+              styles.emptyCard,
+              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+            ]}
+          >
+            <Feather name="map" size={40} color={theme.textSecondary} />
             <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-              スプリントを開始すると{"\n"}スタンプが集まります
+              スプリントを開始すると{"\n"}パンダが集まります
             </ThemedText>
           </View>
         ) : (
@@ -146,53 +197,62 @@ export default function SprintStampGalleryScreen() {
               <View key={rowIdx} style={styles.gridRow}>
                 {row.map((cell, colIdx) => {
                   if (!cell) {
-                    return <View key={colIdx} style={[styles.stamp, styles.stampPlaceholder]} />;
+                    return <View key={colIdx} style={{ width: STAMP_SIZE }} />;
                   }
+
                   const isCompleted = cell.completedDate !== null;
                   const isTest = cell.sessionType === "test";
                   const isSpecial = cell.isSpecial;
 
-                  const baseColor = isSpecial
+                  const borderColor = isSpecial
                     ? Colors.light.alert
                     : isTest
                     ? "#7C3AED"
                     : theme.primary;
 
                   return (
-                    <View key={colIdx} style={styles.stampWrapper}>
+                    <View key={colIdx} style={[styles.stampWrapper, { width: STAMP_SIZE }]}>
                       <View
                         style={[
-                          styles.stamp,
+                          styles.stampCircle,
                           {
-                            backgroundColor: isCompleted ? baseColor : "transparent",
-                            borderColor: isCompleted ? baseColor : theme.border,
-                            borderWidth: isCompleted ? 0 : 1.5,
+                            width: STAMP_SIZE,
+                            height: STAMP_SIZE,
+                            borderRadius: STAMP_SIZE / 2,
+                            borderColor: isCompleted ? borderColor : theme.border,
+                            borderWidth: isCompleted ? 2.5 : 1.5,
+                            backgroundColor: isCompleted
+                              ? theme.backgroundDefault
+                              : theme.backgroundSubtle ?? "#F3F4F6",
                           },
                         ]}
                       >
                         {isCompleted ? (
-                          <>
-                            {isSpecial ? (
-                              <Feather name="star" size={STAMP_SIZE * 0.38} color="#FFFFFF" />
-                            ) : isTest ? (
-                              <Feather name="check-circle" size={STAMP_SIZE * 0.38} color="#FFFFFF" />
-                            ) : (
-                              <Feather name="book-open" size={STAMP_SIZE * 0.34} color="#FFFFFF" />
-                            )}
-                          </>
+                          <Image
+                            source={getPandaImage(cell.index, isSpecial)}
+                            style={[
+                              styles.pandaImage,
+                              { width: STAMP_SIZE - 6, height: STAMP_SIZE - 6, borderRadius: (STAMP_SIZE - 6) / 2 },
+                            ]}
+                            resizeMode="cover"
+                          />
                         ) : (
-                          <ThemedText style={[styles.stampNumber, { color: theme.border }]}>
+                          <ThemedText
+                            style={[styles.stampNumber, { color: theme.border, fontSize: STAMP_SIZE * 0.26 }]}
+                          >
                             {cell.index}
                           </ThemedText>
                         )}
                       </View>
+
+                      {/* Date or cell number */}
                       {isCompleted && cell.completedDate ? (
                         <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
                           {formatDate(cell.completedDate)}
                         </ThemedText>
                       ) : (
-                        <ThemedText style={[styles.stampDate, { color: theme.border }]}>
-                          {cell.index}
+                        <ThemedText style={[styles.stampDate, { color: "transparent" }]}>
+                          --
                         </ThemedText>
                       )}
                     </View>
@@ -219,8 +279,16 @@ const styles = StyleSheet.create({
   },
   summaryRow: { flexDirection: "row", alignItems: "center" },
   summaryItem: { flex: 1, alignItems: "center" },
-  summaryValue: { fontSize: 28, fontWeight: "700", fontFamily: "Nunito_700Bold" },
-  summaryLabel: { fontSize: 11, fontFamily: "Nunito_400Regular", marginTop: 2 },
+  summaryValue: {
+    fontSize: 28,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  summaryLabel: {
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
+  },
   summaryDivider: { width: 1, height: 40 },
   progressTrack: {
     height: 8,
@@ -245,34 +313,29 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: "row", alignItems: "center", gap: Spacing.xs },
   legendDot: { width: 10, height: 10, borderRadius: 5 },
   legendLabel: { fontSize: 12, fontFamily: "Nunito_400Regular" },
-  grid: { gap: Spacing.sm },
+  grid: { gap: Spacing.md },
   gridRow: {
     flexDirection: "row",
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
   stampWrapper: {
-    width: STAMP_SIZE,
     alignItems: "center",
-    gap: 3,
+    gap: 4,
   },
-  stamp: {
-    width: STAMP_SIZE,
-    height: STAMP_SIZE,
-    borderRadius: STAMP_SIZE / 2,
+  stampCircle: {
     justifyContent: "center",
     alignItems: "center",
+    overflow: "hidden",
   },
-  stampPlaceholder: {
-    width: STAMP_SIZE,
-    height: STAMP_SIZE,
+  pandaImage: {
+    position: "absolute",
   },
   stampNumber: {
-    fontSize: STAMP_SIZE * 0.28,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
   },
   stampDate: {
-    fontSize: 9,
+    fontSize: 10,
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
   },
