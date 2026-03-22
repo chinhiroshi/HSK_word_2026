@@ -551,9 +551,9 @@ export default function SprintStudySessionScreen() {
                     </Pressable>
                     <Pressable
                       onPress={() => handleChoiceList(item.id, "memorized")}
-                      style={styles.actionIconBtn}
+                      style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
                     >
-                      <Feather name="check" size={18} color={isMemorized ? Colors.light.success : theme.textSecondary} />
+                      <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
                     </Pressable>
                   </View>
                 </View>
@@ -606,9 +606,9 @@ export default function SprintStudySessionScreen() {
                     </Pressable>
                     <Pressable
                       onPress={() => handleChoiceList(item.id, "memorized")}
-                      style={styles.actionIconBtn}
+                      style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
                     >
-                      <Feather name="check" size={18} color={isMemorized ? Colors.light.success : theme.textSecondary} />
+                      <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
                     </Pressable>
                   </View>
                 </View>
