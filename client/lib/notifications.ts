@@ -54,10 +54,10 @@ export async function enableSprintNotification(hour = 19, minute = 0): Promise<b
       sound: true,
     },
     trigger: {
-      type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour,
       minute,
-    },
+      repeats: true,
+    } as any,
   });
 
   await AsyncStorage.setItem(NOTIF_PREF_KEY, "true");
