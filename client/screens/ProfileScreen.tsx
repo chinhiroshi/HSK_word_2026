@@ -194,7 +194,10 @@ export default function ProfileScreen() {
         setNotifEnabled(true);
         Alert.alert("通知を設定しました", "毎日19:00にスプリント学習のリマインダーをお送りします。");
       } else {
-        Alert.alert("通知の許可が必要です", "設定アプリから通知を許可してください。");
+        Alert.alert(
+          "通知を設定できませんでした",
+          "通知の許可が必要です。設定アプリから通知を許可してください。\n\nExpo Goでは通知機能が制限されている場合があります。本番ビルドでは正常に動作します。"
+        );
       }
     } else {
       await disableSprintNotification();

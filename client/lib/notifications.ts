@@ -43,25 +43,30 @@ export async function enableSprintNotification(hour = 19, minute = 0): Promise<b
   const granted = await requestPermission();
   if (!granted) return false;
 
-  await Notifications.cancelAllScheduledNotificationsAsync();
-  const body = MOTIVATING_MESSAGES[Math.floor(Math.random() * MOTIVATING_MESSAGES.length)];
+  try {
+    await Notifications.cancelAllScheduledNotificationsAsync();
+    const body = MOTIVATING_MESSAGES[Math.floor(Math.random() * MOTIVATING_MESSAGES.length)];
 
-  await Notifications.scheduleNotificationAsync({
-    content: {
-      title: "スプリント学習の時間です！",
-      body,
-      data: { screen: "sprint" },
-      sound: true,
-    },
-    trigger: {
-      hour,
-      minute,
-      repeats: true,
-    } as any,
-  });
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "スプリント学習の時間です！",
+        body,
+        data: { screen: "sprint" },
+        sound: true,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour,
+        minute,
+      },
+    });
 
-  await AsyncStorage.setItem(NOTIF_PREF_KEY, "true");
-  return true;
+    await AsyncStorage.setItem(NOTIF_PREF_KEY, "true");
+    return true;
+  } catch (e) {
+    console.warn("通知のスケジュール設定に失敗しました:", e);
+    return false;
+  }
 }
 
 export async function disableSprintNotification(): Promise<void> {
