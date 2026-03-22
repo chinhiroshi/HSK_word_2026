@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { View, StyleSheet, Pressable, ScrollView, Image } from "react-native";
-
+import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -16,6 +15,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 import { MonsterIcon } from "@/components/SprintCellIcons";
+
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -27,8 +27,6 @@ import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
-
-const PANDA_SPECIAL = require("../../assets/images/panda-stamp-special.png");
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type RevealLevel = 0 | 1 | 2;
@@ -251,12 +249,8 @@ export default function SprintTestScreen() {
       <ThemedView style={styles.container}>
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
-            <View style={[styles.stampCircle, { backgroundColor: "#F59E0B" }]}>
-              <Image
-                source={PANDA_SPECIAL}
-                style={styles.stampPandaImage}
-                resizeMode="cover"
-              />
+            <View style={[styles.stampCircle, { backgroundColor: "#7C3AED" }]}>
+              <MonsterIcon size={80} color="#fff" />
             </View>
             <ThemedText style={styles.stampLabel}>特別スタンプ獲得！</ThemedText>
           </Animated.View>
@@ -449,7 +443,6 @@ const styles = StyleSheet.create({
     position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 100,
     backgroundColor: "rgba(0,0,0,0.55)", justifyContent: "center", alignItems: "center", gap: Spacing.xl,
   },
-  stampPandaImage: { width: 160, height: 160, borderRadius: 80 },
-  stampCircle: { width: 160, height: 160, borderRadius: 80, justifyContent: "center", alignItems: "center", overflow: "hidden" },
+  stampCircle: { width: 160, height: 160, borderRadius: 80, justifyContent: "center", alignItems: "center" },
   stampLabel: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", color: "#fff" },
 });

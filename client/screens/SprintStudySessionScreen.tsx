@@ -6,9 +6,7 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
-  Image,
 } from "react-native";
-
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -38,25 +36,6 @@ import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { PlantIcon } from "@/components/SprintCellIcons";
-
-const PANDA_STAMPS: Record<number, any> = {
-  1: require("../../assets/images/panda-stamp-1.png"),
-  2: require("../../assets/images/panda-stamp-2.png"),
-  3: require("../../assets/images/panda-stamp-3.png"),
-  4: require("../../assets/images/panda-stamp-4.png"),
-  5: require("../../assets/images/panda-stamp-5.png"),
-  6: require("../../assets/images/panda-stamp-6.png"),
-  7: require("../../assets/images/panda-stamp-7.png"),
-  8: require("../../assets/images/panda-stamp-8.png"),
-  9: require("../../assets/images/panda-stamp-9.png"),
-  10: require("../../assets/images/panda-stamp-10.png"),
-  11: require("../../assets/images/panda-stamp-11.png"),
-  12: require("../../assets/images/panda-stamp-12.png"),
-};
-function getPandaStamp(cellIndex: number) {
-  const variant = ((Math.max(cellIndex, 1) - 1) % 12) + 1;
-  return PANDA_STAMPS[variant];
-}
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -362,11 +341,7 @@ export default function SprintStudySessionScreen() {
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
             <View style={[styles.stampCircle, { backgroundColor: Colors.light.success }]}>
-              <Image
-                source={getPandaStamp(targetPos)}
-                style={styles.stampPandaImage}
-                resizeMode="cover"
-              />
+              <PlantIcon size={80} color="#fff" />
             </View>
             <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
           </Animated.View>
@@ -1129,14 +1104,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "rgba(0,0,0,0.45)",
   },
-  stampPandaImage: { width: 160, height: 160, borderRadius: 80 },
   stampCircle: {
     width: 160,
     height: 160,
     borderRadius: 80,
     justifyContent: "center",
     alignItems: "center",
-    overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
