@@ -6,8 +6,6 @@ import {
   ScrollView,
   Dimensions,
   Modal,
-  Platform,
-  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -16,11 +14,6 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import {
-  getNotificationEnabled,
-  enableSprintNotification,
-  disableSprintNotification,
-} from "@/lib/notifications";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -451,7 +444,6 @@ export default function SprintScreen() {
   const [canSkip, setCanSkip] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCell, setSelectedCell] = useState(0);
-  const [notifEnabled, setNotifEnabled] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -460,32 +452,10 @@ export default function SprintScreen() {
         await initializeData();
         const allWords = await getWords();
         setWords(allWords);
-        const enabled = await getNotificationEnabled();
-        setNotifEnabled(enabled);
       };
       load();
     }, [loadSprint])
   );
-
-  const handleNotifToggle = async () => {
-    if (Platform.OS === "web") {
-      Alert.alert("通知", "通知はモバイルアプリでのみ利用できます。");
-      return;
-    }
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (notifEnabled) {
-      await disableSprintNotification();
-      setNotifEnabled(false);
-    } else {
-      const ok = await enableSprintNotification(19, 0);
-      if (ok) {
-        setNotifEnabled(true);
-        Alert.alert("通知を設定しました", "毎日19:00にスプリント学習の通知をお送りします。");
-      } else {
-        Alert.alert("通知の許可が必要です", "設定アプリから通知を許可してください。");
-      }
-    }
-  };
 
   useEffect(() => {
     if (sprintData && words.length > 0) {
@@ -588,26 +558,13 @@ export default function SprintScreen() {
               {streakCount}日連続
             </ThemedText>
           </View>
-          <View style={styles.topBarRight}>
-            {isSetup && currentSessionType !== "flag" ? (
-              <View style={[styles.todayBadge, { backgroundColor: getSessionTypeColor(currentSessionType) + "18" }]}>
-                <ThemedText style={[styles.todayText, { color: getSessionTypeColor(currentSessionType) }]}>
-                  今日: {getSessionTypeLabel(currentSessionType)}
-                </ThemedText>
-              </View>
-            ) : null}
-            <Pressable
-              testID="button-notification-toggle"
-              onPress={handleNotifToggle}
-              style={[styles.notifBtn, { backgroundColor: notifEnabled ? theme.primary + "18" : theme.textSecondary + "12" }]}
-            >
-              <Feather
-                name={notifEnabled ? "bell" : "bell-off"}
-                size={15}
-                color={notifEnabled ? theme.primary : theme.textSecondary}
-              />
-            </Pressable>
-          </View>
+          {isSetup && currentSessionType !== "flag" ? (
+            <View style={[styles.todayBadge, { backgroundColor: getSessionTypeColor(currentSessionType) + "18" }]}>
+              <ThemedText style={[styles.todayText, { color: getSessionTypeColor(currentSessionType) }]}>
+                今日: {getSessionTypeLabel(currentSessionType)}
+              </ThemedText>
+            </View>
+          ) : null}
         </View>
 
         {isSetup ? (
@@ -722,10 +679,8 @@ const styles = StyleSheet.create({
   topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.lg },
   streakBadge: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, backgroundColor: Colors.light.secondary + "15", paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
   streakText: { fontSize: 13, fontWeight: "700", fontFamily: "Nunito_700Bold" },
-  topBarRight: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
   todayBadge: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
   todayText: { fontSize: 12, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
-  notifBtn: { width: 30, height: 30, borderRadius: BorderRadius.full, justifyContent: "center", alignItems: "center" },
   progressChart: { borderRadius: BorderRadius.md, borderWidth: 1, padding: Spacing.md, marginBottom: Spacing.lg, gap: Spacing.sm },
   progressChartHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.xs },
   progressChartTitle: { fontSize: 13, fontFamily: "Nunito_600SemiBold" },

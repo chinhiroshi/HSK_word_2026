@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking } from "react-native";
+import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
+import {
+  getNotificationEnabled,
+  enableSprintNotification,
+  disableSprintNotification,
+} from "@/lib/notifications";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -112,6 +117,7 @@ export default function ProfileScreen() {
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
+  const [notifEnabled, setNotifEnabled] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
   const REVIEW_DONE_KEY = "@chinese_master_review_done";
@@ -155,7 +161,29 @@ export default function ProfileScreen() {
       const reviewDone = await AsyncStorage.getItem(REVIEW_DONE_KEY);
       setHasReviewed(reviewDone === "true");
     } catch {}
+    const notifOn = await getNotificationEnabled();
+    setNotifEnabled(notifOn);
   }, [checkAndPromptReview]);
+
+  const handleNotifToggle = async (value: boolean) => {
+    if (Platform.OS === "web") {
+      Alert.alert("通知", "通知はモバイルアプリでのみ利用できます。");
+      return;
+    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (value) {
+      const ok = await enableSprintNotification(19, 0);
+      if (ok) {
+        setNotifEnabled(true);
+        Alert.alert("通知を設定しました", "毎日19:00にスプリント学習のリマインダーをお送りします。");
+      } else {
+        Alert.alert("通知の許可が必要です", "設定アプリから通知を許可してください。");
+      }
+    } else {
+      await disableSprintNotification();
+      setNotifEnabled(false);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
@@ -438,6 +466,36 @@ export default function ProfileScreen() {
           </View>
         </View>
       )}
+
+      <View
+        style={[
+          styles.notifCard,
+          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+        ]}
+      >
+        <View style={styles.notifContent}>
+          <View style={[styles.notifIcon, { backgroundColor: notifEnabled ? theme.primary + "15" : theme.textSecondary + "12" }]}>
+            <Feather
+              name={notifEnabled ? "bell" : "bell-off"}
+              size={20}
+              color={notifEnabled ? theme.primary : theme.textSecondary}
+            />
+          </View>
+          <View style={styles.notifTextContainer}>
+            <ThemedText style={styles.notifTitle}>毎日のリマインダー</ThemedText>
+            <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
+              {notifEnabled ? "スプリント通知 毎日19:00" : "オフ"}
+            </ThemedText>
+          </View>
+          <Switch
+            testID="switch-notification"
+            value={notifEnabled}
+            onValueChange={handleNotifToggle}
+            trackColor={{ false: theme.border, true: theme.primary + "80" }}
+            thumbColor={notifEnabled ? theme.primary : theme.textSecondary}
+          />
+        </View>
+      </View>
 
       {!hasReviewed ? (
         <Pressable
@@ -788,6 +846,37 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     color: "rgba(255,255,255,0.8)",
+  },
+  notifCard: {
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.lg,
+  },
+  notifContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  notifIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.md,
+  },
+  notifTextContainer: {
+    flex: 1,
+  },
+  notifTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+    marginBottom: 2,
+  },
+  notifDesc: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
   },
   reviewCard: {
     padding: Spacing.lg,
