@@ -7,6 +7,7 @@ import SprintSetupScreen from "@/screens/SprintSetupScreen";
 import SprintStudySessionScreen from "@/screens/SprintStudySessionScreen";
 import SprintTestScreen from "@/screens/SprintTestScreen";
 import SprintAudioPlaybackScreen from "@/screens/SprintAudioPlaybackScreen";
+import SprintStampGalleryScreen from "@/screens/SprintStampGalleryScreen";
 
 export type SprintStackParamList = {
   SprintHome: undefined;
@@ -14,6 +15,7 @@ export type SprintStackParamList = {
   SprintStudySession: { mode: "study" | "text-only" | "audio-only" | "audio-cards-only"; cellIndex: number };
   SprintTest: undefined;
   SprintAudioPlayback: { cellIndex: number };
+  SprintStampGallery: undefined;
 };
 
 const Stack = createNativeStackNavigator<SprintStackParamList>();
@@ -52,6 +54,11 @@ export default function SprintStackNavigator() {
         name="SprintAudioPlayback"
         component={SprintAudioPlaybackScreen}
         options={{ headerTitle: "音声連続再生" }}
+      />
+      <Stack.Screen
+        name="SprintStampGallery"
+        component={SprintStampGalleryScreen}
+        options={{ headerTitle: "スタンプ帳" }}
       />
     </Stack.Navigator>
   );

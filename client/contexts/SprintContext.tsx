@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from "react";
-import { SprintData, SprintSessionType, Word } from "@/types";
-import { getSprintData, saveSprintData, resetSprintData } from "@/lib/storage";
+import { SprintData, SprintSessionType, Word, HskLevel } from "@/types";
+import { getSprintData, saveSprintData, resetSprintData, getSelectedHskLevel } from "@/lib/storage";
 
 const DEFAULT_TOTAL_CELLS = 29;
 
@@ -112,10 +112,13 @@ export function useSprint() {
 export function SprintProvider({ children }: { children: React.ReactNode }) {
   const [sprintData, setSprintData] = useState<SprintData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentLevel, setCurrentLevel] = useState<HskLevel>(4);
 
   const loadSprint = useCallback(async () => {
     setLoading(true);
-    const data = await getSprintData();
+    const level = await getSelectedHskLevel();
+    setCurrentLevel(level);
+    const data = await getSprintData(level);
     setSprintData(data);
     setLoading(false);
   }, []);
@@ -137,9 +140,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       completedDates: {},
       totalCells,
     };
-    await saveSprintData(newData);
+    await saveSprintData(newData, currentLevel);
     setSprintData(newData);
-  }, []);
+  }, [currentLevel]);
 
   const completeSession = useCallback(
     async (isSpecial = false) => {
@@ -189,10 +192,10 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         setupDate: sprintData.setupDate ?? today,
         completedDates: newCompletedDates,
       };
-      await saveSprintData(updated);
+      await saveSprintData(updated, currentLevel);
       setSprintData(updated);
     },
-    [sprintData]
+    [sprintData, currentLevel]
   );
 
   const completePhase = useCallback(
@@ -254,7 +257,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
           completedDates: newCompletedDates,
           cellPhaseProgress: newPhaseProgress,
         };
-        await saveSprintData(updated);
+        await saveSprintData(updated, currentLevel);
         setSprintData(updated);
         return true;
       } else {
@@ -262,12 +265,12 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
           ...sprintData,
           cellPhaseProgress: newPhaseProgress,
         };
-        await saveSprintData(updated);
+        await saveSprintData(updated, currentLevel);
         setSprintData(updated);
         return false;
       }
     },
-    [sprintData]
+    [sprintData, currentLevel]
   );
 
   const skipSession = useCallback(async () => {
@@ -275,9 +278,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   }, [completeSession]);
 
   const resetSprint = useCallback(async () => {
-    await resetSprintData();
+    await resetSprintData(currentLevel);
     setSprintData(null);
-  }, []);
+  }, [currentLevel]);
 
   const boundGetSessionType = useCallback(
     (position: number): SprintSessionType => {

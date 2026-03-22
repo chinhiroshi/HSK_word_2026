@@ -2,7 +2,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Word, HskLevel, SprintData } from "@/types";
 import { mockWords } from "@/data/mockData";
 
-const SPRINT_KEY = "@chinese_master_sprint";
+const SPRINT_KEY_PREFIX = "@chinese_master_sprint_hsk";
+const SPRINT_KEY_LEGACY = "@chinese_master_sprint";
+
+function getSprintKey(level: HskLevel): string {
+  return `${SPRINT_KEY_PREFIX}${level}`;
+}
 
 const HSK_LEVEL_KEY = "@chinese_master_hsk_level";
 const DATA_VERSION_PREFIX = "@chinese_master_data_version_hsk";
@@ -222,20 +227,31 @@ export async function resetProgress(): Promise<void> {
   await resetSprintData();
 }
 
-export async function getSprintData(): Promise<SprintData | null> {
+export async function getSprintData(level?: HskLevel): Promise<SprintData | null> {
   try {
-    const data = await AsyncStorage.getItem(SPRINT_KEY);
+    const currentLevel = level ?? await getSelectedHskLevel();
+    const key = getSprintKey(currentLevel);
+    const data = await AsyncStorage.getItem(key);
     if (data) return JSON.parse(data) as SprintData;
+    // Migrate legacy data (only for the level that was active when legacy key was written)
+    const legacyData = await AsyncStorage.getItem(SPRINT_KEY_LEGACY);
+    if (legacyData) {
+      await AsyncStorage.setItem(key, legacyData);
+      await AsyncStorage.removeItem(SPRINT_KEY_LEGACY);
+      return JSON.parse(legacyData) as SprintData;
+    }
     return null;
   } catch {
     return null;
   }
 }
 
-export async function saveSprintData(data: SprintData): Promise<void> {
-  await AsyncStorage.setItem(SPRINT_KEY, JSON.stringify(data));
+export async function saveSprintData(data: SprintData, level?: HskLevel): Promise<void> {
+  const currentLevel = level ?? await getSelectedHskLevel();
+  await AsyncStorage.setItem(getSprintKey(currentLevel), JSON.stringify(data));
 }
 
-export async function resetSprintData(): Promise<void> {
-  await AsyncStorage.removeItem(SPRINT_KEY);
+export async function resetSprintData(level?: HskLevel): Promise<void> {
+  const currentLevel = level ?? await getSelectedHskLevel();
+  await AsyncStorage.removeItem(getSprintKey(currentLevel));
 }

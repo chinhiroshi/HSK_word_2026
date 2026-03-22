@@ -649,6 +649,16 @@ export default function SprintScreen() {
           </View>
         </View>
 
+        <Pressable
+          testID="button-stamp-gallery"
+          onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintStampGallery"); }}
+          style={[styles.stampGalleryLink, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}
+        >
+          <Feather name="award" size={18} color={theme.primary} />
+          <ThemedText style={[styles.stampGalleryText, { color: theme.primary }]}>スタンプ帳を見る</ThemedText>
+          <Feather name="chevron-right" size={16} color={theme.primary} />
+        </Pressable>
+
         {isSetup ? (
           <Pressable
             testID="button-reset-sprint"
@@ -708,6 +718,8 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: "row", alignItems: "center", gap: Spacing.xs },
   legendDot: { width: 9, height: 9, borderRadius: 5 },
   legendLabel: { fontSize: 11, fontFamily: "Nunito_400Regular" },
+  stampGalleryLink: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, padding: Spacing.md, borderRadius: BorderRadius.md, borderWidth: 1, marginBottom: Spacing.md },
+  stampGalleryText: { flex: 1, fontSize: 14, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
   resetLink: { alignItems: "center", paddingVertical: Spacing.sm },
   resetLinkText: { fontSize: 12, fontFamily: "Nunito_400Regular" },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "flex-end" },
