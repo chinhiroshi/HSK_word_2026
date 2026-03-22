@@ -337,17 +337,12 @@ export default function SprintTestScreen() {
           <View style={styles.choiceButtonsWrapper}>
             <View style={styles.choiceButtons}>
               <Pressable
-                testID="button-reveal-next"
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  setRevealLevel((prev) => (prev < 2 ? ((prev + 1) as RevealLevel) : 2));
-                }}
-                style={[styles.choiceButton, { backgroundColor: Colors.light.alert + "10", borderColor: Colors.light.alert + "60" }]}
+                testID="button-unmemorized-early"
+                onPress={() => handleCardChoice("unmemorized")}
+                style={[styles.choiceButton, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert }]}
               >
-                <Feather name="eye" size={20} color={Colors.light.alert} />
-                <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
-                  {revealLevel === 0 ? "文字を見る" : "意味を見る"}
-                </ThemedText>
+                <Feather name="flag" size={20} color={Colors.light.alert} />
+                <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>覚えてない</ThemedText>
               </Pressable>
               <Pressable
                 testID="button-memorized"
@@ -359,13 +354,16 @@ export default function SprintTestScreen() {
               </Pressable>
             </View>
             <Pressable
-              testID="button-unmemorized-early"
-              onPress={() => handleCardChoice("unmemorized")}
+              testID="button-reveal-next"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setRevealLevel((prev) => (prev < 2 ? ((prev + 1) as RevealLevel) : 2));
+              }}
               style={[styles.earlyUnmemorizedButton, { borderColor: theme.border, backgroundColor: theme.backgroundSecondary }]}
             >
-              <Feather name="flag" size={14} color={theme.textSecondary} />
+              <Feather name="eye" size={14} color={theme.textSecondary} />
               <ThemedText style={[styles.earlyUnmemorizedLabel, { color: theme.textSecondary }]}>
-                初めから覚えていない
+                {revealLevel === 0 ? "文字を見る" : "意味を見る"}
               </ThemedText>
             </Pressable>
           </View>

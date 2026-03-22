@@ -331,7 +331,10 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         }
       }
       if (collected.length === 0) return [];
-      const struggled = collected.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
+      // テキストまたは音声のどちらかで苦手フラグが立っている単語を優先
+      const struggled = collected.filter(
+        (w) => (w.textUnmemorizedCount || 0) > 0 || (w.audioUnmemorizedCount || 0) > 0
+      );
       return struggled.length > 0 ? struggled : collected;
     },
     [sprintData]
