@@ -123,6 +123,19 @@ export default function SprintStudySessionScreen() {
     const allWords = await getWords();
     const study = getStudyWords(allWords, cellIndex);
     setWords(study);
+
+    // Pre-populate choices based on existing study/audio tab progress
+    const initText: Record<string, "memorized" | "unmemorized"> = {};
+    const initAudio: Record<string, "memorized" | "unmemorized"> = {};
+    study.forEach((w) => {
+      if (w.textMemorized) initText[w.id] = "memorized";
+      else if ((w.textUnmemorizedCount ?? 0) > 0) initText[w.id] = "unmemorized";
+      if (w.audioMemorized) initAudio[w.id] = "memorized";
+      else if ((w.audioUnmemorizedCount ?? 0) > 0) initAudio[w.id] = "unmemorized";
+    });
+    setTextChoices(initText);
+    setAudioChoices(initAudio);
+
     if (sessionMode === "audio-cards-only") {
       // Start directly at audio-cards with words not yet audio-memorized
       const unmemorized = study.filter((w) => !w.audioMemorized);
