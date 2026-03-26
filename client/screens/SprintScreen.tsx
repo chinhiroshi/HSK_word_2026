@@ -287,14 +287,15 @@ function ProgressChart({ setupDate, completedCount, totalCells, theme }: Progres
 interface SessionModalProps {
   visible: boolean;
   cellIndex: number;
-  phaseProgress: { text: boolean; audio: boolean };
+  phaseProgress: { text: boolean; audio: boolean; audioCards: boolean };
   onClose: () => void;
   onSelect: (mode: SessionMode) => void;
   theme: ReturnType<typeof useTheme>["theme"];
 }
 
 function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, theme }: SessionModalProps) {
-  const bothDone = phaseProgress.text && phaseProgress.audio;
+  const bothDone = phaseProgress.text && phaseProgress.audio && phaseProgress.audioCards;
+  const doneCount = [phaseProgress.text, phaseProgress.audio, phaseProgress.audioCards].filter(Boolean).length;
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
@@ -308,18 +309,18 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
           </ThemedText>
           {bothDone ? (
             <ThemedText style={[styles.modalSub, { color: Colors.light.success }]}>
-              マス {cellIndex} — 両方完了済み！スタンプ獲得
+              マス {cellIndex} — 3つ完了！スタンプ獲得
             </ThemedText>
-          ) : (phaseProgress.text || phaseProgress.audio) ? (
+          ) : doneCount > 0 ? (
             <View style={[styles.modalProgressHint, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "40" }]}>
               <Feather name="info" size={13} color={Colors.light.alert} />
               <ThemedText style={[styles.modalProgressHintText, { color: Colors.light.alert }]}>
-                {phaseProgress.text ? "文字学習済み — 音声学習でスタンプ獲得" : "音声学習済み — 文字学習でスタンプ獲得"}
+                {doneCount}/3 完了 — 残りを完了するとスタンプ獲得
               </ThemedText>
             </View>
           ) : (
             <ThemedText style={[styles.modalSub, { color: theme.textSecondary }]}>
-              文字・音声リストを確認し、音声カードで仕上げよう
+              文字・音声リスト・音声カードの3つを完了しよう
             </ThemedText>
           )}
 
@@ -387,21 +388,27 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             onPress={() => onSelect("audio-cards-only")}
             style={[
               styles.modalOption,
-              { backgroundColor: Colors.light.alert + "12", borderColor: Colors.light.alert + "40" },
+              phaseProgress.audioCards
+                ? { backgroundColor: Colors.light.success + "12", borderColor: Colors.light.success + "40" }
+                : { backgroundColor: Colors.light.alert + "12", borderColor: Colors.light.alert + "40" },
             ]}
           >
-            <View style={[styles.modalOptionIcon, { backgroundColor: Colors.light.alert + "20" }]}>
-              <Feather name="layers" size={22} color={Colors.light.alert} />
+            <View style={[styles.modalOptionIcon, { backgroundColor: phaseProgress.audioCards ? Colors.light.success + "20" : Colors.light.alert + "20" }]}>
+              {phaseProgress.audioCards ? (
+                <Feather name="check-circle" size={22} color={Colors.light.success} />
+              ) : (
+                <Feather name="layers" size={22} color={Colors.light.alert} />
+              )}
             </View>
             <View style={styles.modalOptionText}>
-              <ThemedText style={[styles.modalOptionTitle, { color: Colors.light.alert }]}>
-                音声カード
+              <ThemedText style={[styles.modalOptionTitle, { color: phaseProgress.audioCards ? Colors.light.success : Colors.light.alert }]}>
+                音声カード{phaseProgress.audioCards ? "（完了）" : ""}
               </ThemedText>
               <ThemedText style={[styles.modalOptionDesc, { color: theme.textSecondary }]}>
                 音声→文字→意味の順で3段階確認
               </ThemedText>
             </View>
-            <Feather name="chevron-right" size={18} color={Colors.light.alert} />
+            <Feather name="chevron-right" size={18} color={phaseProgress.audioCards ? Colors.light.success : Colors.light.alert} />
           </Pressable>
 
           {/* 4: 音声連続再生 */}

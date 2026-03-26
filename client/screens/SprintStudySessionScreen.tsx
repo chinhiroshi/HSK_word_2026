@@ -77,6 +77,7 @@ export default function SprintStudySessionScreen() {
   const [completing, setCompleting] = useState(false);
   const [isPartialComplete, setIsPartialComplete] = useState(false);
   const [stampVisible, setStampVisible] = useState(false);
+  const [showPostStamp, setShowPostStamp] = useState(false);
   const autoSavedPhase = useRef<string | null>(null);
 
   const stampScale = useSharedValue(0);
@@ -156,8 +157,9 @@ export default function SprintStudySessionScreen() {
     const key = `${sessionMode}-${cellIndex ?? "default"}`;
     if (autoSavedPhase.current === key) return;
     autoSavedPhase.current = key;
-    const phaseArg =
-      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "text";
+    const phaseArg: "text" | "audio" | "audioCards" =
+      sessionMode === "audio-only" ? "audio" :
+      sessionMode === "audio-cards-only" ? "audioCards" : "text";
     completePhase(phaseArg, cellIndex);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
@@ -286,12 +288,13 @@ export default function SprintStudySessionScreen() {
 
   const handleComplete = async () => {
     setCompleting(true);
-    const phaseArg =
-      (sessionMode === "audio-only" || sessionMode === "audio-cards-only") ? "audio" : "text";
+    const phaseArg: "text" | "audio" | "audioCards" =
+      sessionMode === "audio-only" ? "audio" :
+      sessionMode === "audio-cards-only" ? "audioCards" : "text";
     const advanced = await completePhase(phaseArg, cellIndex);
     setCompleting(false);
     if (advanced) {
-      triggerStamp(() => navigation.navigate("SprintHome"));
+      triggerStamp(() => setShowPostStamp(true));
     } else {
       setIsPartialComplete(true);
     }
@@ -313,7 +316,9 @@ export default function SprintStudySessionScreen() {
     const donePhase =
       sessionMode === "text-only" ? "文字リスト" :
       sessionMode === "audio-only" ? "音声リスト" : "音声カード";
-    const nextPhase = sessionMode === "text-only" ? "音声学習" : "文字学習";
+    const nextPhase =
+      sessionMode === "text-only" ? "音声リスト・音声カード" :
+      sessionMode === "audio-only" ? "文字リスト・音声カード" : "文字リスト・音声リスト";
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
         <Animated.View entering={FadeIn} style={styles.completeContainer}>
@@ -338,16 +343,67 @@ export default function SprintStudySessionScreen() {
   // ----- COMPLETE (full) -----
   if (phase === "complete") {
     const targetPos = cellIndex ?? sprintData?.currentPosition ?? -1;
-    const savedProgress = targetPos >= 0 ? getCellPhaseProgress(targetPos) : { text: false, audio: false };
+    const savedProgress = targetPos >= 0
+      ? getCellPhaseProgress(targetPos)
+      : { text: false, audio: false, audioCards: false };
+    // Stamp requires all 3 phases done
     const willGetStamp =
       sessionMode === "study" ||
-      (sessionMode === "text-only" && savedProgress.audio) ||
-      (sessionMode === "audio-only" && savedProgress.text) ||
-      (sessionMode === "audio-cards-only" && savedProgress.text);
+      (sessionMode === "text-only" && savedProgress.audio && savedProgress.audioCards) ||
+      (sessionMode === "audio-only" && savedProgress.text && savedProgress.audioCards) ||
+      (sessionMode === "audio-cards-only" && savedProgress.text && savedProgress.audio);
     const phaseDoneLabel =
       sessionMode === "text-only" ? "文字リスト" :
       sessionMode === "audio-only" ? "音声リスト" :
       sessionMode === "audio-cards-only" ? "音声カード" : "";
+
+    // Build hint for missing phases
+    const missingPhases: string[] = [];
+    if (sessionMode === "text-only") {
+      if (!savedProgress.audio) missingPhases.push("音声リスト");
+      if (!savedProgress.audioCards) missingPhases.push("音声カード");
+    } else if (sessionMode === "audio-only") {
+      if (!savedProgress.text) missingPhases.push("文字リスト");
+      if (!savedProgress.audioCards) missingPhases.push("音声カード");
+    } else if (sessionMode === "audio-cards-only") {
+      if (!savedProgress.text) missingPhases.push("文字リスト");
+      if (!savedProgress.audio) missingPhases.push("音声リスト");
+    }
+
+    const studiedCellIndex = cellIndex ?? (sprintData?.currentPosition ?? 1);
+
+    // ----- POST STAMP SCREEN -----
+    if (showPostStamp) {
+      return (
+        <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+          <Animated.View entering={FadeIn} style={styles.completeContainer}>
+            <View style={[styles.stampCircle, { backgroundColor: Colors.light.success, marginBottom: Spacing.lg }]}>
+              <PlantIcon size={80} color="#fff" />
+            </View>
+            <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
+            <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
+              {words.length}語の学習完了
+            </ThemedText>
+            <Pressable
+              testID="button-audio-playback-review"
+              onPress={() => navigation.navigate("SprintAudioPlayback", { cellIndex: studiedCellIndex })}
+              style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: Colors.light.secondary + "18", borderColor: Colors.light.secondary + "50" }]}
+            >
+              <Feather name="play-circle" size={18} color={Colors.light.secondary} />
+              <ThemedText style={[styles.audioStudyText, { color: Colors.light.secondary }]}>音声連続再生で復習する</ThemedText>
+            </Pressable>
+            <Pressable
+              testID="button-back-to-sprint"
+              onPress={() => navigation.navigate("SprintHome")}
+              style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}
+            >
+              <Feather name="map" size={16} color={theme.textSecondary} />
+              <ThemedText style={[styles.audioStudyText, { color: theme.textSecondary }]}>スプリントに戻る</ThemedText>
+            </Pressable>
+          </Animated.View>
+        </ThemedView>
+      );
+    }
 
     return (
       <ThemedView style={styles.container}>
@@ -369,11 +425,11 @@ export default function SprintStudySessionScreen() {
           <ThemedText style={[styles.completeSub, { color: theme.textSecondary }]}>
             {words.length}語を学習しました
           </ThemedText>
-          {!willGetStamp ? (
+          {!willGetStamp && missingPhases.length > 0 ? (
             <View style={[styles.partialNotice, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "40" }]}>
               <Feather name="info" size={15} color={Colors.light.alert} />
               <ThemedText style={[styles.partialNoticeText, { color: Colors.light.alert }]}>
-                {sessionMode === "text-only" ? "音声学習" : "文字学習"}も完了するとスタンプ獲得！
+                {missingPhases.join("・")}も完了するとスタンプ獲得！
               </ThemedText>
             </View>
           ) : null}
@@ -405,11 +461,22 @@ export default function SprintStudySessionScreen() {
           {sessionMode === "text-only" && !savedProgress.audio ? (
             <Pressable
               testID="button-start-audio-study"
-              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-only", cellIndex: cellIndex ?? (sprintData?.currentPosition ?? 1) })}
+              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-only", cellIndex: studiedCellIndex })}
               style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
             >
               <Feather name="headphones" size={16} color={theme.primary} />
-              <ThemedText style={[styles.audioStudyText, { color: theme.primary }]}>音声学習を始める</ThemedText>
+              <ThemedText style={[styles.audioStudyText, { color: theme.primary }]}>音声リストを始める</ThemedText>
+            </Pressable>
+          ) : null}
+          {(sessionMode === "text-only" && !savedProgress.audioCards) ||
+           (sessionMode === "audio-only" && !savedProgress.audioCards) ? (
+            <Pressable
+              testID="button-start-audio-cards"
+              onPress={() => navigation.replace("SprintStudySession", { mode: "audio-cards-only", cellIndex: studiedCellIndex })}
+              style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: Colors.light.alert + "12", borderColor: Colors.light.alert + "40" }]}
+            >
+              <Feather name="layers" size={16} color={Colors.light.alert} />
+              <ThemedText style={[styles.audioStudyText, { color: Colors.light.alert }]}>音声カードを始める</ThemedText>
             </Pressable>
           ) : null}
         </Animated.View>
@@ -691,7 +758,7 @@ export default function SprintStudySessionScreen() {
           styles.content,
           {
             paddingTop: headerHeight + Spacing.xl,
-            paddingBottom: insets.bottom + Spacing["3xl"],
+            paddingBottom: tabBarHeight + Spacing["3xl"],
           },
         ]}
       >
@@ -780,6 +847,19 @@ export default function SprintStudySessionScreen() {
         ) : (
           <View style={styles.choiceButtons}>
             <Pressable
+              testID="button-unmemorized"
+              onPress={() => handleCardChoice("unmemorized")}
+              style={[
+                styles.choiceButton,
+                { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
+              ]}
+            >
+              <Feather name="flag" size={20} color={Colors.light.alert} />
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
+                覚えてない
+              </ThemedText>
+            </Pressable>
+            <Pressable
               testID="button-memorized"
               onPress={() => handleCardChoice("memorized")}
               style={[
@@ -790,19 +870,6 @@ export default function SprintStudySessionScreen() {
               <Feather name="check" size={20} color={Colors.light.success} />
               <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>
                 覚えた
-              </ThemedText>
-            </Pressable>
-            <Pressable
-              testID="button-unmemorized"
-              onPress={() => handleCardChoice("unmemorized")}
-              style={[
-                styles.choiceButton,
-                { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
-              ]}
-            >
-              <Feather name="flag" size={20} color={Colors.light.alert} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>
-                まだ
               </ThemedText>
             </Pressable>
           </View>

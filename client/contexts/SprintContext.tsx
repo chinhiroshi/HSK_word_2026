@@ -75,7 +75,7 @@ interface SprintContextType {
   loadSprint: () => Promise<void>;
   setupSprint: (wordsPerDay: number, totalWords?: number) => Promise<void>;
   completeSession: (isSpecial?: boolean) => Promise<void>;
-  completePhase: (phase: "text" | "audio" | "both", targetCell?: number) => Promise<boolean>;
+  completePhase: (phase: "text" | "audio" | "audioCards" | "both", targetCell?: number) => Promise<boolean>;
   skipSession: () => Promise<void>;
   resetSprint: () => Promise<void>;
   getSessionType: (position: number) => SprintSessionType;
@@ -83,7 +83,7 @@ interface SprintContextType {
   getStudyWords: (words: Word[], cellIndex?: number) => Word[];
   getTestWords: (words: Word[]) => Word[];
   getTodayStudyWords: (words: Word[]) => Word[];
-  getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean };
+  getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean; audioCards: boolean };
   totalCells: number;
 }
 
@@ -101,7 +101,7 @@ const SprintContext = createContext<SprintContextType>({
   getStudyWords: () => [],
   getTestWords: () => [],
   getTodayStudyWords: () => [],
-  getCellPhaseProgress: () => ({ text: false, audio: false }),
+  getCellPhaseProgress: () => ({ text: false, audio: false, audioCards: false }),
   totalCells: DEFAULT_TOTAL_CELLS,
 });
 
@@ -199,20 +199,21 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   );
 
   const completePhase = useCallback(
-    async (phase: "text" | "audio" | "both", targetCell?: number): Promise<boolean> => {
+    async (phase: "text" | "audio" | "audioCards" | "both", targetCell?: number): Promise<boolean> => {
       if (!sprintData) return false;
 
       const position = targetCell ?? sprintData.currentPosition;
       const phaseProgress = sprintData.cellPhaseProgress ?? {};
-      const current = phaseProgress[position] ?? { text: false, audio: false };
+      const current = phaseProgress[position] ?? { text: false, audio: false, audioCards: false };
 
       const newText = phase === "text" || phase === "both" ? true : current.text;
       const newAudio = phase === "audio" || phase === "both" ? true : current.audio;
-      const bothDone = newText && newAudio;
+      const newAudioCards = phase === "audioCards" ? true : (current.audioCards ?? false);
+      const bothDone = newText && newAudio && newAudioCards;
 
       const newPhaseProgress = {
         ...phaseProgress,
-        [position]: { text: newText, audio: newAudio },
+        [position]: { text: newText, audio: newAudio, audioCards: newAudioCards },
       };
 
       if (bothDone) {
@@ -378,9 +379,10 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   );
 
   const getCellPhaseProgress = useCallback(
-    (position: number): { text: boolean; audio: boolean } => {
-      if (!sprintData) return { text: false, audio: false };
-      return (sprintData.cellPhaseProgress ?? {})[position] ?? { text: false, audio: false };
+    (position: number): { text: boolean; audio: boolean; audioCards: boolean } => {
+      if (!sprintData) return { text: false, audio: false, audioCards: false };
+      const p = (sprintData.cellPhaseProgress ?? {})[position];
+      return p ? { text: p.text, audio: p.audio, audioCards: p.audioCards ?? false } : { text: false, audio: false, audioCards: false };
     },
     [sprintData]
   );
