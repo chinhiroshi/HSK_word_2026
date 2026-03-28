@@ -242,15 +242,16 @@ export default function SprintStampGalleryScreen() {
                         )}
                       </View>
 
-                      {isCompleted && cell.completedDate ? (
+                      <View style={styles.stampMeta}>
                         <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
-                          {formatDate(cell.completedDate)}
+                          {`No.${cell.index}`}
                         </ThemedText>
-                      ) : (
-                        <ThemedText style={[styles.stampDate, { color: "transparent" }]}>
-                          --
-                        </ThemedText>
-                      )}
+                        {isCompleted && cell.completedDate ? (
+                          <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
+                            {` ${formatDate(cell.completedDate)}`}
+                          </ThemedText>
+                        ) : null}
+                      </View>
                     </View>
                   );
                 })}
@@ -329,6 +330,11 @@ const styles = StyleSheet.create({
   stampNumber: {
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
+  },
+  stampMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   stampDate: {
     fontSize: 10,
