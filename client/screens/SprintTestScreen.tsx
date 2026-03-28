@@ -27,6 +27,7 @@ import { Word } from "@/types";
 import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/lib/storage";
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
+import { getQuoteForStamp } from "@/data/quotes";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -117,7 +118,7 @@ export default function SprintTestScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { completeSession, getTestWords } = useSprint();
+  const { completeSession, getTestWords, sprintData } = useSprint();
 
   const [cardWords, setCardWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -127,6 +128,9 @@ export default function SprintTestScreen() {
   const [completing, setCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [stampVisible, setStampVisible] = useState(false);
+
+  // Capture cell index before completeSession advances position
+  const testCellIndexRef = useRef<number>(sprintData?.currentPosition ?? 1);
 
   const stampScale = useSharedValue(0);
   const stampOpacity = useSharedValue(0);
@@ -278,6 +282,21 @@ export default function SprintTestScreen() {
           <ThemedText style={[styles.resultStats, { color: theme.textSecondary }]}>
             {memorized} / {total} 語 覚えた
           </ThemedText>
+          {cleared ? (() => {
+            const q = getQuoteForStamp(testCellIndexRef.current);
+            if (!q) return null;
+            return (
+              <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
+                <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
+                <ThemedText style={styles.quoteText}>{q.text}</ThemedText>
+                {q.pinyin ? (
+                  <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
+                ) : null}
+                <ThemedText style={[styles.quoteJa, { color: theme.textSecondary }]}>{q.japanese}</ThemedText>
+                <ThemedText style={[styles.quoteSource, { color: theme.textSecondary }]}>— {q.source}</ThemedText>
+              </View>
+            );
+          })() : null}
           <Button
             testID="button-finish-test"
             onPress={() => handleFinish(cleared)}
@@ -451,4 +470,10 @@ const styles = StyleSheet.create({
   },
   stampCircle: { width: 160, height: 160, borderRadius: 80, justifyContent: "center", alignItems: "center" },
   stampLabel: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", color: "#fff" },
+  quoteCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.lg, marginTop: Spacing.sm, marginBottom: Spacing.md, width: "100%", alignItems: "center", gap: Spacing.xs },
+  quoteFlag: { fontSize: 28 },
+  quoteText: { fontSize: 15, fontFamily: "Nunito_700Bold", textAlign: "center" },
+  quotePinyin: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center" },
+  quoteJa: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center", lineHeight: 20 },
+  quoteSource: { fontSize: 12, fontFamily: "Nunito_400Regular", textAlign: "right", alignSelf: "flex-end", marginTop: Spacing.xs },
 });

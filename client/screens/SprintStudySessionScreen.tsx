@@ -34,6 +34,7 @@ import { Word } from "@/types";
 import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/lib/storage";
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
+import { getQuoteForStamp } from "@/data/quotes";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { PlantIcon } from "@/components/SprintCellIcons";
 
@@ -384,6 +385,21 @@ export default function SprintStudySessionScreen() {
             <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
               {words.length}語の学習完了
             </ThemedText>
+            {(() => {
+              const q = getQuoteForStamp(studiedCellIndex);
+              if (!q) return null;
+              return (
+                <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
+                  <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
+                  <ThemedText style={styles.quoteText}>{q.text}</ThemedText>
+                  {q.pinyin ? (
+                    <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
+                  ) : null}
+                  <ThemedText style={[styles.quoteJa, { color: theme.textSecondary }]}>{q.japanese}</ThemedText>
+                  <ThemedText style={[styles.quoteSource, { color: theme.textSecondary }]}>— {q.source}</ThemedText>
+                </View>
+              );
+            })()}
             <Pressable
               testID="button-audio-playback-review"
               onPress={() => navigation.navigate("SprintAudioPlayback", { cellIndex: studiedCellIndex })}
@@ -1229,4 +1245,10 @@ const styles = StyleSheet.create({
   audioStudyText: { fontSize: 15, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", textAlign: "center", marginBottom: Spacing.sm },
   emptySub: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
+  quoteCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.lg, marginTop: Spacing.md, marginBottom: Spacing.lg, width: "100%", alignItems: "center", gap: Spacing.xs },
+  quoteFlag: { fontSize: 28 },
+  quoteText: { fontSize: 16, fontFamily: "Nunito_700Bold", textAlign: "center" },
+  quotePinyin: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center" },
+  quoteJa: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center", lineHeight: 20 },
+  quoteSource: { fontSize: 12, fontFamily: "Nunito_400Regular", textAlign: "right", alignSelf: "flex-end", marginTop: Spacing.xs },
 });

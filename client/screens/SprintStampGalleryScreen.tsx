@@ -179,6 +179,16 @@ export default function SprintStampGalleryScreen() {
           </View>
         </View>
 
+        {/* Tap hint */}
+        {isSetup ? (
+          <View style={styles.tapHintRow}>
+            <Feather name="info" size={13} color={theme.textSecondary} />
+            <ThemedText style={[styles.tapHintText, { color: theme.textSecondary }]}>
+              スタンプをタップするとアドバイスが出てきます
+            </ThemedText>
+          </View>
+        ) : null}
+
         {/* Stamp Grid */}
         {!isSetup ? (
           <View
@@ -348,6 +358,8 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: "row", alignItems: "center", gap: Spacing.xs },
   legendDot: { width: 10, height: 10, borderRadius: 5 },
   legendLabel: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  tapHintRow: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, alignSelf: "center", marginTop: Spacing.xs, marginBottom: Spacing.sm },
+  tapHintText: { fontSize: 12, fontFamily: "Nunito_400Regular" },
   grid: { gap: Spacing.md },
   gridRow: {
     flexDirection: "row",
