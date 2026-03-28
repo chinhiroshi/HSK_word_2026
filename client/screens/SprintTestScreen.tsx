@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { View, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, StyleSheet, Pressable, ScrollView, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -14,7 +14,8 @@ import Animated, {
   withSequence,
   runOnJS,
 } from "react-native-reanimated";
-import { MonsterIcon } from "@/components/SprintCellIcons";
+
+const PANDA_SPECIAL = require("../../assets/images/panda-stamp-special.png");
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -249,8 +250,8 @@ export default function SprintTestScreen() {
       <ThemedView style={styles.container}>
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
-            <View style={[styles.stampCircle, { backgroundColor: "#7C3AED" }]}>
-              <MonsterIcon size={80} color="#fff" />
+            <View style={[styles.stampCircle, { backgroundColor: Colors.light.alert, borderWidth: 4, borderColor: "#fff" }]}>
+              <Image source={PANDA_SPECIAL} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
             </View>
             <ThemedText style={styles.stampLabel}>特別スタンプ獲得！</ThemedText>
           </Animated.View>
@@ -314,7 +315,12 @@ export default function SprintTestScreen() {
           </View>
           <Pressable
             testID="button-replay-audio"
-            onPress={() => { speakChinese(currentWord.word); }}
+            onPress={() => {
+              const text = currentWord.exampleSentence
+                ? `${currentWord.word}。${currentWord.exampleSentence}`
+                : currentWord.word;
+              speakChinese(text);
+            }}
             style={[styles.replayButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
           >
             <Feather name="volume-2" size={16} color={theme.primary} />
