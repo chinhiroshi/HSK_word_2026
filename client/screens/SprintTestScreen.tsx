@@ -288,7 +288,7 @@ export default function SprintTestScreen() {
             return (
               <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
                 <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
-                <ThemedText style={styles.quoteText}>{q.text}</ThemedText>
+                <ThemedText style={styles.quoteText}>{q.chinese}</ThemedText>
                 {q.pinyin ? (
                   <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
                 ) : null}
