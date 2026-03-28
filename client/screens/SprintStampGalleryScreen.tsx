@@ -57,7 +57,7 @@ export default function SprintStampGalleryScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { sprintData, totalCells } = useSprint();
+  const { sprintData, totalCells, currentLevel } = useSprint();
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
 
   const wordsPerDay = sprintData?.wordsPerDay ?? 10;
@@ -222,7 +222,7 @@ export default function SprintStampGalleryScreen() {
                     : theme.primary;
 
                   const handleStampPress = () => {
-                    const quote = getQuoteForStamp(cell.index);
+                    const quote = getQuoteForStamp(cell.index, currentLevel);
                     if (quote) setSelectedQuote(quote);
                   };
 

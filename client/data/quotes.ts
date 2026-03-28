@@ -210,14 +210,21 @@ export const QUOTES: Quote[] = [
   { number: 200, flag: "🇮🇹", chinese: "只有受过教育的人才是自由的", pinyin: "zhǐ yǒu shòu guò jiào yù de rén cái shì zì yóu de", source: "エピクテトス（古代ローマ・哲学者）", japanese: "教育を受けた者だけが自由である。語学力を身につけることで、世界中どこでも自由に生きられる。" },
 ];
 
-export function getQuoteForStamp(stampIndex: number): Quote | null {
+const CELLS_PER_LEVEL = 29;
+const CHINESE_PER_LEVEL = Math.ceil(CELLS_PER_LEVEL / 2);  // 15
+const FOREIGN_PER_LEVEL = Math.floor(CELLS_PER_LEVEL / 2); // 14
+
+export function getQuoteForStamp(stampIndex: number, hskLevel: number = 1): Quote | null {
   if (stampIndex < 1) return null;
   let quoteNumber: number;
   if (stampIndex % 2 === 1) {
-    quoteNumber = Math.ceil(stampIndex / 2);
+    // Odd cells → Chinese quotes (1–100), offset by level
+    const chineseIndex = Math.ceil(stampIndex / 2) + (hskLevel - 1) * CHINESE_PER_LEVEL;
+    quoteNumber = ((chineseIndex - 1) % 100) + 1;
   } else {
-    quoteNumber = 100 + stampIndex / 2;
+    // Even cells → Foreign quotes (101–200), offset by level
+    const foreignIndex = stampIndex / 2 + (hskLevel - 1) * FOREIGN_PER_LEVEL;
+    quoteNumber = 100 + ((foreignIndex - 1) % 100) + 1;
   }
-  if (quoteNumber < 1 || quoteNumber > 200) return null;
   return QUOTES[quoteNumber - 1] ?? null;
 }

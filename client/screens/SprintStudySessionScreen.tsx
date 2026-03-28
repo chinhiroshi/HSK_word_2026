@@ -53,7 +53,7 @@ export default function SprintStudySessionScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { sprintData, completePhase, getStudyWords, getCellPhaseProgress } = useSprint();
+  const { sprintData, completePhase, getStudyWords, getCellPhaseProgress, currentLevel } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
   const cellIndex = route.params?.cellIndex;
@@ -386,7 +386,7 @@ export default function SprintStudySessionScreen() {
               {words.length}語の学習完了
             </ThemedText>
             {(() => {
-              const q = getQuoteForStamp(studiedCellIndex);
+              const q = getQuoteForStamp(studiedCellIndex, currentLevel);
               if (!q) return null;
               return (
                 <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>

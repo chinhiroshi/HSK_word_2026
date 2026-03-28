@@ -72,6 +72,7 @@ function canSkipSession(
 interface SprintContextType {
   sprintData: SprintData | null;
   loading: boolean;
+  currentLevel: number;
   loadSprint: () => Promise<void>;
   setupSprint: (wordsPerDay: number, totalWords?: number) => Promise<void>;
   completeSession: (isSpecial?: boolean) => Promise<void>;
@@ -90,6 +91,7 @@ interface SprintContextType {
 const SprintContext = createContext<SprintContextType>({
   sprintData: null,
   loading: true,
+  currentLevel: 1,
   loadSprint: async () => {},
   setupSprint: async () => {},
   completeSession: async () => {},
@@ -389,6 +391,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       value={{
         sprintData,
         loading,
+        currentLevel,
         loadSprint,
         setupSprint,
         completeSession,

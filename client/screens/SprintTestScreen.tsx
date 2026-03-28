@@ -118,7 +118,7 @@ export default function SprintTestScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
-  const { completeSession, getTestWords, sprintData } = useSprint();
+  const { completeSession, getTestWords, sprintData, currentLevel } = useSprint();
 
   const [cardWords, setCardWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -283,7 +283,7 @@ export default function SprintTestScreen() {
             {memorized} / {total} 語 覚えた
           </ThemedText>
           {cleared ? (() => {
-            const q = getQuoteForStamp(testCellIndexRef.current);
+            const q = getQuoteForStamp(testCellIndexRef.current, currentLevel);
             if (!q) return null;
             return (
               <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
