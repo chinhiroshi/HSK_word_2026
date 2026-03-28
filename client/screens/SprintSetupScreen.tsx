@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -14,6 +15,7 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -23,6 +25,12 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { getWords, initializeData } from "@/lib/storage";
+import {
+  DEFAULT_NOTIF_HOUR,
+  DEFAULT_NOTIF_MINUTE,
+  enableSprintNotification,
+  disableSprintNotification,
+} from "@/lib/notifications";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 
@@ -31,6 +39,10 @@ const WORD_OPTIONS = [
   { label: "30語", words: 30, description: "標準ペース" },
   { label: "50語", words: 50, description: "集中ペース" },
 ];
+
+function padTwo(n: number) {
+  return String(n).padStart(2, "0");
+}
 
 export default function SprintSetupScreen() {
   const navigation = useNavigation<NavigationProp>();
@@ -44,6 +56,17 @@ export default function SprintSetupScreen() {
   const [showCustom, setShowCustom] = useState(false);
   const [loading, setLoading] = useState(false);
   const [totalWords, setTotalWords] = useState(150);
+
+  const [notifEnabled, setNotifEnabled] = useState(false);
+  const [notifHour, setNotifHour] = useState(DEFAULT_NOTIF_HOUR);
+  const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
+  const [showIOSPicker, setShowIOSPicker] = useState(false);
+  const [tempTime, setTempTime] = useState<Date>(() => {
+    const d = new Date();
+    d.setHours(DEFAULT_NOTIF_HOUR, DEFAULT_NOTIF_MINUTE, 0, 0);
+    return d;
+  });
+  const [showAndroidPicker, setShowAndroidPicker] = useState(false);
 
   useEffect(() => {
     initializeData().then(() =>
@@ -73,14 +96,45 @@ export default function SprintSetupScreen() {
   const expectedCells = 1 + fullCycles * (N + 1);
   const canStart = wordsPerDay >= 5;
 
+  const handleToggleNotif = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setNotifEnabled((prev) => !prev);
+  };
+
+  const handleOpenTimePicker = () => {
+    if (!notifEnabled) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS === "ios") {
+      const d = new Date();
+      d.setHours(notifHour, notifMinute, 0, 0);
+      setTempTime(d);
+      setShowIOSPicker(true);
+    } else {
+      setShowAndroidPicker(true);
+    }
+  };
+
+  const handleIOSPickerDone = () => {
+    setNotifHour(tempTime.getHours());
+    setNotifMinute(tempTime.getMinutes());
+    setShowIOSPicker(false);
+  };
+
   const handleStart = async () => {
     if (!canStart) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
     await setupSprint(wordsPerDay, totalWords);
+    if (notifEnabled && Platform.OS !== "web") {
+      await enableSprintNotification(notifHour, notifMinute);
+    } else if (!notifEnabled) {
+      await disableSprintNotification();
+    }
     setLoading(false);
     navigation.goBack();
   };
+
+  const notifTimeLabel = `${padTwo(notifHour)}:${padTwo(notifMinute)}`;
 
   return (
     <ThemedView style={styles.container}>
@@ -236,6 +290,63 @@ export default function SprintSetupScreen() {
             </View>
           ) : null}
 
+          {/* Push Notification Section */}
+          <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+            <ThemedText style={[styles.notifTitle, { color: theme.text }]}>
+              学習リマインダー
+            </ThemedText>
+            <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
+              毎日決まった時間に通知でスプリントの学習を促します。
+            </ThemedText>
+
+            <Pressable
+              testID="button-toggle-notif"
+              onPress={handleToggleNotif}
+              style={styles.notifToggleRow}
+            >
+              <View style={styles.notifToggleLeft}>
+                <View style={[styles.notifIcon, { backgroundColor: Colors.light.secondary + "18" }]}>
+                  <Feather name="bell" size={18} color={Colors.light.secondary} />
+                </View>
+                <ThemedText style={[styles.notifToggleLabel, { color: theme.text }]}>
+                  通知を受け取る
+                </ThemedText>
+              </View>
+              <View style={[
+                styles.toggle,
+                { backgroundColor: notifEnabled ? Colors.light.secondary : theme.border },
+              ]}>
+                <View style={[
+                  styles.toggleThumb,
+                  { transform: [{ translateX: notifEnabled ? 20 : 2 }] },
+                ]} />
+              </View>
+            </Pressable>
+
+            {notifEnabled ? (
+              <Pressable
+                testID="button-notif-time"
+                onPress={handleOpenTimePicker}
+                style={[styles.notifTimeRow, { borderTopColor: theme.border }]}
+              >
+                <View style={styles.notifToggleLeft}>
+                  <View style={[styles.notifIcon, { backgroundColor: theme.primary + "15" }]}>
+                    <Feather name="clock" size={18} color={theme.primary} />
+                  </View>
+                  <ThemedText style={[styles.notifToggleLabel, { color: theme.text }]}>
+                    通知時刻
+                  </ThemedText>
+                </View>
+                <View style={styles.notifTimeRight}>
+                  <ThemedText style={[styles.notifTimeValue, { color: theme.primary }]}>
+                    {notifTimeLabel}
+                  </ThemedText>
+                  <Feather name="chevron-right" size={16} color={theme.textSecondary} />
+                </View>
+              </Pressable>
+            ) : null}
+          </View>
+
           <Button
             testID="button-start-sprint"
             onPress={handleStart}
@@ -246,6 +357,45 @@ export default function SprintSetupScreen() {
           </Button>
         </ScrollView>
       </KeyboardAvoidingView>
+
+      {/* iOS Time Picker Modal */}
+      {Platform.OS === "ios" && showIOSPicker ? (
+        <Modal transparent animationType="slide" visible={showIOSPicker}>
+          <View style={styles.iosPickerOverlay}>
+            <View style={[styles.iosPickerSheet, { backgroundColor: theme.backgroundDefault }]}>
+              <View style={[styles.iosPickerHeader, { borderBottomColor: theme.border }]}>
+                <ThemedText style={[styles.iosPickerTitle, { color: theme.textSecondary }]}>
+                  通知時刻を選択
+                </ThemedText>
+                <Pressable onPress={handleIOSPickerDone}>
+                  <ThemedText style={[styles.iosPickerDone, { color: theme.primary }]}>完了</ThemedText>
+                </Pressable>
+              </View>
+              <DateTimePicker
+                value={tempTime}
+                mode="time"
+                display="spinner"
+                locale="ja-JP"
+                onChange={(_e, d) => { if (d) setTempTime(d); }}
+                style={styles.picker}
+              />
+            </View>
+          </View>
+        </Modal>
+      ) : null}
+
+      {/* Android Time Picker */}
+      {Platform.OS === "android" && showAndroidPicker ? (
+        <DateTimePicker
+          value={(() => { const d = new Date(); d.setHours(notifHour, notifMinute, 0, 0); return d; })()}
+          mode="time"
+          display="default"
+          onChange={(_e, d) => {
+            setShowAndroidPicker(false);
+            if (d) { setNotifHour(d.getHours()); setNotifMinute(d.getMinutes()); }
+          }}
+        />
+      ) : null}
     </ThemedView>
   );
 }
@@ -336,5 +486,89 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_600SemiBold",
     flex: 1,
   },
+  notifCard: {
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    marginBottom: Spacing.xl,
+    overflow: "hidden",
+  },
+  notifTitle: {
+    fontSize: 15,
+    fontFamily: "Nunito_700Bold",
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.xs,
+  },
+  notifDesc: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+    lineHeight: 19,
+  },
+  notifToggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  notifToggleLeft: { flexDirection: "row", alignItems: "center", gap: Spacing.md, flex: 1 },
+  notifIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  notifToggleLabel: { fontSize: 15, fontFamily: "Nunito_600SemiBold" },
+  toggle: {
+    width: 44,
+    height: 26,
+    borderRadius: 13,
+    justifyContent: "center",
+  },
+  toggleThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  notifTimeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderTopWidth: 1,
+  },
+  notifTimeRight: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
+  notifTimeValue: { fontSize: 17, fontFamily: "Nunito_700Bold" },
   startButton: { marginTop: Spacing.sm },
+  iosPickerOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0,0,0,0.3)",
+  },
+  iosPickerSheet: {
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    overflow: "hidden",
+  },
+  iosPickerHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+  },
+  iosPickerTitle: { fontSize: 15, fontFamily: "Nunito_600SemiBold" },
+  iosPickerDone: { fontSize: 16, fontFamily: "Nunito_700Bold" },
+  picker: { height: 200 },
 });

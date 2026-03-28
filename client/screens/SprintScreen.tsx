@@ -534,12 +534,17 @@ export default function SprintScreen() {
       const testNum = getTestNumber(index, wPD);
       const prevTestCell = getPreviousTestCell(index, wPD);
       const cDates = sprintData.completedDates ?? {};
+
+      if (cDates[index]) {
+        Alert.alert(`テスト ${testNum} クリア済み`, formatShortDate(cDates[index]) + " にクリアしました。", [{ text: "OK" }]);
+        return;
+      }
+      if (index !== currentPosition) {
+        Alert.alert(`テスト ${testNum}`, "前のセルを全て完了してからテストに挑戦できます。", [{ text: "OK" }]);
+        return;
+      }
       if (prevTestCell !== null && cDates[prevTestCell] == null) {
-        Alert.alert(
-          `テスト ${testNum}`,
-          `テスト${testNum - 1}をクリアしてから挑戦できます。`,
-          [{ text: "OK" }]
-        );
+        Alert.alert(`テスト ${testNum}`, `テスト${testNum - 1}をクリアしてから挑戦できます。`, [{ text: "OK" }]);
         return;
       }
       if (testNum > 1 && !isPremium) {
@@ -690,7 +695,10 @@ export default function SprintScreen() {
                   const wPD = sprintData?.wordsPerDay ?? 10;
                   const cellTestNum = cellSessionType === "test" ? getTestNumber(cellIndex, wPD) : undefined;
                   const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD) : null;
-                  const cellIsLocked = cellSessionType === "test" && prevTestForCell !== null && completedDates[prevTestForCell] == null && !isCompleted;
+                  const cellIsLocked = cellSessionType === "test" && !isCompleted && (
+                    (prevTestForCell !== null && completedDates[prevTestForCell] == null) ||
+                    cellIndex !== currentPosition
+                  );
                   return (
                     <Cell
                       key={colIdx}
