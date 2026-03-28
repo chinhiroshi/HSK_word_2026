@@ -6,6 +6,7 @@ import {
   ScrollView,
   Dimensions,
   Modal,
+  Alert,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -21,7 +22,8 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
-import { useSprint } from "@/contexts/SprintContext";
+import { useSprint, getSessionType as getSessionTypeFn } from "@/contexts/SprintContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
@@ -96,6 +98,20 @@ function formatShortDate(dateStr: string): string {
   return `${parseInt(month)}/${parseInt(day)}`;
 }
 
+function getTestNumber(cellIndex: number, wordsPerDay: number): number {
+  let count = 0;
+  for (let i = 1; i <= cellIndex; i++) {
+    if (getSessionTypeFn(i, wordsPerDay) === "test") count++;
+  }
+  return count;
+}
+
+function getPreviousTestCell(cellIndex: number, wordsPerDay: number): number | null {
+  for (let i = cellIndex - 1; i >= 1; i--) {
+    if (getSessionTypeFn(i, wordsPerDay) === "test") return i;
+  }
+  return null;
+}
 
 interface CellProps {
   index: number;
@@ -107,9 +123,11 @@ interface CellProps {
   direction: CellDir;
   onPress: () => void;
   theme: ReturnType<typeof useTheme>["theme"];
+  testNumber?: number;
+  isLocked?: boolean;
 }
 
-function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme }: CellProps) {
+function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme, testNumber, isLocked }: CellProps) {
   const isFlag = index === 0;
 
   let bgColor = theme.backgroundDefault;
@@ -149,9 +167,15 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     iconColor = "#fff";
     textColor = "#fff";
   } else if (sessionType === "test") {
-    bgColor = "#EDE9FE";
-    borderColor = "#C4B5FD";
-    textColor = "#7C3AED";
+    if (isLocked) {
+      bgColor = theme.backgroundSecondary;
+      borderColor = theme.border;
+      textColor = theme.textSecondary;
+    } else {
+      bgColor = "#EDE9FE";
+      borderColor = "#C4B5FD";
+      textColor = "#7C3AED";
+    }
   } else {
     bgColor = theme.primary + "12";
     borderColor = theme.primary + "40";
@@ -169,7 +193,21 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
     if (sessionType === "test") {
-      return <MonsterIcon size={iconSize} color={stampColor ?? "#7C3AED"} />;
+      if (isLocked) {
+        return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "60"} />;
+      }
+      return (
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />
+          {testNumber != null ? (
+            <View style={[styles.testNumBadge, isCompleted ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#7C3AED22" }]}>
+              <ThemedText style={[styles.testNumText, { color: isCompleted ? "#fff" : "#7C3AED" }]}>
+                {testNumber}
+              </ThemedText>
+            </View>
+          ) : null}
+        </View>
+      );
     }
     return <PlantIcon size={iconSize} color={stampColor ?? theme.primary} />;
   };
@@ -181,18 +219,26 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       style={[
         styles.cell,
         { backgroundColor: bgColor, borderColor, width: CELL_SIZE, height: CELL_SIZE },
+        isLocked ? { opacity: 0.55 } : null,
       ]}
     >
       {renderIcon()}
-      {index > 0 ? (
+      {index > 0 && sessionType !== "test" ? (
         <ThemedText style={[styles.cellNumber, { color: textColor, fontSize: CELL_SIZE * 0.16 }]}>
           {index}
         </ThemedText>
       ) : null}
       {isCompleted && completedDate ? (
-        <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.14 }]}>
-          {formatShortDate(completedDate)}
-        </ThemedText>
+        <View style={{ alignItems: "center" }}>
+          {sessionType === "test" ? (
+            <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.13, fontWeight: "600" }]}>
+              クリア
+            </ThemedText>
+          ) : null}
+          <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.13 }]}>
+            {formatShortDate(completedDate)}
+          </ThemedText>
+        </View>
       ) : null}
       {direction ? (
         <View
@@ -446,6 +492,7 @@ export default function SprintScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress } = useSprint();
+  const { isPremium } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
   const [canSkip, setCanSkip] = useState(false);
@@ -483,6 +530,22 @@ export default function SprintScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const sessionType = getSessionType(index);
     if (sessionType === "test") {
+      const wPD = sprintData.wordsPerDay ?? 10;
+      const testNum = getTestNumber(index, wPD);
+      const prevTestCell = getPreviousTestCell(index, wPD);
+      const cDates = sprintData.completedDates ?? {};
+      if (prevTestCell !== null && cDates[prevTestCell] == null) {
+        Alert.alert(
+          `テスト ${testNum}`,
+          `テスト${testNum - 1}をクリアしてから挑戦できます。`,
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      if (testNum > 1 && !isPremium) {
+        (navigation as any).navigate("Paywall");
+        return;
+      }
       navigation.navigate("SprintTest");
     } else {
       setSelectedCell(index);
@@ -623,11 +686,16 @@ export default function SprintScreen() {
                   const isCurrent = isSetup && cellIndex === currentPosition;
                   const isCompleted = isSetup && !isCurrent && completedDates[cellIndex] != null;
                   const isSpecialStamp = specialStamps.includes(cellIndex);
+                  const cellSessionType = getSessionType(cellIndex);
+                  const wPD = sprintData?.wordsPerDay ?? 10;
+                  const cellTestNum = cellSessionType === "test" ? getTestNumber(cellIndex, wPD) : undefined;
+                  const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD) : null;
+                  const cellIsLocked = cellSessionType === "test" && prevTestForCell !== null && completedDates[prevTestForCell] == null && !isCompleted;
                   return (
                     <Cell
                       key={colIdx}
                       index={cellIndex}
-                      sessionType={getSessionType(cellIndex)}
+                      sessionType={cellSessionType}
                       isCurrent={isCurrent}
                       isCompleted={isCompleted}
                       isSpecialStamp={isSpecialStamp}
@@ -635,6 +703,8 @@ export default function SprintScreen() {
                       direction={getCellArrowDir(cellIndex, cellPositions)}
                       onPress={() => handleCellPress(cellIndex)}
                       theme={theme}
+                      testNumber={cellTestNum}
+                      isLocked={cellIsLocked}
                     />
                   );
                 }
@@ -718,6 +788,17 @@ const styles = StyleSheet.create({
   cellNumber: { fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 15 },
   cellDate: { fontFamily: "Nunito_400Regular", lineHeight: 12 },
   cellArrow: { position: "absolute" },
+  testNumBadge: {
+    borderRadius: 6,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+    marginTop: 2,
+  },
+  testNumText: {
+    fontSize: 10,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
   decoCell: { justifyContent: "center", alignItems: "center", borderRadius: 6 },
   legend: { marginBottom: Spacing.xl },
   legendTitle: { fontSize: 11, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.sm, textTransform: "uppercase", letterSpacing: 0.5 },

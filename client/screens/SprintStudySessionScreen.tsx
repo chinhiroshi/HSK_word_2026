@@ -943,7 +943,10 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
       {revealLevel === 0 ? (
         <View style={styles.audioHiddenContent}>
           <View style={[styles.audioIconContainer, { backgroundColor: Colors.light.secondary + "18" }]}>
-            <SpeakButton text={word.word} size="large" />
+            <SpeakButton
+              text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
+              size="large"
+            />
           </View>
           <ThemedText style={[styles.audioPrompt, { color: theme.textSecondary }]}>
             音声を聴いて答えましょう
@@ -956,7 +959,10 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
         <Animated.View entering={FadeIn.duration(200)}>
           <View style={styles.wordHeader}>
             <ThemedText style={styles.wordText}>{word.word}</ThemedText>
-            <SpeakButton text={word.word} size="medium" />
+            <SpeakButton
+              text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
+              size="medium"
+            />
           </View>
           <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
             {word.pinyin}
