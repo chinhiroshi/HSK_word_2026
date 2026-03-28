@@ -33,13 +33,10 @@ const PANDA_STAMPS: Record<number, any> = {
 };
 const PANDA_SPECIAL = require("../../assets/images/panda-stamp-special.png");
 
-// Must match SprintScreen's NUM_GRID_COLS = 5
-const NUM_GRID_COLS = 5;
+const NUM_COLS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const GRID_PADDING = Spacing.lg * 2;
-const GAP = Spacing.sm;
 const STAMP_SIZE = Math.floor(
-  (SCREEN_WIDTH - GRID_PADDING - (NUM_GRID_COLS - 1) * GAP) / NUM_GRID_COLS
+  (SCREEN_WIDTH - Spacing.lg * 2 - (NUM_COLS - 1) * Spacing.md) / NUM_COLS
 );
 
 function formatDate(dateStr: string): string {
@@ -53,26 +50,6 @@ function getPandaImage(cellIndex: number, isSpecial: boolean) {
   return PANDA_STAMPS[variant];
 }
 
-// Mirrors buildCellPositions from SprintScreen.tsx (must stay in sync)
-function buildCellPositions(totalCells: number): [number, number][] {
-  const positions: [number, number][] = [];
-  let segIdx = 0;
-  while (positions.length < totalCells) {
-    const gridRow = segIdx * 2;
-    const isRight = segIdx % 2 === 0;
-    const remaining = totalCells - positions.length;
-    const count = Math.min(5, remaining);
-    for (let i = 0; i < count; i++) {
-      positions.push([gridRow, isRight ? i : 4 - i]);
-    }
-    if (positions.length < totalCells) {
-      positions.push([gridRow + 1, isRight ? 4 : 0]);
-    }
-    segIdx++;
-  }
-  return positions;
-}
-
 export default function SprintStampGalleryScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
@@ -84,44 +61,33 @@ export default function SprintStampGalleryScreen() {
   const specialStamps = sprintData?.specialStamps ?? [];
   const isSetup = sprintData?.hasSetup ?? false;
 
-  // Build positional grid matching sprint map layout
-  const { grid } = useMemo(() => {
-    const positions = buildCellPositions(totalCells);
-    const maxRow = positions.reduce((max, [r]) => Math.max(max, r), 0);
-    const rows = maxRow + 1;
-    const g: (number | null)[][] = Array.from({ length: rows }, () =>
-      Array(NUM_GRID_COLS).fill(null)
-    );
-    positions.forEach(([r, c], idx) => {
-      g[r][c] = idx;
-    });
-    return { grid: g };
-  }, [totalCells]);
-
   const cells = useMemo(() => {
-    const result: Record<number, { sessionType: "flag" | "study" | "test"; completedDate: string | null; isSpecial: boolean }> = {};
-    for (let i = 0; i < totalCells; i++) {
+    const result = [];
+    for (let i = 1; i < totalCells; i++) {
       const sessionType = getSessionType(i, wordsPerDay);
       const completedDate = completedDates[i] ?? null;
       const isSpecial = specialStamps.includes(i);
-      result[i] = { sessionType, completedDate, isSpecial };
+      result.push({ index: i, sessionType, completedDate, isSpecial });
     }
     return result;
   }, [totalCells, wordsPerDay, completedDates, specialStamps]);
 
-  const completedCount = Object.values(cells).filter(
-    (c) => c.completedDate !== null && c.sessionType !== "flag"
-  ).length;
-  const specialCount = Object.values(cells).filter((c) => c.isSpecial).length;
-  const studyCount = Object.values(cells).filter(
-    (c) => c.sessionType === "study" && c.completedDate
-  ).length;
-  const testCount = Object.values(cells).filter(
+  // Simple sequential rows — left to right, top to bottom
+  const rows: (typeof cells[0] | null)[][] = [];
+  for (let i = 0; i < cells.length; i += NUM_COLS) {
+    const row = cells.slice(i, i + NUM_COLS);
+    while (row.length < NUM_COLS) row.push(null);
+    rows.push(row as any);
+  }
+
+  const completedCount = cells.filter((c) => c.completedDate !== null).length;
+  const specialCount = cells.filter((c) => c.isSpecial).length;
+  const testCount = cells.filter(
     (c) => c.sessionType === "test" && c.completedDate
   ).length;
-  const nonFlagTotal = totalCells - 1;
+
   const progressPercent =
-    nonFlagTotal > 0 ? Math.round((completedCount / nonFlagTotal) * 100) : 0;
+    cells.length > 0 ? Math.round((completedCount / cells.length) * 100) : 0;
 
   return (
     <ThemedView style={styles.container}>
@@ -209,7 +175,7 @@ export default function SprintStampGalleryScreen() {
           </View>
         </View>
 
-        {/* Stamp Grid — same layout as sprint map */}
+        {/* Stamp Grid */}
         {!isSetup ? (
           <View
             style={[
@@ -223,53 +189,21 @@ export default function SprintStampGalleryScreen() {
             </ThemedText>
           </View>
         ) : (
-          <View style={[styles.grid, { gap: GAP }]}>
-            {grid.map((row, rowIdx) => (
-              <View key={rowIdx} style={[styles.gridRow, { gap: GAP }]}>
-                {row.map((cellIdx, colIdx) => {
-                  // Empty grid position
-                  if (cellIdx === null) {
-                    return (
-                      <View
-                        key={colIdx}
-                        style={{ width: STAMP_SIZE, height: STAMP_SIZE }}
-                      />
-                    );
+          <View style={styles.grid}>
+            {rows.map((row, rowIdx) => (
+              <View key={rowIdx} style={styles.gridRow}>
+                {row.map((cell, colIdx) => {
+                  if (!cell) {
+                    return <View key={colIdx} style={{ width: STAMP_SIZE }} />;
                   }
 
-                  const cell = cells[cellIdx];
-                  if (!cell) return <View key={colIdx} style={{ width: STAMP_SIZE, height: STAMP_SIZE }} />;
-
-                  const { sessionType, completedDate, isSpecial } = cell;
-                  const isCompleted = completedDate !== null;
-
-                  // Flag cell
-                  if (sessionType === "flag") {
-                    return (
-                      <View key={colIdx} style={[styles.stampWrapper, { width: STAMP_SIZE }]}>
-                        <View
-                          style={[
-                            styles.stampCircle,
-                            {
-                              width: STAMP_SIZE,
-                              height: STAMP_SIZE,
-                              borderRadius: STAMP_SIZE / 2,
-                              backgroundColor: Colors.light.success,
-                              borderColor: Colors.light.success,
-                              borderWidth: 2,
-                            },
-                          ]}
-                        >
-                          <Feather name="flag" size={STAMP_SIZE * 0.38} color="#fff" />
-                        </View>
-                        <ThemedText style={[styles.stampDate, { color: "transparent" }]}>--</ThemedText>
-                      </View>
-                    );
-                  }
+                  const isCompleted = cell.completedDate !== null;
+                  const isTest = cell.sessionType === "test";
+                  const isSpecial = cell.isSpecial;
 
                   const borderColor = isSpecial
                     ? Colors.light.alert
-                    : sessionType === "test"
+                    : isTest
                     ? "#7C3AED"
                     : theme.primary;
 
@@ -292,14 +226,10 @@ export default function SprintStampGalleryScreen() {
                       >
                         {isCompleted ? (
                           <Image
-                            source={getPandaImage(cellIdx, isSpecial)}
+                            source={getPandaImage(cell.index, isSpecial)}
                             style={[
                               styles.pandaImage,
-                              {
-                                width: STAMP_SIZE - 6,
-                                height: STAMP_SIZE - 6,
-                                borderRadius: (STAMP_SIZE - 6) / 2,
-                              },
+                              { width: STAMP_SIZE - 6, height: STAMP_SIZE - 6, borderRadius: (STAMP_SIZE - 6) / 2 },
                             ]}
                             resizeMode="cover"
                           />
@@ -307,14 +237,14 @@ export default function SprintStampGalleryScreen() {
                           <ThemedText
                             style={[styles.stampNumber, { color: theme.border, fontSize: STAMP_SIZE * 0.26 }]}
                           >
-                            {cellIdx}
+                            {cell.index}
                           </ThemedText>
                         )}
                       </View>
 
-                      {isCompleted && completedDate ? (
+                      {isCompleted && cell.completedDate ? (
                         <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
-                          {formatDate(completedDate)}
+                          {formatDate(cell.completedDate)}
                         </ThemedText>
                       ) : (
                         <ThemedText style={[styles.stampDate, { color: "transparent" }]}>
@@ -379,9 +309,10 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: "row", alignItems: "center", gap: Spacing.xs },
   legendDot: { width: 10, height: 10, borderRadius: 5 },
   legendLabel: { fontSize: 12, fontFamily: "Nunito_400Regular" },
-  grid: {},
+  grid: { gap: Spacing.md },
   gridRow: {
     flexDirection: "row",
+    gap: Spacing.md,
   },
   stampWrapper: {
     alignItems: "center",

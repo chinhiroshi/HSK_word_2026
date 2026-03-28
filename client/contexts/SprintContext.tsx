@@ -326,11 +326,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         recent.push(words[idx]);
       }
       if (recent.length === 0) return [];
-      // テキストまたは音声のどちらかで苦手フラグが立っている単語を優先
-      const struggled = recent.filter(
-        (w) => (w.textUnmemorizedCount || 0) > 0 || (w.audioUnmemorizedCount || 0) > 0
-      );
-      return struggled.length > 0 ? struggled : recent;
+      // テスト対象は全単語（苦手フィルタなし）
+      return recent;
     },
     [sprintData]
   );

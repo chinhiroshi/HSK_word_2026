@@ -163,7 +163,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
   } else if (isCurrent) {
     bgColor = Colors.light.secondary;
     borderColor = Colors.light.secondary;
-    featherIcon = "zap";
+    if (sessionType !== "test") featherIcon = "zap";
     iconColor = "#fff";
     textColor = "#fff";
   } else if (sessionType === "test") {
@@ -200,8 +200,8 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />
           {testNumber != null ? (
-            <View style={[styles.testNumBadge, isCompleted ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#7C3AED22" }]}>
-              <ThemedText style={[styles.testNumText, { color: isCompleted ? "#fff" : "#7C3AED" }]}>
+            <View style={[styles.testNumBadge, (isCompleted || isCurrent) ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#7C3AED22" }]}>
+              <ThemedText style={[styles.testNumText, { color: (isCompleted || isCurrent) ? "#fff" : "#7C3AED" }]}>
                 {testNumber}
               </ThemedText>
             </View>
