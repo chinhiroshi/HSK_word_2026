@@ -1,10 +1,12 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
   Dimensions,
   Image,
+  Modal,
+  Pressable,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -15,6 +17,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint, getSessionType } from "@/contexts/SprintContext";
+import { getQuoteForStamp, Quote } from "@/data/quotes";
 
 // Panda stamp images (12 variants + 1 special)
 const PANDA_STAMPS: Record<number, any> = {
@@ -55,6 +58,7 @@ export default function SprintStampGalleryScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { sprintData, totalCells } = useSprint();
+  const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
 
   const wordsPerDay = sprintData?.wordsPerDay ?? 10;
   const completedDates = sprintData?.completedDates ?? {};
@@ -207,8 +211,13 @@ export default function SprintStampGalleryScreen() {
                     ? "#7C3AED"
                     : theme.primary;
 
+                  const handleStampPress = () => {
+                    const quote = getQuoteForStamp(cell.index);
+                    if (quote) setSelectedQuote(quote);
+                  };
+
                   return (
-                    <View key={colIdx} style={[styles.stampWrapper, { width: STAMP_SIZE }]}>
+                    <Pressable key={colIdx} style={[styles.stampWrapper, { width: STAMP_SIZE }]} onPress={handleStampPress}>
                       <View
                         style={[
                           styles.stampCircle,
@@ -252,7 +261,7 @@ export default function SprintStampGalleryScreen() {
                           </ThemedText>
                         ) : null}
                       </View>
-                    </View>
+                    </Pressable>
                   );
                 })}
               </View>
@@ -260,6 +269,35 @@ export default function SprintStampGalleryScreen() {
           </View>
         )}
       </ScrollView>
+      {/* Quote Modal */}
+      <Modal
+        visible={selectedQuote !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSelectedQuote(null)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setSelectedQuote(null)}>
+          <Pressable style={[styles.modalCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+            {selectedQuote ? (
+              <>
+                <View style={styles.modalHeader}>
+                  <ThemedText style={styles.modalFlag}>{selectedQuote.flag}</ThemedText>
+                  <ThemedText style={[styles.modalSource, { color: theme.textSecondary }]}>{selectedQuote.source}</ThemedText>
+                </View>
+                <ThemedText style={[styles.modalChinese, { color: theme.text }]}>{selectedQuote.chinese}</ThemedText>
+                <ThemedText style={[styles.modalPinyin, { color: theme.primary }]}>{selectedQuote.pinyin}</ThemedText>
+                <ThemedText style={[styles.modalJapanese, { color: theme.textSecondary }]}>{selectedQuote.japanese}</ThemedText>
+                <Pressable
+                  style={[styles.modalCloseBtn, { backgroundColor: theme.primary }]}
+                  onPress={() => setSelectedQuote(null)}
+                >
+                  <ThemedText style={styles.modalCloseBtnText}>閉じる</ThemedText>
+                </Pressable>
+              </>
+            ) : null}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ThemedView>
   );
 }
@@ -353,5 +391,60 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
     lineHeight: 22,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Spacing.xl,
+  },
+  modalCard: {
+    width: "100%",
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    padding: Spacing.xl,
+    gap: Spacing.md,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  modalFlag: {
+    fontSize: 28,
+  },
+  modalSource: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    flex: 1,
+    flexWrap: "wrap",
+  },
+  modalChinese: {
+    fontSize: 20,
+    fontFamily: "Nunito_700Bold",
+    lineHeight: 30,
+  },
+  modalPinyin: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    lineHeight: 22,
+  },
+  modalJapanese: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    lineHeight: 22,
+  },
+  modalCloseBtn: {
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.sm,
+    alignItems: "center",
+    marginTop: Spacing.sm,
+  },
+  modalCloseBtnText: {
+    color: "#fff",
+    fontSize: 15,
+    fontFamily: "Nunito_700Bold",
   },
 });
