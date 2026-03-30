@@ -260,52 +260,57 @@ export default function SprintTestScreen() {
             <ThemedText style={styles.stampLabel}>特別スタンプ獲得！</ThemedText>
           </Animated.View>
         ) : null}
-        <Animated.View entering={FadeIn} style={[styles.resultContainer, { paddingTop: headerHeight + Spacing.xl }]}>
-          <View style={[styles.scoreCircle, { borderColor: cleared ? Colors.light.success : Colors.light.alert }]}>
-            <ThemedText style={styles.scorePercentage}>{percentage}%</ThemedText>
-            <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]}>覚えた率</ThemedText>
-          </View>
-          {cleared ? (
-            <View style={[styles.specialStampBadge, { backgroundColor: Colors.light.success + "20" }]}>
-              <Feather name="star" size={20} color={Colors.light.success} />
-              <ThemedText style={[styles.specialStampText, { color: Colors.light.success }]}>
-                特別スタンプ獲得！
-              </ThemedText>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={[styles.resultScrollContent, { paddingTop: headerHeight + Spacing.xl }]}
+        >
+          <Animated.View entering={FadeIn} style={styles.resultInner}>
+            <View style={[styles.scoreCircle, { borderColor: cleared ? Colors.light.success : Colors.light.alert }]}>
+              <ThemedText style={styles.scorePercentage}>{percentage}%</ThemedText>
+              <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]}>覚えた率</ThemedText>
             </View>
-          ) : null}
-          <ThemedText style={styles.resultTitle}>
-            {cleared ? "テストクリア！" : "もう少し頑張りましょう！"}
-          </ThemedText>
-          <ThemedText style={[styles.passInfo, { color: theme.textSecondary }]}>
-            合格ライン: {PASS_PERCENTAGE}%（覚えた）
-          </ThemedText>
-          <ThemedText style={[styles.resultStats, { color: theme.textSecondary }]}>
-            {memorized} / {total} 語 覚えた
-          </ThemedText>
-          {cleared ? (() => {
-            const q = getQuoteForStamp(testCellIndexRef.current, currentLevel);
-            if (!q) return null;
-            return (
-              <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
-                <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
-                <ThemedText style={styles.quoteText}>{q.chinese}</ThemedText>
-                {q.pinyin ? (
-                  <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
-                ) : null}
-                <ThemedText style={[styles.quoteJa, { color: theme.textSecondary }]}>{q.japanese}</ThemedText>
-                <ThemedText style={[styles.quoteSource, { color: theme.textSecondary }]}>— {q.source}</ThemedText>
+            {cleared ? (
+              <View style={[styles.specialStampBadge, { backgroundColor: Colors.light.success + "20" }]}>
+                <Feather name="star" size={20} color={Colors.light.success} />
+                <ThemedText style={[styles.specialStampText, { color: Colors.light.success }]}>
+                  特別スタンプ獲得！
+                </ThemedText>
               </View>
-            );
-          })() : null}
-          <Button
-            testID="button-finish-test"
-            onPress={() => handleFinish(cleared)}
-            disabled={completing}
-            style={styles.actionButton}
-          >
-            {completing ? "保存中..." : cleared ? "スタンプをもらう" : "次へ進む"}
-          </Button>
-        </Animated.View>
+            ) : null}
+            <ThemedText style={styles.resultTitle}>
+              {cleared ? "テストクリア！" : "もう少し頑張りましょう！"}
+            </ThemedText>
+            <ThemedText style={[styles.passInfo, { color: theme.textSecondary }]}>
+              合格ライン: {PASS_PERCENTAGE}%（覚えた）
+            </ThemedText>
+            <ThemedText style={[styles.resultStats, { color: theme.textSecondary }]}>
+              {memorized} / {total} 語 覚えた
+            </ThemedText>
+            {cleared ? (() => {
+              const q = getQuoteForStamp(testCellIndexRef.current, currentLevel);
+              if (!q) return null;
+              return (
+                <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
+                  <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
+                  <ThemedText style={styles.quoteText}>{q.chinese}</ThemedText>
+                  {q.pinyin ? (
+                    <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
+                  ) : null}
+                  <ThemedText style={[styles.quoteJa, { color: theme.textSecondary }]}>{q.japanese}</ThemedText>
+                  <ThemedText style={[styles.quoteSource, { color: theme.textSecondary }]}>— {q.source}</ThemedText>
+                </View>
+              );
+            })() : null}
+            <Button
+              testID="button-finish-test"
+              onPress={() => handleFinish(cleared)}
+              disabled={completing}
+              style={styles.actionButton}
+            >
+              {completing ? "保存中..." : cleared ? "スタンプをもらう" : "次へ進む"}
+            </Button>
+          </Animated.View>
+        </ScrollView>
       </ThemedView>
     );
   }
@@ -449,6 +454,8 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
   actionButton: { width: "100%", marginTop: Spacing.xl },
   resultContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing["3xl"] },
+  resultScrollContent: { flexGrow: 1, paddingHorizontal: Spacing["3xl"], paddingBottom: Spacing["3xl"] },
+  resultInner: { alignItems: "center", width: "100%" },
   scoreCircle: {
     width: 140, height: 140, borderRadius: 70, borderWidth: 6,
     justifyContent: "center", alignItems: "center", marginBottom: Spacing.xl,

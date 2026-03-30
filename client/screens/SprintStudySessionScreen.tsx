@@ -376,47 +376,52 @@ export default function SprintStudySessionScreen() {
     // ----- POST STAMP SCREEN -----
     if (showPostStamp) {
       return (
-        <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
-          <Animated.View entering={FadeIn} style={styles.completeContainer}>
-            <View style={[styles.stampCircle, { backgroundColor: Colors.light.success, marginBottom: Spacing.lg }]}>
-              <PlantIcon size={80} color="#fff" />
-            </View>
-            <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
-            <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
-              {words.length}語の学習完了
-            </ThemedText>
-            {(() => {
-              const q = getQuoteForStamp(studiedCellIndex, currentLevel);
-              if (!q) return null;
-              return (
-                <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
-                  <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
-                  <ThemedText style={styles.quoteText}>{q.chinese}</ThemedText>
-                  {q.pinyin ? (
-                    <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
-                  ) : null}
-                  <ThemedText style={[styles.quoteJa, { color: theme.textSecondary }]}>{q.japanese}</ThemedText>
-                  <ThemedText style={[styles.quoteSource, { color: theme.textSecondary }]}>— {q.source}</ThemedText>
-                </View>
-              );
-            })()}
-            <Pressable
-              testID="button-audio-playback-review"
-              onPress={() => navigation.navigate("SprintAudioPlayback", { cellIndex: studiedCellIndex })}
-              style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: Colors.light.secondary + "18", borderColor: Colors.light.secondary + "50" }]}
-            >
-              <Feather name="play-circle" size={18} color={Colors.light.secondary} />
-              <ThemedText style={[styles.audioStudyText, { color: Colors.light.secondary }]}>音声連続再生で復習する</ThemedText>
-            </Pressable>
-            <Pressable
-              testID="button-back-to-sprint"
-              onPress={() => navigation.navigate("SprintHome")}
-              style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}
-            >
-              <Feather name="map" size={16} color={theme.textSecondary} />
-              <ThemedText style={[styles.audioStudyText, { color: theme.textSecondary }]}>スプリントに戻る</ThemedText>
-            </Pressable>
-          </Animated.View>
+        <ThemedView style={styles.container}>
+          <ScrollView
+            contentContainerStyle={[styles.completeScrollContent, { paddingTop: headerHeight + Spacing.xl }]}
+            showsVerticalScrollIndicator={false}
+          >
+            <Animated.View entering={FadeIn} style={styles.completeInner}>
+              <View style={[styles.stampCircle, { backgroundColor: Colors.light.success, marginBottom: Spacing.lg }]}>
+                <PlantIcon size={80} color="#fff" />
+              </View>
+              <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
+              <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
+                {words.length}語の学習完了
+              </ThemedText>
+              {(() => {
+                const q = getQuoteForStamp(studiedCellIndex, currentLevel);
+                if (!q) return null;
+                return (
+                  <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
+                    <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
+                    <ThemedText style={styles.quoteText}>{q.chinese}</ThemedText>
+                    {q.pinyin ? (
+                      <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
+                    ) : null}
+                    <ThemedText style={[styles.quoteJa, { color: theme.textSecondary }]}>{q.japanese}</ThemedText>
+                    <ThemedText style={[styles.quoteSource, { color: theme.textSecondary }]}>— {q.source}</ThemedText>
+                  </View>
+                );
+              })()}
+              <Pressable
+                testID="button-audio-playback-review"
+                onPress={() => navigation.navigate("SprintAudioPlayback", { cellIndex: studiedCellIndex })}
+                style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: Colors.light.secondary + "18", borderColor: Colors.light.secondary + "50" }]}
+              >
+                <Feather name="play-circle" size={18} color={Colors.light.secondary} />
+                <ThemedText style={[styles.audioStudyText, { color: Colors.light.secondary }]}>音声連続再生で復習する</ThemedText>
+              </Pressable>
+              <Pressable
+                testID="button-back-to-sprint"
+                onPress={() => navigation.navigate("SprintHome")}
+                style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}
+              >
+                <Feather name="map" size={16} color={theme.textSecondary} />
+                <ThemedText style={[styles.audioStudyText, { color: theme.textSecondary }]}>スプリントに戻る</ThemedText>
+              </Pressable>
+            </Animated.View>
+          </ScrollView>
         </ThemedView>
       );
     }
@@ -1232,6 +1237,8 @@ const styles = StyleSheet.create({
   memoBadge: { flexDirection: "row", alignItems: "center", gap: 4, alignSelf: "flex-start", paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.full },
   memoBadgeText: { fontSize: 11, fontFamily: "Nunito_600SemiBold" },
   completeContainer: { flex: 1, justifyContent: "center", alignItems: "center", padding: Spacing["3xl"] },
+  completeScrollContent: { flexGrow: 1, padding: Spacing["3xl"], paddingBottom: Spacing["3xl"] },
+  completeInner: { alignItems: "center", width: "100%" },
   completeIcon: { width: 100, height: 100, borderRadius: 50, justifyContent: "center", alignItems: "center", marginBottom: Spacing.xl },
   completeTitle: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: Spacing.sm, textAlign: "center" },
   completeSub: { fontSize: 15, fontFamily: "Nunito_400Regular", marginBottom: Spacing.xl, textAlign: "center" },
