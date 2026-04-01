@@ -123,15 +123,28 @@ export default function SprintSetupScreen() {
     setShowIOSPicker(false);
   };
 
+  const applyNotifSetting = async () => {
+    if (Platform.OS === "web") return;
+    try {
+      if (notifEnabled) {
+        await enableSprintNotification(notifHour, notifMinute);
+      } else {
+        await disableSprintNotification();
+      }
+    } catch (e) {
+      console.warn("Notification setup failed:", e);
+    }
+  };
+
   const handleStart = async () => {
     if (!canStart) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
-    await setupSprint(wordsPerDay, totalWords);
-    if (notifEnabled && Platform.OS !== "web") {
-      await enableSprintNotification(notifHour, notifMinute);
-    } else if (!notifEnabled) {
-      await disableSprintNotification();
+    try {
+      await setupSprint(wordsPerDay, totalWords);
+      await applyNotifSetting();
+    } catch (e) {
+      console.warn("Sprint setup failed:", e);
     }
     setLoading(false);
     navigation.goBack();
@@ -141,12 +154,12 @@ export default function SprintSetupScreen() {
     if (!canStart) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
-    await resetWordsOnly();
-    await setupSprint(wordsPerDay, totalWords);
-    if (notifEnabled && Platform.OS !== "web") {
-      await enableSprintNotification(notifHour, notifMinute);
-    } else if (!notifEnabled) {
-      await disableSprintNotification();
+    try {
+      await resetWordsOnly();
+      await setupSprint(wordsPerDay, totalWords);
+      await applyNotifSetting();
+    } catch (e) {
+      console.warn("Sprint setup with reset failed:", e);
     }
     setLoading(false);
     navigation.goBack();

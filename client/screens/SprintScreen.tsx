@@ -668,18 +668,6 @@ export default function SprintScreen() {
               旗のマスをタップして学習を始めましょう
             </ThemedText>
           </View>
-        ) : canSkip ? (
-          <Pressable
-            testID="button-skip-session"
-            onPress={handleSkip}
-            style={[styles.skipBanner, { backgroundColor: theme.primary + "12", borderColor: theme.primary + "30" }]}
-          >
-            <Feather name="check-circle" size={18} color={theme.primary} />
-            <ThemedText style={[styles.skipText, { color: theme.primary }]}>
-              今日の単語は学習済みです。スタンプを進める
-            </ThemedText>
-            <Feather name="chevron-right" size={18} color={theme.primary} />
-          </Pressable>
         ) : null}
 
         {/* Free-form path grid */}
