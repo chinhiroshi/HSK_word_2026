@@ -26,7 +26,7 @@ import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
-import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel } from "@/lib/storage";
+import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
 import { speakChinese } from "@/lib/speech";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
@@ -125,6 +125,7 @@ export default function ProfileScreen() {
   const [notifHour, setNotifHour] = useState(DEFAULT_NOTIF_HOUR);
   const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [silentModeAudio, setSilentModeAudioState] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
   const REVIEW_DONE_KEY = "@chinese_master_review_done";
@@ -190,6 +191,8 @@ export default function ProfileScreen() {
     const { hour, minute } = await getNotificationTime();
     setNotifHour(hour);
     setNotifMinute(minute);
+    const silentAudio = await getSilentModeAudio();
+    setSilentModeAudioState(silentAudio);
   }, [checkAndPromptReview]);
 
   const handleNotifToggle = async (value: boolean) => {
@@ -242,6 +245,12 @@ export default function ProfileScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       await enableSprintNotification(notifHour, notifMinute);
     }
+  };
+
+  const handleSilentModeAudioToggle = async (value: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSilentModeAudioState(value);
+    await setSilentModeAudio(value);
   };
 
   useFocusEffect(
@@ -615,6 +624,36 @@ export default function ProfileScreen() {
           </>
         ) : null}
       </View>
+
+      {/* マナーモードでも音を出す設定 */}
+      {Platform.OS === "ios" ? (
+        <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border, marginBottom: Spacing.lg }]}>
+          <View style={styles.notifContent}>
+            <View style={[styles.notifIcon, { backgroundColor: Colors.light.secondary + "15" }]}>
+              <Feather name="volume-2" size={20} color={Colors.light.secondary} />
+            </View>
+            <View style={styles.notifTextContainer}>
+              <ThemedText style={styles.notifTitle}>マナーモードでも音を出す</ThemedText>
+              <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
+                サイレントモード中も発音・音声を再生します
+              </ThemedText>
+            </View>
+            <Switch
+              testID="switch-silent-mode-audio"
+              value={silentModeAudio}
+              onValueChange={handleSilentModeAudioToggle}
+              trackColor={{ false: theme.border, true: Colors.light.secondary + "80" }}
+              thumbColor={silentModeAudio ? Colors.light.secondary : theme.textSecondary}
+            />
+          </View>
+          <View style={[styles.notifInfoBox, { backgroundColor: theme.backgroundSubtle ?? theme.border + "30", borderColor: theme.border }]}>
+            <Feather name="info" size={13} color={theme.textSecondary} />
+            <ThemedText style={[styles.notifInfoText, { color: theme.textSecondary }]}>
+              iPhoneのマナーモード（消音）スイッチをオンにしていても、単語の発音や音声学習の音が再生されます。
+            </ThemedText>
+          </View>
+        </View>
+      ) : null}
 
       {!hasReviewed ? (
         <Pressable

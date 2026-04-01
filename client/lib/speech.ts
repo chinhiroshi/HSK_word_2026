@@ -1,7 +1,19 @@
 import * as Speech from "expo-speech";
 import { Platform } from "react-native";
+import { setAudioModeAsync } from "expo-audio";
+import { getSilentModeAudio } from "./storage";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function applyAudioMode(): Promise<void> {
+  if (Platform.OS !== "ios") return;
+  try {
+    const playsInSilent = await getSilentModeAudio();
+    await setAudioModeAsync({ playsInSilentModeIOS: playsInSilent });
+  } catch (e) {
+    console.warn("setAudioMode failed:", e);
+  }
+}
 
 let availableVoices: Speech.Voice[] = [];
 
@@ -24,6 +36,7 @@ function findChineseVoice(): string | undefined {
 }
 
 export async function speakChinese(text: string): Promise<void> {
+  await applyAudioMode();
   try {
     const isSpeaking = await Speech.isSpeakingAsync();
     if (isSpeaking) {
@@ -67,6 +80,7 @@ export async function speakChinese(text: string): Promise<void> {
 }
 
 export async function speakWithLanguage(text: string, language: string, rate: number = 0.8): Promise<void> {
+  await applyAudioMode();
   try {
     const isSpeaking = await Speech.isSpeakingAsync();
     if (isSpeaking) {

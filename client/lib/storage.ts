@@ -212,6 +212,21 @@ export async function markAsMemorized(wordId: string, type: MemorizationType = "
   return undefined;
 }
 
+const SILENT_AUDIO_KEY = "@chinese_master_silent_audio";
+
+export async function getSilentModeAudio(): Promise<boolean> {
+  try {
+    const val = await AsyncStorage.getItem(SILENT_AUDIO_KEY);
+    return val === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function setSilentModeAudio(enabled: boolean): Promise<void> {
+  await AsyncStorage.setItem(SILENT_AUDIO_KEY, enabled ? "true" : "false");
+}
+
 export async function resetWordsOnly(): Promise<void> {
   const words = await getWords();
   const resetWords = words.map((w) => ({
