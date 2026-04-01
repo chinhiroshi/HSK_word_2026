@@ -748,8 +748,12 @@ export default function SprintScreen() {
           <Pressable
             testID="button-reset-sprint"
             onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintSetup", { isChange: true }); }}
-            style={styles.resetLink}
+            style={({ pressed }) => [
+              styles.resetLink,
+              { backgroundColor: theme.backgroundDefault, borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
+            ]}
           >
+            <Feather name="settings" size={15} color={theme.textSecondary} />
             <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>設定を変更する</ThemedText>
           </Pressable>
         ) : null}
@@ -817,8 +821,20 @@ const styles = StyleSheet.create({
   topBarRight: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
   stampGalleryBtn: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: Spacing.sm, paddingVertical: 6, borderRadius: BorderRadius.full, borderWidth: 1 },
   stampGalleryBtnText: { fontSize: 12, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
-  resetLink: { alignItems: "center", paddingVertical: Spacing.sm },
-  resetLinkText: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  resetLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    alignSelf: "center",
+  },
+  resetLinkText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "flex-end" },
   modalSheet: { borderTopLeftRadius: BorderRadius.xl, borderTopRightRadius: BorderRadius.xl, padding: Spacing.xl, paddingBottom: Spacing["3xl"], gap: Spacing.md },
   modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: "center", marginBottom: Spacing.sm },
