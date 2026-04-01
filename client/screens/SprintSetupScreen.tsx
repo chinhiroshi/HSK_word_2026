@@ -9,7 +9,7 @@ import {
   ScrollView,
   Modal,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -24,7 +24,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
-import { getWords, initializeData } from "@/lib/storage";
+import { getWords, initializeData, resetWordsOnly } from "@/lib/storage";
 import {
   DEFAULT_NOTIF_HOUR,
   DEFAULT_NOTIF_MINUTE,
@@ -33,6 +33,7 @@ import {
 } from "@/lib/notifications";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
+type SetupRouteProp = RouteProp<SprintStackParamList, "SprintSetup">;
 
 const WORD_OPTIONS = [
   { label: "20語", words: 20, description: "初級・コツコツペース" },
@@ -46,6 +47,8 @@ function padTwo(n: number) {
 
 export default function SprintSetupScreen() {
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<SetupRouteProp>();
+  const isChange = !!(route.params as any)?.isChange;
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
@@ -124,6 +127,21 @@ export default function SprintSetupScreen() {
     if (!canStart) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
+    await setupSprint(wordsPerDay, totalWords);
+    if (notifEnabled && Platform.OS !== "web") {
+      await enableSprintNotification(notifHour, notifMinute);
+    } else if (!notifEnabled) {
+      await disableSprintNotification();
+    }
+    setLoading(false);
+    navigation.goBack();
+  };
+
+  const handleStartWithReset = async () => {
+    if (!canStart) return;
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setLoading(true);
+    await resetWordsOnly();
     await setupSprint(wordsPerDay, totalWords);
     if (notifEnabled && Platform.OS !== "web") {
       await enableSprintNotification(notifHour, notifMinute);
@@ -347,14 +365,41 @@ export default function SprintSetupScreen() {
             ) : null}
           </View>
 
-          <Button
-            testID="button-start-sprint"
-            onPress={handleStart}
-            disabled={!canStart || loading}
-            style={styles.startButton}
-          >
-            {loading ? "設定中..." : "スプリントを開始"}
-          </Button>
+          {isChange ? (
+            <View style={styles.changeButtonsContainer}>
+              <Button
+                testID="button-change-keep-data"
+                onPress={handleStart}
+                disabled={!canStart || loading}
+                style={styles.startButton}
+              >
+                {loading ? "設定中..." : "今までの単語データを記憶して変更"}
+              </Button>
+              <Pressable
+                testID="button-change-reset-data"
+                onPress={handleStartWithReset}
+                disabled={!canStart || loading}
+                style={({ pressed }) => [
+                  styles.resetDataButton,
+                  { borderColor: Colors.light.alert + "60", opacity: pressed ? 0.7 : 1 },
+                ]}
+              >
+                <Feather name="refresh-cw" size={15} color={Colors.light.alert} />
+                <ThemedText style={[styles.resetDataButtonText, { color: Colors.light.alert }]}>
+                  {loading ? "設定中..." : "データをリセットして変更"}
+                </ThemedText>
+              </Pressable>
+            </View>
+          ) : (
+            <Button
+              testID="button-start-sprint"
+              onPress={handleStart}
+              disabled={!canStart || loading}
+              style={styles.startButton}
+            >
+              {loading ? "設定中..." : "スプリントを開始"}
+            </Button>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
 
@@ -550,6 +595,17 @@ const styles = StyleSheet.create({
   notifTimeRight: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
   notifTimeValue: { fontSize: 17, fontFamily: "Nunito_700Bold" },
   startButton: { marginTop: Spacing.sm },
+  changeButtonsContainer: { gap: Spacing.md, marginTop: Spacing.sm },
+  resetDataButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    borderRadius: 999,
+    borderWidth: 1.5,
+    paddingVertical: Spacing.md,
+  },
+  resetDataButtonText: { fontSize: 15, fontFamily: "Nunito_600SemiBold" },
   iosPickerOverlay: {
     flex: 1,
     justifyContent: "flex-end",

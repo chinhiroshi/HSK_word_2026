@@ -212,11 +212,11 @@ export async function markAsMemorized(wordId: string, type: MemorizationType = "
   return undefined;
 }
 
-export async function resetProgress(): Promise<void> {
+export async function resetWordsOnly(): Promise<void> {
   const words = await getWords();
-  const resetWords = words.map((w) => ({ 
-    ...w, 
-    isMemorized: false, 
+  const resetWords = words.map((w) => ({
+    ...w,
+    isMemorized: false,
     unmemorizedCount: 0,
     textMemorized: false,
     audioMemorized: false,
@@ -224,6 +224,10 @@ export async function resetProgress(): Promise<void> {
     audioUnmemorizedCount: 0,
   }));
   await saveWords(resetWords);
+}
+
+export async function resetProgress(): Promise<void> {
+  await resetWordsOnly();
   await resetSprintData();
 }
 

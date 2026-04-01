@@ -747,7 +747,7 @@ export default function SprintScreen() {
         {isSetup ? (
           <Pressable
             testID="button-reset-sprint"
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintSetup"); }}
+            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintSetup", { isChange: true }); }}
             style={styles.resetLink}
           >
             <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>設定を変更する</ThemedText>

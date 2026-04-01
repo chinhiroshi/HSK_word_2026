@@ -11,7 +11,7 @@ import SprintStampGalleryScreen from "@/screens/SprintStampGalleryScreen";
 
 export type SprintStackParamList = {
   SprintHome: undefined;
-  SprintSetup: undefined;
+  SprintSetup: { isChange?: boolean } | undefined;
   SprintStudySession: { mode: "study" | "text-only" | "audio-only" | "audio-cards-only"; cellIndex: number };
   SprintTest: undefined;
   SprintAudioPlayback: { cellIndex: number };
