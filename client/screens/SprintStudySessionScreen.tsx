@@ -396,6 +396,9 @@ export default function SprintStudySessionScreen() {
                   <View style={[styles.quoteCard, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
                     <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
                     <ThemedText style={styles.quoteText}>{q.chinese}</ThemedText>
+                    <View style={styles.quoteSpeakRow}>
+                      <SpeakButton text={q.chinese} size="small" />
+                    </View>
                     {q.pinyin ? (
                       <ThemedText style={[styles.quotePinyin, { color: theme.textSecondary }]}>{q.pinyin}</ThemedText>
                     ) : null}
@@ -1255,6 +1258,7 @@ const styles = StyleSheet.create({
   quoteCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.lg, marginTop: Spacing.md, marginBottom: Spacing.lg, width: "100%", alignItems: "center", gap: Spacing.xs },
   quoteFlag: { fontSize: 28 },
   quoteText: { fontSize: 16, fontFamily: "Nunito_700Bold", textAlign: "center" },
+  quoteSpeakRow: { marginTop: Spacing.xs },
   quotePinyin: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center" },
   quoteJa: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center", lineHeight: 20 },
   quoteSource: { fontSize: 12, fontFamily: "Nunito_400Regular", textAlign: "right", alignSelf: "flex-end", marginTop: Spacing.xs },

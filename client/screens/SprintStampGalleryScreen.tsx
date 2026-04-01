@@ -14,6 +14,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint, getSessionType } from "@/contexts/SprintContext";
@@ -295,6 +296,9 @@ export default function SprintStampGalleryScreen() {
                   <ThemedText style={[styles.modalSource, { color: theme.textSecondary }]}>{selectedQuote.source}</ThemedText>
                 </View>
                 <ThemedText style={[styles.modalChinese, { color: theme.text }]}>{selectedQuote.chinese}</ThemedText>
+                <View style={styles.modalSpeakRow}>
+                  <SpeakButton text={selectedQuote.chinese} size="small" />
+                </View>
                 <ThemedText style={[styles.modalPinyin, { color: theme.primary }]}>{selectedQuote.pinyin}</ThemedText>
                 <ThemedText style={[styles.modalJapanese, { color: theme.textSecondary }]}>{selectedQuote.japanese}</ThemedText>
                 <Pressable
@@ -438,6 +442,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     lineHeight: 30,
   },
+  modalSpeakRow: { marginTop: Spacing.xs, marginBottom: Spacing.xs },
   modalPinyin: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
