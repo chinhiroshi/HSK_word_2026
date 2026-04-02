@@ -120,7 +120,6 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
-  const [hasReviewed, setHasReviewed] = useState(false);
   const [notifEnabled, setNotifEnabled] = useState(false);
   const [notifHour, setNotifHour] = useState(DEFAULT_NOTIF_HOUR);
   const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
@@ -128,7 +127,6 @@ export default function ProfileScreen() {
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
-  const REVIEW_DONE_KEY = "@chinese_master_review_done";
   const REVIEW_THRESHOLD = 10;
 
   const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
@@ -182,10 +180,6 @@ export default function ProfileScreen() {
     setWords(data);
     setLoading(false);
     checkAndPromptReview(data);
-    try {
-      const reviewDone = await AsyncStorage.getItem(REVIEW_DONE_KEY);
-      setHasReviewed(reviewDone === "true");
-    } catch {}
     const notifOn = await getNotificationEnabled();
     setNotifEnabled(notifOn);
     const { hour, minute } = await getNotificationTime();
@@ -655,51 +649,47 @@ export default function ProfileScreen() {
         </View>
       ) : null}
 
-      {!hasReviewed ? (
-        <Pressable
-          testID="button-review-app"
-          onPress={async () => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            try {
-              if (await StoreReview.hasAction()) {
-                await StoreReview.requestReview();
-              } else {
-                const storeUrl = Platform.select({
-                  ios: "https://apps.apple.com/app/id{YOUR_APP_ID}",
-                  android: "https://play.google.com/store/apps/details?id=com.hskhsk.app",
-                  default: "",
-                });
-                if (storeUrl) {
-                  Linking.openURL(storeUrl);
-                }
+      <Pressable
+        testID="button-review-app"
+        onPress={async () => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          try {
+            if (await StoreReview.hasAction()) {
+              await StoreReview.requestReview();
+            } else {
+              const storeUrl = Platform.select({
+                ios: "https://apps.apple.com/app/id{YOUR_APP_ID}",
+                android: "https://play.google.com/store/apps/details?id=com.hskhsk.app",
+                default: "",
+              });
+              if (storeUrl) {
+                Linking.openURL(storeUrl);
               }
-              await AsyncStorage.setItem(REVIEW_DONE_KEY, "true");
-              setHasReviewed(true);
-            } catch (e) {
-              console.warn("Review request failed:", e);
             }
-          }}
-          style={[
-            styles.reviewCard,
-            { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-          ]}
-        >
-          <View style={styles.reviewContent}>
-            <View style={[styles.reviewIcon, { backgroundColor: `${theme.secondary}15` }]}>
-              <Feather name="heart" size={20} color={theme.secondary} />
-            </View>
-            <View style={styles.reviewTextContainer}>
-              <ThemedText style={styles.reviewTitle}>
-                アプリを評価する
-              </ThemedText>
-              <ThemedText style={[styles.reviewDesc, { color: theme.textSecondary }]}>
-                レビューやコメントで応援してください
-              </ThemedText>
-            </View>
-            <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+          } catch (e) {
+            console.warn("Review request failed:", e);
+          }
+        }}
+        style={[
+          styles.reviewCard,
+          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+        ]}
+      >
+        <View style={styles.reviewContent}>
+          <View style={[styles.reviewIcon, { backgroundColor: `${theme.secondary}15` }]}>
+            <Feather name="heart" size={20} color={theme.secondary} />
           </View>
-        </Pressable>
-      ) : null}
+          <View style={styles.reviewTextContainer}>
+            <ThemedText style={styles.reviewTitle}>
+              アプリを評価する
+            </ThemedText>
+            <ThemedText style={[styles.reviewDesc, { color: theme.textSecondary }]}>
+              レビューやコメントで応援してください
+            </ThemedText>
+          </View>
+          <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+        </View>
+      </Pressable>
 
       {hasWordsForLevel ? (
         <>
