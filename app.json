@@ -2,7 +2,7 @@
   "expo": {
     "name": "HSK受講者が作ったHSK単語帳",
     "slug": "hskhsk",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "app.replit.hskhsk",
