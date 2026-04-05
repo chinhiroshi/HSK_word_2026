@@ -78,7 +78,7 @@ export default function UpdateModal({
           {!required && (
             <Pressable style={styles.laterBtn} onPress={onDismiss}>
               <ThemedText style={[styles.laterText, { color: theme.textSecondary }]}>
-                あとで
+                今はしない
               </ThemedText>
             </Pressable>
           )}
