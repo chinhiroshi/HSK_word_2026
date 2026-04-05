@@ -376,6 +376,10 @@ export default function SprintStudySessionScreen() {
 
     // ----- POST STAMP SCREEN -----
     if (showPostStamp) {
+      const featuredWord = words.length > 0
+        ? words[studiedCellIndex % words.length] ?? words[0]
+        : null;
+
       return (
         <ThemedView style={styles.container}>
           <ScrollView
@@ -390,6 +394,35 @@ export default function SprintStudySessionScreen() {
               <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
                 {words.length}語の学習完了
               </ThemedText>
+
+              {/* 今日の一語 */}
+              {featuredWord ? (
+                <View style={[styles.featuredWordCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.primary + "40" }]}>
+                  <View style={styles.featuredWordHeader}>
+                    <Feather name="star" size={14} color={theme.primary} />
+                    <ThemedText style={[styles.featuredWordTitle, { color: theme.primary }]}>今日の一語</ThemedText>
+                  </View>
+                  <ThemedText style={styles.featuredWordChinese}>{featuredWord.word}</ThemedText>
+                  <View style={styles.featuredWordSpeakRow}>
+                    <SpeakButton
+                      text={featuredWord.exampleSentence
+                        ? `${featuredWord.word}。${featuredWord.exampleSentence}`
+                        : featuredWord.word}
+                      size="small"
+                    />
+                  </View>
+                  <ThemedText style={[styles.featuredWordPinyin, { color: theme.primary }]}>{featuredWord.pinyin}</ThemedText>
+                  <ThemedText style={[styles.featuredWordTranslation, { color: theme.textSecondary }]}>{featuredWord.translation}</ThemedText>
+                  {featuredWord.exampleSentence ? (
+                    <View style={[styles.featuredWordExample, { borderTopColor: theme.border }]}>
+                      <ThemedText style={[styles.featuredWordExText, { color: theme.text }]}>{featuredWord.exampleSentence}</ThemedText>
+                      <ThemedText style={[styles.featuredWordExTrans, { color: theme.textSecondary }]}>{featuredWord.exampleTranslation}</ThemedText>
+                    </View>
+                  ) : null}
+                </View>
+              ) : null}
+
+              {/* 名言 */}
               {(() => {
                 const q = getQuoteForStamp(studiedCellIndex, currentLevel);
                 if (!q) return null;
@@ -1256,6 +1289,31 @@ const styles = StyleSheet.create({
   audioStudyText: { fontSize: 15, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", textAlign: "center", marginBottom: Spacing.sm },
   emptySub: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
+  featuredWordCard: {
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1.5,
+    padding: Spacing.lg,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
+    width: "100%",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  featuredWordHeader: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, marginBottom: Spacing.xs },
+  featuredWordTitle: { fontSize: 12, fontFamily: "Nunito_700Bold" },
+  featuredWordChinese: { fontSize: 32, fontFamily: "Nunito_700Bold", textAlign: "center", lineHeight: 44 },
+  featuredWordSpeakRow: { marginVertical: Spacing.xs },
+  featuredWordPinyin: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
+  featuredWordTranslation: { fontSize: 14, fontFamily: "Nunito_600SemiBold", textAlign: "center" },
+  featuredWordExample: {
+    borderTopWidth: 1,
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    width: "100%",
+    gap: Spacing.xs,
+  },
+  featuredWordExText: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center", lineHeight: 20 },
+  featuredWordExTrans: { fontSize: 12, fontFamily: "Nunito_400Regular", textAlign: "center", lineHeight: 18 },
   quoteCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.lg, marginTop: Spacing.md, marginBottom: Spacing.lg, width: "100%", alignItems: "center", gap: Spacing.xs },
   quoteFlag: { fontSize: 28 },
   quoteText: { fontSize: 16, fontFamily: "Nunito_700Bold", textAlign: "center" },

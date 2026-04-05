@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -57,6 +58,7 @@ function getPandaImage(cellIndex: number, isSpecial: boolean) {
 export default function SprintStampGalleryScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
   const { sprintData, totalCells, currentLevel } = useSprint();
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
@@ -100,7 +102,7 @@ export default function SprintStampGalleryScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.lg,
+            paddingTop: safeHeaderPadding + Spacing.lg,
             paddingBottom: tabBarHeight + Spacing["3xl"],
           },
         ]}
