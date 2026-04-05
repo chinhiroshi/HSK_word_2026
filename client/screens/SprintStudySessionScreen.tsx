@@ -295,6 +295,10 @@ export default function SprintStudySessionScreen() {
       sessionMode === "audio-cards-only" ? "audioCards" : "text";
     const advanced = await completePhase(phaseArg, cellIndex);
     setCompleting(false);
+    // Prevent auto-save effect from double-calling completePhase
+    const key = `${sessionMode}-${cellIndex ?? "default"}`;
+    autoSavedPhase.current = key;
+    setPhase("complete");
     if (advanced) {
       triggerStamp(() => setShowPostStamp(true));
     } else {
