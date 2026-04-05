@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "node:http";
 
 const VERSION_CONFIG = {
-  latest: "2.1.2",
+  latest: "2.1.3",
   minimum: "1.0.0",
   storeUrl: {
     ios: "https://apps.apple.com/jp/app/id6745029930",
