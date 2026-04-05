@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch } from "react-native";
-import Constants from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
 import {
@@ -827,10 +826,6 @@ export default function ProfileScreen() {
           </ThemedText>
         </View>
       )}
-
-      <ThemedText style={[styles.versionText, { color: theme.textSecondary }]}>
-        バージョン {Constants.expoConfig?.version ?? ""}
-      </ThemedText>
     </KeyboardAwareScrollViewCompat>
   );
 }
@@ -1226,12 +1221,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
     color: "#FFFFFF",
-  },
-  versionText: {
-    fontSize: 12,
-    fontFamily: "Nunito_400Regular",
-    textAlign: "center",
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
   },
 });
