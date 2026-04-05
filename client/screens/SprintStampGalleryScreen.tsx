@@ -225,6 +225,7 @@ export default function SprintStampGalleryScreen() {
                     : theme.primary;
 
                   const handleStampPress = () => {
+                    if (!isCompleted) return;
                     const quote = getQuoteForStamp(cell.index, currentLevel);
                     if (quote) setSelectedQuote(quote);
                   };
