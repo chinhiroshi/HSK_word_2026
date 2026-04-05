@@ -202,6 +202,7 @@ function AudioWordCard({
 export default function AudioWordListScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = headerHeight > 0 ? headerHeight : insets.top + 56;
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<AudioWordListRouteProp>();
@@ -379,7 +380,7 @@ export default function AudioWordListScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
-      <View style={[styles.header, { paddingTop: headerHeight + Spacing.sm }]}>
+      <View style={[styles.header, { paddingTop: safeHeaderPadding + Spacing.sm }]}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}

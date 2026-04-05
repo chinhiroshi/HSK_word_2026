@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
@@ -35,6 +36,7 @@ const springConfig: WithSpringConfig = {
 export default function WordDetailScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
@@ -91,7 +93,7 @@ export default function WordDetailScreen() {
           styles.container,
           {
             backgroundColor: theme.backgroundRoot,
-            paddingTop: headerHeight + Spacing["4xl"],
+            paddingTop: safeHeaderPadding + Spacing["4xl"],
             paddingHorizontal: Spacing.lg,
           },
         ]}
@@ -122,7 +124,7 @@ export default function WordDetailScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing["5xl"],
+            paddingTop: safeHeaderPadding + Spacing["5xl"],
             paddingBottom: insets.bottom + Spacing.xl,
           },
         ]}

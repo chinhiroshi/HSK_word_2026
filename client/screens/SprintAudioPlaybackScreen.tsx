@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, StyleSheet, Pressable, ScrollView } from "react-native";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -22,6 +23,7 @@ type RouteProps = RouteProp<SprintStackParamList, "SprintAudioPlayback">;
 export default function SprintAudioPlaybackScreen() {
   const route = useRoute<RouteProps>();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { getTodayStudyWords } = useSprint();
@@ -158,7 +160,7 @@ export default function SprintAudioPlaybackScreen() {
 
   if (loading) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <ThemedText style={{ color: theme.textSecondary }}>準備中...</ThemedText>
         </View>
@@ -168,7 +170,7 @@ export default function SprintAudioPlaybackScreen() {
 
   if (words.length === 0) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <Feather name="check-circle" size={56} color={Colors.light.success} />
           <ThemedText style={styles.emptyTitle}>再生できる単語がありません</ThemedText>
@@ -185,7 +187,7 @@ export default function SprintAudioPlaybackScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingTop: headerHeight + Spacing.lg, paddingBottom: insets.bottom + Spacing["3xl"] },
+          { paddingTop: safeHeaderPadding + Spacing.lg, paddingBottom: insets.bottom + Spacing["3xl"] },
         ]}
       >
         <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>

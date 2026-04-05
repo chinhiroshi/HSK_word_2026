@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { FlatList, View, StyleSheet, RefreshControl } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -21,6 +22,7 @@ type RouteProps = RouteProp<RootStackParamList, "UnmemorizedList">;
 export default function UnmemorizedListScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProps>();
@@ -125,7 +127,7 @@ export default function UnmemorizedListScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.md,
+            paddingTop: safeHeaderPadding + Spacing.md,
             paddingBottom: insets.bottom + Spacing.xl,
           },
           unmemorizedWords.length === 0 && !loading && styles.emptyContainer,

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useMemo, useRef } from "react"
 import { View, StyleSheet, Pressable, ScrollView, TextInput, Animated } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
@@ -22,6 +23,7 @@ export default function AudioPlaybackScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { isPremium, freeWordsLimit, isFreeLevel } = useSubscription();
@@ -226,7 +228,7 @@ export default function AudioPlaybackScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.lg,
+            paddingTop: safeHeaderPadding + Spacing.lg,
             paddingBottom: tabBarHeight + Spacing.xl,
           },
         ]}

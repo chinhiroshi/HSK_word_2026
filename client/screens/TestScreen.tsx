@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
@@ -40,6 +41,7 @@ interface Answer {
 export default function TestScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
@@ -174,7 +176,7 @@ export default function TestScreen() {
 
   if (loading) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.loadingContainer}>
           <ThemedText>テストを準備中...</ThemedText>
         </View>
@@ -184,7 +186,7 @@ export default function TestScreen() {
 
   if (questions.length === 0) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.emptyContainer}>
           <Feather name="check-circle" size={64} color={Colors.light.success} />
           <ThemedText style={styles.emptyTitle}>テスト対象がありません</ThemedText>
@@ -202,7 +204,7 @@ export default function TestScreen() {
   if (isCompleted) {
     const score = calculateScore(answers);
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <Animated.View entering={FadeIn} style={styles.resultContainer}>
           <View
             style={[
@@ -246,7 +248,7 @@ export default function TestScreen() {
         style={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: safeHeaderPadding + Spacing.xl,
             paddingBottom: insets.bottom + Spacing.xl,
           },
         ]}

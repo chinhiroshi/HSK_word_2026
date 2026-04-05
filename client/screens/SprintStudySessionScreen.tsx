@@ -52,6 +52,7 @@ export default function SprintStudySessionScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const safeHeaderPadding = headerHeight > 0 ? headerHeight : insets.top + 56;
   const { theme } = useTheme();
   const { sprintData, completePhase, getStudyWords, getCellPhaseProgress, currentLevel } = useSprint();
 
@@ -304,7 +305,7 @@ export default function SprintStudySessionScreen() {
   // ----- LOADING -----
   if (loading) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <ThemedText style={{ color: theme.textSecondary }}>準備中...</ThemedText>
         </View>
@@ -321,7 +322,7 @@ export default function SprintStudySessionScreen() {
       sessionMode === "text-only" ? "音声リスト・音声カード" :
       sessionMode === "audio-only" ? "文字リスト・音声カード" : "文字リスト・音声リスト";
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <Animated.View entering={FadeIn} style={styles.completeContainer}>
           <View style={[styles.completeIcon, { backgroundColor: theme.primary + "20" }]}>
             <Feather name="check-circle" size={48} color={theme.primary} />
@@ -378,7 +379,7 @@ export default function SprintStudySessionScreen() {
       return (
         <ThemedView style={styles.container}>
           <ScrollView
-            contentContainerStyle={[styles.completeScrollContent, { paddingTop: headerHeight + Spacing.xl }]}
+            contentContainerStyle={[styles.completeScrollContent, { paddingTop: safeHeaderPadding + Spacing.xl }]}
             showsVerticalScrollIndicator={false}
           >
             <Animated.View entering={FadeIn} style={styles.completeInner}>
@@ -439,7 +440,7 @@ export default function SprintStudySessionScreen() {
             <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
           </Animated.View>
         ) : null}
-        <Animated.View entering={FadeIn} style={[styles.completeContainer, { paddingTop: headerHeight + Spacing.xl }]}>
+        <Animated.View entering={FadeIn} style={[styles.completeContainer, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
           <View style={[styles.completeIcon, { backgroundColor: (willGetStamp ? Colors.light.success : theme.primary) + "20" }]}>
             <Feather name={willGetStamp ? "award" : "check-circle"} size={48} color={willGetStamp ? Colors.light.success : theme.primary} />
           </View>
@@ -538,7 +539,7 @@ export default function SprintStudySessionScreen() {
       <ThemedView style={styles.container}>
         {/* Review phase banner */}
         {isReviewPhase ? (
-          <View style={[styles.reviewBanner, { backgroundColor: Colors.light.alert + "18", borderBottomColor: Colors.light.alert + "40", paddingTop: headerHeight + Spacing.sm }]}>
+          <View style={[styles.reviewBanner, { backgroundColor: Colors.light.alert + "18", borderBottomColor: Colors.light.alert + "40", paddingTop: safeHeaderPadding + Spacing.sm }]}>
             <Feather name="alert-circle" size={14} color={Colors.light.alert} />
             <ThemedText style={[styles.reviewBannerText, { color: Colors.light.alert }]}>
               {"まだの単語を再確認してください。準備ができたら完了を押してください。"}
@@ -547,7 +548,7 @@ export default function SprintStudySessionScreen() {
         ) : null}
 
         {/* Filter tabs */}
-        <View style={[styles.filterRow, { paddingTop: isReviewPhase ? Spacing.md : headerHeight + Spacing.md, borderBottomColor: theme.border }]}>
+        <View style={[styles.filterRow, { paddingTop: isReviewPhase ? Spacing.md : safeHeaderPadding + Spacing.md, borderBottomColor: theme.border }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRowContent}>
             <Pressable
               onPress={() => setListFilter("all")}
@@ -758,7 +759,7 @@ export default function SprintStudySessionScreen() {
   // ----- AUDIO CARDS PHASE -----
   if (!currentCardWord) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <Feather name="check-circle" size={56} color={Colors.light.success} />
           <ThemedText style={[styles.emptyTitle, { marginTop: Spacing.lg }]}>
@@ -781,7 +782,7 @@ export default function SprintStudySessionScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: safeHeaderPadding + Spacing.xl,
             paddingBottom: tabBarHeight + Spacing["3xl"],
           },
         ]}

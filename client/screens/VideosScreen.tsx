@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { SectionList, View, StyleSheet, RefreshControl } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -27,6 +28,7 @@ interface Section {
 export default function VideosScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
@@ -106,7 +108,7 @@ export default function VideosScreen() {
           styles.loadingContainer,
           {
             backgroundColor: theme.backgroundRoot,
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: safeHeaderPadding + Spacing.xl,
           },
         ]}
       >
@@ -122,7 +124,7 @@ export default function VideosScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: safeHeaderPadding + Spacing.xl,
             paddingBottom: tabBarHeight + Spacing.xl,
           },
           sections.length === 0 && styles.emptyContainer,

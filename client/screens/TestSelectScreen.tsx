@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
@@ -105,6 +106,7 @@ function TestCard({ title, description, icon, onPress, disabled }: TestCardProps
 export default function TestSelectScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
 
@@ -146,7 +148,7 @@ export default function TestSelectScreen() {
         style={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.xl,
+            paddingTop: safeHeaderPadding + Spacing.xl,
             paddingBottom: insets.bottom + Spacing.xl,
           },
         ]}
