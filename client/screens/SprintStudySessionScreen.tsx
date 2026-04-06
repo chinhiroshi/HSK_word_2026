@@ -989,7 +989,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
       {revealLevel >= 1 ? (
         <Animated.View entering={FadeIn.duration(200)}>
           <View style={styles.wordHeader}>
-            <ThemedText style={styles.wordText}>{word.word}</ThemedText>
+            <ThemedText style={[styles.wordText, { color: theme.text }]}>{word.word}</ThemedText>
             <SpeakButton
               text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
               size="medium"
@@ -1179,7 +1179,7 @@ const styles = StyleSheet.create({
   progressBarWrapper: { marginBottom: Spacing.xl },
   wordCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.xl, marginBottom: Spacing.xl, minHeight: 160 },
   wordHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.sm },
-  wordText: { fontSize: 42, fontWeight: "700", fontFamily: "Nunito_700Bold", flex: 1 },
+  wordText: { fontSize: 42, fontWeight: "400", flex: 1 },
   pinyinText: { fontSize: 17, fontFamily: "Nunito_400Regular", marginBottom: Spacing.md },
   divider: { height: 1, marginBottom: Spacing.md },
   translationText: { fontSize: 16, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.md },

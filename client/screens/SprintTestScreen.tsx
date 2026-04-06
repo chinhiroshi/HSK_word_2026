@@ -72,7 +72,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
       </View>
       {revealLevel >= 1 ? (
         <Animated.View entering={FadeIn.duration(200)}>
-          <ThemedText style={cardStyles.chinese}>{word.word}</ThemedText>
+          <ThemedText style={[cardStyles.chinese, { color: theme.text }]}>{word.word}</ThemedText>
           <ThemedText style={[cardStyles.pinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
         </Animated.View>
       ) : (
@@ -103,7 +103,7 @@ const cardStyles = StyleSheet.create({
   badgeText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
   badgePlaceholder: { width: 1, height: 20 },
   counter: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  chinese: { fontSize: 44, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  chinese: { fontSize: 44, fontWeight: "400" },
   pinyin: { fontSize: 17, fontFamily: "Nunito_400Regular", marginTop: Spacing.xs },
   hiddenPlaceholder: { alignItems: "center", paddingVertical: Spacing["2xl"], gap: Spacing.sm },
   hiddenHint: { fontSize: 14, fontFamily: "Nunito_400Regular" },
