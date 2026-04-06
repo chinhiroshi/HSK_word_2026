@@ -380,10 +380,6 @@ export default function SprintStudySessionScreen() {
 
     // ----- POST STAMP SCREEN -----
     if (showPostStamp) {
-      const featuredWord = words.length > 0
-        ? words[studiedCellIndex % words.length] ?? words[0]
-        : null;
-
       return (
         <ThemedView style={styles.container}>
           <ScrollView
@@ -398,33 +394,6 @@ export default function SprintStudySessionScreen() {
               <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
                 {words.length}語の学習完了
               </ThemedText>
-
-              {/* 今日の一語 */}
-              {featuredWord ? (
-                <View style={[styles.featuredWordCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.primary + "40" }]}>
-                  <View style={styles.featuredWordHeader}>
-                    <Feather name="star" size={14} color={theme.primary} />
-                    <ThemedText style={[styles.featuredWordTitle, { color: theme.primary }]}>今日の一語</ThemedText>
-                  </View>
-                  <ThemedText style={styles.featuredWordChinese}>{featuredWord.word}</ThemedText>
-                  <View style={styles.featuredWordSpeakRow}>
-                    <SpeakButton
-                      text={featuredWord.exampleSentence
-                        ? `${featuredWord.word}。${featuredWord.exampleSentence}`
-                        : featuredWord.word}
-                      size="small"
-                    />
-                  </View>
-                  <ThemedText style={[styles.featuredWordPinyin, { color: theme.primary }]}>{featuredWord.pinyin}</ThemedText>
-                  <ThemedText style={[styles.featuredWordTranslation, { color: theme.textSecondary }]}>{featuredWord.translation}</ThemedText>
-                  {featuredWord.exampleSentence ? (
-                    <View style={[styles.featuredWordExample, { borderTopColor: theme.border }]}>
-                      <ThemedText style={[styles.featuredWordExText, { color: theme.text }]}>{featuredWord.exampleSentence}</ThemedText>
-                      <ThemedText style={[styles.featuredWordExTrans, { color: theme.textSecondary }]}>{featuredWord.exampleTranslation}</ThemedText>
-                    </View>
-                  ) : null}
-                </View>
-              ) : null}
 
               {/* 名言 */}
               {(() => {
