@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch } from "react-native";
+import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
+import * as Updates from "expo-updates";
 import Constants from "expo-constants";
 import {
   getNotificationEnabled,
@@ -126,6 +127,7 @@ export default function ProfileScreen() {
   const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
   const REVIEW_THRESHOLD = 10;
@@ -841,6 +843,52 @@ export default function ProfileScreen() {
             </ThemedText>
           </View>
         </View>
+        <Pressable
+          testID="button-check-update"
+          onPress={async () => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            if (checkingUpdate) return;
+            setCheckingUpdate(true);
+            try {
+              const result = await Updates.checkForUpdateAsync();
+              if (result.isAvailable) {
+                Alert.alert(
+                  "アップデートあり",
+                  "新しいバージョンが見つかりました。今すぐ更新しますか？",
+                  [
+                    { text: "キャンセル", style: "cancel" },
+                    {
+                      text: "更新する",
+                      onPress: async () => {
+                        try {
+                          await Updates.fetchUpdateAsync();
+                          await Updates.reloadAsync();
+                        } catch {
+                          Alert.alert("エラー", "更新に失敗しました。");
+                        }
+                      },
+                    },
+                  ]
+                );
+              } else {
+                Alert.alert("最新版です", "すでに最新バージョンを使用しています。");
+              }
+            } catch {
+              Alert.alert("最新版です", "現在お使いのバージョン（" + (Constants.expoConfig?.version ?? "—") + "）が最新です。");
+            } finally {
+              setCheckingUpdate(false);
+            }
+          }}
+          style={[styles.updateButton, { borderColor: theme.primary }]}
+        >
+          {checkingUpdate ? (
+            <ActivityIndicator size="small" color={theme.primary} />
+          ) : (
+            <ThemedText style={[styles.updateButtonText, { color: theme.primary }]}>
+              最新バージョンを確認する
+            </ThemedText>
+          )}
+        </Pressable>
       </View>
     </KeyboardAwareScrollViewCompat>
   );
@@ -1159,6 +1207,20 @@ const styles = StyleSheet.create({
   versionNumber: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
+  },
+  updateButton: {
+    borderWidth: 1,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.sm,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 38,
+    marginTop: Spacing.sm,
+  },
+  updateButtonText: {
+    fontSize: 14,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
   emptyCard: {
     padding: Spacing["2xl"],
