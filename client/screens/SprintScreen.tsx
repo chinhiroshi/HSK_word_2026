@@ -113,6 +113,15 @@ function getPreviousTestCell(cellIndex: number, wordsPerDay: number): number | n
   return null;
 }
 
+// Count study sessions before position → used to compute word range for premium check
+function getStudyWordOffset(position: number, wordsPerDay: number): number {
+  let count = 0;
+  for (let i = 1; i < position; i++) {
+    if (getSessionTypeFn(i, wordsPerDay) === "study") count++;
+  }
+  return count;
+}
+
 interface CellProps {
   index: number;
   sessionType: SprintSessionType;
@@ -192,10 +201,10 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
+    if (isLocked) {
+      return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "60"} />;
+    }
     if (sessionType === "test") {
-      if (isLocked) {
-        return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "60"} />;
-      }
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
           <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />
@@ -491,7 +500,7 @@ export default function SprintScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress } = useSprint();
+  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel } = useSprint();
   const { isPremium } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
@@ -529,21 +538,24 @@ export default function SprintScreen() {
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const sessionType = getSessionType(index);
+    const wPD = sprintData.wordsPerDay ?? 10;
+    const sStamps = sprintData.specialStamps ?? [];
+
     if (sessionType === "test") {
-      const wPD = sprintData.wordsPerDay ?? 10;
       const testNum = getTestNumber(index, wPD);
       const prevTestCell = getPreviousTestCell(index, wPD);
       const cDates = sprintData.completedDates ?? {};
 
-      if (cDates[index]) {
-        Alert.alert(`テスト ${testNum} クリア済み`, formatShortDate(cDates[index]) + " にクリアしました。", [{ text: "OK" }]);
+      // Test is truly "cleared" only if it's in specialStamps (passed ≥85%)
+      if (sStamps.includes(index)) {
+        Alert.alert(`テスト ${testNum} クリア済み`, formatShortDate(cDates[index] ?? "") + " にクリアしました。", [{ text: "OK" }]);
         return;
       }
       if (index !== currentPosition) {
         Alert.alert(`テスト ${testNum}`, "前のセルを全て完了してからテストに挑戦できます。", [{ text: "OK" }]);
         return;
       }
-      if (prevTestCell !== null && cDates[prevTestCell] == null) {
+      if (prevTestCell !== null && !sStamps.includes(prevTestCell)) {
         Alert.alert(`テスト ${testNum}`, `テスト${testNum - 1}をクリアしてから挑戦できます。`, [{ text: "OK" }]);
         return;
       }
@@ -553,6 +565,12 @@ export default function SprintScreen() {
       }
       navigation.navigate("SprintTest");
     } else {
+      // Premium check for study cells: words 51+ require premium (except HSK1)
+      const studyOffset = getStudyWordOffset(index, wPD);
+      if (studyOffset * wPD >= 50 && currentLevel !== 1 && !isPremium) {
+        (navigation as any).navigate("Paywall");
+        return;
+      }
       setSelectedCell(index);
       setModalVisible(true);
     }
@@ -677,16 +695,29 @@ export default function SprintScreen() {
               {rowSlots.map((cellIndex, colIdx) => {
                 if (cellIndex >= 0) {
                   const isCurrent = isSetup && cellIndex === currentPosition;
-                  const isCompleted = isSetup && !isCurrent && completedDates[cellIndex] != null;
-                  const isSpecialStamp = specialStamps.includes(cellIndex);
                   const cellSessionType = getSessionType(cellIndex);
                   const wPD = sprintData?.wordsPerDay ?? 10;
+                  // Test cells: "completed" only when passed (in specialStamps)
+                  // Study cells: completed when in completedDates
+                  const isCompleted = isSetup && !isCurrent && (
+                    cellSessionType === "test"
+                      ? specialStamps.includes(cellIndex)
+                      : completedDates[cellIndex] != null
+                  );
+                  const isSpecialStamp = specialStamps.includes(cellIndex);
                   const cellTestNum = cellSessionType === "test" ? getTestNumber(cellIndex, wPD) : undefined;
                   const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD) : null;
-                  const cellIsLocked = cellSessionType === "test" && !isCompleted && (
-                    (prevTestForCell !== null && completedDates[prevTestForCell] == null) ||
+                  // Lock test cells that can't be attempted yet
+                  const testIsLocked = cellSessionType === "test" && !isCompleted && (
+                    (prevTestForCell !== null && !specialStamps.includes(prevTestForCell)) ||
                     cellIndex !== currentPosition
                   );
+                  // Lock study cells that require premium words (word 51+ for non-HSK1)
+                  const studyIsPremiumLocked = cellSessionType === "study" &&
+                    currentLevel !== 1 &&
+                    !isPremium &&
+                    (getStudyWordOffset(cellIndex, wPD) * wPD >= 50);
+                  const cellIsLocked = testIsLocked || studyIsPremiumLocked;
                   return (
                     <Cell
                       key={colIdx}
