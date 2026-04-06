@@ -97,7 +97,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
 }
 
 const cardStyles = StyleSheet.create({
-  root: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.xl, gap: Spacing.md },
+  root: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.xl, gap: Spacing.xl },
   topRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   badge: { paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.full },
   badgeText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
