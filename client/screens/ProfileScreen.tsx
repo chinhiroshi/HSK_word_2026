@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch, ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as StoreReview from "expo-store-review";
-import * as Updates from "expo-updates";
 import Constants from "expo-constants";
 import {
   getNotificationEnabled,
@@ -34,6 +33,7 @@ import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useAppUpdate } from "@/navigation/MainTabNavigator";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
   1: require("../../assets/images/avatar-hsk1.png"),
@@ -117,6 +117,7 @@ export default function ProfileScreen() {
   const { theme } = useTheme();
   const { isPremium } = useSubscription();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { updateInfo } = useAppUpdate();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -830,7 +831,32 @@ export default function ProfileScreen() {
         </View>
       )}
 
-      {/* バージョン情報 & アップデート確認 */}
+      {/* アップデート通知バナー */}
+      {updateInfo.available ? (
+        <Pressable
+          testID="button-update-banner"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            if (updateInfo.storeUrl) {
+              Linking.openURL(updateInfo.storeUrl);
+            }
+          }}
+          style={[styles.updateBanner, { backgroundColor: Colors.light.primary }]}
+        >
+          <View style={styles.updateBannerLeft}>
+            <Feather name="arrow-up-circle" size={22} color="#fff" />
+            <View style={styles.updateBannerText}>
+              <ThemedText style={styles.updateBannerTitle}>新しいバージョンがあります</ThemedText>
+              <ThemedText style={styles.updateBannerSub}>
+                v{updateInfo.latestVersion} が利用可能です。タップしてApp Storeへ
+              </ThemedText>
+            </View>
+          </View>
+          <Feather name="chevron-right" size={18} color="#fff" />
+        </Pressable>
+      ) : null}
+
+      {/* バージョン情報 */}
       <View style={[styles.versionCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
         <View style={styles.versionRow}>
           <View style={[styles.versionIconWrap, { backgroundColor: `${theme.primary}15` }]}>
@@ -840,55 +866,10 @@ export default function ProfileScreen() {
             <ThemedText style={styles.versionLabel}>アプリバージョン</ThemedText>
             <ThemedText style={[styles.versionNumber, { color: theme.textSecondary }]}>
               {Constants.expoConfig?.version ?? "—"}
+              {updateInfo.available ? `  →  v${updateInfo.latestVersion}` : ""}
             </ThemedText>
           </View>
         </View>
-        <Pressable
-          testID="button-check-update"
-          onPress={async () => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            if (checkingUpdate) return;
-            setCheckingUpdate(true);
-            try {
-              const result = await Updates.checkForUpdateAsync();
-              if (result.isAvailable) {
-                Alert.alert(
-                  "アップデートあり",
-                  "新しいバージョンが見つかりました。今すぐ更新しますか？",
-                  [
-                    { text: "キャンセル", style: "cancel" },
-                    {
-                      text: "更新する",
-                      onPress: async () => {
-                        try {
-                          await Updates.fetchUpdateAsync();
-                          await Updates.reloadAsync();
-                        } catch {
-                          Alert.alert("エラー", "更新に失敗しました。");
-                        }
-                      },
-                    },
-                  ]
-                );
-              } else {
-                Alert.alert("最新版です", "すでに最新バージョンを使用しています。");
-              }
-            } catch {
-              Alert.alert("最新版です", "現在お使いのバージョン（" + (Constants.expoConfig?.version ?? "—") + "）が最新です。");
-            } finally {
-              setCheckingUpdate(false);
-            }
-          }}
-          style={[styles.updateButton, { borderColor: theme.primary }]}
-        >
-          {checkingUpdate ? (
-            <ActivityIndicator size="small" color={theme.primary} />
-          ) : (
-            <ThemedText style={[styles.updateButtonText, { color: theme.primary }]}>
-              最新バージョンを確認する
-            </ThemedText>
-          )}
-        </Pressable>
       </View>
     </KeyboardAwareScrollViewCompat>
   );
@@ -1221,6 +1202,36 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Nunito_600SemiBold",
     fontWeight: "600",
+  },
+  updateBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  updateBannerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+    flex: 1,
+  },
+  updateBannerText: {
+    flex: 1,
+    gap: 2,
+  },
+  updateBannerTitle: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
+    color: "#fff",
+  },
+  updateBannerSub: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    color: "rgba(255,255,255,0.85)",
   },
   emptyCard: {
     padding: Spacing["2xl"],
