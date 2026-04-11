@@ -1,5 +1,292 @@
 uploads = []
-generated = []
+
+[[generated]]
+id = "xEQhhAhcfYDtzWuA2M-nm"
+uri = "file://assets/images/panda-stamp-13.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "GNxRwHqNzd-oz7PCLa06l"
+uri = "file://assets/images/panda-stamp-14.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "O4rQ1Z4fXufE-EYGCmt0D"
+uri = "file://assets/images/panda-stamp-15.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "RP-dCdcZ57GkZKYnNLYx2"
+uri = "file://assets/images/panda-stamp-16.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "c5YrP5D602QBylr8opzVN"
+uri = "file://assets/images/panda-stamp-17.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "d_ef0ABeQ2QQ-fE0Pmvy8"
+uri = "file://assets/images/panda-stamp-18.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "E1DY9LzQ_4VipQLofBfoM"
+uri = "file://assets/images/panda-stamp-19.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Nf3V5YUHJUbUN64FgINv_"
+uri = "file://assets/images/panda-stamp-20.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "3krPxcO0CxJrsKjETWJuE"
+uri = "file://assets/images/panda-stamp-21.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "MSyjM4xmC36I9UFvIz5P7"
+uri = "file://assets/images/panda-stamp-22.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ZV0KPfScGWFR1IEB97_Mq"
+uri = "file://assets/images/panda-stamp-23.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Yd0tbwt3HBKfbEIHgJktE"
+uri = "file://assets/images/panda-stamp-24.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ZMd4UEy9O62oqq7Nml9kK"
+uri = "file://assets/images/panda-stamp-25.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Ih-CF6a7gUn3HFKNqM2rf"
+uri = "file://assets/images/panda-stamp-26.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "184HVciHfQnk7Oh_7EctV"
+uri = "file://assets/images/panda-stamp-27.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "jZIrjcDjnrOF3LxjqoS-Y"
+uri = "file://assets/images/panda-stamp-28.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "MsDJsxuxAGpO0kOPQAfUm"
+uri = "file://assets/images/panda-stamp-29.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "84PzWYAH9fsYYJjZJkW6G"
+uri = "file://assets/images/panda-stamp-30.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "RMN4liGWesBnhOtdFzTqy"
+uri = "file://assets/images/panda-stamp-31.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "BNPU4RWdCfhcVDosVQIrb"
+uri = "file://assets/images/panda-stamp-32.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "URbO6veqR3qYPWyRfIyi9"
+uri = "file://assets/images/panda-stamp-33.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "E1eN4FXfAx-oVcNyBydXf"
+uri = "file://assets/images/panda-stamp-34.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "JpwjV6vkBpEUPxrlNibU0"
+uri = "file://assets/images/panda-stamp-35.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "3oN084TLXbKo5xhS0S2WL"
+uri = "file://assets/images/panda-stamp-36.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "cFrMNNa7Br0EQKJg_Q_Q3"
+uri = "file://assets/images/panda-stamp-37.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "c7sMuo4BdcCrrFTOoqd0f"
+uri = "file://assets/images/panda-stamp-38.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "__gwSYOt8MTz6iDILoJGI"
+uri = "file://assets/images/panda-stamp-39.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "NTlQKKDqEhM7vWye-OR31"
+uri = "file://assets/images/panda-stamp-40.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "wC_gmu-JxsF-YptBlKGS4"
+uri = "file://assets/images/panda-stamp-41.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "HUhNuXLM55r550eiDsUg4"
+uri = "file://assets/images/panda-stamp-42.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "bFqogAuwilvg7f8EsZsaV"
+uri = "file://assets/images/panda-stamp-43.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "tJ79PUTq0slvYvvXNB8pC"
+uri = "file://assets/images/panda-stamp-44.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "_0tnCBpOeFEG8YKEmr_Ze"
+uri = "file://assets/images/panda-stamp-45.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "xnBh-vID5iTLvqwCVOHq1"
+uri = "file://assets/images/panda-stamp-46.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "aaLFaiK44_GWsDQ4zBB4Z"
+uri = "file://assets/images/panda-stamp-47.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "1OY8LYgqN76ik0yu83OFD"
+uri = "file://assets/images/panda-stamp-48.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Nk-0eapK6uAkKnakOOS7P"
+uri = "file://assets/images/panda-stamp-49.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "oNY28lxT2falGxyUynEkA"
+uri = "file://assets/images/panda-stamp-50.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "aH4M3ehxm2nMJsA-uyC-0"
+uri = "file://assets/images/panda-stamp-51.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Zib3u1snbkwqXlrzqMk97"
+uri = "file://assets/images/panda-stamp-52.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Bauu2UVEFMV9-YIqpSGZb"
+uri = "file://assets/images/panda-stamp-53.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "7RJcbfBiFODt5z4DUNsiU"
+uri = "file://assets/images/panda-stamp-54.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "VRxtqfoEzf5Cwyd9ahNRT"
+uri = "file://assets/images/panda-stamp-55.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "zP4wL84oIpeC1N7ZAY7KP"
+uri = "file://assets/images/panda-stamp-56.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "hPIzXuxBZYJVuUO5ta_kq"
+uri = "file://assets/images/panda-stamp-57.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "u0yr6HMHFMurwElcEF3lL"
+uri = "file://assets/images/panda-stamp-58.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "TDCJt4UDbWJYWQmux-o4T"
+uri = "file://assets/images/panda-stamp-59.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "81ecbRvkkOoN8nr68ln8D"
+uri = "file://assets/images/panda-stamp-60.png"
+type = "image"
+title = "generated_image"
 
 [[outputs]]
 id = "25ttI0-awxEyfFdb-9QYb"
