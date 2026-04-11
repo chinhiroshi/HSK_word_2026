@@ -30,6 +30,7 @@ import {
   PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon, FlowerIcon,
   WaveIcon, FishIcon, PalmIcon, SnowflakeIcon, SnowyMountainIcon,
   BuildingIcon, SmallBuildingIcon, SunIcon, MushroomIcon, TropicalFlowerIcon,
+  MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
 import { HskLevel } from "@/types";
 
@@ -67,42 +68,44 @@ function getLevelTheme(level: number): LevelTheme {
 }
 
 // ─── Cell deco icon selection per level ────────────────────────────────────
-// 5 variants: 0,2,4 = level icons; 1,3 = cloud (≈40% cloud coverage)
+// 7 variants: 0-5 = level icons; 6 = cloud (≈14% cloud coverage)
 function getDecoVariant(row: number, col: number): number {
-  return (row * 17 + col * 11 + row * col * 3) % 5;
+  return (row * 17 + col * 11 + row * col * 3 + row * 5) % 7;
 }
 
 function renderDecoIcon(variant: number, level: number, size: number) {
   const lv = getLevelTheme(level);
-  // variant 1 and 3 → always cloud (tinted per level)
-  if (variant === 1) return <CloudIcon size={size} color={lv.decoColor} />;
-  if (variant === 3) return <CloudIcon size={size} color={lv.decoColor} />;
+  // variant 6 → cloud
+  if (variant === 6) return <CloudIcon size={size} color={lv.decoColor} />;
 
   switch (level) {
-    case 1: // 草原
-      return variant === 0 ? <TreeIcon size={size} color={lv.decoColor} />
-           : variant === 2 ? <FlowerIcon size={size} color="#C8A45A" />
-           : <PlantIcon size={size} color={lv.decoColor} />;
-    case 2: // 海
-      return variant === 0 ? <WaveIcon size={size} color={lv.decoColor} />
-           : variant === 2 ? <SunIcon size={size} color="#FFB300" />
-           : <FishIcon size={size} color="#42A5F5" />;
-    case 3: // 森林
-      return variant === 0 ? <TreeIcon size={size} color="#2E7D32" />
-           : variant === 2 ? <MushroomIcon size={size} color="#C62828" />
-           : <TreeIcon size={size} color="#388E3C" />;
-    case 4: // 熱帯
-      return variant === 0 ? <PalmIcon size={size} color={lv.decoColor} />
-           : variant === 2 ? <TropicalFlowerIcon size={size} color="#E91E63" />
-           : <PlantIcon size={size} color="#66BB6A" />;
-    case 5: // 雪山
-      return variant === 0 ? <SnowyMountainIcon size={size} color={lv.decoColor} />
-           : variant === 2 ? <SnowflakeIcon size={size} color="#90CAF9" />
-           : <MountainIcon size={size} color="#B0BEC5" />;
-    case 6: // 都市
-      return variant === 0 ? <BuildingIcon size={size} color="#546E7A" />
-           : variant === 2 ? <SmallBuildingIcon size={size} color="#607D8B" />
-           : <BuildingIcon size={size} color="#455A64" />;
+    case 1: // 草原: tree / flower / plant の3種類 × 2
+      if (variant === 0 || variant === 3) return <TreeIcon size={size} color={lv.decoColor} />;
+      if (variant === 1 || variant === 4) return <FlowerIcon size={size} color="#C8A45A" />;
+      return <PlantIcon size={size} color={lv.decoColor} />;
+    case 2: // 海: wave / sun / fish の3種類 × 2
+      if (variant === 0 || variant === 3) return <WaveIcon size={size} color={lv.decoColor} />;
+      if (variant === 1 || variant === 4) return <SunIcon size={size} color="#FFB300" />;
+      return <FishIcon size={size} color="#42A5F5" />;
+    case 3: // 森林: 濃い木 / キノコ / 明るい木 の3種類 × 2
+      if (variant === 0 || variant === 3) return <TreeIcon size={size} color="#2E7D32" />;
+      if (variant === 1 || variant === 4) return <MushroomIcon size={size} color="#C62828" />;
+      return <TreeIcon size={size} color="#66BB6A" />;
+    case 4: // 熱帯: palm / tropical flower / plant の3種類 × 2
+      if (variant === 0 || variant === 3) return <PalmIcon size={size} color={lv.decoColor} />;
+      if (variant === 1 || variant === 4) return <TropicalFlowerIcon size={size} color="#E91E63" />;
+      return <PlantIcon size={size} color="#66BB6A" />;
+    case 5: // 雪山: snowy mountain / snowflake / mountain の3種類 × 2
+      if (variant === 0 || variant === 3) return <SnowyMountainIcon size={size} color={lv.decoColor} />;
+      if (variant === 1 || variant === 4) return <SnowflakeIcon size={size} color="#90CAF9" />;
+      return <MountainIcon size={size} color="#B0BEC5" />;
+    case 6: // 都市: building / moon / star / rocket / small building の5種類
+      if (variant === 0) return <BuildingIcon size={size} color="#546E7A" />;
+      if (variant === 1) return <MoonIcon size={size} color="#5C6BC0" />;
+      if (variant === 2) return <StarIcon size={size} color="#FFB300" />;
+      if (variant === 3) return <RocketIcon size={size} color="#E53935" />;
+      if (variant === 4) return <SmallBuildingIcon size={size} color="#607D8B" />;
+      return <MoonIcon size={size} color="#7986CB" />;
     default:
       return <TreeIcon size={size} color={lv.decoColor} />;
   }
@@ -304,6 +307,8 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </View>
       );
     }
+    // Completed non-test cells all show PlantIcon (HSK1 style)
+    if (isCompleted) return <PlantIcon size={iconSize} color={stampColor ?? "#fff"} />;
     return renderStudyIcon(currentLevel, iconSize, stampColor ?? lvTheme.studyColor);
   };
 

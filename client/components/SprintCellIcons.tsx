@@ -314,6 +314,65 @@ export function MushroomIcon({ size, color = "#E53935" }: IconProps) {
   );
 }
 
+// HSK6: 都市 — crescent moon
+export function MoonIcon({ size, color = "#5C6BC0" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.75}>
+      <Path
+        d="M22 16 A10 10 0 1 1 16 6 A7 7 0 1 0 22 16 Z"
+        fill={color}
+      />
+      <Circle cx="23" cy="9" r="1.2" fill={color} opacity="0.6" />
+      <Circle cx="26" cy="13" r="0.8" fill={color} opacity="0.5" />
+      <Circle cx="21" cy="6" r="0.7" fill={color} opacity="0.4" />
+    </Svg>
+  );
+}
+
+// HSK6: 都市 — star
+export function StarIcon({ size, color = "#FFB300" }: IconProps) {
+  const s = size;
+  const points = Array.from({ length: 5 }, (_, i) => {
+    const outer = (Math.PI / 2 + i * (2 * Math.PI / 5));
+    const inner = outer + Math.PI / 5;
+    const ox = 16 + 13 * Math.cos(outer);
+    const oy = 16 - 13 * Math.sin(outer);
+    const ix = 16 + 5.5 * Math.cos(inner);
+    const iy = 16 - 5.5 * Math.sin(inner);
+    return `${ox},${oy} ${ix},${iy}`;
+  }).join(" ");
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.8}>
+      <Polygon points={points} fill={color} />
+    </Svg>
+  );
+}
+
+// HSK6: 都市 — rocket
+export function RocketIcon({ size, color = "#E53935" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.75}>
+      {/* Body */}
+      <Path d="M16 4 C12 4 9 10 9 18 L23 18 C23 10 20 4 16 4 Z" fill={color} />
+      {/* Nose tip */}
+      <Path d="M16 2 L13 6 L19 6 Z" fill={color} opacity="0.7" />
+      {/* Window */}
+      <Circle cx="16" cy="13" r="3" fill="white" opacity="0.7" />
+      <Circle cx="16" cy="13" r="1.8" fill={color} opacity="0.5" />
+      {/* Left fin */}
+      <Path d="M9 18 L5 25 L11 22 Z" fill={color} opacity="0.8" />
+      {/* Right fin */}
+      <Path d="M23 18 L27 25 L21 22 Z" fill={color} opacity="0.8" />
+      {/* Exhaust */}
+      <Ellipse cx="14" cy="20" rx="1.5" ry="3" fill="#FF8F00" opacity="0.8" />
+      <Ellipse cx="18" cy="20" rx="1.5" ry="3" fill="#FF8F00" opacity="0.8" />
+      <Ellipse cx="16" cy="21" rx="2" ry="4" fill="#FFD54F" opacity="0.6" />
+    </Svg>
+  );
+}
+
 // HSK4: 熱帯 — tropical flower
 export function TropicalFlowerIcon({ size, color = "#E91E63" }: IconProps) {
   const s = size;
