@@ -297,9 +297,9 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
-    // Test cell locked: sequential lock (not yet reached) → monster icon in amber
+    // Test cell locked: sequential lock (not yet reached) → award icon in amber
     if (isLocked) {
-      return <MonsterIcon size={CELL_SIZE * 0.32} color="#F59E0B" />;
+      return <Feather name="award" size={CELL_SIZE * 0.30} color="#F59E0B" />;
     }
     // Study cell premium locked: lock icon in grey
     if (isPremiumLocked) {
