@@ -4,13 +4,31 @@ import { getSprintData, saveSprintData, resetSprintData, getSelectedHskLevel } f
 
 const DEFAULT_TOTAL_CELLS = 29;
 
-// Dynamic cell type: position 0 = flag, then cycles of N study cells + 1 test.
-// N = ceil(50 / wordsPerDay) — i.e., test appears after every 50 words studied.
+function shuffleArray<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Dynamic cell type:
+//   position 0 = flag
+//   then macro-cycles of [ (N study + 1 test) × 4 ] + 1 review
+//   N = ceil(50 / wordsPerDay)  →  each regular cycle covers 50 words
+//   4 regular cycles = 200 words  →  then 1 review test
 export function getSessionType(position: number, wordsPerDay: number = 10): SprintSessionType {
   if (position <= 0) return "flag";
   const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
-  const cycleLen = N + 1; // N study + 1 test
-  const posInCycle = (position - 1) % cycleLen;
+  const regularCycleLen = N + 1;               // N study + 1 test
+  const macroCycleLen = 4 * regularCycleLen + 1; // 4 regular cycles + 1 review
+
+  const p = position - 1; // 0-indexed
+  const posInMacro = p % macroCycleLen;
+
+  if (posInMacro === macroCycleLen - 1) return "review";
+  const posInCycle = posInMacro % regularCycleLen;
   return posInCycle < N ? "study" : "test";
 }
 
@@ -20,9 +38,12 @@ function calcWordsPerDay(minutes: number): number {
 
 function calcTotalCells(totalWords: number, wordsPerDay: number): number {
   const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
+  const regularCycleLen = N + 1;
+  const macroCycleLen = 4 * regularCycleLen + 1; // 4 regular cycles + 1 review
   const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
   const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / N));
-  return 1 + fullCycles * (N + 1); // flag + (N study + 1 test) × cycles
+  const fullMacroCycles = Math.max(1, Math.ceil(fullCycles / 4));
+  return 1 + fullMacroCycles * macroCycleLen;
 }
 
 function getTodayString(): string {
@@ -54,6 +75,7 @@ function canSkipSession(
   sessionType: SprintSessionType
 ): boolean {
   if (sessionType === "flag") return false;
+  if (sessionType === "review") return false;
   if (sessionType === "test") {
     const unmemorized = words.filter((w) => !w.audioMemorized);
     return unmemorized.length === 0;
@@ -83,6 +105,7 @@ interface SprintContextType {
   canSkipCurrentSession: (words: Word[]) => boolean;
   getStudyWords: (words: Word[], cellIndex?: number) => Word[];
   getTestWords: (words: Word[]) => Word[];
+  getReviewTestWords: (words: Word[]) => Word[];
   getTodayStudyWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean; audioCards: boolean };
   totalCells: number;
@@ -102,6 +125,7 @@ const SprintContext = createContext<SprintContextType>({
   canSkipCurrentSession: () => false,
   getStudyWords: () => [],
   getTestWords: () => [],
+  getReviewTestWords: () => [],
   getTodayStudyWords: () => [],
   getCellPhaseProgress: () => ({ text: false, audio: false, audioCards: false }),
   totalCells: DEFAULT_TOTAL_CELLS,
@@ -175,9 +199,13 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       const dynTotal = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
       const nextPosition = sprintData.currentPosition + 1;
       const newPosition = nextPosition >= dynTotal ? 1 : nextPosition;
+      const isReviewSession = sessionType === "review";
       const newSpecialStamps = isSpecial
         ? [...sprintData.specialStamps, sprintData.currentPosition]
         : sprintData.specialStamps;
+      const newReviewStamps = isSpecial && isReviewSession
+        ? [...(sprintData.reviewStamps ?? []), sprintData.currentPosition]
+        : (sprintData.reviewStamps ?? []);
 
       const newCompletedDates = {
         ...(sprintData.completedDates ?? {}),
@@ -191,6 +219,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         lastStudyDate: today,
         streakCount: newStreak,
         specialStamps: newSpecialStamps,
+        reviewStamps: newReviewStamps,
         setupDate: sprintData.setupDate ?? today,
         completedDates: newCompletedDates,
       };
@@ -314,6 +343,38 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
+  // レビューテストセル用: 直前200語のうち苦手語から最大50語をランダム選択
+  const getReviewTestWords = useCallback(
+    (words: Word[]): Word[] => {
+      if (!sprintData || words.length === 0) return [];
+      const total = words.length;
+      const studied = sprintData.studiedWordCount;
+      const batchSize = Math.min(200, studied);
+      if (batchSize === 0) return [];
+
+      // Get last batchSize studied words (oldest first)
+      const batchWords: Word[] = [];
+      for (let i = batchSize - 1; i >= 0; i--) {
+        const idx = ((studied - 1 - i) % total + total) % total;
+        batchWords.push(words[idx]);
+      }
+
+      // Filter for 苦手 words (any unmemorized marker)
+      const difficult = batchWords.filter(
+        (w) =>
+          (w.textUnmemorizedCount || 0) > 0 ||
+          (w.audioUnmemorizedCount || 0) > 0 ||
+          !w.textMemorized ||
+          !w.audioMemorized
+      );
+
+      // Use difficult if ≥10, otherwise fall back to all batch words
+      const pool = difficult.length >= 10 ? difficult : batchWords;
+      return shuffleArray(pool).slice(0, 50);
+    },
+    [sprintData]
+  );
+
   // テストセルの直前50語を取得し、苦手単語を優先して返す
   const getTestWords = useCallback(
     (words: Word[]): Word[] => {
@@ -402,6 +463,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         canSkipCurrentSession,
         getStudyWords,
         getTestWords,
+        getReviewTestWords,
         getTodayStudyWords,
         getCellPhaseProgress,
         totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,

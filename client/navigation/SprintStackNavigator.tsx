@@ -6,6 +6,7 @@ import SprintScreen from "@/screens/SprintScreen";
 import SprintSetupScreen from "@/screens/SprintSetupScreen";
 import SprintStudySessionScreen from "@/screens/SprintStudySessionScreen";
 import SprintTestScreen from "@/screens/SprintTestScreen";
+import SprintReviewTestScreen from "@/screens/SprintReviewTestScreen";
 import SprintAudioPlaybackScreen from "@/screens/SprintAudioPlaybackScreen";
 import SprintStampGalleryScreen from "@/screens/SprintStampGalleryScreen";
 
@@ -14,6 +15,7 @@ export type SprintStackParamList = {
   SprintSetup: { isChange?: boolean } | undefined;
   SprintStudySession: { mode: "study" | "text-only" | "audio-only" | "audio-cards-only"; cellIndex: number };
   SprintTest: undefined;
+  SprintReviewTest: undefined;
   SprintAudioPlayback: { cellIndex: number };
   SprintStampGallery: undefined;
 };
@@ -49,6 +51,11 @@ export default function SprintStackNavigator() {
         name="SprintTest"
         component={SprintTestScreen}
         options={{ headerTitle: "週次テスト" }}
+      />
+      <Stack.Screen
+        name="SprintReviewTest"
+        component={SprintReviewTestScreen}
+        options={{ headerTitle: "苦手語復習テスト" }}
       />
       <Stack.Screen
         name="SprintAudioPlayback"

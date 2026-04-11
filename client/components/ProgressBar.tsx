@@ -12,6 +12,7 @@ import { BorderRadius, Colors } from "@/constants/theme";
 interface ProgressBarProps {
   progress: number;
   height?: number;
+  color?: string;
 }
 
 const springConfig: WithSpringConfig = {
@@ -20,7 +21,7 @@ const springConfig: WithSpringConfig = {
   stiffness: 100,
 };
 
-export function ProgressBar({ progress, height = 8 }: ProgressBarProps) {
+export function ProgressBar({ progress, height = 8, color }: ProgressBarProps) {
   const { theme } = useTheme();
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -37,7 +38,7 @@ export function ProgressBar({ progress, height = 8 }: ProgressBarProps) {
       <Animated.View
         style={[
           styles.fill,
-          { backgroundColor: Colors.light.primary, height },
+          { backgroundColor: color ?? Colors.light.primary, height },
           animatedStyle,
         ]}
       />
