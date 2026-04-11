@@ -61,4 +61,5 @@ export interface SprintData {
   cellPhaseProgress?: Record<number, { text: boolean; audio: boolean; audioCards: boolean }>;
   totalCells?: number;
   reviewStamps?: number[];
+  schemaVersion?: number;
 }

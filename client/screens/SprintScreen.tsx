@@ -185,34 +185,34 @@ function formatShortDate(dateStr: string): string {
   return `${parseInt(month)}/${parseInt(day)}`;
 }
 
-function getTestNumber(cellIndex: number, wordsPerDay: number): number {
+function getTestNumber(cellIndex: number, wordsPerDay: number, useReview = true): number {
   let count = 0;
   for (let i = 1; i <= cellIndex; i++) {
-    if (getSessionTypeFn(i, wordsPerDay) === "test") count++;
+    if (getSessionTypeFn(i, wordsPerDay, useReview) === "test") count++;
   }
   return count;
 }
 
-function getPreviousTestCell(cellIndex: number, wordsPerDay: number): number | null {
+function getPreviousTestCell(cellIndex: number, wordsPerDay: number, useReview = true): number | null {
   for (let i = cellIndex - 1; i >= 1; i--) {
-    if (getSessionTypeFn(i, wordsPerDay) === "test") return i;
+    if (getSessionTypeFn(i, wordsPerDay, useReview) === "test") return i;
   }
   return null;
 }
 
-function getReviewNumber(cellIndex: number, wordsPerDay: number): number {
+function getReviewNumber(cellIndex: number, wordsPerDay: number, useReview = true): number {
   let count = 0;
   for (let i = 1; i <= cellIndex; i++) {
-    if (getSessionTypeFn(i, wordsPerDay) === "review") count++;
+    if (getSessionTypeFn(i, wordsPerDay, useReview) === "review") count++;
   }
   return count;
 }
 
 // Count study sessions before position → used to compute word range for premium check
-function getStudyWordOffset(position: number, wordsPerDay: number): number {
+function getStudyWordOffset(position: number, wordsPerDay: number, useReview = true): number {
   let count = 0;
   for (let i = 1; i < position; i++) {
-    if (getSessionTypeFn(i, wordsPerDay) === "study") count++;
+    if (getSessionTypeFn(i, wordsPerDay, useReview) === "study") count++;
   }
   return count;
 }
@@ -631,7 +631,7 @@ export default function SprintScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel } = useSprint();
+  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel, resetSprint } = useSprint();
   const { isPremium } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
@@ -670,11 +670,12 @@ export default function SprintScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const sessionType = getSessionType(index);
     const wPD = sprintData.wordsPerDay ?? 10;
+    const useReview = (sprintData.schemaVersion ?? 1) >= 2;
     const sStamps = sprintData.specialStamps ?? [];
 
     if (sessionType === "test") {
-      const testNum = getTestNumber(index, wPD);
-      const prevTestCell = getPreviousTestCell(index, wPD);
+      const testNum = getTestNumber(index, wPD, useReview);
+      const prevTestCell = getPreviousTestCell(index, wPD, useReview);
       const cDates = sprintData.completedDates ?? {};
 
       // Test is truly "cleared" only if it's in specialStamps (passed ≥85%)
@@ -696,7 +697,7 @@ export default function SprintScreen() {
       }
       navigation.navigate("SprintTest");
     } else if (sessionType === "review") {
-      const reviewNum = getReviewNumber(index, wPD);
+      const reviewNum = getReviewNumber(index, wPD, useReview);
       const cDates = sprintData.completedDates ?? {};
 
       if (sStamps.includes(index)) {
@@ -710,7 +711,7 @@ export default function SprintScreen() {
       navigation.navigate("SprintReviewTest");
     } else {
       // Premium check for study cells: words 51+ require premium (except HSK1)
-      const studyOffset = getStudyWordOffset(index, wPD);
+      const studyOffset = getStudyWordOffset(index, wPD, useReview);
       if (studyOffset * wPD >= 50 && currentLevel !== 1 && !isPremium) {
         (navigation as any).navigate("Paywall");
         return;
@@ -777,6 +778,31 @@ export default function SprintScreen() {
       <ThemedView style={styles.container}>
         <View style={[styles.centered, { paddingTop: headerHeight + Spacing.xl }]}>
           <ThemedText style={{ color: theme.textSecondary }}>読み込み中...</ThemedText>
+        </View>
+      </ThemedView>
+    );
+  }
+
+  // Old-schema (V1) data: prompt user to reset so V2 review feature works correctly
+  if (sprintData?.hasSetup && (sprintData.schemaVersion ?? 1) < 2) {
+    return (
+      <ThemedView style={styles.container}>
+        <View style={[styles.centered, { paddingTop: headerHeight + Spacing.xl, paddingHorizontal: Spacing["2xl"] }]}>
+          <Feather name="refresh-cw" size={48} color={theme.primary} style={{ marginBottom: Spacing.xl }} />
+          <ThemedText style={[styles.sectionTitle, { textAlign: "center", marginBottom: Spacing.lg }]}>
+            スプリントのアップデート
+          </ThemedText>
+          <ThemedText style={[styles.subtitleText, { textAlign: "center", marginBottom: Spacing["2xl"], color: theme.textSecondary }]}>
+            200単語ごとの苦手語復習テスト機能が追加されました。この機能を利用するには、現在のスプリントをリセットして再設定する必要があります。
+          </ThemedText>
+          <Pressable
+            style={[styles.startButton, { backgroundColor: theme.primary }]}
+            onPress={async () => {
+              await resetSprint();
+            }}
+          >
+            <ThemedText style={[styles.startButtonText, { color: "#fff" }]}>リセットして再設定する</ThemedText>
+          </Pressable>
         </View>
       </ThemedView>
     );
@@ -850,6 +876,7 @@ export default function SprintScreen() {
                   const isCurrent = isSetup && cellIndex === currentPosition;
                   const cellSessionType = getSessionType(cellIndex);
                   const wPD = sprintData?.wordsPerDay ?? 10;
+                  const useReview = (sprintData?.schemaVersion ?? 1) >= 2;
                   // Test / review cells: "completed" only when passed (in specialStamps)
                   // Study cells: completed when in completedDates
                   const isCompleted = isSetup && !isCurrent && (
@@ -858,12 +885,12 @@ export default function SprintScreen() {
                       : completedDates[cellIndex] != null
                   );
                   const isSpecialStamp = specialStamps.includes(cellIndex);
-                  const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD) : null;
+                  const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD, useReview) : null;
                   // Number badge: test number for "test" cells, review number for "review" cells
                   const cellTestNum = cellSessionType === "test"
-                    ? getTestNumber(cellIndex, wPD)
+                    ? getTestNumber(cellIndex, wPD, useReview)
                     : cellSessionType === "review"
-                    ? getReviewNumber(cellIndex, wPD)
+                    ? getReviewNumber(cellIndex, wPD, useReview)
                     : undefined;
                   // Lock test cells that can't be attempted yet (sequential lock)
                   const testIsLocked = cellSessionType === "test" && !isCompleted && (
@@ -876,7 +903,7 @@ export default function SprintScreen() {
                   const studyIsPremiumLocked = cellSessionType === "study" &&
                     currentLevel !== 1 &&
                     !isPremium &&
-                    (getStudyWordOffset(cellIndex, wPD) * wPD >= 50);
+                    (getStudyWordOffset(cellIndex, wPD, useReview) * wPD >= 50);
                   return (
                     <Cell
                       key={colIdx}
