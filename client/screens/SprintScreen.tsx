@@ -1071,4 +1071,11 @@ const styles = StyleSheet.create({
   modalOptionText: { flex: 1 },
   modalOptionTitle: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: 2 },
   modalOptionDesc: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  sectionTitle: { fontSize: 20, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  subtitleText: { fontSize: 14, fontFamily: "Nunito_400Regular", lineHeight: 22 },
+  startButton: {
+    paddingVertical: Spacing.lg, paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.md, alignItems: "center", width: "100%",
+  },
+  startButtonText: { fontSize: 16, fontWeight: "700", fontFamily: "Nunito_700Bold" },
 });

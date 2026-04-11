@@ -391,10 +391,16 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       const shuffledDifficult = shuffleArray(difficult);
       if (shuffledDifficult.length >= 50) return shuffledDifficult.slice(0, 50);
 
-      // Backfill from unlearned words (words outside the last 200 studied)
-      const batchIdSet = new Set(batchWords.map((w) => w.id));
-      const unlearned = shuffleArray(words.filter((w) => !batchIdSet.has(w.id)));
-      const backfill = unlearned.slice(0, 50 - shuffledDifficult.length);
+      // Backfill from truly unstudied words:
+      // studied words occupy indices [(studied - studiedCount) .. (studied - 1)] modulo total.
+      // Unstudied words are everything outside that range (start from `studied` going forward).
+      const unstudied: Word[] = [];
+      const unstudiedCount = total - studied; // may be 0 if all words studied
+      for (let i = 0; i < unstudiedCount; i++) {
+        const idx = (studied + i) % total;
+        unstudied.push(words[idx]);
+      }
+      const backfill = shuffleArray(unstudied).slice(0, 50 - shuffledDifficult.length);
       return [...shuffledDifficult, ...backfill];
     },
     [sprintData]
