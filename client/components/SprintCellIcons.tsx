@@ -48,22 +48,33 @@ export function FlowerIcon({ size, color = "#E8956F" }: IconProps) {
 // Test cell monster
 export function MonsterIcon({ size, color = "#7C3AED" }: IconProps) {
   const s = size;
-  const skinColor = "#A78BFA";
   return (
     <Svg width={s} height={s} viewBox="0 0 32 32">
-      <Ellipse cx="16" cy="17" rx="12" ry="11" fill={color} />
-      <Rect x="4" y="6" width="24" height="14" rx="8" fill={color} />
-      <Path d="M4 16 L4 22 L7 19 L10 22 L13 19 L16 22 L19 19 L22 22 L25 19 L28 22 L28 16 Z" fill={color} />
-      <Circle cx="11" cy="11" r="4" fill="white" />
-      <Circle cx="21" cy="11" r="4" fill="white" />
-      <Circle cx="12" cy="12" r="2.5" fill="#1F1F2E" />
-      <Circle cx="22" cy="12" r="2.5" fill="#1F1F2E" />
-      <Circle cx="12.8" cy="11.2" r="0.9" fill="white" />
-      <Circle cx="22.8" cy="11.2" r="0.9" fill="white" />
-      <Path d="M9 19 L11 16 L13 19 L15 16 L17 19 L19 16 L21 19 L23 16" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <Polygon points="6,6 8,2 10,6" fill={skinColor} />
-      <Polygon points="14,4 16,0 18,4" fill={skinColor} />
-      <Polygon points="22,6 24,2 26,6" fill={skinColor} />
+      {/* Antennae */}
+      <Rect x="8" y="2" width="3" height="5" rx="1.5" fill={color} />
+      <Rect x="21" y="2" width="3" height="5" rx="1.5" fill={color} />
+      {/* Body */}
+      <Rect x="4" y="7" width="24" height="14" rx="3" fill={color} />
+      {/* Eyes (white square blocks) */}
+      <Rect x="8" y="11" width="5" height="5" rx="1" fill="white" />
+      <Rect x="19" y="11" width="5" height="5" rx="1" fill="white" />
+      {/* Pupils */}
+      <Rect x="10" y="12" width="2.5" height="3" rx="0.5" fill={color} />
+      <Rect x="21" y="12" width="2.5" height="3" rx="0.5" fill={color} />
+      {/* Mouth — pixel style */}
+      <Rect x="10" y="18" width="2" height="2" rx="0.3" fill="white" opacity="0.9" />
+      <Rect x="15" y="18" width="2" height="2" rx="0.3" fill="white" opacity="0.9" />
+      <Rect x="20" y="18" width="2" height="2" rx="0.3" fill="white" opacity="0.9" />
+      {/* Side claws */}
+      <Rect x="0" y="9" width="4" height="3" rx="1" fill={color} />
+      <Rect x="28" y="9" width="4" height="3" rx="1" fill={color} />
+      <Rect x="0" y="14" width="4" height="3" rx="1" fill={color} />
+      <Rect x="28" y="14" width="4" height="3" rx="1" fill={color} />
+      {/* Bottom legs (4 pairs — space invader style) */}
+      <Rect x="6" y="21" width="3" height="5" rx="1" fill={color} />
+      <Rect x="11" y="21" width="3" height="4" rx="1" fill={color} />
+      <Rect x="18" y="21" width="3" height="4" rx="1" fill={color} />
+      <Rect x="23" y="21" width="3" height="5" rx="1" fill={color} />
     </Svg>
   );
 }
