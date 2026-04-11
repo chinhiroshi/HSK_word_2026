@@ -220,3 +220,119 @@ export function GoldCloudIcon({ size, color = "#FFD700" }: IconProps) {
     </Svg>
   );
 }
+
+// HSK6: 都市 — city skyline (study cell)
+export function BuildingIcon({ size, color = "#546E7A" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.75}>
+      {/* Ground */}
+      <Rect x="1" y="29" width="30" height="2" rx="1" fill={color} opacity="0.5" />
+      {/* Tall center building */}
+      <Rect x="12" y="6" width="8" height="23" rx="1" fill={color} />
+      <Rect x="13" y="8" width="2" height="2" rx="0.5" fill="white" opacity="0.5" />
+      <Rect x="17" y="8" width="2" height="2" rx="0.5" fill="white" opacity="0.5" />
+      <Rect x="13" y="12" width="2" height="2" rx="0.5" fill="white" opacity="0.5" />
+      <Rect x="17" y="12" width="2" height="2" rx="0.5" fill="white" opacity="0.5" />
+      <Rect x="13" y="16" width="2" height="2" rx="0.5" fill="white" opacity="0.5" />
+      <Rect x="17" y="16" width="2" height="2" rx="0.5" fill="white" opacity="0.5" />
+      {/* Antenna */}
+      <Rect x="15.5" y="3" width="1" height="4" rx="0.5" fill={color} />
+      {/* Left building */}
+      <Rect x="3" y="14" width="7" height="15" rx="1" fill={color} opacity="0.85" />
+      <Rect x="4.5" y="16" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="7" y="16" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="4.5" y="20" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="7" y="20" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      {/* Right building */}
+      <Rect x="22" y="11" width="7" height="18" rx="1" fill={color} opacity="0.85" />
+      <Rect x="23" y="13" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="25.5" y="13" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="23" y="17" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="25.5" y="17" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="23" y="21" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="25.5" y="21" width="1.5" height="2" rx="0.3" fill="white" opacity="0.4" />
+    </Svg>
+  );
+}
+
+// HSK6: 都市 — small building deco variant
+export function SmallBuildingIcon({ size, color = "#546E7A" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.6}>
+      <Rect x="2" y="29" width="28" height="2" rx="1" fill={color} opacity="0.4" />
+      <Rect x="6" y="16" width="6" height="13" rx="1" fill={color} opacity="0.8" />
+      <Rect x="7" y="18" width="1.5" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="9.5" y="18" width="1.5" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="13" y="9" width="7" height="20" rx="1" fill={color} />
+      <Rect x="14" y="11" width="2" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="17" y="11" width="2" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="14" y="15" width="2" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="17" y="15" width="2" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="14" y="19" width="2" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="17" y="19" width="2" height="2" rx="0.3" fill="white" opacity="0.5" />
+      <Rect x="14.5" y="6" width="1" height="4" rx="0.5" fill={color} />
+      <Rect x="21" y="18" width="5" height="11" rx="1" fill={color} opacity="0.7" />
+      <Rect x="22" y="20" width="1.2" height="1.5" rx="0.3" fill="white" opacity="0.4" />
+      <Rect x="24" y="20" width="1.2" height="1.5" rx="0.3" fill="white" opacity="0.4" />
+    </Svg>
+  );
+}
+
+// HSK2: 海 — sun over water
+export function SunIcon({ size, color = "#FFB300" }: IconProps) {
+  const s = size;
+  const rays = [0, 45, 90, 135, 180, 225, 270, 315];
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.65}>
+      {rays.map((angle, i) => {
+        const rad = (angle * Math.PI) / 180;
+        const x1 = 16 + Math.cos(rad) * 8;
+        const y1 = 16 + Math.sin(rad) * 8;
+        const x2 = 16 + Math.cos(rad) * 13;
+        const y2 = 16 + Math.sin(rad) * 13;
+        return <Line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={color} strokeWidth="2" strokeLinecap="round" />;
+      })}
+      <Circle cx="16" cy="16" r="7" fill={color} />
+      <Circle cx="16" cy="16" r="5" fill="#FFD54F" />
+    </Svg>
+  );
+}
+
+// HSK3: 森林 — mushroom
+export function MushroomIcon({ size, color = "#E53935" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.65}>
+      <Rect x="13" y="18" width="6" height="9" rx="2" fill="#D7CCC8" />
+      <Path d="M4 18 Q4 6 16 6 Q28 6 28 18 Z" fill={color} />
+      <Circle cx="11" cy="13" r="2.5" fill="white" opacity="0.7" />
+      <Circle cx="19" cy="10" r="2" fill="white" opacity="0.7" />
+      <Circle cx="22" cy="15" r="1.8" fill="white" opacity="0.7" />
+    </Svg>
+  );
+}
+
+// HSK4: 熱帯 — tropical flower
+export function TropicalFlowerIcon({ size, color = "#E91E63" }: IconProps) {
+  const s = size;
+  const angles = [0, 72, 144, 216, 288];
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32">
+      <G>
+        {angles.map((angle, i) => {
+          const rad = (angle * Math.PI) / 180;
+          const cx = 16 + Math.cos(rad) * 8;
+          const cy = 16 + Math.sin(rad) * 8;
+          return (
+            <Ellipse key={i} cx={cx} cy={cy} rx="5" ry="3" fill={color}
+              opacity="0.9" transform={`rotate(${angle} ${cx} ${cy})`} />
+          );
+        })}
+      </G>
+      <Circle cx="16" cy="16" r="5" fill="#FFEB3B" />
+      <Circle cx="16" cy="16" r="2.5" fill="#FF8F00" />
+    </Svg>
+  );
+}

@@ -27,8 +27,9 @@ import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import {
-  PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon,
-  WaveIcon, FishIcon, PalmIcon, SnowflakeIcon, SnowyMountainIcon, LanternIcon, GoldCloudIcon,
+  PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon, FlowerIcon,
+  WaveIcon, FishIcon, PalmIcon, SnowflakeIcon, SnowyMountainIcon,
+  BuildingIcon, SmallBuildingIcon, SunIcon, MushroomIcon, TropicalFlowerIcon,
 } from "@/components/SprintCellIcons";
 import { HskLevel } from "@/types";
 
@@ -58,7 +59,7 @@ const LEVEL_THEMES: Record<number, LevelTheme> = {
   3: { name: "森林",  studyColor: "#2E7D32", studyBg: "#2E7D3214", studyBorder: "#2E7D3245", decoColor: "#388E3C", decoBg: "#E6F4E6" },
   4: { name: "熱帯",  studyColor: "#E65100", studyBg: "#E6510014", studyBorder: "#E6510045", decoColor: "#FF8C42", decoBg: "#FFF3E0" },
   5: { name: "雪山",  studyColor: "#455A64", studyBg: "#455A6414", studyBorder: "#455A6445", decoColor: "#78909C", decoBg: "#ECEFF1" },
-  6: { name: "中国",  studyColor: "#C62828", studyBg: "#C6282814", studyBorder: "#C6282845", decoColor: "#D4A017", decoBg: "#FFF8E1" },
+  6: { name: "都市",  studyColor: "#37474F", studyBg: "#37474F14", studyBorder: "#37474F45", decoColor: "#546E7A", decoBg: "#ECEFF1" },
 };
 
 function getLevelTheme(level: number): LevelTheme {
@@ -66,41 +67,44 @@ function getLevelTheme(level: number): LevelTheme {
 }
 
 // ─── Cell deco icon selection per level ────────────────────────────────────
-type DecoVariant = "a" | "b" | "c";
-function getDecoVariant(row: number, col: number): DecoVariant {
-  const hash = (row * 7 + col * 3) % 3;
-  return hash === 0 ? "a" : hash === 1 ? "b" : "c";
+// 5 variants: 0,2,4 = level icons; 1,3 = cloud (≈40% cloud coverage)
+function getDecoVariant(row: number, col: number): number {
+  return (row * 17 + col * 11 + row * col * 3) % 5;
 }
 
-function renderDecoIcon(variant: DecoVariant, level: number, size: number) {
-  const theme = getLevelTheme(level);
+function renderDecoIcon(variant: number, level: number, size: number) {
+  const lv = getLevelTheme(level);
+  // variant 1 and 3 → always cloud (tinted per level)
+  if (variant === 1) return <CloudIcon size={size} color={lv.decoColor} />;
+  if (variant === 3) return <CloudIcon size={size} color={lv.decoColor} />;
+
   switch (level) {
     case 1: // 草原
-      return variant === "a" ? <TreeIcon size={size} color={theme.decoColor} />
-           : variant === "b" ? <CloudIcon size={size} color="#7BB3D4" />
-           : <PlantIcon size={size} color={theme.decoColor} />;
+      return variant === 0 ? <TreeIcon size={size} color={lv.decoColor} />
+           : variant === 2 ? <FlowerIcon size={size} color="#C8A45A" />
+           : <PlantIcon size={size} color={lv.decoColor} />;
     case 2: // 海
-      return variant === "a" ? <WaveIcon size={size} color={theme.decoColor} />
-           : variant === "b" ? <CloudIcon size={size} color="#90CAF9" />
-           : <WaveIcon size={size} color="#64B5F6" />;
+      return variant === 0 ? <WaveIcon size={size} color={lv.decoColor} />
+           : variant === 2 ? <SunIcon size={size} color="#FFB300" />
+           : <FishIcon size={size} color="#42A5F5" />;
     case 3: // 森林
-      return variant === "a" ? <TreeIcon size={size} color="#2E7D32" />
-           : variant === "b" ? <TreeIcon size={size} color="#388E3C" />
-           : <CloudIcon size={size} color="#A5D6A7" />;
+      return variant === 0 ? <TreeIcon size={size} color="#2E7D32" />
+           : variant === 2 ? <MushroomIcon size={size} color="#C62828" />
+           : <TreeIcon size={size} color="#388E3C" />;
     case 4: // 熱帯
-      return variant === "a" ? <PalmIcon size={size} color={theme.decoColor} />
-           : variant === "b" ? <PlantIcon size={size} color="#66BB6A" />
-           : <CloudIcon size={size} color="#FFCC80" />;
+      return variant === 0 ? <PalmIcon size={size} color={lv.decoColor} />
+           : variant === 2 ? <TropicalFlowerIcon size={size} color="#E91E63" />
+           : <PlantIcon size={size} color="#66BB6A" />;
     case 5: // 雪山
-      return variant === "a" ? <SnowyMountainIcon size={size} color={theme.decoColor} />
-           : variant === "b" ? <SnowflakeIcon size={size} color="#90CAF9" />
-           : <CloudIcon size={size} color="#B0BEC5" />;
-    case 6: // 中国
-      return variant === "a" ? <LanternIcon size={size} color="#E53935" />
-           : variant === "b" ? <GoldCloudIcon size={size} color="#FFD700" />
-           : <LanternIcon size={size} color="#C62828" />;
+      return variant === 0 ? <SnowyMountainIcon size={size} color={lv.decoColor} />
+           : variant === 2 ? <SnowflakeIcon size={size} color="#90CAF9" />
+           : <MountainIcon size={size} color="#B0BEC5" />;
+    case 6: // 都市
+      return variant === 0 ? <BuildingIcon size={size} color="#546E7A" />
+           : variant === 2 ? <SmallBuildingIcon size={size} color="#607D8B" />
+           : <BuildingIcon size={size} color="#455A64" />;
     default:
-      return <TreeIcon size={size} color={theme.decoColor} />;
+      return <TreeIcon size={size} color={lv.decoColor} />;
   }
 }
 
@@ -112,7 +116,7 @@ function renderStudyIcon(level: number, size: number, color: string) {
     case 3: return <TreeIcon size={size} color={color} />;
     case 4: return <PalmIcon size={size} color={color} />;
     case 5: return <SnowflakeIcon size={size} color={color} />;
-    case 6: return <LanternIcon size={size} color={color} />;
+    case 6: return <BuildingIcon size={size} color={color} />;
     default: return <PlantIcon size={size} color={color} />;
   }
 }
@@ -718,7 +722,7 @@ export default function SprintScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingTop: headerHeight + Spacing.lg, paddingBottom: tabBarHeight + Spacing["3xl"] },
+          { paddingTop: headerHeight + Spacing.xl, paddingBottom: tabBarHeight + Spacing["3xl"] },
         ]}
       >
         <View style={styles.topBar}>
