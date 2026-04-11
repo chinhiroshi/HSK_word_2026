@@ -4,40 +4,13 @@ import { getSprintData, saveSprintData, resetSprintData, getSelectedHskLevel } f
 
 const DEFAULT_TOTAL_CELLS = 29;
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-// V1 (original, no review cells): N study + 1 test per cycle
-function getSessionTypeV1(position: number, wordsPerDay: number = 10): SprintSessionType {
+// Dynamic cell type: position 0 = flag, then cycles of N study cells + 1 test.
+// N = ceil(50 / wordsPerDay) — i.e., test appears after every 50 words studied.
+export function getSessionType(position: number, wordsPerDay: number = 10): SprintSessionType {
   if (position <= 0) return "flag";
   const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
-  const cycleLen = N + 1;
+  const cycleLen = N + 1; // N study + 1 test
   const posInCycle = (position - 1) % cycleLen;
-  return posInCycle < N ? "study" : "test";
-}
-
-// V2 (schemaVersion ≥ 2): macro-cycles of [ (N study + 1 test) × 4 ] + 1 review
-//   N = ceil(50 / wordsPerDay)  →  each regular cycle covers 50 words
-//   4 regular cycles = 200 words  →  then 1 review test
-//   useReview=false falls back to V1 logic for backward compatibility
-export function getSessionType(position: number, wordsPerDay: number = 10, useReview = true): SprintSessionType {
-  if (!useReview) return getSessionTypeV1(position, wordsPerDay);
-  if (position <= 0) return "flag";
-  const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
-  const regularCycleLen = N + 1;               // N study + 1 test
-  const macroCycleLen = 4 * regularCycleLen + 1; // 4 regular cycles + 1 review
-
-  const p = position - 1; // 0-indexed
-  const posInMacro = p % macroCycleLen;
-
-  if (posInMacro === macroCycleLen - 1) return "review";
-  const posInCycle = posInMacro % regularCycleLen;
   return posInCycle < N ? "study" : "test";
 }
 
@@ -45,18 +18,11 @@ function calcWordsPerDay(minutes: number): number {
   return Math.max(5, Math.floor(minutes * (2 / 3)));
 }
 
-// calcTotalCells (V2): insert a review cell only after each complete group of 4 regular cycles
-// (i.e., only when studying ≥200 words). Remaining regular cycles at the end get no review.
 function calcTotalCells(totalWords: number, wordsPerDay: number): number {
   const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
-  const regularCycleLen = N + 1;
-  const macroCycleLen = 4 * regularCycleLen + 1;
   const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
   const fullCycles = Math.max(1, Math.ceil(studySessionsNeeded / N));
-  // Only complete groups of 4 cycles get a review cell — use floor (not ceil/max)
-  const fullMacroCycles = Math.floor(fullCycles / 4);
-  const remainingCycles = fullCycles % 4;
-  return 1 + fullMacroCycles * macroCycleLen + remainingCycles * regularCycleLen;
+  return 1 + fullCycles * (N + 1); // flag + (N study + 1 test) × cycles
 }
 
 function getTodayString(): string {
@@ -74,10 +40,10 @@ function getSessionWords(words: Word[], studiedWordCount: number, count: number)
 }
 
 // Count how many STUDY cells come before `position` to derive that cell's word offset.
-function getStudyWordOffsetForCell(position: number, wordsPerDay: number, useReview = true): number {
+function getStudyWordOffsetForCell(position: number, wordsPerDay: number): number {
   let count = 0;
   for (let i = 1; i < position; i++) {
-    if (getSessionType(i, wordsPerDay, useReview) === "study") count++;
+    if (getSessionType(i, wordsPerDay) === "study") count++;
   }
   return count;
 }
@@ -88,7 +54,6 @@ function canSkipSession(
   sessionType: SprintSessionType
 ): boolean {
   if (sessionType === "flag") return false;
-  if (sessionType === "review") return false;
   if (sessionType === "test") {
     const unmemorized = words.filter((w) => !w.audioMemorized);
     return unmemorized.length === 0;
@@ -118,7 +83,6 @@ interface SprintContextType {
   canSkipCurrentSession: (words: Word[]) => boolean;
   getStudyWords: (words: Word[], cellIndex?: number) => Word[];
   getTestWords: (words: Word[]) => Word[];
-  getReviewTestWords: (words: Word[]) => Word[];
   getTodayStudyWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean; audioCards: boolean };
   totalCells: number;
@@ -138,7 +102,6 @@ const SprintContext = createContext<SprintContextType>({
   canSkipCurrentSession: () => false,
   getStudyWords: () => [],
   getTestWords: () => [],
-  getReviewTestWords: () => [],
   getTodayStudyWords: () => [],
   getCellPhaseProgress: () => ({ text: false, audio: false, audioCards: false }),
   totalCells: DEFAULT_TOTAL_CELLS,
@@ -178,7 +141,6 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       setupDate: today,
       completedDates: {},
       totalCells,
-      schemaVersion: 2,
     };
     await saveSprintData(newData, currentLevel);
     setSprintData(newData);
@@ -204,8 +166,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         newStreak = 1;
       }
 
-      const useReview = (sprintData.schemaVersion ?? 1) >= 2;
-      const sessionType = getSessionType(sprintData.currentPosition, sprintData.wordsPerDay, useReview);
+      const sessionType = getSessionType(sprintData.currentPosition, sprintData.wordsPerDay);
       const isStudySession = sessionType === "study";
       const newStudiedWordCount = isStudySession
         ? sprintData.studiedWordCount + sprintData.wordsPerDay
@@ -214,13 +175,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       const dynTotal = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
       const nextPosition = sprintData.currentPosition + 1;
       const newPosition = nextPosition >= dynTotal ? 1 : nextPosition;
-      const isReviewSession = sessionType === "review";
       const newSpecialStamps = isSpecial
         ? [...sprintData.specialStamps, sprintData.currentPosition]
         : sprintData.specialStamps;
-      const newReviewStamps = isSpecial && isReviewSession
-        ? [...(sprintData.reviewStamps ?? []), sprintData.currentPosition]
-        : (sprintData.reviewStamps ?? []);
 
       const newCompletedDates = {
         ...(sprintData.completedDates ?? {}),
@@ -234,7 +191,6 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         lastStudyDate: today,
         streakCount: newStreak,
         specialStamps: newSpecialStamps,
-        reviewStamps: newReviewStamps,
         setupDate: sprintData.setupDate ?? today,
         completedDates: newCompletedDates,
       };
@@ -284,8 +240,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         };
 
         const isCurrentCell = position === sprintData.currentPosition;
-        const useReview2 = (sprintData.schemaVersion ?? 1) >= 2;
-        const sessionType = getSessionType(position, sprintData.wordsPerDay, useReview2);
+        const sessionType = getSessionType(position, sprintData.wordsPerDay);
         const newStudiedWordCount =
           isCurrentCell && sessionType === "study"
             ? sprintData.studiedWordCount + sprintData.wordsPerDay
@@ -332,8 +287,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
 
   const boundGetSessionType = useCallback(
     (position: number): SprintSessionType => {
-      const useReview = (sprintData?.schemaVersion ?? 1) >= 2;
-      return getSessionType(position, sprintData?.wordsPerDay ?? 10, useReview);
+      return getSessionType(position, sprintData?.wordsPerDay ?? 10);
     },
     [sprintData]
   );
@@ -341,8 +295,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   const canSkipCurrentSession = useCallback(
     (words: Word[]) => {
       if (!sprintData) return false;
-      const useReview = (sprintData.schemaVersion ?? 1) >= 2;
-      const sessionType = getSessionType(sprintData.currentPosition, sprintData.wordsPerDay, useReview);
+      const sessionType = getSessionType(sprintData.currentPosition, sprintData.wordsPerDay);
       return canSkipSession(words, sprintData, sessionType);
     },
     [sprintData]
@@ -352,56 +305,11 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     (words: Word[], cellIndex?: number) => {
       if (!sprintData) return [];
       if (cellIndex !== undefined) {
-        const useReview = (sprintData.schemaVersion ?? 1) >= 2;
-        const studyIndex = getStudyWordOffsetForCell(cellIndex, sprintData.wordsPerDay, useReview);
+        const studyIndex = getStudyWordOffsetForCell(cellIndex, sprintData.wordsPerDay);
         const wordOffset = (studyIndex * sprintData.wordsPerDay) % Math.max(1, words.length);
         return getSessionWords(words, wordOffset, sprintData.wordsPerDay);
       }
       return getSessionWords(words, sprintData.studiedWordCount, sprintData.wordsPerDay);
-    },
-    [sprintData]
-  );
-
-  // レビューテストセル用: 直前200語のうち苦手語から最大50語をランダム選択
-  const getReviewTestWords = useCallback(
-    (words: Word[]): Word[] => {
-      if (!sprintData || words.length === 0) return [];
-      const total = words.length;
-      const studied = sprintData.studiedWordCount;
-      const batchSize = Math.min(200, studied);
-      if (batchSize === 0) return [];
-
-      // Get last batchSize studied words (oldest first)
-      const batchWords: Word[] = [];
-      for (let i = batchSize - 1; i >= 0; i--) {
-        const idx = ((studied - 1 - i) % total + total) % total;
-        batchWords.push(words[idx]);
-      }
-
-      // Filter for 苦手 words (has unmemorized counter or not memorized)
-      const difficult = batchWords.filter(
-        (w) =>
-          (w.textUnmemorizedCount || 0) > 0 ||
-          (w.audioUnmemorizedCount || 0) > 0 ||
-          !w.textMemorized ||
-          !w.audioMemorized
-      );
-
-      // Shuffle all difficult words; if ≥50 pick 50
-      const shuffledDifficult = shuffleArray(difficult);
-      if (shuffledDifficult.length >= 50) return shuffledDifficult.slice(0, 50);
-
-      // Backfill from truly unstudied words:
-      // studied words occupy indices [(studied - studiedCount) .. (studied - 1)] modulo total.
-      // Unstudied words are everything outside that range (start from `studied` going forward).
-      const unstudied: Word[] = [];
-      const unstudiedCount = total - studied; // may be 0 if all words studied
-      for (let i = 0; i < unstudiedCount; i++) {
-        const idx = (studied + i) % total;
-        unstudied.push(words[idx]);
-      }
-      const backfill = shuffleArray(unstudied).slice(0, 50 - shuffledDifficult.length);
-      return [...shuffledDifficult, ...backfill];
     },
     [sprintData]
   );
@@ -436,7 +344,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       const result: Word[] = [];
 
       const addCellWords = (pos: number) => {
-        const studyIdx = getStudyWordOffsetForCell(pos, wPD, useReview);
+        const studyIdx = getStudyWordOffsetForCell(pos, wPD);
         const wordOffset = (studyIdx * wPD) % Math.max(1, words.length);
         const cellWords = getSessionWords(words, wordOffset, wPD);
         for (const w of cellWords) {
@@ -447,12 +355,10 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         }
       };
 
-      const useReview = (sprintData.schemaVersion ?? 1) >= 2;
-
       // All study cells completed today
       for (const posStr of Object.keys(completedDates)) {
         const pos = Number(posStr);
-        if (completedDates[pos] === today && getSessionType(pos, wPD, useReview) === "study") {
+        if (completedDates[pos] === today && getSessionType(pos, wPD) === "study") {
           addCellWords(pos);
         }
       }
@@ -460,7 +366,7 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
       // Current cell if it's a study cell and not yet completed today
       const currentPos = sprintData.currentPosition;
       if (
-        getSessionType(currentPos, wPD, useReview) === "study" &&
+        getSessionType(currentPos, wPD) === "study" &&
         completedDates[currentPos] !== today
       ) {
         addCellWords(currentPos);
@@ -496,7 +402,6 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         canSkipCurrentSession,
         getStudyWords,
         getTestWords,
-        getReviewTestWords,
         getTodayStudyWords,
         getCellPhaseProgress,
         totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,

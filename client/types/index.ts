@@ -44,7 +44,7 @@ export interface TestQuestion {
   correctAnswer: string;
 }
 
-export type SprintSessionType = "flag" | "study" | "test" | "review";
+export type SprintSessionType = "flag" | "study" | "test";
 
 export interface SprintData {
   hasSetup: boolean;
@@ -60,6 +60,4 @@ export interface SprintData {
   completedDates: Record<number, string>;
   cellPhaseProgress?: Record<number, { text: boolean; audio: boolean; audioCards: boolean }>;
   totalCells?: number;
-  reviewStamps?: number[];
-  schemaVersion?: number;
 }

@@ -185,34 +185,26 @@ function formatShortDate(dateStr: string): string {
   return `${parseInt(month)}/${parseInt(day)}`;
 }
 
-function getTestNumber(cellIndex: number, wordsPerDay: number, useReview = true): number {
+function getTestNumber(cellIndex: number, wordsPerDay: number): number {
   let count = 0;
   for (let i = 1; i <= cellIndex; i++) {
-    if (getSessionTypeFn(i, wordsPerDay, useReview) === "test") count++;
+    if (getSessionTypeFn(i, wordsPerDay) === "test") count++;
   }
   return count;
 }
 
-function getPreviousTestCell(cellIndex: number, wordsPerDay: number, useReview = true): number | null {
+function getPreviousTestCell(cellIndex: number, wordsPerDay: number): number | null {
   for (let i = cellIndex - 1; i >= 1; i--) {
-    if (getSessionTypeFn(i, wordsPerDay, useReview) === "test") return i;
+    if (getSessionTypeFn(i, wordsPerDay) === "test") return i;
   }
   return null;
 }
 
-function getReviewNumber(cellIndex: number, wordsPerDay: number, useReview = true): number {
-  let count = 0;
-  for (let i = 1; i <= cellIndex; i++) {
-    if (getSessionTypeFn(i, wordsPerDay, useReview) === "review") count++;
-  }
-  return count;
-}
-
 // Count study sessions before position → used to compute word range for premium check
-function getStudyWordOffset(position: number, wordsPerDay: number, useReview = true): number {
+function getStudyWordOffset(position: number, wordsPerDay: number): number {
   let count = 0;
   for (let i = 1; i < position; i++) {
-    if (getSessionTypeFn(i, wordsPerDay, useReview) === "study") count++;
+    if (getSessionTypeFn(i, wordsPerDay) === "study") count++;
   }
   return count;
 }
@@ -256,7 +248,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     iconColor = "#fff";
     textColor = "#fff";
   } else if (isCompleted) {
-    if (sessionType === "test" || sessionType === "review") {
+    if (sessionType === "test") {
       bgColor = "#7C3AED";
       borderColor = "#7C3AED";
       iconColor = "#fff";
@@ -270,7 +262,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
   } else if (isCurrent) {
     bgColor = Colors.light.secondary;
     borderColor = Colors.light.secondary;
-    if (sessionType !== "test" && sessionType !== "review") featherIcon = "zap";
+    if (sessionType !== "test") featherIcon = "zap";
     iconColor = "#fff";
     textColor = "#fff";
   } else if (sessionType === "test") {
@@ -283,16 +275,6 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       bgColor = "#EDE9FE";
       borderColor = "#C4B5FD";
       textColor = "#7C3AED";
-    }
-  } else if (sessionType === "review") {
-    if (isLocked) {
-      bgColor = theme.backgroundSecondary;
-      borderColor = theme.border;
-      textColor = theme.textSecondary;
-    } else {
-      bgColor = "#FCE7F3";
-      borderColor = "#F9A8D4";
-      textColor = "#BE185D";
     }
   } else if (isPremiumLocked) {
     // Study cell locked: premium subscription required → amber/gold tint
@@ -315,13 +297,13 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
-    // Test cell locked: sequential lock (not yet reached) → award/badge icon
+    // Test cell locked: sequential lock (not yet reached)
     if (isLocked) {
-      return <Feather name="award" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
+      return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
     }
-    // Study cell premium locked: subscription required → lock icon in amber
+    // Study cell premium locked: crown/award icon in amber
     if (isPremiumLocked) {
-      return <Feather name="lock" size={CELL_SIZE * 0.30} color="#F59E0B" />;
+      return <Feather name="award" size={CELL_SIZE * 0.30} color="#F59E0B" />;
     }
     if (sessionType === "test") {
       return (
@@ -331,21 +313,6 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
             <View style={[styles.testNumBadge, (isCompleted || isCurrent) ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#7C3AED22" }]}>
               <ThemedText style={[styles.testNumText, { color: (isCompleted || isCurrent) ? "#fff" : "#7C3AED" }]}>
                 {testNumber}
-              </ThemedText>
-            </View>
-          ) : null}
-        </View>
-      );
-    }
-    if (sessionType === "review") {
-      const reviewActive = isCompleted || isCurrent;
-      return (
-        <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <MonsterIcon size={iconSize * 0.85} color={reviewActive ? "#fff" : (isLocked ? theme.textSecondary + "70" : "#BE185D")} />
-          {testNumber != null ? (
-            <View style={[styles.testNumBadge, reviewActive ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#BE185D22" }]}>
-              <ThemedText style={[styles.testNumText, { color: reviewActive ? "#fff" : "#BE185D" }]}>
-                復{testNumber}
               </ThemedText>
             </View>
           ) : null}
@@ -368,14 +335,14 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       ]}
     >
       {renderIcon()}
-      {index > 0 && sessionType !== "test" && sessionType !== "review" ? (
+      {index > 0 && sessionType !== "test" ? (
         <ThemedText style={[styles.cellNumber, { color: textColor, fontSize: CELL_SIZE * 0.16 }]}>
           {index}
         </ThemedText>
       ) : null}
       {isCompleted && completedDate ? (
         <View style={{ alignItems: "center" }}>
-          {(sessionType === "test" || sessionType === "review") ? (
+          {sessionType === "test" ? (
             <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.13, fontWeight: "600" }]}>
               クリア
             </ThemedText>
@@ -631,7 +598,7 @@ export default function SprintScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
-  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel, resetSprint } = useSprint();
+  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel } = useSprint();
   const { isPremium } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
@@ -670,12 +637,11 @@ export default function SprintScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const sessionType = getSessionType(index);
     const wPD = sprintData.wordsPerDay ?? 10;
-    const useReview = (sprintData.schemaVersion ?? 1) >= 2;
     const sStamps = sprintData.specialStamps ?? [];
 
     if (sessionType === "test") {
-      const testNum = getTestNumber(index, wPD, useReview);
-      const prevTestCell = getPreviousTestCell(index, wPD, useReview);
+      const testNum = getTestNumber(index, wPD);
+      const prevTestCell = getPreviousTestCell(index, wPD);
       const cDates = sprintData.completedDates ?? {};
 
       // Test is truly "cleared" only if it's in specialStamps (passed ≥85%)
@@ -696,28 +662,9 @@ export default function SprintScreen() {
         return;
       }
       navigation.navigate("SprintTest");
-    } else if (sessionType === "review") {
-      const reviewNum = getReviewNumber(index, wPD, useReview);
-      const cDates = sprintData.completedDates ?? {};
-
-      if (sStamps.includes(index)) {
-        Alert.alert(`復習テスト ${reviewNum} クリア済み`, formatShortDate(cDates[index] ?? "") + " にクリアしました。", [{ text: "OK" }]);
-        return;
-      }
-      if (index !== currentPosition) {
-        Alert.alert("復習テスト", "前のセルを全て完了してから復習テストに挑戦できます。", [{ text: "OK" }]);
-        return;
-      }
-      // Must have cleared the immediately preceding normal test
-      const prevTestForReview = getPreviousTestCell(index, wPD, useReview);
-      if (prevTestForReview !== null && !sStamps.includes(prevTestForReview)) {
-        Alert.alert("復習テスト", `直前のテスト${getTestNumber(prevTestForReview, wPD, useReview)}をクリアしてから復習テストに挑戦できます。`, [{ text: "OK" }]);
-        return;
-      }
-      navigation.navigate("SprintReviewTest");
     } else {
       // Premium check for study cells: words 51+ require premium (except HSK1)
-      const studyOffset = getStudyWordOffset(index, wPD, useReview);
+      const studyOffset = getStudyWordOffset(index, wPD);
       if (studyOffset * wPD >= 50 && currentLevel !== 1 && !isPremium) {
         (navigation as any).navigate("Paywall");
         return;
@@ -765,7 +712,6 @@ export default function SprintScreen() {
     switch (type) {
       case "study": return "学習";
       case "test": return "テスト";
-      case "review": return "復習テスト";
       default: return "";
     }
   };
@@ -774,7 +720,6 @@ export default function SprintScreen() {
     switch (type) {
       case "study": return theme.primary;
       case "test": return "#7C3AED";
-      case "review": return "#BE185D";
       default: return theme.textSecondary;
     }
   };
@@ -784,31 +729,6 @@ export default function SprintScreen() {
       <ThemedView style={styles.container}>
         <View style={[styles.centered, { paddingTop: headerHeight + Spacing.xl }]}>
           <ThemedText style={{ color: theme.textSecondary }}>読み込み中...</ThemedText>
-        </View>
-      </ThemedView>
-    );
-  }
-
-  // Old-schema (V1) data: prompt user to reset so V2 review feature works correctly
-  if (sprintData?.hasSetup && (sprintData.schemaVersion ?? 1) < 2) {
-    return (
-      <ThemedView style={styles.container}>
-        <View style={[styles.centered, { paddingTop: headerHeight + Spacing.xl, paddingHorizontal: Spacing["2xl"] }]}>
-          <Feather name="refresh-cw" size={48} color={theme.primary} style={{ marginBottom: Spacing.xl }} />
-          <ThemedText style={[styles.sectionTitle, { textAlign: "center", marginBottom: Spacing.lg }]}>
-            スプリントのアップデート
-          </ThemedText>
-          <ThemedText style={[styles.subtitleText, { textAlign: "center", marginBottom: Spacing["2xl"], color: theme.textSecondary }]}>
-            200単語ごとの苦手語復習テスト機能が追加されました。この機能を利用するには、現在のスプリントをリセットして再設定する必要があります。
-          </ThemedText>
-          <Pressable
-            style={[styles.startButton, { backgroundColor: theme.primary }]}
-            onPress={async () => {
-              await resetSprint();
-            }}
-          >
-            <ThemedText style={[styles.startButtonText, { color: "#fff" }]}>リセットして再設定する</ThemedText>
-          </Pressable>
         </View>
       </ThemedView>
     );
@@ -882,38 +802,26 @@ export default function SprintScreen() {
                   const isCurrent = isSetup && cellIndex === currentPosition;
                   const cellSessionType = getSessionType(cellIndex);
                   const wPD = sprintData?.wordsPerDay ?? 10;
-                  const useReview = (sprintData?.schemaVersion ?? 1) >= 2;
-                  // Test / review cells: "completed" only when passed (in specialStamps)
+                  // Test cells: "completed" only when passed (in specialStamps)
                   // Study cells: completed when in completedDates
                   const isCompleted = isSetup && !isCurrent && (
-                    (cellSessionType === "test" || cellSessionType === "review")
+                    cellSessionType === "test"
                       ? specialStamps.includes(cellIndex)
                       : completedDates[cellIndex] != null
                   );
                   const isSpecialStamp = specialStamps.includes(cellIndex);
-                  const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD, useReview) : null;
-                  // Number badge: test number for "test" cells, review number for "review" cells
-                  const cellTestNum = cellSessionType === "test"
-                    ? getTestNumber(cellIndex, wPD, useReview)
-                    : cellSessionType === "review"
-                    ? getReviewNumber(cellIndex, wPD, useReview)
-                    : undefined;
+                  const cellTestNum = cellSessionType === "test" ? getTestNumber(cellIndex, wPD) : undefined;
+                  const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD) : null;
                   // Lock test cells that can't be attempted yet (sequential lock)
                   const testIsLocked = cellSessionType === "test" && !isCompleted && (
                     (prevTestForCell !== null && !specialStamps.includes(prevTestForCell)) ||
                     cellIndex !== currentPosition
                   );
-                  // Lock review cells: must be current position AND preceding normal test must be passed
-                  const prevTestForReview = cellSessionType === "review" ? getPreviousTestCell(cellIndex, wPD, useReview) : null;
-                  const reviewIsLocked = cellSessionType === "review" && !isCompleted && (
-                    cellIndex !== currentPosition ||
-                    (prevTestForReview !== null && !specialStamps.includes(prevTestForReview))
-                  );
                   // Lock study cells that require premium words (word 51+ for non-HSK1)
                   const studyIsPremiumLocked = cellSessionType === "study" &&
                     currentLevel !== 1 &&
                     !isPremium &&
-                    (getStudyWordOffset(cellIndex, wPD, useReview) * wPD >= 50);
+                    (getStudyWordOffset(cellIndex, wPD) * wPD >= 50);
                   return (
                     <Cell
                       key={colIdx}
@@ -927,7 +835,7 @@ export default function SprintScreen() {
                       onPress={() => handleCellPress(cellIndex)}
                       theme={theme}
                       testNumber={cellTestNum}
-                      isLocked={testIsLocked || reviewIsLocked}
+                      isLocked={testIsLocked}
                       isPremiumLocked={studyIsPremiumLocked}
                       currentLevel={currentLevel}
                     />
@@ -957,10 +865,6 @@ export default function SprintScreen() {
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: Colors.light.alert }]} />
               <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>特別スタンプ</ThemedText>
-            </View>
-            <View style={styles.legendItem}>
-              <View style={[styles.legendDot, { backgroundColor: "#FCE7F3", borderWidth: 1, borderColor: "#F9A8D4" }]} />
-              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>復習テスト</ThemedText>
             </View>
           </View>
         </View>
@@ -1071,11 +975,4 @@ const styles = StyleSheet.create({
   modalOptionText: { flex: 1 },
   modalOptionTitle: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: 2 },
   modalOptionDesc: { fontSize: 12, fontFamily: "Nunito_400Regular" },
-  sectionTitle: { fontSize: 20, fontWeight: "700", fontFamily: "Nunito_700Bold" },
-  subtitleText: { fontSize: 14, fontFamily: "Nunito_400Regular", lineHeight: 22 },
-  startButton: {
-    paddingVertical: Spacing.lg, paddingHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.md, alignItems: "center", width: "100%",
-  },
-  startButtonText: { fontSize: 16, fontWeight: "700", fontFamily: "Nunito_700Bold" },
 });
