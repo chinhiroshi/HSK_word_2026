@@ -301,10 +301,10 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (isLocked) {
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <MonsterIcon size={iconSize * 0.85} color="#F59E0B" />
+          <MonsterIcon size={iconSize * 0.85} color="#7C3AED" />
           {testNumber != null ? (
-            <View style={[styles.testNumBadge, { backgroundColor: "#FFD54F44" }]}>
-              <ThemedText style={[styles.testNumText, { color: "#F59E0B" }]}>{testNumber}</ThemedText>
+            <View style={[styles.testNumBadge, { backgroundColor: "#7C3AED22" }]}>
+              <ThemedText style={[styles.testNumText, { color: "#7C3AED" }]}>{testNumber}</ThemedText>
             </View>
           ) : null}
         </View>
