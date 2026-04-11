@@ -708,6 +708,12 @@ export default function SprintScreen() {
         Alert.alert("復習テスト", "前のセルを全て完了してから復習テストに挑戦できます。", [{ text: "OK" }]);
         return;
       }
+      // Must have cleared the immediately preceding normal test
+      const prevTestForReview = getPreviousTestCell(index, wPD, useReview);
+      if (prevTestForReview !== null && !sStamps.includes(prevTestForReview)) {
+        Alert.alert("復習テスト", `直前のテスト${getTestNumber(prevTestForReview, wPD, useReview)}をクリアしてから復習テストに挑戦できます。`, [{ text: "OK" }]);
+        return;
+      }
       navigation.navigate("SprintReviewTest");
     } else {
       // Premium check for study cells: words 51+ require premium (except HSK1)
@@ -897,8 +903,12 @@ export default function SprintScreen() {
                     (prevTestForCell !== null && !specialStamps.includes(prevTestForCell)) ||
                     cellIndex !== currentPosition
                   );
-                  // Lock review cells that aren't the current position yet
-                  const reviewIsLocked = cellSessionType === "review" && !isCompleted && cellIndex !== currentPosition;
+                  // Lock review cells: must be current position AND preceding normal test must be passed
+                  const prevTestForReview = cellSessionType === "review" ? getPreviousTestCell(cellIndex, wPD, useReview) : null;
+                  const reviewIsLocked = cellSessionType === "review" && !isCompleted && (
+                    cellIndex !== currentPosition ||
+                    (prevTestForReview !== null && !specialStamps.includes(prevTestForReview))
+                  );
                   // Lock study cells that require premium words (word 51+ for non-HSK1)
                   const studyIsPremiumLocked = cellSessionType === "study" &&
                     currentLevel !== 1 &&

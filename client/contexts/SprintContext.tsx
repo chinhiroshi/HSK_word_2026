@@ -387,13 +387,14 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
           !w.audioMemorized
       );
 
-      // Shuffle all difficult words; if ≥50 pick 50, otherwise backfill from non-difficult batch
+      // Shuffle all difficult words; if ≥50 pick 50
       const shuffledDifficult = shuffleArray(difficult);
       if (shuffledDifficult.length >= 50) return shuffledDifficult.slice(0, 50);
 
-      const difficultIds = new Set(difficult.map((w) => w.id));
-      const nonDifficult = shuffleArray(batchWords.filter((w) => !difficultIds.has(w.id)));
-      const backfill = nonDifficult.slice(0, 50 - shuffledDifficult.length);
+      // Backfill from unlearned words (words outside the last 200 studied)
+      const batchIdSet = new Set(batchWords.map((w) => w.id));
+      const unlearned = shuffleArray(words.filter((w) => !batchIdSet.has(w.id)));
+      const backfill = unlearned.slice(0, 50 - shuffledDifficult.length);
       return [...shuffledDifficult, ...backfill];
     },
     [sprintData]

@@ -206,10 +206,10 @@ export default function SprintReviewTestScreen() {
   };
 
   const handleFinish = async (cleared: boolean) => {
+    setCompleting(true);
+    await completeSession(cleared);
+    setCompleting(false);
     if (cleared) {
-      setCompleting(true);
-      await completeSession(true);
-      setCompleting(false);
       triggerStamp(() => navigation.navigate("SprintHome"));
     } else {
       navigation.navigate("SprintHome");
