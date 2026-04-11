@@ -59,14 +59,14 @@
         color: #555;
         margin-bottom: 12px;
       }
-      section ul {
+      section ul, section ol {
         padding-left: 20px;
         margin-bottom: 12px;
       }
       section li {
         font-size: 14px;
         color: #555;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
       }
       a {
         color: #5B8C85;
@@ -76,12 +76,29 @@
         color: #888;
         margin-bottom: 24px;
       }
+      .highlight-box {
+        background: #f0f8f7;
+        border: 1px solid #b2dfdb;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin: 12px 0;
+      }
+      .highlight-box p {
+        font-size: 14px;
+        color: #2e5f5b;
+        margin: 0;
+      }
       footer {
         text-align: center;
         padding: 24px 20px;
         border-top: 1px solid #e8e8e8;
         font-size: 12px;
         color: #999;
+      }
+      footer a {
+        color: #5B8C85;
+        text-decoration: none;
+        margin: 0 8px;
       }
       @media (prefers-color-scheme: dark) {
         body { background: #111; color: #e0e0e0; }
@@ -90,8 +107,11 @@
         section h3 { color: #ddd; }
         section p, section li { color: #aaa; }
         .update-date { color: #777; }
+        .highlight-box { background: #1a2e2c; border-color: #2e5550; }
+        .highlight-box p { color: #7db5ad; }
         a { color: #7db5ad; }
         footer { border-top-color: #333; color: #666; }
+        footer a { color: #7db5ad; }
       }
     </style>
   </head>
@@ -102,7 +122,7 @@
     </div>
 
     <div class="container">
-      <p class="update-date">最終更新日: 2026年3月7日</p>
+      <p class="update-date">最終更新日: 2026年4月11日</p>
 
       <section>
         <h2>第1条（適用）</h2>
@@ -113,76 +133,112 @@
         <h2>第2条（サービス内容）</h2>
         <p>本アプリは、HSK（漢語水平考試）の受験対策として、中国語単語の学習支援サービスを提供します。主な機能は以下の通りです：</p>
         <ul>
-          <li>HSK1級〜6級の単語の閲覧・学習</li>
+          <li>HSK1〜6級の単語の閲覧・学習（約5,000語）</li>
           <li>文字暗記モード・音声暗記モードによる学習</li>
-          <li>音声再生による連続学習</li>
-          <li>学習進捗の管理</li>
+          <li>音声再生による連続学習機能</li>
+          <li>7日間スプリント機能によるスタンプラリー式学習管理</li>
+          <li>学習進捗の管理（暗記済み・暗記必要・未暗記）</li>
         </ul>
       </section>
 
       <section>
-        <h2>第3条（サブスクリプション）</h2>
+        <h2>第3条（無料プランとプレミアムプラン）</h2>
+
         <h3>無料プラン</h3>
-        <p>HSK1級の全単語およびHSK2〜6級の各レベル最初の50単語は、無料でご利用いただけます。</p>
+        <p>以下のコンテンツは登録不要・無料でご利用いただけます：</p>
+        <ul>
+          <li>HSK1級の全単語（150語）</li>
+          <li>HSK2〜6級の各レベル最初の50語（グループ1）</li>
+          <li>すべての学習機能（文字暗記・音声暗記・スプリント等）</li>
+        </ul>
 
         <h3>プレミアムプラン</h3>
-        <p>HSK2〜6級の全単語にアクセスするには、月額サブスクリプション（¥380/月）への登録が必要です。</p>
-
-        <h3>自動更新と解約</h3>
+        <p>月額¥380（税込）のプレミアムプランに登録すると、以下のコンテンツにアクセスできます：</p>
         <ul>
-          <li>サブスクリプションは、現在の期間が終了する24時間前までにキャンセルしない限り、自動的に更新されます。</li>
-          <li>更新時に、サブスクリプション料金がApple IDまたはGoogle Playアカウントに請求されます。</li>
-          <li>サブスクリプションの管理およびキャンセルは、お使いのデバイスの設定画面から行えます。</li>
-          <li>無料トライアル期間がある場合、未使用分はサブスクリプション購入時に失効します。</li>
+          <li>HSK2〜6級の全単語（合計約4,850語）</li>
+          <li>音声再生機能の全範囲利用</li>
+          <li>すべての学習機能の制限なし利用</li>
         </ul>
       </section>
 
       <section>
-        <h2>第4条（知的財産権）</h2>
+        <h2>第4条（サブスクリプション）</h2>
+
+        <h3>課金タイミング</h3>
+        <p>購入確認後、Apple ID / Google Playアカウントに課金されます。サブスクリプション期間は課金日から1ヶ月間です。</p>
+
+        <h3>自動更新</h3>
+        <p>サブスクリプションは、現在の期間が終了する<strong>24時間前まで</strong>にキャンセルしない限り、自動的に更新されます。更新時には同額（¥380）が請求されます。</p>
+
+        <div class="highlight-box">
+          <p>自動更新を停止するには、次回の請求日の24時間前までに、お使いのデバイスの設定画面（iOS：設定 → Apple ID → サブスクリプション、Android：Google Play → お支払いと定期購入 → 定期購入）からキャンセルしてください。</p>
+        </div>
+
+        <h3>キャンセル後の利用</h3>
+        <p>キャンセル後も、当月分のサブスクリプション期間が終了するまでプレミアム機能をご利用いただけます。期間終了後は無料プランに移行します。</p>
+
+        <h3>購入の復元</h3>
+        <p>機種変更やアプリの再インストール後は、アプリ内「プロフィール」画面の「購入を復元」ボタンを使用して、同じApple ID / Google Playアカウントに紐づいたサブスクリプションを復元できます。</p>
+
+        <h3>返金ポリシー</h3>
+        <p>購入済みのサブスクリプションの返金は、Apple App StoreまたはGoogle Playの返金ポリシーに従います。アプリ開発者は直接の返金対応を行いません。返金申請は各ストアのサポートにお問い合わせください。</p>
+
+        <h3>価格の変更</h3>
+        <p>サブスクリプション料金は将来変更される可能性があります。価格変更が行われる場合は、事前にアプリ内またはこのページでお知らせします。</p>
+      </section>
+
+      <section>
+        <h2>第5条（知的財産権）</h2>
         <p>本アプリに含まれるすべてのコンテンツ（テキスト、音声、デザイン、ソフトウェアなど）に関する知的財産権は、開発者またはそのライセンサーに帰属します。ユーザーは、個人的な学習目的以外で本アプリのコンテンツを複製、配布、修正することはできません。</p>
       </section>
 
       <section>
-        <h2>第5条（禁止事項）</h2>
+        <h2>第6条（禁止事項）</h2>
         <p>ユーザーは、以下の行為を行ってはなりません：</p>
         <ul>
           <li>本アプリの逆コンパイル、リバースエンジニアリング、または解析</li>
           <li>本アプリのコンテンツの無断転載・再配布</li>
           <li>本アプリの正常な運用を妨害する行為</li>
-          <li>不正な方法によるサブスクリプションの取得</li>
+          <li>不正な方法によるサブスクリプションの取得（購入の偽装・チート行為等）</li>
+          <li>他のユーザーに対する迷惑行為</li>
         </ul>
       </section>
 
       <section>
-        <h2>第6条（免責事項）</h2>
+        <h2>第7条（免責事項）</h2>
         <p>本アプリは「現状有姿」で提供されます。開発者は、以下について一切の責任を負いません：</p>
         <ul>
           <li>本アプリの内容の正確性、完全性、最新性</li>
           <li>本アプリの利用によるHSK試験の合否結果</li>
           <li>本アプリの利用に起因するデバイスの不具合やデータの損失</li>
           <li>サービスの中断、停止、変更</li>
+          <li>通信環境等に起因する課金・購入処理の失敗</li>
         </ul>
       </section>
 
       <section>
-        <h2>第7条（規約の変更）</h2>
+        <h2>第8条（規約の変更）</h2>
         <p>開発者は、必要に応じて本規約を変更できるものとします。変更後の規約は、アプリのアップデートまたは本ページでの公開をもって効力を生じます。変更後も本アプリの利用を継続した場合、変更後の規約に同意したものとみなされます。</p>
       </section>
 
       <section>
-        <h2>第8条（Apple標準EULA）</h2>
+        <h2>第9条（Apple標準EULA）</h2>
         <p>本アプリのご利用には、本規約に加えて、Apple Inc.の標準使用許諾契約（EULA）が適用されます。詳細は以下のリンクをご参照ください：</p>
         <p><a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener noreferrer">Apple標準使用許諾契約（EULA）</a></p>
       </section>
 
       <section>
         <h2>お問い合わせ</h2>
-        <p>本規約に関するご質問がございましたら、<a href="mailto:hiroshi.chin@gmail.com">hiroshi.chin@gmail.com</a> までお問い合わせください。</p>
+        <p>本規約に関するご質問、またはサブスクリプションに関するお問い合わせは、<a href="mailto:hiroshi.chin@gmail.com">hiroshi.chin@gmail.com</a> までご連絡ください。</p>
       </section>
     </div>
 
     <footer>
       &copy; 2026 HSK受験者が作った単語帳
+      <br />
+      <a href="/privacy-policy">プライバシーポリシー</a>
+      <a href="/terms">利用規約</a>
+      <a href="/support">サポート</a>
     </footer>
   </body>
 </html>

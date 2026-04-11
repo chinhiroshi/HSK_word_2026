@@ -76,12 +76,29 @@
         color: #888;
         margin-bottom: 24px;
       }
+      .highlight-box {
+        background: #f0f8f7;
+        border: 1px solid #b2dfdb;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin: 12px 0;
+      }
+      .highlight-box p {
+        font-size: 14px;
+        color: #2e5f5b;
+        margin: 0;
+      }
       footer {
         text-align: center;
         padding: 24px 20px;
         border-top: 1px solid #e8e8e8;
         font-size: 12px;
         color: #999;
+      }
+      footer a {
+        color: #5B8C85;
+        text-decoration: none;
+        margin: 0 8px;
       }
       @media (prefers-color-scheme: dark) {
         body { background: #111; color: #e0e0e0; }
@@ -90,8 +107,11 @@
         section h3 { color: #ddd; }
         section p, section li { color: #aaa; }
         .update-date { color: #777; }
+        .highlight-box { background: #1a2e2c; border-color: #2e5550; }
+        .highlight-box p { color: #7db5ad; }
         a { color: #7db5ad; }
         footer { border-top-color: #333; color: #666; }
+        footer a { color: #7db5ad; }
       }
     </style>
   </head>
@@ -102,39 +122,69 @@
     </div>
 
     <div class="container">
-      <p class="update-date">最終更新日: 2026年3月7日</p>
+      <p class="update-date">最終更新日: 2026年4月11日</p>
 
       <section>
         <h2>はじめに</h2>
-        <p>「HSK受験者が作った単語帳」（以下「本アプリ」）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めています。本プライバシーポリシーは、本アプリがどのような情報を収集し、どのように利用するかを説明します。</p>
+        <p>「HSK受験者が作った単語帳」（以下「本アプリ」）は、ユーザーのプライバシーを尊重し、個人情報の保護に努めています。本プライバシーポリシーは、本アプリがどのような情報を取り扱い、どのように利用するかを説明します。</p>
+        <div class="highlight-box">
+          <p>本アプリはユーザーの個人情報を収集・保存しません。学習データはすべてお使いのデバイス内にのみ保存されます。</p>
+        </div>
       </section>
 
       <section>
         <h2>収集する情報</h2>
-        <h3>ローカルデータ</h3>
-        <p>本アプリは、学習の進捗状況（暗記済み・未暗記の単語、学習回数など）をお使いのデバイス内にのみ保存します。これらのデータは外部サーバーに送信されることはありません。</p>
+
+        <h3>ローカルデータ（デバイス内保存）</h3>
+        <p>本アプリは、以下の学習データをお使いのデバイス内のみに保存します。これらのデータは外部サーバーに送信されることはありません：</p>
+        <ul>
+          <li>単語の暗記状況（暗記済み・暗記必要・未暗記）</li>
+          <li>学習の進捗（HSK各級ごとの進捗データ）</li>
+          <li>スプリント機能の進行状況・スタンプ履歴</li>
+          <li>アプリの設定（選択中のHSK級、表示設定など）</li>
+        </ul>
 
         <h3>サブスクリプション情報</h3>
-        <p>本アプリではアプリ内課金（サブスクリプション）を提供しています。課金処理はApple App Store / Google Play Storeおよび RevenueCat を通じて行われます。購入に関する情報（購入履歴、サブスクリプションステータスなど）はこれらのプラットフォームによって管理されます。</p>
+        <p>本アプリではアプリ内課金（月額サブスクリプション）を提供しています。課金処理はApple App Store / Google Play StoreおよびRevenueCatを通じて行われます。購入に関する情報（購入日時、サブスクリプションステータス、購入の有効期限など）はRevenueCatおよびApple / Googleによって管理されます。開発者は決済情報（クレジットカード番号など）にアクセスすることはありません。</p>
+
+        <h3>収集しない情報</h3>
+        <p>本アプリは以下の情報を収集しません：</p>
+        <ul>
+          <li>氏名・メールアドレス・電話番号などの個人識別情報</li>
+          <li>位置情報</li>
+          <li>デバイスの連絡先・写真・カメラ等へのアクセス</li>
+          <li>行動分析・広告トラッキングデータ</li>
+        </ul>
       </section>
 
       <section>
         <h2>第三者サービス</h2>
         <p>本アプリは以下の第三者サービスを使用しています：</p>
         <ul>
-          <li><strong>RevenueCat</strong>: サブスクリプションの管理に使用。RevenueCatのプライバシーポリシーは <a href="https://www.revenuecat.com/privacy" target="_blank" rel="noopener noreferrer">こちら</a> をご覧ください。</li>
-          <li><strong>Apple App Store / Google Play Store</strong>: アプリの配信および課金処理に使用。</li>
+          <li>
+            <strong>RevenueCat</strong>: サブスクリプションの管理・購入処理に使用します。RevenueCatはサブスクリプションのステータス確認・更新・復元を担います。RevenueCatのプライバシーポリシーは
+            <a href="https://www.revenuecat.com/privacy" target="_blank" rel="noopener noreferrer">こちら</a>をご覧ください。
+          </li>
+          <li>
+            <strong>Apple App Store</strong>: iOSにおけるアプリ配信および課金処理に使用。Appleのプライバシーポリシーは<a href="https://www.apple.com/jp/legal/privacy/" target="_blank" rel="noopener noreferrer">こちら</a>をご覧ください。
+          </li>
+          <li>
+            <strong>Google Play Store</strong>: Androidにおけるアプリ配信および課金処理に使用。Googleのプライバシーポリシーは<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">こちら</a>をご覧ください。
+          </li>
+          <li>
+            <strong>expo-speech（デバイスTTS）</strong>: 音声再生機能に使用。デバイスに内蔵されたテキスト読み上げ機能を利用するもので、音声データを外部に送信しません。
+          </li>
         </ul>
       </section>
 
       <section>
         <h2>データの共有</h2>
-        <p>本アプリは、上記の第三者サービスを除き、ユーザーのデータを第三者と共有することはありません。</p>
+        <p>本アプリは、上記の第三者サービスを除き、ユーザーのデータを第三者と共有することはありません。学習データは外部に送信されず、広告目的に使用されることもありません。</p>
       </section>
 
       <section>
         <h2>分析ツール・広告</h2>
-        <p>本アプリは、分析ツールおよび広告を使用していません。</p>
+        <p>本アプリは、分析ツール・広告SDKを使用していません。広告はアプリ内に一切表示されません。</p>
       </section>
 
       <section>
@@ -144,16 +194,22 @@
 
       <section>
         <h2>データの保持と削除</h2>
-        <p>学習データはデバイスのローカルストレージに保存されます。以下の方法でデータを削除できます：</p>
+        <p>学習データはデバイスのローカルストレージ（AsyncStorage）に保存されます。以下の方法でデータを削除できます：</p>
         <ul>
-          <li>アプリ内の「プロフィール」画面からすべての学習データをリセット</li>
+          <li>アプリ内の「プロフィール」画面からすべての学習データをリセット（サブスクリプションはリセットされません）</li>
           <li>アプリをアンインストールすることで、すべてのローカルデータを削除</li>
         </ul>
+        <p>サブスクリプションのデータ（購入履歴など）はRevenueCat / Apple / Googleによって管理されます。これらのデータの削除については各サービスのサポートにお問い合わせください。</p>
       </section>
 
       <section>
-        <h2>変更について</h2>
-        <p>本プライバシーポリシーは、必要に応じて更新されることがあります。重要な変更がある場合は、アプリのアップデートを通じてお知らせします。</p>
+        <h2>セキュリティ</h2>
+        <p>本アプリはユーザーの個人情報を外部に送信しないため、データ漏洩のリスクを最小限に抑えています。サブスクリプションの課金処理はApple / GoogleおよびRevenueCatの安全な決済インフラを通じて行われます。</p>
+      </section>
+
+      <section>
+        <h2>本ポリシーの変更</h2>
+        <p>本プライバシーポリシーは、必要に応じて更新されることがあります。重要な変更がある場合は、アプリのアップデートまたはこのページでお知らせします。変更後も本アプリの利用を継続した場合、変更後のポリシーに同意したものとみなされます。</p>
       </section>
 
       <section>
@@ -164,6 +220,10 @@
 
     <footer>
       &copy; 2026 HSK受験者が作った単語帳
+      <br />
+      <a href="/privacy-policy">プライバシーポリシー</a>
+      <a href="/terms">利用規約</a>
+      <a href="/support">サポート</a>
     </footer>
   </body>
 </html>

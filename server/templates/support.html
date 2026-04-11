@@ -54,7 +54,7 @@
       }
       nav a {
         display: block;
-        padding: 12px 12px;
+        padding: 12px 10px;
         font-size: 13px;
         font-weight: 500;
         color: #666;
@@ -75,7 +75,7 @@
       }
 
       section {
-        margin-bottom: 40px;
+        margin-bottom: 48px;
       }
       section h2 {
         font-size: 20px;
@@ -97,6 +97,138 @@
         margin-bottom: 12px;
       }
 
+      /* ── Plan cards ── */
+      .plan-grid {
+        display: grid;
+        gap: 16px;
+        margin-top: 4px;
+      }
+      .plan-card {
+        background: #fff;
+        border: 2px solid #e8e8e8;
+        border-radius: 16px;
+        padding: 24px 20px;
+      }
+      .plan-card.premium {
+        border-color: #5B8C85;
+        position: relative;
+        overflow: hidden;
+      }
+      .plan-card.premium::before {
+        content: "おすすめ";
+        position: absolute;
+        top: 14px;
+        right: -24px;
+        background: #E8956F;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 32px;
+        transform: rotate(45deg);
+        letter-spacing: 0.5px;
+      }
+      .plan-name {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #111;
+      }
+      .plan-price {
+        font-size: 28px;
+        font-weight: 800;
+        color: #5B8C85;
+        margin-bottom: 16px;
+      }
+      .plan-price span {
+        font-size: 14px;
+        font-weight: 500;
+        color: #888;
+      }
+      .plan-features {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .plan-features li {
+        font-size: 14px;
+        color: #555;
+        padding: 6px 0;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .plan-features li:last-child {
+        border-bottom: none;
+      }
+      .plan-features li .check {
+        color: #10B981;
+        font-size: 16px;
+        flex-shrink: 0;
+        line-height: 1.5;
+      }
+      .plan-features li .cross {
+        color: #ccc;
+        font-size: 16px;
+        flex-shrink: 0;
+        line-height: 1.5;
+      }
+
+      /* ── Word count table ── */
+      .subscription-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+        font-size: 14px;
+      }
+      .subscription-table th,
+      .subscription-table td {
+        padding: 10px 14px;
+        border: 1px solid #e8e8e8;
+        text-align: left;
+      }
+      .subscription-table th {
+        background: #f5f5f4;
+        font-weight: 600;
+        color: #333;
+      }
+      .subscription-table td {
+        color: #555;
+      }
+      .badge-free {
+        display: inline-block;
+        background: #e8f5e9;
+        color: #2e7d32;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .badge-premium {
+        display: inline-block;
+        background: #e3f2fd;
+        color: #1565c0;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+
+      /* ── Restore button callout ── */
+      .info-box {
+        background: #f0f8f7;
+        border: 1px solid #b2dfdb;
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin-top: 16px;
+      }
+      .info-box p {
+        font-size: 14px;
+        color: #2e5f5b;
+        margin: 0;
+      }
+
+      /* ── Feature cards ── */
       .features {
         display: grid;
         gap: 12px;
@@ -124,6 +256,7 @@
         margin: 0;
       }
 
+      /* ── FAQ ── */
       .faq-item {
         background: #fff;
         border: 1px solid #e8e8e8;
@@ -154,7 +287,7 @@
         transition: transform 0.2s;
       }
       .faq-item[open] summary::after {
-        content: "-";
+        content: "−";
       }
       .faq-item .answer {
         padding: 0 20px 16px;
@@ -162,7 +295,15 @@
         color: #555;
         line-height: 1.7;
       }
+      .faq-item .answer ol {
+        padding-left: 20px;
+        margin-top: 6px;
+      }
+      .faq-item .answer li {
+        margin-bottom: 4px;
+      }
 
+      /* ── Contact ── */
       .contact-box {
         background: #fff;
         border: 1px solid #e8e8e8;
@@ -190,6 +331,7 @@
         background: #4a7a73;
       }
 
+      /* ── Legal ── */
       .privacy-section h3 {
         font-size: 15px;
         font-weight: 600;
@@ -208,11 +350,11 @@
       .privacy-section li {
         margin-bottom: 4px;
       }
-
       .legal-links {
         display: flex;
         gap: 16px;
         flex-wrap: wrap;
+        margin-top: 16px;
       }
       .legal-links a {
         display: inline-flex;
@@ -231,27 +373,6 @@
         background: #4a7a73;
       }
 
-      .subscription-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 12px 0;
-        font-size: 14px;
-      }
-      .subscription-table th,
-      .subscription-table td {
-        padding: 10px 14px;
-        border: 1px solid #e8e8e8;
-        text-align: left;
-      }
-      .subscription-table th {
-        background: #f5f5f4;
-        font-weight: 600;
-        color: #333;
-      }
-      .subscription-table td {
-        color: #555;
-      }
-
       footer {
         text-align: center;
         padding: 24px 20px;
@@ -268,6 +389,11 @@
         text-decoration: underline;
       }
 
+      @media (min-width: 540px) {
+        .plan-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
       @media (min-width: 768px) {
         .hero {
           padding: 64px 32px 56px;
@@ -317,6 +443,36 @@
         section p {
           color: #bbb;
         }
+        .plan-card {
+          background: #1a1a1a;
+          border-color: #333;
+        }
+        .plan-card.premium {
+          border-color: #7db5ad;
+        }
+        .plan-name {
+          color: #e0e0e0;
+        }
+        .plan-price {
+          color: #7db5ad;
+        }
+        .plan-price span {
+          color: #666;
+        }
+        .plan-features li {
+          color: #aaa;
+          border-bottom-color: #2a2a2a;
+        }
+        .plan-features li .cross {
+          color: #444;
+        }
+        .info-box {
+          background: #1a2e2c;
+          border-color: #2e5550;
+        }
+        .info-box p {
+          color: #7db5ad;
+        }
         .feature-card {
           background: #1a1a1a;
           border-color: #333;
@@ -347,12 +503,6 @@
         .contact-box p {
           color: #999;
         }
-        .contact-email {
-          background: #5B8C85;
-        }
-        .contact-email:hover {
-          background: #6da39b;
-        }
         .privacy-section h3 {
           color: #ddd;
         }
@@ -360,21 +510,13 @@
         .privacy-section li {
           color: #aaa;
         }
-        .legal-links a {
-          background: #5B8C85;
-        }
-        .legal-links a:hover {
-          background: #6da39b;
-        }
         .subscription-table th {
           background: #222;
           color: #ddd;
+          border-color: #333;
         }
         .subscription-table td {
           color: #aaa;
-          border-color: #333;
-        }
-        .subscription-table th {
           border-color: #333;
         }
         footer {
@@ -392,26 +534,120 @@
     <div class="hero">
       <img src="/assets/images/app-icon.png" alt="App Icon" class="hero-icon" />
       <h1>HSK受験者が作った単語帳</h1>
-      <p class="tagline">HSK1〜6級対応 - 聴いて覚える中国語単語帳</p>
+      <p class="tagline">HSK1〜6級対応 · 無料ではじめる中国語単語帳</p>
     </div>
 
     <nav>
-      <a href="#features" class="active">機能紹介</a>
-      <a href="#subscription">料金プラン</a>
+      <a href="#pricing" class="active">料金プラン</a>
+      <a href="#features">機能紹介</a>
       <a href="#faq">よくある質問</a>
       <a href="#contact">お問い合わせ</a>
-      <a href="/privacy-policy">プライバシーポリシー</a>
+      <a href="/privacy-policy">プライバシー</a>
       <a href="/terms">利用規約</a>
     </nav>
 
     <div class="container">
 
+      <!-- ── About ── -->
       <section id="about">
         <h2>アプリについて</h2>
-        <p>「HSK受験者が作った単語帳」は、HSK（漢語水平考試）1級〜6級の全単語約5,000語を収録した中国語語彙学習アプリです。実際のHSK受験経験をもとに、合格に直結する単語帳を作りました。</p>
-        <p>文字暗記と音声暗記の2つのモードで、見て覚える・聴いて覚えるの両方からアプローチ。50語ずつのグループ分けで、計画的に学習を進められます。</p>
+        <p>「HSK受験者が作った単語帳」は、HSK1〜6級の全単語約5,000語を収録した中国語語彙学習アプリです。無料でダウンロードして今すぐ学習をはじめられます。</p>
+        <p>文字暗記と音声暗記の2つのモードで、視覚・聴覚の両面から効率よく単語を定着させます。さらに7日間のスプリント機能でパンダスタンプを集めながらゲーム感覚で学習できます。</p>
       </section>
 
+      <!-- ── Pricing ── -->
+      <section id="pricing">
+        <h2>料金プラン</h2>
+        <p>まずは無料でお試しください。プレミアムプランに登録すると、全レベル・全単語にアクセスできます。</p>
+
+        <div class="plan-grid">
+
+          <div class="plan-card">
+            <div class="plan-name">無料プラン</div>
+            <div class="plan-price">¥0 <span>/ 永久無料</span></div>
+            <ul class="plan-features">
+              <li><span class="check">&#10003;</span>HSK1級 全150語</li>
+              <li><span class="check">&#10003;</span>HSK2〜6級 各レベル最初の50語</li>
+              <li><span class="check">&#10003;</span>文字暗記モード</li>
+              <li><span class="check">&#10003;</span>音声暗記モード</li>
+              <li><span class="check">&#10003;</span>スプリント機能</li>
+              <li><span class="cross">&#10007;</span>HSK2〜6級 50語以降の単語</li>
+              <li><span class="cross">&#10007;</span>音声再生（未暗記フィルタ）の全範囲</li>
+            </ul>
+          </div>
+
+          <div class="plan-card premium">
+            <div class="plan-name">プレミアムプラン</div>
+            <div class="plan-price">¥380 <span>/ 月（税込）</span></div>
+            <ul class="plan-features">
+              <li><span class="check">&#10003;</span>HSK1〜6級 全約5,000語</li>
+              <li><span class="check">&#10003;</span>文字暗記モード（全語）</li>
+              <li><span class="check">&#10003;</span>音声暗記モード（全語）</li>
+              <li><span class="check">&#10003;</span>音声再生（全範囲）</li>
+              <li><span class="check">&#10003;</span>スプリント機能（全語）</li>
+              <li><span class="check">&#10003;</span>広告なし</li>
+              <li><span class="check">&#10003;</span>いつでもキャンセル可能</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <h3>HSK別収録語数</h3>
+        <table class="subscription-table">
+          <thead>
+            <tr>
+              <th>HSK級</th>
+              <th>収録語数</th>
+              <th>無料</th>
+              <th>プレミアム</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>HSK1級</td>
+              <td>150語</td>
+              <td><span class="badge-free">全語</span></td>
+              <td><span class="badge-free">全語</span></td>
+            </tr>
+            <tr>
+              <td>HSK2級</td>
+              <td>150語</td>
+              <td>50語</td>
+              <td><span class="badge-premium">全150語</span></td>
+            </tr>
+            <tr>
+              <td>HSK3級</td>
+              <td>300語</td>
+              <td>50語</td>
+              <td><span class="badge-premium">全300語</span></td>
+            </tr>
+            <tr>
+              <td>HSK4級</td>
+              <td>600語</td>
+              <td>50語</td>
+              <td><span class="badge-premium">全600語</span></td>
+            </tr>
+            <tr>
+              <td>HSK5級</td>
+              <td>1,300語</td>
+              <td>50語</td>
+              <td><span class="badge-premium">全1,300語</span></td>
+            </tr>
+            <tr>
+              <td>HSK6級</td>
+              <td>2,500語</td>
+              <td>50語</td>
+              <td><span class="badge-premium">全2,500語</span></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-box">
+          <p>サブスクリプションは自動更新されます。次回の請求日の<strong>24時間前まで</strong>にキャンセルすれば、翌月以降の請求は発生しません。以前に購入済みの場合は「購入を復元」からプレミアムを有効化できます。</p>
+        </div>
+      </section>
+
+      <!-- ── Features ── -->
       <section id="features">
         <h2>主な機能</h2>
         <div class="features">
@@ -428,117 +664,122 @@
           <div class="feature-card">
             <span class="icon" aria-hidden="true">&#x1F50A;</span>
             <h3>音声再生機能</h3>
-            <p>中国語・日本語・英語の例文を連続再生。0.5〜1.5倍速まで調整可能。通勤中のながら学習に最適。</p>
+            <p>中国語・日本語・英語の例文を連続再生。0.5〜1.5倍速調整対応。通勤中のながら学習に最適。</p>
+          </div>
+          <div class="feature-card">
+            <span class="icon" aria-hidden="true">&#x1F43C;</span>
+            <h3>スプリント機能</h3>
+            <p>7日間のスタンプラリー形式で学習を進捗管理。60種類のパンダスタンプを集めながらゲーム感覚で継続できます。</p>
           </div>
           <div class="feature-card">
             <span class="icon" aria-hidden="true">&#x1F4CA;</span>
             <h3>進捗管理</h3>
             <p>暗記済み・暗記必要・未暗記の3段階で進捗を可視化。HSK各級ごとに独立した進捗管理が可能です。</p>
           </div>
+          <div class="feature-card">
+            <span class="icon" aria-hidden="true">&#x1F507;</span>
+            <h3>広告なし</h3>
+            <p>無料プランも含め、広告は一切表示されません。学習に集中できる環境を提供します。</p>
+          </div>
         </div>
       </section>
 
-      <section id="subscription">
-        <h2>料金プラン</h2>
-        <h3>収録単語数</h3>
-        <table class="subscription-table">
-          <thead>
-            <tr>
-              <th>HSK級</th>
-              <th>収録語数</th>
-              <th>無料アクセス</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>HSK1級</td>
-              <td>150語</td>
-              <td>全単語無料</td>
-            </tr>
-            <tr>
-              <td>HSK2級</td>
-              <td>150語</td>
-              <td>最初の50語</td>
-            </tr>
-            <tr>
-              <td>HSK3級</td>
-              <td>300語</td>
-              <td>最初の50語</td>
-            </tr>
-            <tr>
-              <td>HSK4級</td>
-              <td>600語</td>
-              <td>最初の50語</td>
-            </tr>
-            <tr>
-              <td>HSK5級</td>
-              <td>1,300語</td>
-              <td>最初の50語</td>
-            </tr>
-            <tr>
-              <td>HSK6級</td>
-              <td>2,500語</td>
-              <td>最初の50語</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>プレミアムプラン</h3>
-        <p>HSK2〜6級の全単語にアクセスするには、月額サブスクリプションへの登録が必要です。</p>
-        <p><strong>月額 ¥380（税込）</strong> - いつでもキャンセル可能</p>
-        <p>サブスクリプションは自動更新されます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。管理・キャンセルはお使いのデバイスの設定画面から行えます。</p>
-      </section>
-
+      <!-- ── FAQ ── -->
       <section id="faq">
         <h2>よくある質問</h2>
 
+        <h3>料金・サブスクリプションについて</h3>
+
         <details class="faq-item">
-          <summary>どのレベルの単語が収録されていますか？</summary>
-          <div class="answer">HSK1級〜6級の全単語約5,000語を収録しています。各級ごとに50語単位のグループに分かれており、段階的に学習を進められます。</div>
+          <summary>無料で使える範囲はどこまでですか？</summary>
+          <div class="answer">HSK1級の全150語は完全無料でご利用いただけます。HSK2〜6級は各レベル最初の50語（グループ1）が無料です。50語を超える単語にアクセスするにはプレミアムプランへの登録が必要です。</div>
         </details>
 
         <details class="faq-item">
-          <summary>インターネット接続は必要ですか？</summary>
-          <div class="answer">音声再生にはデバイスのテキスト読み上げ機能を使用しているため、基本的にオフラインでもご利用いただけます。初回ダウンロード後はインターネット接続なしで学習できます。</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>学習データは他のデバイスに引き継げますか？</summary>
-          <div class="answer">現在、学習データはお使いのデバイス内にのみ保存されます。デバイス間の同期機能は今後のアップデートで検討しています。</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>学習データをリセットしたい場合は？</summary>
-          <div class="answer">アプリ内の「プロフィール」画面から、すべての学習データをリセットできます。リセットすると暗記状況がすべて初期化されますのでご注意ください。</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>アプリは無料ですか？</summary>
-          <div class="answer">HSK1級の全単語は完全無料でご利用いただけます。HSK2〜6級は各レベル最初の50語が無料で、全単語へのアクセスには月額¥380のプレミアムプランへの登録が必要です。広告は表示されません。</div>
-        </details>
-
-        <details class="faq-item">
-          <summary>文字暗記と音声暗記の違いは何ですか？</summary>
-          <div class="answer">文字暗記モードでは漢字とピンインが表示され、視覚的に単語を覚えます。音声暗記モードでは中国語が隠された状態で、音声を聴いて意味を理解する練習ができます。それぞれの暗記状況は別々に管理されます。</div>
+          <summary>プレミアムプランの料金は？</summary>
+          <div class="answer">月額¥380（税込）です。サブスクリプションはApple App StoreまたはGoogle Playを通じて課金されます。いつでもキャンセル可能で、キャンセル後は当月末まで引き続きご利用いただけます。</div>
         </details>
 
         <details class="faq-item">
           <summary>サブスクリプションのキャンセル方法は？</summary>
-          <div class="answer">iOSの場合：設定 → Apple ID → サブスクリプション から管理・キャンセルできます。Androidの場合：Google Play ストア → お支払いと定期購入 → 定期購入 から管理できます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。</div>
+          <div class="answer">
+            <strong>iOS（iPhone / iPad）の場合：</strong>
+            <ol>
+              <li>設定アプリ を開く</li>
+              <li>画面上部の Apple ID をタップ</li>
+              <li>「サブスクリプション」をタップ</li>
+              <li>「HSK受験者が作った単語帳」を選択してキャンセル</li>
+            </ol>
+            <br />
+            <strong>Androidの場合：</strong>
+            <ol>
+              <li>Google Play ストア を開く</li>
+              <li>右上のアカウントアイコンをタップ</li>
+              <li>「お支払いと定期購入」→「定期購入」をタップ</li>
+              <li>「HSK受験者が作った単語帳」を選択してキャンセル</li>
+            </ol>
+            <br />
+            次回請求日の24時間前までにキャンセルすれば、翌月以降の請求は発生しません。
+          </div>
         </details>
+
+        <details class="faq-item">
+          <summary>機種変更・再インストール後にプレミアムを復元するには？</summary>
+          <div class="answer">アプリ内の「プロフィール」画面にある「購入を復元」ボタンをタップしてください。同じApple IDまたはGoogleアカウントでご購入された場合、自動的にプレミアムが有効になります。</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>プレミアムを購入したのに反映されない場合は？</summary>
+          <div class="answer">以下の手順をお試しください：（1）アプリを一度終了して再起動する、（2）プロフィール画面の「購入を復元」をタップする、（3）端末のインターネット接続を確認する。それでも解決しない場合はお問い合わせください。</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>無料トライアルはありますか？</summary>
+          <div class="answer">現在、無料トライアル期間は設けておりません。ただし、HSK1級の全語とHSK2〜6級各50語は無料でご利用いただけるため、まずは無料でアプリの学習機能をお試しください。</div>
+        </details>
+
+        <h3>機能・学習方法について</h3>
+
+        <details class="faq-item">
+          <summary>文字暗記と音声暗記の違いは何ですか？</summary>
+          <div class="answer">文字暗記モードでは漢字とピンインが表示され、視覚的に単語を覚えます。音声暗記モードでは中国語が隠された状態で音声を聴いて意味を理解する練習ができます。それぞれの暗記状況は独立して管理されます。</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>インターネット接続は必要ですか？</summary>
+          <div class="answer">音声再生にはデバイスのテキスト読み上げ機能（TTS）を使用しているため、基本的にオフラインでもご利用いただけます。サブスクリプションの購入・復元にはインターネット接続が必要です。</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>学習データを他のデバイスに引き継げますか？</summary>
+          <div class="answer">現在、学習データはお使いのデバイス内にのみ保存されます。デバイス間の同期機能は今後のアップデートで検討しています。なお、サブスクリプションは同じApple ID / Googleアカウントで別端末にも復元できます。</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>学習データをリセットしたい場合は？</summary>
+          <div class="answer">アプリ内の「プロフィール」画面から、すべての学習データをリセットできます。リセットすると暗記状況がすべて初期化されますのでご注意ください。サブスクリプションはリセットされません。</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>どのレベルの単語が収録されていますか？</summary>
+          <div class="answer">HSK1〜6級の全単語約5,000語を収録しています。各級ごとに50語単位のグループに分かれており、段階的に学習を進められます。各単語には漢字・ピンイン・日本語訳・例文（中国語・日本語・英語）が含まれます。</div>
+        </details>
+
       </section>
 
+      <!-- ── Contact ── -->
       <section id="contact">
         <h2>お問い合わせ</h2>
         <div class="contact-box">
-          <p>アプリに関するご質問、ご要望、不具合のご報告など、<br />お気軽にお問い合わせください。</p>
+          <p>サブスクリプションに関するご質問、機能のご要望、<br />不具合のご報告など、お気軽にお問い合わせください。</p>
           <a href="mailto:hiroshi.chin@gmail.com" class="contact-email">hiroshi.chin@gmail.com</a>
         </div>
       </section>
 
+      <!-- ── Legal ── -->
       <section id="legal" class="privacy-section">
         <h2>プライバシーポリシー・利用規約</h2>
-        <p>最終更新日: 2026年3月9日</p>
+        <p>最終更新日: 2026年4月11日</p>
 
         <h3>プライバシーポリシー概要</h3>
         <p>本アプリは、ユーザーの個人情報を収集しません。学習の進捗状況はお使いのデバイス内にのみ保存され、外部サーバーに送信されることはありません。サブスクリプションの課金処理はApple App Store / Google Play StoreおよびRevenueCatを通じて行われます。</p>
