@@ -336,3 +336,53 @@ export function TropicalFlowerIcon({ size, color = "#E91E63" }: IconProps) {
     </Svg>
   );
 }
+
+// HSK5: 夜空 — crescent moon
+export function MoonIcon({ size, color = "#FDD835" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.85}>
+      <Path
+        d="M20 8 C12 8 8 13 8 18 C8 23 12 26 18 26 C23 26 27 23 28 19 C25 21 20 21 17 18 C14 15 14 10 20 8 Z"
+        fill={color}
+      />
+      <Circle cx="22" cy="10" r="1.2" fill={color} opacity="0.5" />
+      <Circle cx="10" cy="11" r="0.8" fill={color} opacity="0.4" />
+    </Svg>
+  );
+}
+
+// HSK5: 夜空 — 5-pointed star
+export function StarIcon({ size, color = "#F0F4FF" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.9}>
+      <Path
+        d="M16 4 L18.4 11.6 L26.5 11.6 L20.1 16.4 L22.5 24 L16 19.2 L9.5 24 L11.9 16.4 L5.5 11.6 L13.6 11.6 Z"
+        fill={color}
+      />
+    </Svg>
+  );
+}
+
+// HSK5: 夜空 — rocket
+export function RocketIcon({ size, color = "#90CAF9" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.85}>
+      {/* Body */}
+      <Path d="M16 4 C12 8 10 13 10 18 L22 18 C22 13 20 8 16 4 Z" fill={color} />
+      {/* Nose tip */}
+      <Path d="M16 4 C14.5 6 13.5 8 13 10 L19 10 C18.5 8 17.5 6 16 4 Z" fill={color} opacity="0.6" />
+      {/* Window */}
+      <Circle cx="16" cy="14" r="2.5" fill="white" opacity="0.7" />
+      {/* Left fin */}
+      <Path d="M10 18 L7 24 L10 22 Z" fill={color} opacity="0.8" />
+      {/* Right fin */}
+      <Path d="M22 18 L25 24 L22 22 Z" fill={color} opacity="0.8" />
+      {/* Exhaust */}
+      <Ellipse cx="16" cy="21" rx="3" ry="2" fill="#FF7043" opacity="0.8" />
+      <Ellipse cx="16" cy="23" rx="2" ry="2.5" fill="#FFCA28" opacity="0.6" />
+    </Svg>
+  );
+}
