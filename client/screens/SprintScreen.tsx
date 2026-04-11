@@ -297,13 +297,13 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
-    // Test cell locked: sequential lock (not yet reached)
+    // Test cell locked: sequential lock (not yet reached) → award/badge icon
     if (isLocked) {
-      return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
+      return <Feather name="award" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
     }
-    // Study cell premium locked: crown/award icon in amber
+    // Study cell premium locked: subscription required → lock icon in amber
     if (isPremiumLocked) {
-      return <Feather name="award" size={CELL_SIZE * 0.30} color="#F59E0B" />;
+      return <Feather name="lock" size={CELL_SIZE * 0.30} color="#F59E0B" />;
     }
     if (sessionType === "test") {
       return (
