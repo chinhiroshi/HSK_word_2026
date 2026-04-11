@@ -314,6 +314,28 @@ export function MushroomIcon({ size, color = "#E53935" }: IconProps) {
   );
 }
 
+// HSK2 (雪山): 杉の木 — cedar/fir tree
+export function CedarTreeIcon({ size, color = "#37474F" }: IconProps) {
+  const s = size;
+  return (
+    <Svg width={s} height={s} viewBox="0 0 32 32" opacity={0.8}>
+      {/* Trunk */}
+      <Rect x="14.5" y="25" width="3" height="5" rx="1" fill={color} opacity="0.7" />
+      {/* Bottom layer (widest) */}
+      <Polygon points="16,18 5,28 27,28" fill={color} opacity="0.7" />
+      {/* Middle layer */}
+      <Polygon points="16,12 7,22 25,22" fill={color} opacity="0.85" />
+      {/* Top layer */}
+      <Polygon points="16,6 9,16 23,16" fill={color} />
+      {/* Tip */}
+      <Polygon points="16,2 12.5,9 19.5,9" fill={color} />
+      {/* Snow caps */}
+      <Polygon points="16,2 12.5,7 19.5,7" fill="white" opacity="0.55" />
+      <Polygon points="16,7 10,14 22,14" fill="white" opacity="0.3" />
+    </Svg>
+  );
+}
+
 // HSK6: 都市 — crescent moon
 export function MoonIcon({ size, color = "#5C6BC0" }: IconProps) {
   const s = size;

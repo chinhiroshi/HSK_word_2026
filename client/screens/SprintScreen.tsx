@@ -28,7 +28,7 @@ import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import {
   PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon, FlowerIcon,
-  WaveIcon, FishIcon, PalmIcon, SnowflakeIcon, SnowyMountainIcon,
+  WaveIcon, FishIcon, PalmIcon, SnowflakeIcon, SnowyMountainIcon, CedarTreeIcon,
   BuildingIcon, SmallBuildingIcon, SunIcon, MushroomIcon, TropicalFlowerIcon,
   MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
@@ -56,10 +56,10 @@ interface LevelTheme {
 
 const LEVEL_THEMES: Record<number, LevelTheme> = {
   1: { name: "草原",  studyColor: "#5B8C85", studyBg: "#5B8C8514", studyBorder: "#5B8C8545", decoColor: "#6EAF6E", decoBg: "#EBF5EB" },
-  2: { name: "海",    studyColor: "#1976D2", studyBg: "#1976D214", studyBorder: "#1976D245", decoColor: "#38A2D7", decoBg: "#E3F2FD" },
+  2: { name: "雪山",  studyColor: "#455A64", studyBg: "#455A6414", studyBorder: "#455A6445", decoColor: "#78909C", decoBg: "#ECEFF1" },
   3: { name: "森林",  studyColor: "#2E7D32", studyBg: "#2E7D3214", studyBorder: "#2E7D3245", decoColor: "#388E3C", decoBg: "#E6F4E6" },
   4: { name: "熱帯",  studyColor: "#E65100", studyBg: "#E6510014", studyBorder: "#E6510045", decoColor: "#FF8C42", decoBg: "#FFF3E0" },
-  5: { name: "雪山",  studyColor: "#455A64", studyBg: "#455A6414", studyBorder: "#455A6445", decoColor: "#78909C", decoBg: "#ECEFF1" },
+  5: { name: "海",    studyColor: "#1976D2", studyBg: "#1976D214", studyBorder: "#1976D245", decoColor: "#38A2D7", decoBg: "#E3F2FD" },
   6: { name: "都市",  studyColor: "#37474F", studyBg: "#37474F14", studyBorder: "#37474F45", decoColor: "#546E7A", decoBg: "#ECEFF1" },
 };
 
@@ -83,10 +83,10 @@ function renderDecoIcon(variant: number, level: number, size: number) {
       if (variant === 0 || variant === 3) return <TreeIcon size={size} color={lv.decoColor} />;
       if (variant === 1 || variant === 4) return <FlowerIcon size={size} color="#C8A45A" />;
       return <PlantIcon size={size} color={lv.decoColor} />;
-    case 2: // 海: wave / sun / fish の3種類 × 2
-      if (variant === 0 || variant === 3) return <WaveIcon size={size} color={lv.decoColor} />;
-      if (variant === 1 || variant === 4) return <SunIcon size={size} color="#FFB300" />;
-      return <FishIcon size={size} color="#42A5F5" />;
+    case 2: // 雪山: snowy mountain (多め) / cedar / snowflake
+      if (variant === 0 || variant === 2 || variant === 4) return <SnowyMountainIcon size={size} color={lv.decoColor} />;
+      if (variant === 1 || variant === 3) return <CedarTreeIcon size={size} color="#455A64" />;
+      return <SnowflakeIcon size={size} color="#90CAF9" />;
     case 3: // 森林: 濃い木 / キノコ / 明るい木 の3種類 × 2
       if (variant === 0 || variant === 3) return <TreeIcon size={size} color="#2E7D32" />;
       if (variant === 1 || variant === 4) return <MushroomIcon size={size} color="#C62828" />;
@@ -95,10 +95,10 @@ function renderDecoIcon(variant: number, level: number, size: number) {
       if (variant === 0 || variant === 3) return <PalmIcon size={size} color={lv.decoColor} />;
       if (variant === 1 || variant === 4) return <TropicalFlowerIcon size={size} color="#E91E63" />;
       return <PlantIcon size={size} color="#66BB6A" />;
-    case 5: // 雪山: snowy mountain / snowflake / mountain の3種類 × 2
-      if (variant === 0 || variant === 3) return <SnowyMountainIcon size={size} color={lv.decoColor} />;
-      if (variant === 1 || variant === 4) return <SnowflakeIcon size={size} color="#90CAF9" />;
-      return <MountainIcon size={size} color="#B0BEC5" />;
+    case 5: // 海: wave / sun / fish の3種類 × 2
+      if (variant === 0 || variant === 3) return <WaveIcon size={size} color={lv.decoColor} />;
+      if (variant === 1 || variant === 4) return <SunIcon size={size} color="#FFB300" />;
+      return <FishIcon size={size} color="#42A5F5" />;
     case 6: // 都市: building / moon / star / rocket / small building の5種類
       if (variant === 0) return <BuildingIcon size={size} color="#546E7A" />;
       if (variant === 1) return <MoonIcon size={size} color="#5C6BC0" />;
@@ -115,10 +115,10 @@ function renderDecoIcon(variant: number, level: number, size: number) {
 function renderStudyIcon(level: number, size: number, color: string) {
   switch (level) {
     case 1: return <PlantIcon size={size} color={color} />;
-    case 2: return <FishIcon size={size} color={color} />;
+    case 2: return <SnowyMountainIcon size={size} color={color} />;  // 雪山
     case 3: return <TreeIcon size={size} color={color} />;
     case 4: return <PalmIcon size={size} color={color} />;
-    case 5: return <SnowflakeIcon size={size} color={color} />;
+    case 5: return <FishIcon size={size} color={color} />;           // 海
     case 6: return <BuildingIcon size={size} color={color} />;
     default: return <PlantIcon size={size} color={color} />;
   }
@@ -221,10 +221,11 @@ interface CellProps {
   theme: ReturnType<typeof useTheme>["theme"];
   testNumber?: number;
   isLocked?: boolean;
+  isPremiumLocked?: boolean;
   currentLevel: number;
 }
 
-function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme, testNumber, isLocked, currentLevel }: CellProps) {
+function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme, testNumber, isLocked, isPremiumLocked, currentLevel }: CellProps) {
   const isFlag = index === 0;
   const lvTheme = getLevelTheme(currentLevel);
 
@@ -266,6 +267,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     textColor = "#fff";
   } else if (sessionType === "test") {
     if (isLocked) {
+      // Test cell locked: not yet reached / prerequisite not met
       bgColor = theme.backgroundSecondary;
       borderColor = theme.border;
       textColor = theme.textSecondary;
@@ -274,6 +276,11 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       borderColor = "#C4B5FD";
       textColor = "#7C3AED";
     }
+  } else if (isPremiumLocked) {
+    // Study cell locked: premium subscription required → amber/gold tint
+    bgColor = "#FFFBEA";
+    borderColor = "#FFD54F";
+    textColor = "#F59E0B";
   } else {
     bgColor = lvTheme.studyBg;
     borderColor = lvTheme.studyBorder;
@@ -290,8 +297,13 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
+    // Test cell locked: sequential lock (not yet reached)
     if (isLocked) {
-      return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "60"} />;
+      return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
+    }
+    // Study cell premium locked: crown/award icon in amber
+    if (isPremiumLocked) {
+      return <Feather name="award" size={CELL_SIZE * 0.30} color="#F59E0B" />;
     }
     if (sessionType === "test") {
       return (
@@ -319,7 +331,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       style={[
         styles.cell,
         { backgroundColor: bgColor, borderColor, width: CELL_SIZE, height: CELL_SIZE },
-        isLocked ? { opacity: 0.55 } : null,
+        (isLocked || isPremiumLocked) ? { opacity: 0.65 } : null,
       ]}
     >
       {renderIcon()}
@@ -800,7 +812,7 @@ export default function SprintScreen() {
                   const isSpecialStamp = specialStamps.includes(cellIndex);
                   const cellTestNum = cellSessionType === "test" ? getTestNumber(cellIndex, wPD) : undefined;
                   const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD) : null;
-                  // Lock test cells that can't be attempted yet
+                  // Lock test cells that can't be attempted yet (sequential lock)
                   const testIsLocked = cellSessionType === "test" && !isCompleted && (
                     (prevTestForCell !== null && !specialStamps.includes(prevTestForCell)) ||
                     cellIndex !== currentPosition
@@ -810,7 +822,6 @@ export default function SprintScreen() {
                     currentLevel !== 1 &&
                     !isPremium &&
                     (getStudyWordOffset(cellIndex, wPD) * wPD >= 50);
-                  const cellIsLocked = testIsLocked || studyIsPremiumLocked;
                   return (
                     <Cell
                       key={colIdx}
@@ -824,7 +835,8 @@ export default function SprintScreen() {
                       onPress={() => handleCellPress(cellIndex)}
                       theme={theme}
                       testNumber={cellTestNum}
-                      isLocked={cellIsLocked}
+                      isLocked={testIsLocked}
+                      isPremiumLocked={studyIsPremiumLocked}
                       currentLevel={currentLevel}
                     />
                   );
