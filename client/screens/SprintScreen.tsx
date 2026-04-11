@@ -26,7 +26,11 @@ import { useSprint, getSessionType as getSessionTypeFn } from "@/contexts/Sprint
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
-import { PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon } from "@/components/SprintCellIcons";
+import {
+  PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon,
+  WaveIcon, FishIcon, PalmIcon, SnowflakeIcon, SnowyMountainIcon, LanternIcon, GoldCloudIcon,
+} from "@/components/SprintCellIcons";
+import { HskLevel } from "@/types";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "audio-cards-only" | "audio-playback";
@@ -38,6 +42,82 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const ROW_WIDTH = SCREEN_WIDTH - Spacing.lg * 2;
 const CELL_SIZE = Math.floor(ROW_WIDTH / NUM_GRID_COLS) - 12;
 
+// ─── Level theme ────────────────────────────────────────────────────────────
+interface LevelTheme {
+  name: string;
+  studyColor: string;
+  studyBg: string;
+  studyBorder: string;
+  decoColor: string;
+  decoBg: string;
+}
+
+const LEVEL_THEMES: Record<number, LevelTheme> = {
+  1: { name: "草原",  studyColor: "#5B8C85", studyBg: "#5B8C8514", studyBorder: "#5B8C8545", decoColor: "#6EAF6E", decoBg: "#EBF5EB" },
+  2: { name: "海",    studyColor: "#1976D2", studyBg: "#1976D214", studyBorder: "#1976D245", decoColor: "#38A2D7", decoBg: "#E3F2FD" },
+  3: { name: "森林",  studyColor: "#2E7D32", studyBg: "#2E7D3214", studyBorder: "#2E7D3245", decoColor: "#388E3C", decoBg: "#E6F4E6" },
+  4: { name: "熱帯",  studyColor: "#E65100", studyBg: "#E6510014", studyBorder: "#E6510045", decoColor: "#FF8C42", decoBg: "#FFF3E0" },
+  5: { name: "雪山",  studyColor: "#455A64", studyBg: "#455A6414", studyBorder: "#455A6445", decoColor: "#78909C", decoBg: "#ECEFF1" },
+  6: { name: "中国",  studyColor: "#C62828", studyBg: "#C6282814", studyBorder: "#C6282845", decoColor: "#D4A017", decoBg: "#FFF8E1" },
+};
+
+function getLevelTheme(level: number): LevelTheme {
+  return LEVEL_THEMES[level] ?? LEVEL_THEMES[1];
+}
+
+// ─── Cell deco icon selection per level ────────────────────────────────────
+type DecoVariant = "a" | "b" | "c";
+function getDecoVariant(row: number, col: number): DecoVariant {
+  const hash = (row * 7 + col * 3) % 3;
+  return hash === 0 ? "a" : hash === 1 ? "b" : "c";
+}
+
+function renderDecoIcon(variant: DecoVariant, level: number, size: number) {
+  const theme = getLevelTheme(level);
+  switch (level) {
+    case 1: // 草原
+      return variant === "a" ? <TreeIcon size={size} color={theme.decoColor} />
+           : variant === "b" ? <CloudIcon size={size} color="#7BB3D4" />
+           : <PlantIcon size={size} color={theme.decoColor} />;
+    case 2: // 海
+      return variant === "a" ? <WaveIcon size={size} color={theme.decoColor} />
+           : variant === "b" ? <CloudIcon size={size} color="#90CAF9" />
+           : <WaveIcon size={size} color="#64B5F6" />;
+    case 3: // 森林
+      return variant === "a" ? <TreeIcon size={size} color="#2E7D32" />
+           : variant === "b" ? <TreeIcon size={size} color="#388E3C" />
+           : <CloudIcon size={size} color="#A5D6A7" />;
+    case 4: // 熱帯
+      return variant === "a" ? <PalmIcon size={size} color={theme.decoColor} />
+           : variant === "b" ? <PlantIcon size={size} color="#66BB6A" />
+           : <CloudIcon size={size} color="#FFCC80" />;
+    case 5: // 雪山
+      return variant === "a" ? <SnowyMountainIcon size={size} color={theme.decoColor} />
+           : variant === "b" ? <SnowflakeIcon size={size} color="#90CAF9" />
+           : <CloudIcon size={size} color="#B0BEC5" />;
+    case 6: // 中国
+      return variant === "a" ? <LanternIcon size={size} color="#E53935" />
+           : variant === "b" ? <GoldCloudIcon size={size} color="#FFD700" />
+           : <LanternIcon size={size} color="#C62828" />;
+    default:
+      return <TreeIcon size={size} color={theme.decoColor} />;
+  }
+}
+
+// ─── Study cell icon per level ──────────────────────────────────────────────
+function renderStudyIcon(level: number, size: number, color: string) {
+  switch (level) {
+    case 1: return <PlantIcon size={size} color={color} />;
+    case 2: return <FishIcon size={size} color={color} />;
+    case 3: return <TreeIcon size={size} color={color} />;
+    case 4: return <PalmIcon size={size} color={color} />;
+    case 5: return <SnowflakeIcon size={size} color={color} />;
+    case 6: return <LanternIcon size={size} color={color} />;
+    default: return <PlantIcon size={size} color={color} />;
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 function buildCellPositions(totalCells: number): [number, number][] {
   const positions: [number, number][] = [];
   let segIdx = 0;
@@ -134,10 +214,12 @@ interface CellProps {
   theme: ReturnType<typeof useTheme>["theme"];
   testNumber?: number;
   isLocked?: boolean;
+  currentLevel: number;
 }
 
-function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme, testNumber, isLocked }: CellProps) {
+function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme, testNumber, isLocked, currentLevel }: CellProps) {
   const isFlag = index === 0;
+  const lvTheme = getLevelTheme(currentLevel);
 
   let bgColor = theme.backgroundDefault;
   let borderColor = theme.border;
@@ -164,8 +246,8 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       iconColor = "#fff";
       textColor = "rgba(255,255,255,0.85)";
     } else {
-      bgColor = theme.primary;
-      borderColor = theme.primary;
+      bgColor = lvTheme.studyColor;
+      borderColor = lvTheme.studyColor;
       iconColor = "#fff";
       textColor = "rgba(255,255,255,0.85)";
     }
@@ -186,9 +268,9 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       textColor = "#7C3AED";
     }
   } else {
-    bgColor = theme.primary + "12";
-    borderColor = theme.primary + "40";
-    textColor = theme.primary;
+    bgColor = lvTheme.studyBg;
+    borderColor = lvTheme.studyBorder;
+    textColor = lvTheme.studyColor;
   }
 
   const iconSize = CELL_SIZE * 0.38;
@@ -218,7 +300,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </View>
       );
     }
-    return <PlantIcon size={iconSize} color={stampColor ?? theme.primary} />;
+    return renderStudyIcon(currentLevel, iconSize, stampColor ?? lvTheme.studyColor);
   };
 
   return (
@@ -281,18 +363,13 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
   );
 }
 
-function DecoCell({ row, col, theme }: { row: number; col: number; theme: ReturnType<typeof useTheme>["theme"] }) {
-  const decoType = getDecoType(row, col);
+function DecoCell({ row, col, theme, currentLevel }: { row: number; col: number; theme: ReturnType<typeof useTheme>["theme"]; currentLevel: number }) {
+  const variant = getDecoVariant(row, col);
   const iconSize = CELL_SIZE * 0.6;
+  const lvTheme = getLevelTheme(currentLevel);
   return (
-    <View style={[styles.decoCell, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: theme.backgroundSecondary + "50" }]}>
-      {decoType === "tree" ? (
-        <TreeIcon size={iconSize} />
-      ) : decoType === "cloud" ? (
-        <CloudIcon size={iconSize} />
-      ) : (
-        <MountainIcon size={iconSize} />
-      )}
+    <View style={[styles.decoCell, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: lvTheme.decoBg + "60" }]}>
+      {renderDecoIcon(variant, currentLevel, iconSize)}
     </View>
   );
 }
@@ -645,11 +722,18 @@ export default function SprintScreen() {
         ]}
       >
         <View style={styles.topBar}>
-          <View style={styles.streakBadge}>
-            <Feather name="zap" size={15} color={Colors.light.secondary} />
-            <ThemedText style={[styles.streakText, { color: Colors.light.secondary }]}>
-              {streakCount}日連続
-            </ThemedText>
+          <View style={styles.topBarLeft}>
+            <View style={styles.streakBadge}>
+              <Feather name="zap" size={15} color={Colors.light.secondary} />
+              <ThemedText style={[styles.streakText, { color: Colors.light.secondary }]}>
+                {streakCount}日連続
+              </ThemedText>
+            </View>
+            <View style={[styles.levelBadge, { backgroundColor: getLevelTheme(currentLevel).studyColor + "18", borderColor: getLevelTheme(currentLevel).studyColor + "50" }]}>
+              <ThemedText style={[styles.levelBadgeText, { color: getLevelTheme(currentLevel).studyColor }]}>
+                HSK{currentLevel}・{getLevelTheme(currentLevel).name}
+              </ThemedText>
+            </View>
           </View>
           <View style={styles.topBarRight}>
             {isSetup && currentSessionType !== "flag" ? (
@@ -732,10 +816,11 @@ export default function SprintScreen() {
                       theme={theme}
                       testNumber={cellTestNum}
                       isLocked={cellIsLocked}
+                      currentLevel={currentLevel}
                     />
                   );
                 }
-                return <DecoCell key={colIdx} row={rowIdx} col={colIdx} theme={theme} />;
+                return <DecoCell key={colIdx} row={rowIdx} col={colIdx} theme={theme} currentLevel={currentLevel} />;
               })}
             </View>
           ))}
@@ -794,9 +879,12 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: Spacing.lg },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
-  topBar: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: Spacing.lg },
+  topBar: { flexDirection: "row", alignItems: "flex-start", justifyContent: "space-between", marginBottom: Spacing.lg },
+  topBarLeft: { flexDirection: "column", alignItems: "flex-start", gap: Spacing.xs },
   streakBadge: { flexDirection: "row", alignItems: "center", gap: Spacing.xs, backgroundColor: Colors.light.secondary + "15", paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
   streakText: { fontSize: 13, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  levelBadge: { flexDirection: "row", alignItems: "center", paddingHorizontal: Spacing.md, paddingVertical: 3, borderRadius: BorderRadius.full, borderWidth: 1 },
+  levelBadgeText: { fontSize: 12, fontFamily: "Nunito_700Bold", fontWeight: "700" },
   todayBadge: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.full },
   todayText: { fontSize: 12, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
   progressChart: { borderRadius: BorderRadius.md, borderWidth: 1, padding: Spacing.md, marginBottom: Spacing.lg, gap: Spacing.sm },
