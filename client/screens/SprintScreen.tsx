@@ -267,20 +267,20 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     textColor = "#fff";
   } else if (sessionType === "test") {
     if (isLocked) {
-      // Test cell locked: not yet reached / prerequisite not met
-      bgColor = theme.backgroundSecondary;
-      borderColor = theme.border;
-      textColor = theme.textSecondary;
+      // Test cell locked: not yet reached / prerequisite not met → amber tint
+      bgColor = "#FFFBEA";
+      borderColor = "#FFD54F";
+      textColor = "#F59E0B";
     } else {
       bgColor = "#EDE9FE";
       borderColor = "#C4B5FD";
       textColor = "#7C3AED";
     }
   } else if (isPremiumLocked) {
-    // Study cell locked: premium subscription required → amber/gold tint
-    bgColor = "#FFFBEA";
-    borderColor = "#FFD54F";
-    textColor = "#F59E0B";
+    // Study cell locked: premium subscription required → grey tint
+    bgColor = theme.backgroundSecondary;
+    borderColor = theme.border;
+    textColor = theme.textSecondary;
   } else {
     bgColor = lvTheme.studyBg;
     borderColor = lvTheme.studyBorder;
@@ -297,13 +297,13 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
-    // Test cell locked: sequential lock (not yet reached)
+    // Test cell locked: sequential lock (not yet reached) → award icon in amber
     if (isLocked) {
-      return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
-    }
-    // Study cell premium locked: crown/award icon in amber
-    if (isPremiumLocked) {
       return <Feather name="award" size={CELL_SIZE * 0.30} color="#F59E0B" />;
+    }
+    // Study cell premium locked: lock icon in grey
+    if (isPremiumLocked) {
+      return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
     }
     if (sessionType === "test") {
       return (
