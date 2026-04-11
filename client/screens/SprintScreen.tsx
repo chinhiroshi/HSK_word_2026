@@ -297,9 +297,18 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     if (featherIcon) {
       return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
     }
-    // Test cell locked: sequential lock (not yet reached) → award icon in amber
+    // Test cell locked: sequential lock (not yet reached) → monster in amber
     if (isLocked) {
-      return <Feather name="award" size={CELL_SIZE * 0.30} color="#F59E0B" />;
+      return (
+        <View style={{ alignItems: "center", justifyContent: "center" }}>
+          <MonsterIcon size={iconSize * 0.85} color="#F59E0B" />
+          {testNumber != null ? (
+            <View style={[styles.testNumBadge, { backgroundColor: "#FFD54F44" }]}>
+              <ThemedText style={[styles.testNumText, { color: "#F59E0B" }]}>{testNumber}</ThemedText>
+            </View>
+          ) : null}
+        </View>
+      );
     }
     // Study cell premium locked: lock icon in grey
     if (isPremiumLocked) {
