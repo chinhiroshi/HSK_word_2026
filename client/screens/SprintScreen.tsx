@@ -30,7 +30,6 @@ import {
   PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon, FlowerIcon,
   WaveIcon, FishIcon, PalmIcon, SnowflakeIcon, SnowyMountainIcon,
   BuildingIcon, SmallBuildingIcon, SunIcon, MushroomIcon, TropicalFlowerIcon,
-  MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
 import { HskLevel } from "@/types";
 
@@ -59,7 +58,7 @@ const LEVEL_THEMES: Record<number, LevelTheme> = {
   2: { name: "海",    studyColor: "#1976D2", studyBg: "#1976D214", studyBorder: "#1976D245", decoColor: "#38A2D7", decoBg: "#E3F2FD" },
   3: { name: "森林",  studyColor: "#2E7D32", studyBg: "#2E7D3214", studyBorder: "#2E7D3245", decoColor: "#388E3C", decoBg: "#E6F4E6" },
   4: { name: "熱帯",  studyColor: "#E65100", studyBg: "#E6510014", studyBorder: "#E6510045", decoColor: "#FF8C42", decoBg: "#FFF3E0" },
-  5: { name: "夜空",  studyColor: "#1A237E", studyBg: "#1A237E14", studyBorder: "#1A237E45", decoColor: "#5C6BC0", decoBg: "#E8EAF6" },
+  5: { name: "雪山",  studyColor: "#455A64", studyBg: "#455A6414", studyBorder: "#455A6445", decoColor: "#78909C", decoBg: "#ECEFF1" },
   6: { name: "都市",  studyColor: "#37474F", studyBg: "#37474F14", studyBorder: "#37474F45", decoColor: "#546E7A", decoBg: "#ECEFF1" },
 };
 
@@ -68,52 +67,42 @@ function getLevelTheme(level: number): LevelTheme {
 }
 
 // ─── Cell deco icon selection per level ────────────────────────────────────
-// 5 variants: 0,2,3 = level icons; 4 = cloud (≈20% cloud coverage)
-// variant 1 = second level icon (no cloud)
+// 5 variants: 0,2,4 = level icons; 1,3 = cloud (≈40% cloud coverage)
 function getDecoVariant(row: number, col: number): number {
   return (row * 17 + col * 11 + row * col * 3) % 5;
 }
 
 function renderDecoIcon(variant: number, level: number, size: number) {
   const lv = getLevelTheme(level);
-
-  // variant 4 → cloud for most levels; rocket for HSK5 (夜空 = no clouds)
-  if (variant === 4) {
-    if (level === 5) return <RocketIcon size={size} color="#90CAF9" />;
-    return <CloudIcon size={size} color={lv.decoColor} />;
-  }
+  // variant 1 and 3 → always cloud (tinted per level)
+  if (variant === 1) return <CloudIcon size={size} color={lv.decoColor} />;
+  if (variant === 3) return <CloudIcon size={size} color={lv.decoColor} />;
 
   switch (level) {
     case 1: // 草原
       return variant === 0 ? <TreeIcon size={size} color={lv.decoColor} />
-           : variant === 1 ? <PlantIcon size={size} color={lv.decoColor} />
            : variant === 2 ? <FlowerIcon size={size} color="#C8A45A" />
            : <PlantIcon size={size} color={lv.decoColor} />;
     case 2: // 海
       return variant === 0 ? <WaveIcon size={size} color={lv.decoColor} />
-           : variant === 1 ? <FishIcon size={size} color="#42A5F5" />
            : variant === 2 ? <SunIcon size={size} color="#FFB300" />
-           : <WaveIcon size={size} color={lv.decoColor} />;
+           : <FishIcon size={size} color="#42A5F5" />;
     case 3: // 森林
       return variant === 0 ? <TreeIcon size={size} color="#2E7D32" />
-           : variant === 1 ? <TreeIcon size={size} color="#388E3C" />
            : variant === 2 ? <MushroomIcon size={size} color="#C62828" />
-           : <PlantIcon size={size} color="#4CAF50" />;
+           : <TreeIcon size={size} color="#388E3C" />;
     case 4: // 熱帯
       return variant === 0 ? <PalmIcon size={size} color={lv.decoColor} />
-           : variant === 1 ? <PlantIcon size={size} color="#66BB6A" />
            : variant === 2 ? <TropicalFlowerIcon size={size} color="#E91E63" />
-           : <PalmIcon size={size} color={lv.decoColor} />;
-    case 5: // 夜空
-      return variant === 0 ? <MoonIcon size={size} color="#FDD835" />
-           : variant === 1 ? <StarIcon size={size} color="#E8EAF6" />
-           : variant === 2 ? <StarIcon size={size} color="#C5CAE9" />
-           : <MoonIcon size={size} color="#FDD835" />;
+           : <PlantIcon size={size} color="#66BB6A" />;
+    case 5: // 雪山
+      return variant === 0 ? <SnowyMountainIcon size={size} color={lv.decoColor} />
+           : variant === 2 ? <SnowflakeIcon size={size} color="#90CAF9" />
+           : <MountainIcon size={size} color="#B0BEC5" />;
     case 6: // 都市
       return variant === 0 ? <BuildingIcon size={size} color="#546E7A" />
-           : variant === 1 ? <SmallBuildingIcon size={size} color="#607D8B" />
-           : variant === 2 ? <BuildingIcon size={size} color="#455A64" />
-           : <SmallBuildingIcon size={size} color="#78909C" />;
+           : variant === 2 ? <SmallBuildingIcon size={size} color="#607D8B" />
+           : <BuildingIcon size={size} color="#455A64" />;
     default:
       return <TreeIcon size={size} color={lv.decoColor} />;
   }
@@ -126,7 +115,7 @@ function renderStudyIcon(level: number, size: number, color: string) {
     case 2: return <FishIcon size={size} color={color} />;
     case 3: return <TreeIcon size={size} color={color} />;
     case 4: return <PalmIcon size={size} color={color} />;
-    case 5: return <MoonIcon size={size} color={color} />;
+    case 5: return <SnowflakeIcon size={size} color={color} />;
     case 6: return <BuildingIcon size={size} color={color} />;
     default: return <PlantIcon size={size} color={color} />;
   }
@@ -300,10 +289,6 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     }
     if (isLocked) {
       return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "60"} />;
-    }
-    // Completed study cells always show PlantIcon (same as HSK1)
-    if (isCompleted && sessionType !== "test") {
-      return <PlantIcon size={iconSize} color={stampColor ?? "#5B8C85"} />;
     }
     if (sessionType === "test") {
       return (
