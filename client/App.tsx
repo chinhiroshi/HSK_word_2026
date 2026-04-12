@@ -9,6 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 import "@/lib/notifications"; // register notification handler early
+import { refreshDailyQuoteIfEnabled } from "@/lib/notifications";
 import {
   useFonts,
   Nunito_400Regular,
@@ -65,6 +66,11 @@ export default function App() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError, showOnboarding]);
+
+  // アプリ起動時に格言通知を更新（毎回ランダムな格言に差し替え）
+  useEffect(() => {
+    refreshDailyQuoteIfEnabled();
+  }, []);
 
   // 通知タップ時にスプリントタブへ遷移
   useEffect(() => {
