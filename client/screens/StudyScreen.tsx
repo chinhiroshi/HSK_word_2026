@@ -16,6 +16,7 @@ import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -37,6 +38,7 @@ export default function StudyScreen() {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const { isGroupLocked, isFreeLevel } = useSubscription();
+  const { t } = useI18n();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -155,7 +157,7 @@ export default function StudyScreen() {
         {locked ? (
           <View style={styles.lockedRow}>
             <ThemedText style={[styles.lockedText, { color: theme.textSecondary }]}>
-              プレミアムで解放
+              {t("premium_unlock")}
             </ThemedText>
           </View>
         ) : (
@@ -176,7 +178,7 @@ export default function StudyScreen() {
 
             <View style={[styles.statBadge, { backgroundColor: theme.backgroundSecondary }]}>
               <ThemedText style={[styles.statText, { color: theme.textSecondary }]}>
-                {neutralCount} 未学習
+                {neutralCount}
               </ThemedText>
             </View>
           </View>
@@ -210,7 +212,7 @@ export default function StudyScreen() {
               {totalStats.total}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              総単語
+              {t("total")}
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
@@ -219,7 +221,7 @@ export default function StudyScreen() {
               {totalStats.memorized}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              暗記済み
+              {t("memorized")}
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
@@ -233,7 +235,7 @@ export default function StudyScreen() {
             </ThemedText>
             <View style={styles.summaryLabelRow}>
               <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-                文字暗記必要
+                {t("text_needs_work")}
               </ThemedText>
               {totalStats.needsWork > 0 ? (
                 <Feather name="chevron-right" size={14} color={Colors.light.secondary} />

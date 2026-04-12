@@ -18,6 +18,7 @@ import { getWords, initializeData, markAsUnmemorized } from "@/lib/storage";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 export default function AudioPlaybackScreen() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -27,6 +28,7 @@ export default function AudioPlaybackScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { isPremium, freeWordsLimit, isFreeLevel } = useSubscription();
+  const { t } = useI18n();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -100,7 +102,7 @@ export default function AudioPlaybackScreen() {
   const playWordSequence = async (word: Word) => {
     if (isCancelledRef.current) return;
 
-    setCurrentPhase("中国語単語 (1回)");
+    setCurrentPhase(t("phase_chinese"));
     setCurrentSpokenText(word.word);
     await speak(word.word, "zh-CN");
     if (isCancelledRef.current) return;
@@ -108,7 +110,7 @@ export default function AudioPlaybackScreen() {
     await delay(500);
     if (isCancelledRef.current) return;
 
-    setCurrentPhase("日本語訳");
+    setCurrentPhase(t("phase_japanese"));
     setCurrentSpokenText(word.translation);
     await speak(word.translation, "ja-JP");
     if (isCancelledRef.current) return;
@@ -118,7 +120,7 @@ export default function AudioPlaybackScreen() {
 
     for (let i = 0; i < 2; i++) {
       if (isCancelledRef.current) return;
-      setCurrentPhase(`中国語例文 (${i + 1}/2回目)`);
+      setCurrentPhase(`${t("phase_chinese_word")} (${i + 1}/2)`);
       setCurrentSpokenText(word.exampleSentence);
       await speak(word.exampleSentence, "zh-CN");
       if (isCancelledRef.current) return;
@@ -128,7 +130,7 @@ export default function AudioPlaybackScreen() {
     if (isCancelledRef.current) return;
     await delay(500);
 
-    setCurrentPhase("日本語例文訳");
+    setCurrentPhase(t("phase_japanese_example"));
     setCurrentSpokenText(word.exampleTranslation);
     await speak(word.exampleTranslation, "ja-JP");
     if (isCancelledRef.current) return;
@@ -137,7 +139,7 @@ export default function AudioPlaybackScreen() {
 
     for (let i = 0; i < 2; i++) {
       if (isCancelledRef.current) return;
-      setCurrentPhase(`中国語例文 (${i + 3}/4回目)`);
+      setCurrentPhase(`${t("phase_chinese_word")} (${i + 3}/4)`);
       setCurrentSpokenText(word.exampleSentence);
       await speak(word.exampleSentence, "zh-CN");
       if (isCancelledRef.current) return;
@@ -148,11 +150,11 @@ export default function AudioPlaybackScreen() {
     await delay(500);
 
     if (word.exampleEnglish) {
-      setCurrentPhase("英語例文");
+      setCurrentPhase(t("phase_english_example"));
       setCurrentSpokenText(word.exampleEnglish);
       await speak(word.exampleEnglish, "en-US");
     } else {
-      setCurrentPhase("英語訳");
+      setCurrentPhase(t("phase_english"));
       setCurrentSpokenText(word.translation);
       await speak(word.translation, "en-US");
     }
@@ -234,7 +236,7 @@ export default function AudioPlaybackScreen() {
         ]}
       >
         <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
-          <ThemedText style={styles.sectionTitle}>再生</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("playback_section")}</ThemedText>
 
           {isPlaying && currentWord ? (
             <View style={styles.nowPlaying}>
@@ -269,8 +271,8 @@ export default function AudioPlaybackScreen() {
               <Feather name="headphones" size={48} color={theme.textSecondary} />
               <ThemedText style={[styles.readyText, { color: theme.textSecondary }]}>
                 {playableWords.length > 0 
-                  ? `${playableWords.length}語の単語を再生できます`
-                  : "再生できる単語がありません"
+                  ? `${playableWords.length}${t("words_unit")}`
+                  : t("no_words_to_play")
                 }
               </ThemedText>
             </View>
@@ -284,14 +286,14 @@ export default function AudioPlaybackScreen() {
                   style={[styles.controlButton, styles.unmemorizedButton, { backgroundColor: Colors.light.alert }]}
                 >
                   <Feather name="flag" size={20} color="#FFFFFF" />
-                  <ThemedText style={styles.controlButtonText}>覚えてない</ThemedText>
+                  <ThemedText style={styles.controlButtonText}>{t("not_memorized_btn")}</ThemedText>
                 </Pressable>
                 <Pressable
                   onPress={stopPlayback}
                   style={[styles.controlButton, styles.stopButton]}
                 >
                   <Feather name="square" size={20} color="#FFFFFF" />
-                  <ThemedText style={styles.controlButtonText}>停止</ThemedText>
+                  <ThemedText style={styles.controlButtonText}>{t("stop")}</ThemedText>
                 </Pressable>
               </View>
             ) : (
@@ -305,7 +307,7 @@ export default function AudioPlaybackScreen() {
                 disabled={playableWords.length === 0 || loading}
               >
                 <Feather name="play" size={24} color="#FFFFFF" />
-                <ThemedText style={styles.controlButtonText}>再生開始</ThemedText>
+                <ThemedText style={styles.controlButtonText}>{t("play")}</ThemedText>
               </Pressable>
             )}
           </View>
@@ -324,7 +326,7 @@ export default function AudioPlaybackScreen() {
                   setMarkedWords([]);
                 }}
               >
-                <ThemedText style={[styles.clearButton, { color: theme.textSecondary }]}>クリア</ThemedText>
+                <ThemedText style={[styles.clearButton, { color: theme.textSecondary }]}>{t("clear_btn")}</ThemedText>
               </Pressable>
             </View>
             {markedWords.map((w, idx) => {
@@ -349,13 +351,13 @@ export default function AudioPlaybackScreen() {
                       {textNeedsWork ? (
                         <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.secondary}20` }]}>
                           <Feather name="book-open" size={10} color={Colors.light.secondary} />
-                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.secondary }]}>読</ThemedText>
+                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.secondary }]}>{t("text_badge_short")}</ThemedText>
                         </View>
                       ) : null}
                       {audioNeedsWork ? (
                         <View style={[styles.memoBadge, { backgroundColor: `${Colors.light.alert}20` }]}>
                           <Feather name="headphones" size={10} color={Colors.light.alert} />
-                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>音</ThemedText>
+                          <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>{t("audio_badge_short")}</ThemedText>
                         </View>
                       ) : null}
                     </View>
@@ -381,7 +383,7 @@ export default function AudioPlaybackScreen() {
         ) : null}
 
         <View style={[styles.settingsCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
-          <ThemedText style={styles.sectionTitle}>再生設定</ThemedText>
+          <ThemedText style={styles.sectionTitle}>{t("settings_section")}</ThemedText>
 
           <View style={styles.settingRow}>
             <ThemedText style={[styles.settingLabel, { color: theme.text }]}>

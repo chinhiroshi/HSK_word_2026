@@ -17,6 +17,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
+import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint, getSessionType } from "@/contexts/SprintContext";
 import { getQuoteForStamp, Quote } from "@/data/quotes";
@@ -113,6 +114,7 @@ export default function SprintStampGalleryScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { sprintData, totalCells, currentLevel } = useSprint();
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
 
@@ -361,7 +363,7 @@ export default function SprintStampGalleryScreen() {
                   style={[styles.modalCloseBtn, { backgroundColor: theme.primary }]}
                   onPress={() => setSelectedQuote(null)}
                 >
-                  <ThemedText style={styles.modalCloseBtnText}>閉じる</ThemedText>
+                  <ThemedText style={styles.modalCloseBtnText}>{t("close")}</ThemedText>
                 </Pressable>
               </>
             ) : null}

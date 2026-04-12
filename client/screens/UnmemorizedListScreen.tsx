@@ -15,6 +15,7 @@ import { Spacing } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, markAsUnmemorized, clearUnmemorizedMark, markAsMemorized } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type RouteProps = RouteProp<RootStackParamList, "UnmemorizedList">;
@@ -24,6 +25,7 @@ export default function UnmemorizedListScreen() {
   const headerHeight = useHeaderHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProps>();
   const { type } = route.params;
@@ -44,7 +46,7 @@ export default function UnmemorizedListScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: type === "text" ? "暗記必要な単語" : "暗記必要な単語（音声）",
+      headerTitle: type === "text" ? t("unmemorized_text_header") : t("unmemorized_audio_header"),
     });
   }, [navigation, type]);
 

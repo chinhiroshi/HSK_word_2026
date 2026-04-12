@@ -29,6 +29,7 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { SpeakButton } from "@/components/SpeakButton";
 import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
+import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/lib/storage";
@@ -54,6 +55,7 @@ export default function SprintStudySessionScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const safeHeaderPadding = headerHeight > 0 ? headerHeight : insets.top + 56;
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { sprintData, completePhase, getStudyWords, getCellPhaseProgress, currentLevel } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
@@ -111,7 +113,7 @@ export default function SprintStudySessionScreen() {
   const currentCardWord = cardWords[currentIndex] ?? null;
   const cardProgress = cardWords.length > 0 ? (currentIndex / cardWords.length) * 100 : 0;
 
-  const badgeLabel = isAudioPhase ? "音声学習" : "文字学習";
+  const badgeLabel = isAudioPhase ? t("badge_audio_learning") : t("badge_text_learning");
   const badgeColor = isAudioPhase ? Colors.light.secondary : theme.primary;
   const badgeBg = isAudioPhase ? Colors.light.secondary + "20" : theme.primary + "20";
   const badgeIcon: keyof typeof Feather.glyphMap = isAudioPhase ? "headphones" : "book-open";
@@ -311,7 +313,7 @@ export default function SprintStudySessionScreen() {
     return (
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
-          <ThemedText style={{ color: theme.textSecondary }}>準備中...</ThemedText>
+          <ThemedText style={{ color: theme.textSecondary }}>{t("preparing")}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -320,25 +322,26 @@ export default function SprintStudySessionScreen() {
   // ----- COMPLETE (partial) -----
   if (phase === "complete" && isPartialComplete) {
     const donePhase =
-      sessionMode === "text-only" ? "文字リスト" :
-      sessionMode === "audio-only" ? "音声リスト" : "音声カード";
+      sessionMode === "text-only" ? t("text_list") :
+      sessionMode === "audio-only" ? t("audio_list") : t("audio_cards");
+    const sep = t("phase_separator");
     const nextPhase =
-      sessionMode === "text-only" ? "音声リスト・音声カード" :
-      sessionMode === "audio-only" ? "文字リスト・音声カード" : "文字リスト・音声リスト";
+      sessionMode === "text-only" ? t("audio_list") + sep + t("audio_cards") :
+      sessionMode === "audio-only" ? t("text_list") + sep + t("audio_cards") : t("text_list") + sep + t("audio_list");
     return (
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <Animated.View entering={FadeIn} style={styles.completeContainer}>
           <View style={[styles.completeIcon, { backgroundColor: theme.primary + "20" }]}>
             <Feather name="check-circle" size={48} color={theme.primary} />
           </View>
-          <ThemedText style={styles.completeTitle}>{donePhase}完了！</ThemedText>
+          <ThemedText style={styles.completeTitle}>{donePhase}{t("phase_complete_suffix")}</ThemedText>
           <ThemedText style={[styles.completeSub, { color: theme.textSecondary }]}>
-            {words.length}語を学習しました
+            {t("words_studied_count").replace("{n}", String(words.length))}
           </ThemedText>
           <View style={[styles.partialNotice, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "40" }]}>
             <Feather name="info" size={15} color={Colors.light.alert} />
             <ThemedText style={[styles.partialNoticeText, { color: Colors.light.alert }]}>
-              スタンプは{nextPhase}も完了すると獲得できます
+              {t("stamp_hint_missing").replace("{phases}", nextPhase)}
             </ThemedText>
           </View>
         </Animated.View>
@@ -359,21 +362,21 @@ export default function SprintStudySessionScreen() {
       (sessionMode === "audio-only" && savedProgress.text && savedProgress.audioCards) ||
       (sessionMode === "audio-cards-only" && savedProgress.text && savedProgress.audio);
     const phaseDoneLabel =
-      sessionMode === "text-only" ? "文字リスト" :
-      sessionMode === "audio-only" ? "音声リスト" :
-      sessionMode === "audio-cards-only" ? "音声カード" : "";
+      sessionMode === "text-only" ? t("text_list") :
+      sessionMode === "audio-only" ? t("audio_list") :
+      sessionMode === "audio-cards-only" ? t("audio_cards") : "";
 
     // Build hint for missing phases
     const missingPhases: string[] = [];
     if (sessionMode === "text-only") {
-      if (!savedProgress.audio) missingPhases.push("音声リスト");
-      if (!savedProgress.audioCards) missingPhases.push("音声カード");
+      if (!savedProgress.audio) missingPhases.push(t("audio_list"));
+      if (!savedProgress.audioCards) missingPhases.push(t("audio_cards"));
     } else if (sessionMode === "audio-only") {
-      if (!savedProgress.text) missingPhases.push("文字リスト");
-      if (!savedProgress.audioCards) missingPhases.push("音声カード");
+      if (!savedProgress.text) missingPhases.push(t("text_list"));
+      if (!savedProgress.audioCards) missingPhases.push(t("audio_cards"));
     } else if (sessionMode === "audio-cards-only") {
-      if (!savedProgress.text) missingPhases.push("文字リスト");
-      if (!savedProgress.audio) missingPhases.push("音声リスト");
+      if (!savedProgress.text) missingPhases.push(t("text_list"));
+      if (!savedProgress.audio) missingPhases.push(t("audio_list"));
     }
 
     const studiedCellIndex = cellIndex ?? (sprintData?.currentPosition ?? 1);
@@ -390,9 +393,9 @@ export default function SprintStudySessionScreen() {
               <View style={[styles.stampCircle, { backgroundColor: Colors.light.success, marginBottom: Spacing.lg }]}>
                 <PlantIcon size={80} color="#fff" />
               </View>
-              <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
+              <ThemedText style={styles.stampLabel}>{t("stamp_earned")}</ThemedText>
               <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
-                {words.length}語の学習完了
+                {t("words_studied_count").replace("{n}", String(words.length))}
               </ThemedText>
 
               {/* 名言 */}
@@ -420,7 +423,7 @@ export default function SprintStudySessionScreen() {
                 style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: Colors.light.secondary + "18", borderColor: Colors.light.secondary + "50" }]}
               >
                 <Feather name="play-circle" size={18} color={Colors.light.secondary} />
-                <ThemedText style={[styles.audioStudyText, { color: Colors.light.secondary }]}>音声連続再生で復習する</ThemedText>
+                <ThemedText style={[styles.audioStudyText, { color: Colors.light.secondary }]}>{t("audio_review_sprint")}</ThemedText>
               </Pressable>
               <Pressable
                 testID="button-back-to-sprint"
@@ -428,7 +431,7 @@ export default function SprintStudySessionScreen() {
                 style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}
               >
                 <Feather name="map" size={16} color={theme.textSecondary} />
-                <ThemedText style={[styles.audioStudyText, { color: theme.textSecondary }]}>スプリントに戻る</ThemedText>
+                <ThemedText style={[styles.audioStudyText, { color: theme.textSecondary }]}>{t("back_to_sprint")}</ThemedText>
               </Pressable>
             </Animated.View>
           </ScrollView>
@@ -443,7 +446,7 @@ export default function SprintStudySessionScreen() {
             <View style={[styles.stampCircle, { backgroundColor: Colors.light.success }]}>
               <PlantIcon size={80} color="#fff" />
             </View>
-            <ThemedText style={styles.stampLabel}>スタンプ獲得！</ThemedText>
+            <ThemedText style={styles.stampLabel}>{t("stamp_earned")}</ThemedText>
           </Animated.View>
         ) : null}
         <Animated.View entering={FadeIn} style={[styles.completeContainer, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
@@ -451,16 +454,16 @@ export default function SprintStudySessionScreen() {
             <Feather name={willGetStamp ? "award" : "check-circle"} size={48} color={willGetStamp ? Colors.light.success : theme.primary} />
           </View>
           <ThemedText style={styles.completeTitle}>
-            {phaseDoneLabel ? `${phaseDoneLabel}完了！` : "セッション完了！"}
+            {phaseDoneLabel ? phaseDoneLabel + t("phase_complete_suffix") : t("session_complete")}
           </ThemedText>
           <ThemedText style={[styles.completeSub, { color: theme.textSecondary }]}>
-            {words.length}語を学習しました
+            {t("words_studied_count").replace("{n}", String(words.length))}
           </ThemedText>
           {!willGetStamp && missingPhases.length > 0 ? (
             <View style={[styles.partialNotice, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "40" }]}>
               <Feather name="info" size={15} color={Colors.light.alert} />
               <ThemedText style={[styles.partialNoticeText, { color: Colors.light.alert }]}>
-                {missingPhases.join("・")}も完了するとスタンプ獲得！
+                {t("stamp_hint_missing").replace("{phases}", missingPhases.join(t("phase_separator")))}
               </ThemedText>
             </View>
           ) : null}
@@ -469,14 +472,14 @@ export default function SprintStudySessionScreen() {
               <ThemedText style={[styles.resultValue, { color: Colors.light.success }]}>
                 {memorizedCount}
               </ThemedText>
-              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>覚えた</ThemedText>
+              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>{t("memorized_label")}</ThemedText>
             </View>
             <View style={[styles.resultDivider, { backgroundColor: theme.border }]} />
             <View style={styles.resultStat}>
               <ThemedText style={[styles.resultValue, { color: Colors.light.alert }]}>
                 {totalCount - memorizedCount}
               </ThemedText>
-              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>覚えていない</ThemedText>
+              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>{t("not_memorized_label")}</ThemedText>
             </View>
           </View>
           {willGetStamp ? (
@@ -486,7 +489,7 @@ export default function SprintStudySessionScreen() {
               disabled={completing}
               style={styles.completeButton}
             >
-              {completing ? "保存中..." : "スタンプをもらう"}
+              {completing ? t("saving") : t("get_stamp")}
             </Button>
           ) : null}
           {sessionMode === "text-only" && !savedProgress.audio ? (
@@ -496,7 +499,7 @@ export default function SprintStudySessionScreen() {
               style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
             >
               <Feather name="headphones" size={16} color={theme.primary} />
-              <ThemedText style={[styles.audioStudyText, { color: theme.primary }]}>音声リストを始める</ThemedText>
+              <ThemedText style={[styles.audioStudyText, { color: theme.primary }]}>{t("start_audio_list")}</ThemedText>
             </Pressable>
           ) : null}
           {(sessionMode === "text-only" && !savedProgress.audioCards) ||
@@ -507,7 +510,7 @@ export default function SprintStudySessionScreen() {
               style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: Colors.light.alert + "12", borderColor: Colors.light.alert + "40" }]}
             >
               <Feather name="layers" size={16} color={Colors.light.alert} />
-              <ThemedText style={[styles.audioStudyText, { color: Colors.light.alert }]}>音声カードを始める</ThemedText>
+              <ThemedText style={[styles.audioStudyText, { color: Colors.light.alert }]}>{t("start_audio_cards")}</ThemedText>
             </Pressable>
           ) : null}
         </Animated.View>
@@ -539,7 +542,7 @@ export default function SprintStudySessionScreen() {
       return true;
     });
 
-    const nextButtonLabel = "完了";
+    const nextButtonLabel = t("done");
 
     return (
       <ThemedView style={styles.container}>
@@ -548,7 +551,7 @@ export default function SprintStudySessionScreen() {
           <View style={[styles.reviewBanner, { backgroundColor: Colors.light.alert + "18", borderBottomColor: Colors.light.alert + "40", paddingTop: safeHeaderPadding + Spacing.sm }]}>
             <Feather name="alert-circle" size={14} color={Colors.light.alert} />
             <ThemedText style={[styles.reviewBannerText, { color: Colors.light.alert }]}>
-              {"まだの単語を再確認してください。準備ができたら完了を押してください。"}
+              {t("review_remaining")}
             </ThemedText>
           </View>
         ) : null}
@@ -871,7 +874,7 @@ export default function SprintStudySessionScreen() {
             >
               <Feather name="eye" size={14} color={theme.textSecondary} />
               <ThemedText style={[styles.earlyUnmemorizedLabel, { color: theme.textSecondary }]}>
-                {revealLevel === 0 ? "文字を見る" : "意味を見る"}
+                {revealLevel === 0 ? t("see_character") : t("see_meaning")}
               </ThemedText>
             </Pressable>
           </View>
@@ -916,6 +919,7 @@ function getOriginalWordNum(wordId: string): number {
 }
 
 function MemoBadge({ word, mode, theme }: { word: Word; mode: "text" | "audio"; theme: ReturnType<typeof useTheme>["theme"] }) {
+  const { t } = useI18n();
   const isMemorized = mode === "text" ? word.textMemorized : word.audioMemorized;
   const unmemorizedCount = mode === "text" ? (word.textUnmemorizedCount ?? 0) : (word.audioUnmemorizedCount ?? 0);
 
@@ -923,7 +927,7 @@ function MemoBadge({ word, mode, theme }: { word: Word; mode: "text" | "audio"; 
     return (
       <View style={[styles.memoBadge, { backgroundColor: Colors.light.success + "20" }]}>
         <Feather name="check" size={11} color={Colors.light.success} />
-        <ThemedText style={[styles.memoBadgeText, { color: Colors.light.success }]}>覚えた</ThemedText>
+        <ThemedText style={[styles.memoBadgeText, { color: Colors.light.success }]}>{t("memorized_label")}</ThemedText>
       </View>
     );
   }
@@ -931,13 +935,13 @@ function MemoBadge({ word, mode, theme }: { word: Word; mode: "text" | "audio"; 
     return (
       <View style={[styles.memoBadge, { backgroundColor: Colors.light.alert + "20" }]}>
         <Feather name="flag" size={11} color={Colors.light.alert} />
-        <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>覚えていない</ThemedText>
+        <ThemedText style={[styles.memoBadgeText, { color: Colors.light.alert }]}>{t("not_memorized_label")}</ThemedText>
       </View>
     );
   }
   return (
     <View style={[styles.memoBadge, { backgroundColor: theme.backgroundSecondary }]}>
-      <ThemedText style={[styles.memoBadgeText, { color: theme.textSecondary }]}>未学習</ThemedText>
+      <ThemedText style={[styles.memoBadgeText, { color: theme.textSecondary }]}>{t("not_started_label")}</ThemedText>
     </View>
   );
 }

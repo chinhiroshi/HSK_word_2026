@@ -25,6 +25,7 @@ import { getWords, initializeData } from "@/lib/storage";
 import { useSprint, getSessionType as getSessionTypeFn } from "@/contexts/SprintContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
+import { useI18n } from "@/contexts/LanguageContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import {
   PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon, FlowerIcon,
@@ -412,35 +413,36 @@ interface ProgressChartProps {
 }
 
 function ProgressChart({ setupDate, completedCount, totalCells, theme }: ProgressChartProps) {
+  const { t } = useI18n();
   const maxCells = totalCells - 1;
   const expected = Math.min(getDaysElapsed(setupDate), maxCells);
-  const actual = Math.min(completedCount, maxCells);
-  const diff = actual - expected;
+  const actualVal = Math.min(completedCount, maxCells);
+  const diff = actualVal - expected;
   const diffColor = diff === 0 ? theme.textSecondary : diff > 0 ? Colors.light.success : Colors.light.alert;
-  const diffLabel = diff === 0 ? "予定通り" : diff > 0 ? `${diff}マス先行` : `${Math.abs(diff)}マス遅れ`;
+  const diffLabel = diff === 0 ? t("on_schedule") : diff > 0 ? `${diff}${t("ahead")}` : `${Math.abs(diff)}${t("behind")}`;
 
   return (
     <View style={[styles.progressChart, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
       <View style={styles.progressChartHeader}>
-        <ThemedText style={[styles.progressChartTitle, { color: theme.text }]}>スプリント進捗</ThemedText>
+        <ThemedText style={[styles.progressChartTitle, { color: theme.text }]}>{t("sprint_progress")}</ThemedText>
         <View style={[styles.diffBadge, { backgroundColor: diffColor + "18" }]}>
           <Feather name={diff === 0 ? "minus" : diff > 0 ? "trending-up" : "trending-down"} size={11} color={diffColor} />
           <ThemedText style={[styles.diffLabel, { color: diffColor }]}>{diffLabel}</ThemedText>
         </View>
       </View>
       <View style={styles.barRow}>
-        <ThemedText style={[styles.barLabel, { color: theme.textSecondary }]}>予定</ThemedText>
+        <ThemedText style={[styles.barLabel, { color: theme.textSecondary }]}>{t("scheduled")}</ThemedText>
         <View style={[styles.barTrack, { backgroundColor: theme.backgroundSecondary }]}>
           <View style={[styles.barFill, { width: `${(expected / maxCells) * 100}%`, backgroundColor: theme.textSecondary + "50" }]} />
         </View>
         <ThemedText style={[styles.barCount, { color: theme.textSecondary }]}>{expected}/{maxCells}</ThemedText>
       </View>
       <View style={styles.barRow}>
-        <ThemedText style={[styles.barLabel, { color: theme.textSecondary }]}>実績</ThemedText>
+        <ThemedText style={[styles.barLabel, { color: theme.textSecondary }]}>{t("actual")}</ThemedText>
         <View style={[styles.barTrack, { backgroundColor: theme.backgroundSecondary }]}>
-          <View style={[styles.barFill, { width: `${(actual / maxCells) * 100}%`, backgroundColor: diff >= 0 ? Colors.light.success : Colors.light.alert }]} />
+          <View style={[styles.barFill, { width: `${(actualVal / maxCells) * 100}%`, backgroundColor: diff >= 0 ? Colors.light.success : Colors.light.alert }]} />
         </View>
-        <ThemedText style={[styles.barCount, { color: theme.text }]}>{actual}/{maxCells}</ThemedText>
+        <ThemedText style={[styles.barCount, { color: theme.text }]}>{actualVal}/{maxCells}</ThemedText>
       </View>
     </View>
   );
@@ -607,6 +609,7 @@ export default function SprintScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel } = useSprint();
   const { isPremium } = useSubscription();
 
@@ -655,15 +658,15 @@ export default function SprintScreen() {
 
       // Test is truly "cleared" only if it's in specialStamps (passed ≥85%)
       if (sStamps.includes(index)) {
-        Alert.alert(`テスト ${testNum} クリア済み`, formatShortDate(cDates[index] ?? "") + " にクリアしました。", [{ text: "OK" }]);
+        Alert.alert(t("test_cleared").replace("{n}", String(testNum)), formatShortDate(cDates[index] ?? ""), [{ text: t("ok") }]);
         return;
       }
       if (index !== currentPosition) {
-        Alert.alert(`テスト ${testNum}`, "前のセルを全て完了してからテストに挑戦できます。", [{ text: "OK" }]);
+        Alert.alert(`${t("session_type_test")} ${testNum}`, t("test_locked"), [{ text: t("ok") }]);
         return;
       }
       if (prevTestCell !== null && !sStamps.includes(prevTestCell)) {
-        Alert.alert(`テスト ${testNum}`, `テスト${testNum - 1}をクリアしてから挑戦できます。`, [{ text: "OK" }]);
+        Alert.alert(`${t("session_type_test")} ${testNum}`, t("test_locked"), [{ text: t("ok") }]);
         return;
       }
       if (testNum > 1 && !isPremium) {
@@ -719,8 +722,8 @@ export default function SprintScreen() {
 
   const getSessionTypeLabel = (type: SprintSessionType) => {
     switch (type) {
-      case "study": return "学習";
-      case "test": return "テスト";
+      case "study": return t("session_type_study");
+      case "test": return t("session_type_test");
       default: return "";
     }
   };
@@ -733,11 +736,19 @@ export default function SprintScreen() {
     }
   };
 
+  const getLevelName = (level: number) => {
+    const keys: Record<number, string> = {
+      1: t("level_grassland"), 2: t("level_snowy"), 3: t("level_forest"),
+      4: t("level_tropical"), 5: t("level_ocean"), 6: t("level_city"),
+    };
+    return keys[level] ?? t("level_grassland");
+  };
+
   if (loading) {
     return (
       <ThemedView style={styles.container}>
         <View style={[styles.centered, { paddingTop: headerHeight + Spacing.xl }]}>
-          <ThemedText style={{ color: theme.textSecondary }}>読み込み中...</ThemedText>
+          <ThemedText style={{ color: theme.textSecondary }}>{t("loading")}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -756,12 +767,12 @@ export default function SprintScreen() {
             <View style={styles.streakBadge}>
               <Feather name="zap" size={15} color={Colors.light.secondary} />
               <ThemedText style={[styles.streakText, { color: Colors.light.secondary }]}>
-                {streakCount}日連続
+                {t("streak_days").replace("{n}", String(streakCount))}
               </ThemedText>
             </View>
             <View style={[styles.levelBadge, { backgroundColor: getLevelTheme(currentLevel).studyColor + "18", borderColor: getLevelTheme(currentLevel).studyColor + "50" }]}>
               <ThemedText style={[styles.levelBadgeText, { color: getLevelTheme(currentLevel).studyColor }]}>
-                HSK{currentLevel}・{getLevelTheme(currentLevel).name}
+                HSK{currentLevel}・{getLevelName(currentLevel)}
               </ThemedText>
             </View>
           </View>
@@ -779,7 +790,7 @@ export default function SprintScreen() {
               style={[styles.stampGalleryBtn, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}
             >
               <Feather name="award" size={15} color={theme.primary} />
-              <ThemedText style={[styles.stampGalleryBtnText, { color: theme.primary }]}>スタンプ帳</ThemedText>
+              <ThemedText style={[styles.stampGalleryBtnText, { color: theme.primary }]}>{t("stamp_gallery_btn")}</ThemedText>
             </Pressable>
           </View>
         </View>
@@ -857,23 +868,23 @@ export default function SprintScreen() {
         </View>
 
         <View style={styles.legend}>
-          <ThemedText style={[styles.legendTitle, { color: theme.textSecondary }]}>凡例</ThemedText>
+          <ThemedText style={[styles.legendTitle, { color: theme.textSecondary }]}>{t("legend")}</ThemedText>
           <View style={styles.legendItems}>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: Colors.light.secondary }]} />
-              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>現在地</ThemedText>
+              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>{t("legend_current")}</ThemedText>
             </View>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
-              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>完了済み</ThemedText>
+              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>{t("legend_done")}</ThemedText>
             </View>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: "#7C3AED" }]} />
-              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>テスト</ThemedText>
+              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>{t("legend_test")}</ThemedText>
             </View>
             <View style={styles.legendItem}>
               <View style={[styles.legendDot, { backgroundColor: Colors.light.alert }]} />
-              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>特別スタンプ</ThemedText>
+              <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>{t("legend_special")}</ThemedText>
             </View>
           </View>
         </View>
@@ -888,7 +899,7 @@ export default function SprintScreen() {
             ]}
           >
             <Feather name="settings" size={15} color={theme.textSecondary} />
-            <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>設定を変更する</ThemedText>
+            <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>{t("change_settings")}</ThemedText>
           </Pressable>
         ) : null}
       </ScrollView>

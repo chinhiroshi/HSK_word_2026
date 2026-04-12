@@ -28,6 +28,7 @@ import { getWords, toggleMemorized, initializeData } from "@/lib/storage";
 import { generateTestQuestions, calculateScore } from "@/lib/testUtils";
 import { speakChinese } from "@/lib/speech";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type RouteProps = RouteProp<RootStackParamList, "Test">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -43,6 +44,7 @@ export default function TestScreen() {
   const headerHeight = useHeaderHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
   const { testType } = route.params;
@@ -76,7 +78,7 @@ export default function TestScreen() {
   }, [loadQuestions]);
 
   useEffect(() => {
-    const title = testType === "word" ? "単語テスト" : "例文テスト";
+    const title = testType === "word" ? t("test_word_header") : t("test_sentence_header");
     navigation.setOptions({ headerTitle: title });
   }, [testType, navigation]);
 
@@ -178,7 +180,7 @@ export default function TestScreen() {
     return (
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.loadingContainer}>
-          <ThemedText>テストを準備中...</ThemedText>
+          <ThemedText>{t("preparing_test")}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -189,12 +191,12 @@ export default function TestScreen() {
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.emptyContainer}>
           <Feather name="check-circle" size={64} color={Colors.light.success} />
-          <ThemedText style={styles.emptyTitle}>テスト対象がありません</ThemedText>
+          <ThemedText style={styles.emptyTitle}>{t("no_test_words")}</ThemedText>
           <ThemedText style={[styles.emptyMessage, { color: theme.textSecondary }]}>
-            未暗記の単語がありません。{"\n"}すべての単語を覚えました！
+            {t("no_unmemorized_words")}
           </ThemedText>
           <Button onPress={handleFinish} style={styles.finishButton}>
-            戻る
+            {t("back")}
           </Button>
         </View>
       </ThemedView>
@@ -217,24 +219,24 @@ export default function TestScreen() {
           >
             <ThemedText style={styles.scorePercentage}>{score.percentage}%</ThemedText>
             <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]}>
-              正解率
+              {t("accuracy_rate")}
             </ThemedText>
           </View>
 
           <ThemedText style={styles.resultTitle}>
-            {score.percentage >= 70 ? "素晴らしい！" : "もう少し頑張りましょう！"}
+            {score.percentage >= 70 ? t("test_great") : t("test_keep_going")}
           </ThemedText>
 
           <ThemedText style={[styles.resultStats, { color: theme.textSecondary }]}>
-            {score.correct} / {score.total} 問正解
+            {t("correct_count").replace("{correct}", String(score.correct)).replace("{total}", String(score.total))}
           </ThemedText>
 
           <View style={styles.resultButtons}>
             <Button onPress={handleRetry} style={styles.retryButton}>
-              もう一度
+              {t("try_again")}
             </Button>
             <Button onPress={handleFinish} style={styles.finishButton}>
-              終了
+              {t("finish")}
             </Button>
           </View>
         </Animated.View>
@@ -343,7 +345,7 @@ export default function TestScreen() {
             )}
 
             <Button onPress={handleNext} style={styles.nextButton}>
-              {currentIndex < questions.length - 1 ? "次の問題" : "結果を見る"}
+              {currentIndex < questions.length - 1 ? t("test_next_question") : t("test_see_results")}
             </Button>
           </Animated.View>
         ) : null}

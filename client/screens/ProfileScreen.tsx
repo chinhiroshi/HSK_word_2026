@@ -34,6 +34,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useAppUpdate } from "@/navigation/MainTabNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
   1: require("../../assets/images/avatar-hsk1.png"),
@@ -44,14 +45,6 @@ const HSK_AVATARS: Record<HskLevel, any> = {
   6: require("../../assets/images/avatar-hsk6.png"),
 };
 
-const HSK_TITLES: Record<HskLevel, string> = {
-  1: "入門者",
-  2: "初級者",
-  3: "中級者",
-  4: "上級者",
-  5: "達人",
-  6: "マスター",
-};
 
 interface QuoteData {
   original: string;
@@ -115,9 +108,15 @@ export default function ProfileScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
+  const { t, lang, setLang } = useI18n();
   const { isPremium } = useSubscription();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { updateInfo } = useAppUpdate();
+
+  const HSK_TITLES: Record<HskLevel, string> = {
+    1: t("hsk_title_1"), 2: t("hsk_title_2"), 3: t("hsk_title_3"),
+    4: t("hsk_title_4"), 5: t("hsk_title_5"), 6: t("hsk_title_6"),
+  };
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -195,7 +194,7 @@ export default function ProfileScreen() {
 
   const handleNotifToggle = async (value: boolean) => {
     if (Platform.OS === "web") {
-      Alert.alert("通知", "通知はモバイルアプリでのみ利用できます。");
+      Alert.alert(t("daily_reminder"), t("notif_web_msg"));
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -204,12 +203,9 @@ export default function ProfileScreen() {
       if (ok) {
         setNotifEnabled(true);
         const timeStr = `${String(notifHour).padStart(2, "0")}:${String(notifMinute).padStart(2, "0")}`;
-        Alert.alert("通知を設定しました", `毎日${timeStr}にスプリント学習のリマインダーをお送りします。`);
+        Alert.alert(t("notif_set_title"), `${timeStr}`);
       } else {
-        Alert.alert(
-          "通知を設定できませんでした",
-          "通知の許可が必要です。設定アプリから通知を許可してください。\n\nExpo Goでは通知機能が制限されている場合があります。本番ビルドでは正常に動作します。"
-        );
+        Alert.alert(t("notif_error_title"), t("notif_web_msg"));
       }
     } else {
       await disableSprintNotification();
@@ -276,11 +272,11 @@ export default function ProfileScreen() {
       }
     } else {
       Alert.alert(
-        "級の切り替え",
-        `HSK ${level}級に切り替えますか？`,
+        t("level_switch_title"),
+        `HSK ${level}`,
         [
-          { text: "キャンセル", style: "cancel" },
-          { text: "切り替え", onPress: performChange },
+          { text: t("cancel"), style: "cancel" },
+          { text: t("switch_btn"), onPress: performChange },
         ]
       );
     }
@@ -306,17 +302,17 @@ export default function ProfileScreen() {
   const handleResetProgress = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     if (Platform.OS === "web") {
-      if (confirm("進捗をリセットしますか？すべての暗記状態がクリアされます。")) {
+      if (confirm(t("reset_confirm_msg"))) {
         performReset();
       }
     } else {
       Alert.alert(
-        "進捗をリセット",
-        "すべての暗記状態がクリアされます。よろしいですか？",
+        t("reset_confirm_title"),
+        t("reset_confirm_msg"),
         [
-          { text: "キャンセル", style: "cancel" },
+          { text: t("cancel"), style: "cancel" },
           {
-            text: "リセット",
+            text: t("reset_btn"),
             style: "destructive",
             onPress: performReset,
           },
@@ -370,7 +366,7 @@ export default function ProfileScreen() {
           >
             <Feather name="volume-2" size={16} color={theme.primary} />
             <ThemedText style={[styles.quoteButtonText, { color: theme.primary }]}>
-              発音
+              {t("speak")}
             </ThemedText>
           </Pressable>
           <Pressable
@@ -383,7 +379,7 @@ export default function ProfileScreen() {
           >
             <Feather name="book" size={16} color={theme.primary} />
             <ThemedText style={[styles.quoteButtonText, { color: theme.primary }]}>
-              訳を見る
+              {t("word_detail_header")}
             </ThemedText>
           </Pressable>
         </View>
@@ -482,7 +478,7 @@ export default function ProfileScreen() {
               }}
             >
               <Feather name="volume-2" size={18} color="#FFFFFF" />
-              <ThemedText style={styles.modalSpeakText}>発音を聞く</ThemedText>
+              <ThemedText style={styles.modalSpeakText}>{t("speak")}</ThemedText>
             </Pressable>
           </Pressable>
         </Pressable>
@@ -502,9 +498,9 @@ export default function ProfileScreen() {
               <Feather name="star" size={22} color="#FFFFFF" />
             </View>
             <View style={styles.subscriptionTextContainer}>
-              <ThemedText style={styles.subscriptionTitle}>プレミアムにアップグレード</ThemedText>
+              <ThemedText style={styles.subscriptionTitle}>{t("premium_upgrade")}</ThemedText>
               <ThemedText style={styles.subscriptionDesc}>
-                全単語をアンロック - ¥380/月
+                ¥380/month
               </ThemedText>
             </View>
             <Feather name="chevron-right" size={20} color="rgba(255,255,255,0.8)" />
@@ -523,15 +519,55 @@ export default function ProfileScreen() {
             </View>
             <View style={styles.subscriptionTextContainer}>
               <ThemedText style={[styles.subscriptionTitle, { color: Colors.light.success }]}>
-                プレミアム会員
+                {t("subscription_active")}
               </ThemedText>
               <ThemedText style={[styles.subscriptionDesc, { color: Colors.light.success }]}>
-                全機能がアンロック済み
+                {t("paywall_hero_title")}
               </ThemedText>
             </View>
           </View>
         </View>
       )}
+
+      {/* Language toggle */}
+      <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
+        <View style={styles.notifContent}>
+          <View style={[styles.notifIcon, { backgroundColor: theme.primary + "15" }]}>
+            <Feather name="globe" size={20} color={theme.primary} />
+          </View>
+          <View style={styles.notifTextContainer}>
+            <ThemedText style={styles.notifTitle}>{t("language_setting")}</ThemedText>
+          </View>
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <Pressable
+              testID="button-lang-ja"
+              onPress={() => setLang("ja")}
+              style={[
+                styles.langBtn,
+                { borderColor: lang === "ja" ? theme.primary : theme.border,
+                  backgroundColor: lang === "ja" ? theme.primary + "15" : "transparent" }
+              ]}
+            >
+              <ThemedText style={[styles.langBtnText, { color: lang === "ja" ? theme.primary : theme.textSecondary }]}>
+                {t("language_japanese")}
+              </ThemedText>
+            </Pressable>
+            <Pressable
+              testID="button-lang-en"
+              onPress={() => setLang("en")}
+              style={[
+                styles.langBtn,
+                { borderColor: lang === "en" ? theme.primary : theme.border,
+                  backgroundColor: lang === "en" ? theme.primary + "15" : "transparent" }
+              ]}
+            >
+              <ThemedText style={[styles.langBtnText, { color: lang === "en" ? theme.primary : theme.textSecondary }]}>
+                {t("language_english")}
+              </ThemedText>
+            </Pressable>
+          </View>
+        </View>
+      </View>
 
       <View
         style={[
@@ -549,9 +585,9 @@ export default function ProfileScreen() {
             />
           </View>
           <View style={styles.notifTextContainer}>
-            <ThemedText style={styles.notifTitle}>毎日のリマインダー</ThemedText>
+            <ThemedText style={styles.notifTitle}>{t("daily_reminder")}</ThemedText>
             <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
-              スプリント学習の時間をお知らせします
+              {t("sprint_header")}
             </ThemedText>
           </View>
           <Switch
@@ -567,7 +603,7 @@ export default function ProfileScreen() {
         <View style={[styles.notifInfoBox, { backgroundColor: theme.backgroundSubtle ?? theme.border + "30", borderColor: theme.border }]}>
           <Feather name="info" size={13} color={theme.textSecondary} />
           <ThemedText style={[styles.notifInfoText, { color: theme.textSecondary }]}>
-            毎日設定した時刻に「今日のスプリントを進めましょう」という通知が届きます。スプリントの学習習慣を維持するお手伝いをします。
+            {t("review_prompt_title")}
           </ThemedText>
         </View>
 
@@ -584,7 +620,7 @@ export default function ProfileScreen() {
               style={styles.notifTimeRow}
             >
               <Feather name="clock" size={16} color={theme.primary} />
-              <ThemedText style={[styles.notifTimeLabel, { color: theme.text }]}>通知時刻</ThemedText>
+              <ThemedText style={[styles.notifTimeLabel, { color: theme.text }]}>{t("notif_time")}</ThemedText>
               <ThemedText style={[styles.notifTimeValue, { color: theme.primary }]}>
                 {`${String(notifHour).padStart(2, "0")}:${String(notifMinute).padStart(2, "0")}`}
               </ThemedText>
@@ -605,7 +641,7 @@ export default function ProfileScreen() {
                   onPress={handleIOSPickerDone}
                   style={[styles.iOSPickerDone, { backgroundColor: theme.primary }]}
                 >
-                  <ThemedText style={styles.iOSPickerDoneText}>完了</ThemedText>
+                  <ThemedText style={styles.iOSPickerDoneText}>{t("done")}</ThemedText>
                 </Pressable>
               </View>
             ) : null}
@@ -631,9 +667,9 @@ export default function ProfileScreen() {
               <Feather name="volume-2" size={20} color={Colors.light.secondary} />
             </View>
             <View style={styles.notifTextContainer}>
-              <ThemedText style={styles.notifTitle}>マナーモードでも音を出す</ThemedText>
+              <ThemedText style={styles.notifTitle}>{t("silent_mode_sound")}</ThemedText>
               <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
-                サイレントモード中も発音・音声を再生します
+                {t("speak")}
               </ThemedText>
             </View>
             <Switch
@@ -647,7 +683,7 @@ export default function ProfileScreen() {
           <View style={[styles.notifInfoBox, { backgroundColor: theme.backgroundSubtle ?? theme.border + "30", borderColor: theme.border }]}>
             <Feather name="info" size={13} color={theme.textSecondary} />
             <ThemedText style={[styles.notifInfoText, { color: theme.textSecondary }]}>
-              iPhoneのマナーモード（消音）スイッチをオンにしていても、単語の発音や音声学習の音が再生されます。
+              {t("silent_mode_sound")}
             </ThemedText>
           </View>
         </View>
@@ -685,10 +721,10 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.reviewTextContainer}>
             <ThemedText style={styles.reviewTitle}>
-              アプリを評価する
+              {t("review_btn")}
             </ThemedText>
             <ThemedText style={[styles.reviewDesc, { color: theme.textSecondary }]}>
-              レビューやコメントで応援してください
+              {t("review_prompt_title")}
             </ThemedText>
           </View>
           <Feather name="chevron-right" size={18} color={theme.textSecondary} />
@@ -705,7 +741,7 @@ export default function ProfileScreen() {
           >
             <View style={styles.statsTitleRow}>
               <Feather name="book-open" size={18} color={theme.primary} />
-              <ThemedText style={styles.statsTitle}>文字暗記</ThemedText>
+              <ThemedText style={styles.statsTitle}>{t("text_memorization")}</ThemedText>
             </View>
 
             <View style={styles.progressContainer}>
@@ -721,7 +757,7 @@ export default function ProfileScreen() {
                   {textStats.memorized}
                 </ThemedText>
                 <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  暗記済み
+                  {t("memorized")}
                 </ThemedText>
               </View>
 
@@ -732,7 +768,7 @@ export default function ProfileScreen() {
                   {textStats.needsWork}
                 </ThemedText>
                 <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  暗記必要
+                  {t("needs_work")}
                 </ThemedText>
               </View>
 
@@ -743,7 +779,7 @@ export default function ProfileScreen() {
                   {textStats.notStarted}
                 </ThemedText>
                 <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  未暗記
+                  {t("not_started")}
                 </ThemedText>
               </View>
             </View>
@@ -757,7 +793,7 @@ export default function ProfileScreen() {
           >
             <View style={styles.statsTitleRow}>
               <Feather name="headphones" size={18} color={theme.primary} />
-              <ThemedText style={styles.statsTitle}>音声暗記</ThemedText>
+              <ThemedText style={styles.statsTitle}>{t("audio_memorization")}</ThemedText>
             </View>
 
             <View style={styles.progressContainer}>
@@ -773,7 +809,7 @@ export default function ProfileScreen() {
                   {audioStats.memorized}
                 </ThemedText>
                 <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  暗記済み
+                  {t("memorized")}
                 </ThemedText>
               </View>
 
@@ -784,7 +820,7 @@ export default function ProfileScreen() {
                   {audioStats.needsWork}
                 </ThemedText>
                 <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  暗記必要
+                  {t("needs_work")}
                 </ThemedText>
               </View>
 
@@ -795,7 +831,7 @@ export default function ProfileScreen() {
                   {audioStats.notStarted}
                 </ThemedText>
                 <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  未暗記
+                  {t("not_started")}
                 </ThemedText>
               </View>
             </View>
@@ -807,14 +843,14 @@ export default function ProfileScreen() {
               { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
             ]}
           >
-            <ThemedText style={styles.totalLabel}>総単語数</ThemedText>
+            <ThemedText style={styles.totalLabel}>{t("total_words")}</ThemedText>
             <ThemedText style={[styles.totalValue, { color: theme.primary }]}>
               {totalWords}
             </ThemedText>
           </View>
 
           <Button onPress={handleResetProgress} style={styles.resetButton}>
-            進捗をリセット
+            {t("reset_progress")}
           </Button>
         </>
       ) : (
@@ -846,9 +882,9 @@ export default function ProfileScreen() {
           <View style={styles.updateBannerLeft}>
             <Feather name="arrow-up-circle" size={22} color="#fff" />
             <View style={styles.updateBannerText}>
-              <ThemedText style={styles.updateBannerTitle}>新しいバージョンがあります</ThemedText>
+              <ThemedText style={styles.updateBannerTitle}>{t("update_available")}</ThemedText>
               <ThemedText style={styles.updateBannerSub}>
-                v{updateInfo.latestVersion} が利用可能です。タップしてApp Storeへ
+                v{updateInfo.latestVersion}
               </ThemedText>
             </View>
           </View>
@@ -863,7 +899,7 @@ export default function ProfileScreen() {
             <Feather name="smartphone" size={20} color={theme.primary} />
           </View>
           <View style={styles.versionTextWrap}>
-            <ThemedText style={styles.versionLabel}>アプリバージョン</ThemedText>
+            <ThemedText style={styles.versionLabel}>{t("app_version")}</ThemedText>
             <ThemedText style={[styles.versionNumber, { color: theme.textSecondary }]}>
               {Constants.expoConfig?.version ?? "—"}
               {updateInfo.available ? `  →  v${updateInfo.latestVersion}` : ""}
@@ -1005,6 +1041,18 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     marginBottom: Spacing.xl,
+  },
+  langBtn: {
+    borderWidth: 1,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    minWidth: 48,
+    alignItems: "center",
+  },
+  langBtnText: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
   },
   subscriptionCard: {
     padding: Spacing.md,

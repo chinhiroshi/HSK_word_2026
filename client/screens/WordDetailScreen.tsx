@@ -23,6 +23,7 @@ import { Word } from "@/types";
 import { getWord, toggleMemorized } from "@/lib/storage";
 import { getPinyin } from "@/lib/pinyin";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type RouteProps = RouteProp<RootStackParamList, "WordDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -38,6 +39,7 @@ export default function WordDetailScreen() {
   const headerHeight = useHeaderHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
   const { wordId } = route.params;
@@ -112,7 +114,7 @@ export default function WordDetailScreen() {
           { backgroundColor: theme.backgroundRoot },
         ]}
       >
-        <ThemedText>単語が見つかりませんでした</ThemedText>
+        <ThemedText>{t("word_not_found")}</ThemedText>
       </View>
     );
   }
@@ -165,7 +167,7 @@ export default function WordDetailScreen() {
                 { color: word.isMemorized ? Colors.light.success : Colors.light.alert },
               ]}
             >
-              {word.isMemorized ? "暗記済み" : "未暗記"}
+              {word.isMemorized ? t("word_is_memorized") : t("word_is_not_memorized")}
             </ThemedText>
           </View>
         </View>
@@ -177,7 +179,7 @@ export default function WordDetailScreen() {
           ]}
         >
           <View style={styles.exampleHeader}>
-            <ThemedText style={styles.sectionTitle}>例文</ThemedText>
+            <ThemedText style={styles.sectionTitle}>{t("example_sentence")}</ThemedText>
             <SpeakButton text={word.exampleSentence} size="medium" />
           </View>
           <ThemedText style={styles.exampleSentence}>
@@ -199,7 +201,7 @@ export default function WordDetailScreen() {
             ]}
           >
             <View style={styles.exampleHeader}>
-              <ThemedText style={styles.sectionTitle}>長い例文</ThemedText>
+              <ThemedText style={styles.sectionTitle}>{t("long_example")}</ThemedText>
               <SpeakButton text={word.longExample} size="medium" />
             </View>
             <ThemedText style={styles.exampleSentence}>
@@ -232,7 +234,7 @@ export default function WordDetailScreen() {
               color="#FFFFFF"
             />
             <ThemedText style={styles.toggleText} lightColor="#FFFFFF" darkColor="#FFFFFF">
-              {word.isMemorized ? "未暗記に戻す" : "暗記済みにする"}
+              {word.isMemorized ? t("mark_unmemorized") : t("mark_memorized")}
             </ThemedText>
           </Animated.View>
         </Pressable>

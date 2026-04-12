@@ -1,6 +1,7 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
+import { useI18n } from "@/contexts/LanguageContext";
 
 import SprintScreen from "@/screens/SprintScreen";
 import SprintSetupScreen from "@/screens/SprintSetupScreen";
@@ -22,43 +23,44 @@ const Stack = createNativeStackNavigator<SprintStackParamList>();
 
 export default function SprintStackNavigator() {
   const screenOptions = useScreenOptions();
+  const { t } = useI18n();
 
   return (
     <Stack.Navigator screenOptions={screenOptions}>
       <Stack.Screen
         name="SprintHome"
         component={SprintScreen}
-        options={{ headerTitle: "スプリント" }}
+        options={{ headerTitle: t("sprint_header") }}
       />
       <Stack.Screen
         name="SprintSetup"
         component={SprintSetupScreen}
-        options={{ headerTitle: "スプリント設定" }}
+        options={{ headerTitle: t("sprint_setup_header") }}
       />
       <Stack.Screen
         name="SprintStudySession"
         component={SprintStudySessionScreen}
         options={({ route }) => ({
           headerTitle:
-            route.params?.mode === "audio-only" ? "音声学習" :
-            route.params?.mode === "text-only" ? "文字学習" :
-            route.params?.mode === "audio-cards-only" ? "音声カード" : "学習セッション",
+            route.params?.mode === "audio-only" ? t("audio_learning_header") :
+            route.params?.mode === "text-only" ? t("tab_study") :
+            route.params?.mode === "audio-cards-only" ? t("audio_cards") : t("session_type_study"),
         })}
       />
       <Stack.Screen
         name="SprintTest"
         component={SprintTestScreen}
-        options={{ headerTitle: "週次テスト" }}
+        options={{ headerTitle: t("sprint_test_header") }}
       />
       <Stack.Screen
         name="SprintAudioPlayback"
         component={SprintAudioPlaybackScreen}
-        options={{ headerTitle: "音声連続再生" }}
+        options={{ headerTitle: t("sprint_audio_header") }}
       />
       <Stack.Screen
         name="SprintStampGallery"
         component={SprintStampGalleryScreen}
-        options={{ headerTitle: "スタンプ帳" }}
+        options={{ headerTitle: t("stamp_gallery_header") }}
       />
     </Stack.Navigator>
   );

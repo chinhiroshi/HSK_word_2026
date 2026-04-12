@@ -16,6 +16,7 @@ import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -38,6 +39,7 @@ interface GroupCardProps {
 
 function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
   const { theme } = useTheme();
+  const { t } = useI18n();
   
   const progress = group.totalCount > 0 
     ? Math.round((group.memorizedCount / group.totalCount) * 100) 
@@ -65,7 +67,7 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
           </ThemedText>
           {locked ? (
             <ThemedText style={[styles.lockedText, { color: theme.textSecondary }]}>
-              プレミアムで解放
+              {t("premium_unlock")}
             </ThemedText>
           ) : (
             <View style={styles.progressBarContainer}>
@@ -125,6 +127,7 @@ export default function AudioLearningScreen() {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const { isGroupLocked, isFreeLevel } = useSubscription();
+  const { t } = useI18n();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -240,7 +243,7 @@ export default function AudioLearningScreen() {
               {totalStats.total}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              総単語
+              {t("total")}
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
@@ -249,7 +252,7 @@ export default function AudioLearningScreen() {
               {totalStats.memorized}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              暗記済み
+              {t("memorized")}
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
@@ -258,7 +261,7 @@ export default function AudioLearningScreen() {
               {totalStats.needsWork}
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              音声暗記必要
+              {t("audio_needs_work")}
             </ThemedText>
           </View>
         </View>

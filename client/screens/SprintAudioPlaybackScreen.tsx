@@ -17,6 +17,7 @@ import { getWords, initializeData, markAsUnmemorized } from "@/lib/storage";
 import { speakWithLanguage, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintAudioPlayback">;
 
@@ -26,6 +27,7 @@ export default function SprintAudioPlaybackScreen() {
   const safeHeaderPadding = useSafeHeaderPadding();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { getTodayStudyWords } = useSprint();
 
   const [words, setWords] = useState<Word[]>([]);
@@ -77,13 +79,13 @@ export default function SprintAudioPlaybackScreen() {
 
   const playWordSequence = async (word: Word) => {
     if (isCancelledRef.current) return;
-    setCurrentPhase("中国語単語");
+    setCurrentPhase(t("phase_chinese_word"));
     await speak(word.word, "zh-CN");
     if (isCancelledRef.current) return;
     await delay(400);
 
     if (isCancelledRef.current) return;
-    setCurrentPhase("日本語訳");
+    setCurrentPhase(t("phase_japanese"));
     await speak(word.translation, "ja-JP");
     if (isCancelledRef.current) return;
     await delay(400);
@@ -97,7 +99,7 @@ export default function SprintAudioPlaybackScreen() {
     }
 
     if (isCancelledRef.current) return;
-    setCurrentPhase("日本語例文訳");
+    setCurrentPhase(t("phase_japanese_example"));
     await speak(word.exampleTranslation, "ja-JP");
     if (isCancelledRef.current) return;
     await delay(400);
@@ -112,7 +114,7 @@ export default function SprintAudioPlaybackScreen() {
 
     if (word.exampleEnglish) {
       if (isCancelledRef.current) return;
-      setCurrentPhase("英語例文");
+      setCurrentPhase(t("phase_english_example"));
       await speak(word.exampleEnglish, "en-US");
     }
     await delay(700);
@@ -162,7 +164,7 @@ export default function SprintAudioPlaybackScreen() {
     return (
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
-          <ThemedText style={{ color: theme.textSecondary }}>準備中...</ThemedText>
+          <ThemedText style={{ color: theme.textSecondary }}>{t("preparing")}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -173,7 +175,7 @@ export default function SprintAudioPlaybackScreen() {
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <Feather name="check-circle" size={56} color={Colors.light.success} />
-          <ThemedText style={styles.emptyTitle}>再生できる単語がありません</ThemedText>
+          <ThemedText style={styles.emptyTitle}>{t("no_playable_words")}</ThemedText>
           <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
             今日の単語がすべて音声暗記済みです。
           </ThemedText>
@@ -194,7 +196,7 @@ export default function SprintAudioPlaybackScreen() {
           <View style={styles.cardHeader}>
             <View style={[styles.badge, { backgroundColor: Colors.light.secondary + "20" }]}>
               <Feather name="headphones" size={13} color={Colors.light.secondary} />
-              <ThemedText style={[styles.badgeText, { color: Colors.light.secondary }]}>音声連続再生</ThemedText>
+              <ThemedText style={[styles.badgeText, { color: Colors.light.secondary }]}>{t("continuous_playback_badge")}</ThemedText>
             </View>
             <ThemedText style={[styles.wordCount, { color: theme.textSecondary }]}>
               {words.length}語
@@ -207,7 +209,7 @@ export default function SprintAudioPlaybackScreen() {
               color={isTextStruggleMode ? Colors.light.alert : theme.textSecondary}
             />
             <ThemedText style={[styles.filterBadgeText, { color: isTextStruggleMode ? Colors.light.alert : theme.textSecondary }]}>
-              {isTextStruggleMode ? "文字学習の苦手単語" : "音声未暗記単語"}
+              {isTextStruggleMode ? t("struggle_words") : t("audio_unmemorized")}
             </ThemedText>
           </View>
 
@@ -256,7 +258,7 @@ export default function SprintAudioPlaybackScreen() {
                   style={[styles.controlButton, { backgroundColor: Colors.light.alert }]}
                 >
                   <Feather name="flag" size={18} color="#fff" />
-                  <ThemedText style={styles.controlButtonText}>覚えてない</ThemedText>
+                  <ThemedText style={styles.controlButtonText}>{t("not_memorized_btn")}</ThemedText>
                 </Pressable>
                 <Pressable
                   testID="button-stop-playback"
@@ -264,7 +266,7 @@ export default function SprintAudioPlaybackScreen() {
                   style={[styles.controlButton, { backgroundColor: theme.textSecondary }]}
                 >
                   <Feather name="square" size={18} color="#fff" />
-                  <ThemedText style={styles.controlButtonText}>停止</ThemedText>
+                  <ThemedText style={styles.controlButtonText}>{t("stop")}</ThemedText>
                 </Pressable>
               </View>
             ) : (
@@ -275,7 +277,7 @@ export default function SprintAudioPlaybackScreen() {
                 disabled={words.length === 0 || loading}
               >
                 <Feather name="play" size={22} color="#fff" />
-                <ThemedText style={styles.controlButtonText}>再生開始</ThemedText>
+                <ThemedText style={styles.controlButtonText}>{t("play")}</ThemedText>
               </Pressable>
             )}
           </View>

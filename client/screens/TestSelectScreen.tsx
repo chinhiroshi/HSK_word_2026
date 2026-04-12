@@ -21,6 +21,7 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -108,6 +109,7 @@ export default function TestSelectScreen() {
   const headerHeight = useHeaderHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const navigation = useNavigation<NavigationProp>();
 
   const [unmemorizedCount, setUnmemorizedCount] = useState(0);
@@ -154,7 +156,7 @@ export default function TestSelectScreen() {
         ]}
       >
         <View style={styles.header}>
-          <ThemedText style={styles.title}>テストモード</ThemedText>
+          <ThemedText style={styles.title}>{t("test_mode_title")}</ThemedText>
           <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
             まだ覚えていない単語をシャッフルしてテストします
           </ThemedText>
@@ -179,23 +181,23 @@ export default function TestSelectScreen() {
               ]}
             >
               {unmemorizedCount > 0
-                ? `未暗記: ${unmemorizedCount}語`
-                : "すべて暗記済み！"}
+                ? `${t("not_started")}: ${unmemorizedCount}${t("words_unit")}`
+                : t("test_all_memorized")}
             </ThemedText>
           </View>
         </View>
 
         <View style={styles.testOptions}>
           <TestCard
-            title="単語テスト"
-            description="中国語の単語を見て意味を選ぶ"
+            title={t("test_word")}
+            description={t("test_word_desc")}
             icon="type"
             onPress={handleWordTest}
             disabled={isDisabled}
           />
           <TestCard
-            title="例文リスニングテスト"
-            description="例文を聞いて意味を選ぶ"
+            title={t("test_sentence")}
+            description={t("test_sentence_desc")}
             icon="headphones"
             onPress={handleSentenceTest}
             disabled={isDisabled}
@@ -205,10 +207,9 @@ export default function TestSelectScreen() {
         {isDisabled ? (
           <View style={styles.noTestMessage}>
             <Feather name="award" size={48} color={Colors.light.success} />
-            <ThemedText style={styles.noTestTitle}>おめでとうございます！</ThemedText>
+            <ThemedText style={styles.noTestTitle}>{t("congratulations")}</ThemedText>
             <ThemedText style={[styles.noTestText, { color: theme.textSecondary }]}>
-              すべての単語を覚えました。{"\n"}
-              プロフィール画面から進捗をリセットして再度テストできます。
+              {t("all_words_memorized_msg")}
             </ThemedText>
           </View>
         ) : null}

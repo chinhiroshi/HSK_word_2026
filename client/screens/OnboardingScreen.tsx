@@ -15,6 +15,7 @@ import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import { useI18n } from "@/contexts/LanguageContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -27,81 +28,6 @@ interface OnboardingPage {
   icon: keyof typeof Feather.glyphMap;
 }
 
-const PAGES: OnboardingPage[] = [
-  {
-    id: "1",
-    image: require("../../assets/images/onboarding-1.png"),
-    title: "HSK全級を網羅",
-    subtitle: "HSK1級〜6級、約5,000語を収録",
-    features: [
-      "各級の単語を50語ずつのグループで学習",
-      "級ごとに独立した進捗管理",
-      "ネイティブ発音で音声確認",
-    ],
-    icon: "globe",
-  },
-  {
-    id: "2",
-    image: require("../../assets/images/onboarding-2.png"),
-    title: "音を聞いて覚える",
-    subtitle: "リスニング重視の学習法で記憶に定着",
-    features: [
-      "まず音声だけで単語を聞く",
-      "タップで文字を確認して答え合わせ",
-      "「聞いてわかる」力を鍛える",
-    ],
-    icon: "headphones",
-  },
-  {
-    id: "3",
-    image: require("../../assets/images/onboarding-3.png"),
-    title: "繰り返し再生で定着",
-    subtitle: "覚えていない単語だけを集中リピート",
-    features: [
-      "単語→訳→例文を自動で連続再生",
-      "再生範囲を自由に設定",
-      "ながら学習にも最適",
-    ],
-    icon: "repeat",
-  },
-  {
-    id: "4",
-    image: require("../../assets/images/onboarding-4.png"),
-    title: "例文で使い方を確認",
-    subtitle: "短い例文と長い例文で用法をマスター",
-    features: [
-      "すべての単語に例文付き",
-      "長い例文で実践的な使い方も学べる",
-      "文字カードを見ながら学習も可能",
-    ],
-    icon: "book-open",
-  },
-  {
-    id: "5",
-    image: require("../../assets/images/onboarding-5.png"),
-    title: "さあ、始めましょう！",
-    subtitle: "最初の50単語は無料でお試しいただけます",
-    features: [
-      "今すぐ学習をスタート",
-      "自分のペースで着実にレベルアップ",
-    ],
-    icon: "zap",
-  },
-  {
-    id: "6",
-    image: require("../../assets/images/onboarding-6.png"),
-    title: "スプリント 大アップデート",
-    subtitle: "パンダのスタンプで学習をもっと楽しく！",
-    features: [
-      "12種類のパンダスタンプを集めよう",
-      "テスト合格で特別な王冠パンダをゲット",
-      "スタンプ帳でコレクションを管理",
-      "HSK級ごとに独立したスプリント進捗",
-    ],
-    icon: "award",
-  },
-];
-
 interface OnboardingScreenProps {
   onComplete: () => void;
 }
@@ -109,8 +35,60 @@ interface OnboardingScreenProps {
 export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const [currentIndex, setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+
+  const PAGES: OnboardingPage[] = [
+    {
+      id: "1",
+      image: require("../../assets/images/onboarding-1.png"),
+      title: t("onboard_1_title"),
+      subtitle: t("onboard_1_subtitle"),
+      features: [t("onboard_1_p1"), t("onboard_1_p2"), t("onboard_1_p3")],
+      icon: "globe",
+    },
+    {
+      id: "2",
+      image: require("../../assets/images/onboarding-2.png"),
+      title: t("onboard_2_title"),
+      subtitle: t("onboard_2_subtitle"),
+      features: [t("onboard_2_p1"), t("onboard_2_p2"), t("onboard_2_p3")],
+      icon: "headphones",
+    },
+    {
+      id: "3",
+      image: require("../../assets/images/onboarding-3.png"),
+      title: t("onboard_3_title"),
+      subtitle: t("onboard_3_subtitle"),
+      features: [t("onboard_3_p1"), t("onboard_3_p2"), t("onboard_3_p3")],
+      icon: "repeat",
+    },
+    {
+      id: "4",
+      image: require("../../assets/images/onboarding-4.png"),
+      title: t("onboard_4_title"),
+      subtitle: t("onboard_4_subtitle"),
+      features: [t("onboard_4_p1"), t("onboard_4_p2"), t("onboard_4_p3")],
+      icon: "book-open",
+    },
+    {
+      id: "5",
+      image: require("../../assets/images/onboarding-5.png"),
+      title: t("onboard_5_title"),
+      subtitle: t("onboard_5_subtitle"),
+      features: [t("onboard_5_p1"), t("onboard_5_p2")],
+      icon: "zap",
+    },
+    {
+      id: "6",
+      image: require("../../assets/images/onboarding-6.png"),
+      title: t("onboard_6_title"),
+      subtitle: t("onboard_6_subtitle"),
+      features: [t("onboard_6_p1"), t("onboard_6_p2"), t("onboard_6_p3"), t("onboard_6_p4")],
+      icon: "award",
+    },
+  ];
 
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -192,7 +170,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
             style={styles.skipButton}
           >
             <ThemedText style={[styles.skipText, { color: theme.textSecondary }]}>
-              スキップ
+              {t("skip")}
             </ThemedText>
           </Pressable>
         ) : (
@@ -241,10 +219,10 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
           onPress={handleNext}
         >
           {isLastPage ? (
-            <ThemedText style={styles.nextButtonText}>始める</ThemedText>
+            <ThemedText style={styles.nextButtonText}>{t("onboard_start")}</ThemedText>
           ) : (
             <View style={styles.nextButtonContent}>
-              <ThemedText style={styles.nextButtonText}>次へ</ThemedText>
+              <ThemedText style={styles.nextButtonText}>{t("onboard_next")}</ThemedText>
               <Feather name="arrow-right" size={18} color="#FFFFFF" />
             </View>
           )}

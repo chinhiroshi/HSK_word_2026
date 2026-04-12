@@ -24,6 +24,7 @@ import OnboardingScreen from "@/screens/OnboardingScreen";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { SprintProvider } from "@/contexts/SprintContext";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const ONBOARDING_KEY = "@chinese_master_onboarding_complete";
 
@@ -86,6 +87,7 @@ export default function App() {
         <SafeAreaProvider>
           <GestureHandlerRootView style={styles.root}>
             <KeyboardProvider>
+              <LanguageProvider>
               <SubscriptionProvider>
                 <SprintProvider>
                   {showOnboarding ? (
@@ -97,6 +99,7 @@ export default function App() {
                   )}
                 </SprintProvider>
               </SubscriptionProvider>
+              </LanguageProvider>
               <StatusBar style="auto" />
             </KeyboardProvider>
           </GestureHandlerRootView>

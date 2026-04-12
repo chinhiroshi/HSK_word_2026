@@ -24,6 +24,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 import { getWords, initializeData, resetWordsOnly } from "@/lib/storage";
 import {
   DEFAULT_NOTIF_HOUR,
@@ -34,12 +35,6 @@ import {
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SetupRouteProp = RouteProp<SprintStackParamList, "SprintSetup">;
-
-const WORD_OPTIONS = [
-  { label: "20語", words: 20, description: "初級・コツコツペース" },
-  { label: "30語", words: 30, description: "標準ペース" },
-  { label: "50語", words: 50, description: "集中ペース" },
-];
 
 function padTwo(n: number) {
   return String(n).padStart(2, "0");
@@ -52,7 +47,14 @@ export default function SprintSetupScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { setupSprint } = useSprint();
+
+  const WORD_OPTIONS = [
+    { label: `20${t("words_unit")}`, words: 20, description: t("words_20_desc") },
+    { label: `30${t("words_unit")}`, words: 30, description: t("words_30_desc") },
+    { label: `50${t("words_unit")}`, words: 50, description: t("words_50_desc") },
+  ];
 
   const [selectedWords, setSelectedWords] = useState<number | null>(null);
   const [customInput, setCustomInput] = useState("");
@@ -185,7 +187,7 @@ export default function SprintSetupScreen() {
             <View style={[styles.flagIcon, { backgroundColor: Colors.light.success + "20" }]}>
               <Feather name="flag" size={32} color={Colors.light.success} />
             </View>
-            <ThemedText style={styles.title}>スプリント設定</ThemedText>
+            <ThemedText style={styles.title}>{t("sprint_setup_title")}</ThemedText>
             <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
               1日で覚える語数を選択してください。{"\n"}
               学習マスが自動で作られます。
@@ -282,14 +284,14 @@ export default function SprintSetupScreen() {
               <TextInput
                 testID="input-custom-minutes"
                 style={[styles.customInput, { color: theme.text }]}
-                placeholder="語数を入力 (例: 40)"
+                placeholder={t("words_placeholder")}
                 placeholderTextColor={theme.textSecondary}
                 keyboardType="number-pad"
                 value={customInput}
                 onChangeText={setCustomInput}
                 autoFocus
               />
-              <ThemedText style={[styles.customUnit, { color: theme.textSecondary }]}>語</ThemedText>
+              <ThemedText style={[styles.customUnit, { color: theme.textSecondary }]}>{t("words_unit")}</ThemedText>
             </View>
           ) : null}
 
@@ -365,7 +367,7 @@ export default function SprintSetupScreen() {
                     <Feather name="clock" size={18} color={theme.primary} />
                   </View>
                   <ThemedText style={[styles.notifToggleLabel, { color: theme.text }]}>
-                    通知時刻
+                    {t("notif_time")}
                   </ThemedText>
                 </View>
                 <View style={styles.notifTimeRight}>
@@ -386,7 +388,7 @@ export default function SprintSetupScreen() {
                 disabled={!canStart || loading}
                 style={styles.startButton}
               >
-                {loading ? "設定中..." : "今までの単語データを記憶して変更"}
+                {loading ? t("setting_up") : t("keep_data_change")}
               </Button>
               <Pressable
                 testID="button-change-reset-data"
@@ -399,7 +401,7 @@ export default function SprintSetupScreen() {
               >
                 <Feather name="refresh-cw" size={15} color={Colors.light.alert} />
                 <ThemedText style={[styles.resetDataButtonText, { color: Colors.light.alert }]}>
-                  {loading ? "設定中..." : "データをリセットして変更"}
+                  {loading ? t("setting_up") : t("reset_data_change")}
                 </ThemedText>
               </Pressable>
             </View>
@@ -410,7 +412,7 @@ export default function SprintSetupScreen() {
               disabled={!canStart || loading}
               style={styles.startButton}
             >
-              {loading ? "設定中..." : "スプリントを開始"}
+              {loading ? t("setting_up") : t("start_sprint")}
             </Button>
           )}
         </ScrollView>
@@ -423,10 +425,10 @@ export default function SprintSetupScreen() {
             <View style={[styles.iosPickerSheet, { backgroundColor: theme.backgroundDefault }]}>
               <View style={[styles.iosPickerHeader, { borderBottomColor: theme.border }]}>
                 <ThemedText style={[styles.iosPickerTitle, { color: theme.textSecondary }]}>
-                  通知時刻を選択
+                  {t("select_notification_time")}
                 </ThemedText>
                 <Pressable onPress={handleIOSPickerDone}>
-                  <ThemedText style={[styles.iosPickerDone, { color: theme.primary }]}>完了</ThemedText>
+                  <ThemedText style={[styles.iosPickerDone, { color: theme.primary }]}>{t("done")}</ThemedText>
                 </Pressable>
               </View>
               <DateTimePicker

@@ -12,6 +12,7 @@ import SprintStackNavigator from "@/navigation/SprintStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { Colors } from "@/constants/theme";
 import { useUpdateCheck, UpdateInfo } from "@/hooks/useUpdateCheck";
+import { useI18n } from "@/contexts/LanguageContext";
 
 export type MainTabParamList = {
   StudyTab: undefined;
@@ -35,6 +36,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 export default function MainTabNavigator() {
   const { theme, isDark } = useTheme();
   const { updateInfo, recheckUpdate } = useUpdateCheck();
+  const { t } = useI18n();
 
   return (
     <UpdateContext.Provider value={{ updateInfo, recheckUpdate }}>
@@ -71,7 +73,7 @@ export default function MainTabNavigator() {
           name="StudyTab"
           component={StudyStackNavigator}
           options={{
-            title: "文字学習",
+            title: t("tab_study"),
             tabBarIcon: ({ color, size }) => (
               <Feather name="book-open" size={size} color={color} />
             ),
@@ -81,7 +83,7 @@ export default function MainTabNavigator() {
           name="AudioLearningTab"
           component={AudioLearningStackNavigator}
           options={{
-            title: "音声学習",
+            title: t("tab_audio"),
             tabBarIcon: ({ color, size }) => (
               <Feather name="headphones" size={size} color={color} />
             ),
@@ -91,7 +93,7 @@ export default function MainTabNavigator() {
           name="AudioPlaybackTab"
           component={AudioPlaybackStackNavigator}
           options={{
-            title: "音声再生",
+            title: t("tab_playback"),
             tabBarIcon: ({ color, size }) => (
               <Feather name="play-circle" size={size} color={color} />
             ),
@@ -101,7 +103,7 @@ export default function MainTabNavigator() {
           name="SprintTab"
           component={SprintStackNavigator}
           options={{
-            title: "スプリント",
+            title: t("tab_sprint"),
             tabBarIcon: ({ color, size }) => (
               <Feather name="map" size={size} color={color} />
             ),
@@ -111,7 +113,7 @@ export default function MainTabNavigator() {
           name="ProfileTab"
           component={ProfileStackNavigator}
           options={{
-            title: "プロフィール",
+            title: t("tab_profile"),
             tabBarIcon: ({ color, size }) => (
               <Feather name="user" size={size} color={color} />
             ),

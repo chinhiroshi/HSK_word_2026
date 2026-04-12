@@ -28,6 +28,7 @@ import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { getQuoteForStamp } from "@/data/quotes";
+import { useI18n } from "@/contexts/LanguageContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -78,7 +79,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
       ) : (
         <View style={cardStyles.hiddenPlaceholder}>
           <Feather name="volume-2" size={32} color={theme.primary} />
-          <ThemedText style={[cardStyles.hiddenHint, { color: theme.textSecondary }]}>音声を聴いてください</ThemedText>
+          <ThemedText style={[cardStyles.hiddenHint, { color: theme.textSecondary }]}>{t("listen_audio")}</ThemedText>
         </View>
       )}
       {revealLevel >= 2 ? (
@@ -114,6 +115,7 @@ const cardStyles = StyleSheet.create({
 });
 
 export default function SprintTestScreen() {
+  const { t } = useI18n();
   const navigation = useNavigation<NavigationProp>();
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
@@ -221,7 +223,7 @@ export default function SprintTestScreen() {
     return (
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
         <View style={styles.centered}>
-          <ThemedText style={{ color: theme.textSecondary }}>テストを準備中...</ThemedText>
+          <ThemedText style={{ color: theme.textSecondary }}>{t("preparing_test")}</ThemedText>
         </View>
       </ThemedView>
     );
@@ -232,12 +234,12 @@ export default function SprintTestScreen() {
       <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
         <View style={styles.centered}>
           <Feather name="check-circle" size={56} color={Colors.light.success} />
-          <ThemedText style={styles.emptyTitle}>テスト対象がありません</ThemedText>
+          <ThemedText style={styles.emptyTitle}>{t("no_test_words")}</ThemedText>
           <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-            前のセッションの単語がありません。
+            {t("no_prev_words")}
           </ThemedText>
           <Button onPress={() => handleFinish(true)} style={styles.actionButton}>
-            クリアして進む
+            {t("clear_and_continue")}
           </Button>
         </View>
       </ThemedView>
@@ -257,7 +259,7 @@ export default function SprintTestScreen() {
             <View style={[styles.stampCircle, { backgroundColor: Colors.light.alert, borderWidth: 4, borderColor: "#fff" }]}>
               <Image source={PANDA_SPECIAL} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
             </View>
-            <ThemedText style={styles.stampLabel}>特別スタンプ獲得！</ThemedText>
+            <ThemedText style={styles.stampLabel}>{t("special_stamp_acquired")}</ThemedText>
           </Animated.View>
         ) : null}
         <ScrollView
@@ -267,24 +269,24 @@ export default function SprintTestScreen() {
           <Animated.View entering={FadeIn} style={styles.resultInner}>
             <View style={[styles.scoreCircle, { borderColor: cleared ? Colors.light.success : Colors.light.alert }]}>
               <ThemedText style={styles.scorePercentage}>{percentage}%</ThemedText>
-              <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]}>覚えた率</ThemedText>
+              <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]}>{t("memorized_rate")}</ThemedText>
             </View>
             {cleared ? (
               <View style={[styles.specialStampBadge, { backgroundColor: Colors.light.success + "20" }]}>
                 <Feather name="star" size={20} color={Colors.light.success} />
                 <ThemedText style={[styles.specialStampText, { color: Colors.light.success }]}>
-                  特別スタンプ獲得！
+                  {t("special_stamp_acquired")}
                 </ThemedText>
               </View>
             ) : null}
             <ThemedText style={styles.resultTitle}>
-              {cleared ? "テストクリア！" : "もう少し頑張りましょう！"}
+              {cleared ? t("test_passed") : t("test_failed")}
             </ThemedText>
             <ThemedText style={[styles.passInfo, { color: theme.textSecondary }]}>
-              合格ライン: {PASS_PERCENTAGE}%（覚えた）
+              {t("pass_line")}: {PASS_PERCENTAGE}%
             </ThemedText>
             <ThemedText style={[styles.resultStats, { color: theme.textSecondary }]}>
-              {memorized} / {total} 語 覚えた
+              {t("words_memorized_count").replace("{memorized}", String(memorized)).replace("{total}", String(total))}
             </ThemedText>
             {cleared ? (() => {
               const q = getQuoteForStamp(testCellIndexRef.current, currentLevel);
@@ -307,7 +309,7 @@ export default function SprintTestScreen() {
               disabled={completing}
               style={styles.actionButton}
             >
-              {completing ? "保存中..." : cleared ? "スタンプをもらう" : "次へ進む"}
+              {completing ? t("saving") : cleared ? t("get_stamp") : t("next_step")}
             </Button>
           </Animated.View>
         </ScrollView>
@@ -335,7 +337,7 @@ export default function SprintTestScreen() {
         <View style={[styles.infoBar]}>
           <View style={[styles.infoBadge, { backgroundColor: "#7C3AED20" }]}>
             <Feather name="layers" size={13} color="#7C3AED" />
-            <ThemedText style={[styles.infoBadgeText, { color: "#7C3AED" }]}>音声テスト</ThemedText>
+            <ThemedText style={[styles.infoBadgeText, { color: "#7C3AED" }]}>{t("audio_test_badge")}</ThemedText>
           </View>
           <Pressable
             testID="button-replay-audio"
@@ -348,7 +350,7 @@ export default function SprintTestScreen() {
             style={[styles.replayButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
           >
             <Feather name="volume-2" size={16} color={theme.primary} />
-            <ThemedText style={[styles.replayLabel, { color: theme.primary }]}>再生</ThemedText>
+            <ThemedText style={[styles.replayLabel, { color: theme.primary }]}>{t("replay")}</ThemedText>
           </Pressable>
         </View>
 
@@ -375,7 +377,7 @@ export default function SprintTestScreen() {
                 style={[styles.choiceButton, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert }]}
               >
                 <Feather name="flag" size={20} color={Colors.light.alert} />
-                <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>覚えてない</ThemedText>
+                <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>{t("choice_not_memorized")}</ThemedText>
               </Pressable>
               <Pressable
                 testID="button-memorized"
@@ -383,7 +385,7 @@ export default function SprintTestScreen() {
                 style={[styles.choiceButton, { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success }]}
               >
                 <Feather name="check" size={20} color={Colors.light.success} />
-                <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>覚えた</ThemedText>
+                <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>{t("choice_memorized")}</ThemedText>
               </Pressable>
             </View>
             <Pressable
@@ -396,7 +398,7 @@ export default function SprintTestScreen() {
             >
               <Feather name="eye" size={14} color={theme.textSecondary} />
               <ThemedText style={[styles.earlyUnmemorizedLabel, { color: theme.textSecondary }]}>
-                {revealLevel === 0 ? "文字を見る" : "意味を見る"}
+                {revealLevel === 0 ? t("see_character") : t("see_meaning")}
               </ThemedText>
             </Pressable>
           </View>
@@ -408,7 +410,7 @@ export default function SprintTestScreen() {
               style={[styles.choiceButton, { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success }]}
             >
               <Feather name="check" size={20} color={Colors.light.success} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>覚えた</ThemedText>
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.success }]}>{t("choice_memorized")}</ThemedText>
             </Pressable>
             <Pressable
               testID="button-unmemorized"
@@ -416,7 +418,7 @@ export default function SprintTestScreen() {
               style={[styles.choiceButton, { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert }]}
             >
               <Feather name="flag" size={20} color={Colors.light.alert} />
-              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>まだ</ThemedText>
+              <ThemedText style={[styles.choiceLabel, { color: Colors.light.alert }]}>{t("not_yet")}</ThemedText>
             </Pressable>
           </View>
         )}

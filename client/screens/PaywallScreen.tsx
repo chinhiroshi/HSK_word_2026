@@ -12,23 +12,25 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { getApiUrl } from "@/lib/query-client";
-
-const FEATURES = [
-  { icon: "book-open" as const, title: "全HSK級の全単語", desc: "1級〜6級の全単語にアクセス" },
-  { icon: "headphones" as const, title: "音声学習", desc: "全単語の音声学習が可能" },
-  { icon: "play-circle" as const, title: "音声再生", desc: "全範囲の連続再生が可能" },
-  { icon: "check-circle" as const, title: "暗記トラッキング", desc: "全単語の進捗管理が可能" },
-];
+import { useI18n } from "@/contexts/LanguageContext";
 
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { purchaseSubscription, restorePurchase, isPremium, availablePackages, loading, initError } = useSubscription();
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const FEATURES = [
+    { icon: "book-open" as const, title: t("paywall_feature_all_words"), desc: t("paywall_feature_all_words_desc") },
+    { icon: "headphones" as const, title: t("paywall_feature_audio"), desc: t("paywall_feature_audio_desc") },
+    { icon: "play-circle" as const, title: t("paywall_feature_playback"), desc: t("paywall_feature_playback_desc") },
+    { icon: "check-circle" as const, title: t("paywall_feature_tracking"), desc: t("paywall_feature_tracking_desc") },
+  ];
 
   const monthlyPackage = availablePackages.find(
     (pkg) => pkg.packageType === "MONTHLY"
@@ -61,7 +63,7 @@ export default function PaywallScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       const result = await restorePurchase();
       if (result.success) {
-        setSuccessMessage("サブスクリプションを復元しました。");
+        setSuccessMessage(t("paywall_restored"));
         setTimeout(() => navigation.goBack(), 1500);
       } else if (result.error) {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -85,10 +87,10 @@ export default function PaywallScreen() {
           <Feather name="unlock" size={40} color={theme.primary} />
         </View>
         <ThemedText style={styles.heroTitle}>
-          全機能をアンロック
+          {t("paywall_hero_title")}
         </ThemedText>
         <ThemedText style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
-          最初の50単語は無料でお試しいただけます
+          {t("paywall_hero_subtitle")}
         </ThemedText>
       </View>
 
@@ -128,13 +130,13 @@ export default function PaywallScreen() {
             { backgroundColor: theme.primary, borderColor: theme.primary },
           ]}
         >
-          <ThemedText style={styles.priceLabel}>月額プラン</ThemedText>
+          <ThemedText style={styles.priceLabel}>{t("paywall_monthly")}</ThemedText>
           <View style={styles.priceRow}>
             <ThemedText style={styles.priceAmount}>{priceString}</ThemedText>
-            <ThemedText style={styles.pricePeriod}>/月</ThemedText>
+            <ThemedText style={styles.pricePeriod}>{t("paywall_per_month")}</ThemedText>
           </View>
           <ThemedText style={styles.priceNote}>
-            いつでもキャンセル可能
+            {t("paywall_cancel_anytime")}
           </ThemedText>
         </View>
       </View>
@@ -149,7 +151,7 @@ export default function PaywallScreen() {
           <ActivityIndicator color="#FFFFFF" />
         ) : (
           <ThemedText style={styles.subscribeButtonText}>
-            サブスクリプションを開始
+            {t("paywall_subscribe")}
           </ThemedText>
         )}
       </Pressable>
@@ -164,13 +166,13 @@ export default function PaywallScreen() {
           <ActivityIndicator color={theme.primary} size="small" />
         ) : (
           <ThemedText style={[styles.restoreButtonText, { color: theme.primary }]}>
-            購入を復元
+            {t("paywall_restore")}
           </ThemedText>
         )}
       </Pressable>
 
       <ThemedText style={[styles.disclaimer, { color: theme.textSecondary }]}>
-        サブスクリプションは自動更新されます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。
+        {t("paywall_disclaimer")}
       </ThemedText>
 
       <View style={styles.legalLinks}>
@@ -184,7 +186,7 @@ export default function PaywallScreen() {
           }}
         >
           <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
-            プライバシーポリシー
+            {t("privacy_policy")}
           </ThemedText>
         </Pressable>
         <ThemedText style={[styles.legalSeparator, { color: theme.textSecondary }]}>|</ThemedText>
@@ -198,7 +200,7 @@ export default function PaywallScreen() {
           }}
         >
           <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
-            利用規約
+            {t("terms_of_use")}
           </ThemedText>
         </Pressable>
       </View>
@@ -214,7 +216,7 @@ export default function PaywallScreen() {
             <View style={[styles.modalIconCircle, { backgroundColor: "#FEE2E2" }]}>
               <Feather name="alert-triangle" size={28} color="#DC2626" />
             </View>
-            <ThemedText style={styles.modalTitle}>エラー</ThemedText>
+            <ThemedText style={styles.modalTitle}>{t("paywall_error_title")}</ThemedText>
             <ThemedText style={[styles.modalMessage, { color: theme.textSecondary }]}>
               {errorMessage}
             </ThemedText>
@@ -222,7 +224,7 @@ export default function PaywallScreen() {
               style={[styles.modalButton, { backgroundColor: theme.primary }]}
               onPress={() => setErrorMessage(null)}
             >
-              <ThemedText style={styles.modalButtonText}>閉じる</ThemedText>
+              <ThemedText style={styles.modalButtonText}>{t("close")}</ThemedText>
             </Pressable>
           </View>
         </View>
@@ -239,7 +241,7 @@ export default function PaywallScreen() {
             <View style={[styles.modalIconCircle, { backgroundColor: "#D1FAE5" }]}>
               <Feather name="check-circle" size={28} color="#059669" />
             </View>
-            <ThemedText style={styles.modalTitle}>完了</ThemedText>
+            <ThemedText style={styles.modalTitle}>{t("done")}</ThemedText>
             <ThemedText style={[styles.modalMessage, { color: theme.textSecondary }]}>
               {successMessage}
             </ThemedText>
