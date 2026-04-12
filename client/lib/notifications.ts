@@ -95,6 +95,33 @@ export async function disableSprintNotification(): Promise<void> {
 }
 
 /**
+ * 5秒後にテスト通知を送信する（ランダム格言）
+ */
+export async function sendTestNotification(): Promise<boolean> {
+  if (Platform.OS === "web") return false;
+  try {
+    const { title, body } = getRandomQuoteNotification();
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title,
+        body,
+        data: { screen: "sprint" },
+        sound: true,
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 5,
+        repeats: false,
+      },
+    });
+    return true;
+  } catch (e) {
+    console.warn("テスト通知の送信に失敗しました:", e);
+    return false;
+  }
+}
+
+/**
  * アプリ起動時に呼び出すことで、毎日異なる格言が通知される。
  * 通知が有効な場合のみ再スケジュールする。
  */

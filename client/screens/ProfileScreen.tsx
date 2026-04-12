@@ -8,6 +8,7 @@ import {
   getNotificationTime,
   enableSprintNotification,
   disableSprintNotification,
+  sendTestNotification,
   DEFAULT_NOTIF_HOUR,
   DEFAULT_NOTIF_MINUTE,
 } from "@/lib/notifications";
@@ -126,6 +127,7 @@ export default function ProfileScreen() {
   const [notifHour, setNotifHour] = useState(DEFAULT_NOTIF_HOUR);
   const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [testNotifSent, setTestNotifSent] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
 
@@ -655,6 +657,28 @@ export default function ProfileScreen() {
                 onChange={handleTimeChange}
               />
             ) : null}
+
+            <View style={[styles.notifDivider, { backgroundColor: theme.border }]} />
+            <Pressable
+              testID="button-test-notification"
+              onPress={async () => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                const ok = await sendTestNotification();
+                if (ok) {
+                  setTestNotifSent(true);
+                  setTimeout(() => setTestNotifSent(false), 6000);
+                }
+              }}
+              style={styles.notifTimeRow}
+            >
+              <Feather name="send" size={16} color={testNotifSent ? Colors.light.success : theme.primary} />
+              <ThemedText style={[styles.notifTimeLabel, { color: theme.text, flex: 1 }]}>
+                {t("send_test_notif")}
+              </ThemedText>
+              <ThemedText style={[styles.notifTimeValue, { color: testNotifSent ? Colors.light.success : theme.textSecondary, fontSize: 12 }]}>
+                {testNotifSent ? t("test_notif_sent") : t("test_notif_hint")}
+              </ThemedText>
+            </Pressable>
           </>
         ) : null}
       </View>
