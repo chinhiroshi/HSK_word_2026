@@ -376,7 +376,7 @@ export default function AudioPlaybackScreen() {
           >
             <Feather name="lock" size={16} color={theme.primary} />
             <ThemedText style={[styles.premiumBannerText, { color: theme.primary }]}>
-              無料版は最初の{freeWordsLimit}語のみ再生可能です
+              {t("free_limit_banner").replace("{n}", String(freeWordsLimit))}
             </ThemedText>
             <Feather name="chevron-right" size={16} color={theme.primary} />
           </Pressable>
@@ -387,7 +387,7 @@ export default function AudioPlaybackScreen() {
 
           <View style={styles.settingRow}>
             <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
-              未暗記のみ
+              {t("unmemorized_filter")}
             </ThemedText>
             <Pressable
               onPress={toggleFilter}
@@ -406,14 +406,14 @@ export default function AudioPlaybackScreen() {
                   { color: filterUnmemorized ? "#FFFFFF" : theme.textSecondary }
                 ]}
               >
-                {filterUnmemorized ? `ON (${unmemorizedCount}語)` : "OFF"}
+                {filterUnmemorized ? `ON (${unmemorizedCount}${t("words_unit")})` : "OFF"}
               </ThemedText>
             </Pressable>
           </View>
 
           <View style={styles.settingRow}>
             <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
-              開始位置
+              {t("start_pos")}
             </ThemedText>
             <View style={styles.positionInputContainer}>
               <TextInput
@@ -437,7 +437,7 @@ export default function AudioPlaybackScreen() {
 
           <View style={styles.settingRow}>
             <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
-              終了位置
+              {t("end_pos")}
             </ThemedText>
             <View style={styles.positionInputContainer}>
               <TextInput
@@ -464,7 +464,7 @@ export default function AudioPlaybackScreen() {
           <View style={styles.speedSection}>
             <View style={styles.speedHeader}>
               <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
-                再生速度
+                {t("playback_speed")}
               </ThemedText>
               <ThemedText style={[styles.speedValue, { color: Colors.light.primary }]}>
                 {playbackRate.toFixed(2)}x
@@ -497,7 +497,7 @@ export default function AudioPlaybackScreen() {
 
           <View style={styles.settingRow}>
             <ThemedText style={[styles.settingLabel, { color: theme.text }]}>
-              テキスト表示
+              {t("show_text")}
             </ThemedText>
             <Pressable
               onPress={() => {
@@ -534,7 +534,7 @@ export default function AudioPlaybackScreen() {
           <View style={styles.infoRow}>
             <Feather name="info" size={14} color={theme.textSecondary} />
             <ThemedText style={[styles.infoText, { color: theme.textSecondary }]}>
-              順序: 中国語1回 → 日本語1回 → 中国語例文2回 → 日本語例文訳1回 → 中国語例文2回 → 英語1回
+              {t("playback_order_info")}
             </ThemedText>
           </View>
         </View>

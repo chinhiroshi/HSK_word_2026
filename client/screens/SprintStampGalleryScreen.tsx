@@ -176,7 +176,7 @@ export default function SprintStampGalleryScreen() {
                 {completedCount}
               </ThemedText>
               <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-                取得済み
+                {t("stamps_collected")}
               </ThemedText>
             </View>
             <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
@@ -185,7 +185,7 @@ export default function SprintStampGalleryScreen() {
                 {testCount}
               </ThemedText>
               <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-                テスト合格
+                {t("test_passed_count_label")}
               </ThemedText>
             </View>
             <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
@@ -194,7 +194,7 @@ export default function SprintStampGalleryScreen() {
                 {specialCount}
               </ThemedText>
               <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-                特別スタンプ
+                {t("legend_special")}
               </ThemedText>
             </View>
           </View>
@@ -211,7 +211,7 @@ export default function SprintStampGalleryScreen() {
             />
           </View>
           <ThemedText style={[styles.progressLabel, { color: theme.textSecondary }]}>
-            {progressPercent}% 達成
+            {progressPercent}{t("percent_achieved")}
           </ThemedText>
         </View>
 
@@ -220,19 +220,19 @@ export default function SprintStampGalleryScreen() {
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: theme.primary }]} />
             <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>
-              学習
+              {t("legend_study")}
             </ThemedText>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: "#7C3AED" }]} />
             <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>
-              テスト
+              {t("legend_test")}
             </ThemedText>
           </View>
           <View style={styles.legendItem}>
             <View style={[styles.legendDot, { backgroundColor: Colors.light.alert }]} />
             <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>
-              特別パンダ
+              {t("legend_special_panda")}
             </ThemedText>
           </View>
         </View>
@@ -242,7 +242,7 @@ export default function SprintStampGalleryScreen() {
           <View style={styles.tapHintRow}>
             <Feather name="info" size={13} color={theme.textSecondary} />
             <ThemedText style={[styles.tapHintText, { color: theme.textSecondary }]}>
-              スタンプをタップするとアドバイスが出てきます
+              {t("tap_stamp_hint")}
             </ThemedText>
           </View>
         ) : null}

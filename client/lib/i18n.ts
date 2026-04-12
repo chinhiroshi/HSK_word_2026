@@ -97,6 +97,17 @@ const translations = {
     playback_speed: "再生速度",
     start_pos: "開始位置",
     end_pos: "終了位置",
+    show_text: "テキスト表示",
+    free_limit_banner: "無料版は最初の{n}語のみ再生可能です",
+    playback_order_info: "順序: 中国語1回 → 日本語1回 → 中国語例文2回 → 日本語例文訳1回 → 中国語例文2回 → 英語1回",
+
+    // ── Stamp Gallery ──
+    stamps_collected: "取得済み",
+    test_passed_count_label: "テスト合格",
+    percent_achieved: "% 達成",
+    legend_study: "学習",
+    legend_special_panda: "特別パンダ",
+    tap_stamp_hint: "スタンプをタップするとアドバイスが出てきます",
 
     // ── Sprint Screen ──
     scheduled: "予定",
@@ -412,6 +423,17 @@ const translations = {
     playback_speed: "Speed",
     start_pos: "Start",
     end_pos: "End",
+    show_text: "Show Text",
+    free_limit_banner: "Free version: first {n} words only",
+    playback_order_info: "Order: CN ×1 → JP ×1 → Example ×2 → JP Example ×1 → Example ×2 → EN ×1",
+
+    // ── Stamp Gallery ──
+    stamps_collected: "Collected",
+    test_passed_count_label: "Tests Passed",
+    percent_achieved: "% Complete",
+    legend_study: "Study",
+    legend_special_panda: "Special Panda",
+    tap_stamp_hint: "Tap a stamp for tips",
 
     // ── Sprint Screen ──
     scheduled: "Scheduled",
