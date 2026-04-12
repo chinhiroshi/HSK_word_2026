@@ -10,10 +10,21 @@ export const NOTIF_MINUTE_KEY = "@chinese_master_notification_minute";
 export const DEFAULT_NOTIF_HOUR = 19;
 export const DEFAULT_NOTIF_MINUTE = 0;
 
+const MOTIVATING_MESSAGES = [
+  "今日のマスをクリアして、一歩前に進もう！",
+  "継続は力なり！今日の学習を始めましょう。",
+  "昨日より一つ多く覚えよう！頑張って！",
+  "コツコツ積み重ねることが上達への近道です！",
+  "今日もスプリントを進めよう。あなたならできる！",
+  "一日一歩、着実に中国語が上達していきます！",
+  "今日の学習が未来の自分への投資です。頑張ろう！",
+];
+
 function getRandomQuoteNotification(): { title: string; body: string } {
+  const motivating = MOTIVATING_MESSAGES[Math.floor(Math.random() * MOTIVATING_MESSAGES.length)];
   const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-  const title = `今日の格言｜${quote.chinese}`;
-  const body = `（${quote.source}）\n${quote.japanese}`;
+  const title = motivating;
+  const body = `今日の格言｜${quote.chinese}\n（${quote.source}）\n${quote.japanese}`;
   return { title, body };
 }
 
