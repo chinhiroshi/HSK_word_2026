@@ -33,7 +33,7 @@ export function useUpdateCheck() {
     storeUrl: null,
   });
 
-  const check = useCallback(async () => {
+  const check = useCallback(async (): Promise<UpdateInfo> => {
     try {
       const currentVersion = Constants.expoConfig?.version ?? "0.0.0";
       const res = await fetch(ITUNES_URL);
@@ -42,15 +42,18 @@ export function useUpdateCheck() {
         const result = json.results[0];
         const latestVersion: string = result.version;
         const storeUrl: string = result.trackViewUrl;
-        setUpdateInfo({
+        const info: UpdateInfo = {
           available: isNewer(latestVersion, currentVersion),
           latestVersion,
           storeUrl,
-        });
+        };
+        setUpdateInfo(info);
+        return info;
       }
     } catch {
       // Network error or not yet on App Store — silently ignore
     }
+    return { available: false, latestVersion: null, storeUrl: null };
   }, []);
 
   useEffect(() => {

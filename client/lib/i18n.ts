@@ -240,6 +240,7 @@ const translations = {
     language_english: "English",
     checking_update: "確認中...",
     check_update: "アップデートを確認",
+    up_to_date: "最新バージョンです",
     subscription_active: "プレミアム会員",
     subscription_inactive: "無料プラン",
 
@@ -569,6 +570,7 @@ const translations = {
     language_english: "English",
     checking_update: "Checking...",
     check_update: "Check for Updates",
+    up_to_date: "You're up to date",
     subscription_active: "Premium Member",
     subscription_inactive: "Free Plan",
 

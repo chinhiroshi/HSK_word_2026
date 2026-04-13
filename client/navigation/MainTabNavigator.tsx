@@ -22,9 +22,9 @@ export type MainTabParamList = {
   ProfileTab: undefined;
 };
 
-const UpdateContext = createContext<{ updateInfo: UpdateInfo; recheckUpdate: () => void }>({
+const UpdateContext = createContext<{ updateInfo: UpdateInfo; recheckUpdate: () => Promise<UpdateInfo> }>({
   updateInfo: { available: false, latestVersion: null, storeUrl: null },
-  recheckUpdate: () => {},
+  recheckUpdate: async () => ({ available: false, latestVersion: null, storeUrl: null }),
 });
 
 export function useAppUpdate() {

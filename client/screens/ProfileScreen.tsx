@@ -112,7 +112,7 @@ export default function ProfileScreen() {
   const { t, lang, setLang } = useI18n();
   const { isPremium } = useSubscription();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { updateInfo } = useAppUpdate();
+  const { updateInfo, recheckUpdate } = useAppUpdate();
 
   const HSK_TITLES: Record<HskLevel, string> = {
     1: t("hsk_title_1"), 2: t("hsk_title_2"), 3: t("hsk_title_3"),
@@ -130,6 +130,7 @@ export default function ProfileScreen() {
   const [testNotifSent, setTestNotifSent] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [upToDate, setUpToDate] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
   const REVIEW_THRESHOLD = 10;
@@ -929,6 +930,35 @@ export default function ProfileScreen() {
               {updateInfo.available ? `  →  v${updateInfo.latestVersion}` : ""}
             </ThemedText>
           </View>
+          <Pressable
+            testID="button-check-update"
+            onPress={async () => {
+              if (checkingUpdate) return;
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setCheckingUpdate(true);
+              setUpToDate(false);
+              const result = await recheckUpdate();
+              setCheckingUpdate(false);
+              if (!result.available) {
+                setUpToDate(true);
+                setTimeout(() => setUpToDate(false), 4000);
+              }
+            }}
+            style={[styles.checkUpdateButton, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}
+          >
+            {checkingUpdate ? (
+              <Feather name="loader" size={14} color={theme.textSecondary} />
+            ) : upToDate ? (
+              <Feather name="check" size={14} color={Colors.light.success} />
+            ) : (
+              <Feather name="refresh-cw" size={14} color={theme.primary} />
+            )}
+            <ThemedText style={[styles.checkUpdateText, {
+              color: checkingUpdate ? theme.textSecondary : upToDate ? Colors.light.success : theme.primary
+            }]}>
+              {checkingUpdate ? t("checking_update") : upToDate ? t("up_to_date") : t("check_update")}
+            </ThemedText>
+          </Pressable>
         </View>
       </View>
     </KeyboardAwareScrollViewCompat>
@@ -1274,6 +1304,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Nunito_600SemiBold",
     fontWeight: "600",
+  },
+  checkUpdateButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    borderWidth: 1,
+    borderRadius: BorderRadius.full ?? 999,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+  },
+  checkUpdateText: {
+    fontSize: 12,
+    fontFamily: "Nunito_600SemiBold",
   },
   updateBanner: {
     flexDirection: "row",
