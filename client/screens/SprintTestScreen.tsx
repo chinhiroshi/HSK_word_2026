@@ -19,6 +19,7 @@ const PANDA_SPECIAL = require("../../assets/images/panda-stamp-special.png");
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import ConfettiAnimation from "@/components/ConfettiAnimation";
 import { ProgressBar } from "@/components/ProgressBar";
 import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
@@ -130,6 +131,7 @@ export default function SprintTestScreen() {
   const [completing, setCompleting] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [stampVisible, setStampVisible] = useState(false);
+  const [confettiVisible, setConfettiVisible] = useState(false);
 
   // Capture cell index before completeSession advances position
   const testCellIndexRef = useRef<number>(sprintData?.currentPosition ?? 1);
@@ -143,6 +145,7 @@ export default function SprintTestScreen() {
 
   const triggerStamp = (onDone: () => void) => {
     setStampVisible(true);
+    setConfettiVisible(true);
     stampScale.value = 0;
     stampOpacity.value = 0;
     stampScale.value = withSequence(
@@ -156,6 +159,7 @@ export default function SprintTestScreen() {
         if (finished) runOnJS(onDone)();
       })
     );
+    setTimeout(() => setConfettiVisible(false), 3500);
   };
 
   const load = useCallback(async () => {
@@ -423,6 +427,7 @@ export default function SprintTestScreen() {
           </View>
         )}
       </ScrollView>
+      <ConfettiAnimation visible={confettiVisible} />
     </ThemedView>
   );
 }

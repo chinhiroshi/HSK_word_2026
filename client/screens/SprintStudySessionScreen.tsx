@@ -25,6 +25,7 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import ConfettiAnimation from "@/components/ConfettiAnimation";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SpeakButton } from "@/components/SpeakButton";
 import { Button } from "@/components/Button";
@@ -82,6 +83,7 @@ export default function SprintStudySessionScreen() {
   const [isPartialComplete, setIsPartialComplete] = useState(false);
   const [stampVisible, setStampVisible] = useState(false);
   const [showPostStamp, setShowPostStamp] = useState(false);
+  const [confettiVisible, setConfettiVisible] = useState(false);
   const autoSavedPhase = useRef<string | null>(null);
 
   const stampScale = useSharedValue(0);
@@ -93,6 +95,7 @@ export default function SprintStudySessionScreen() {
 
   const triggerStamp = (onDone: () => void) => {
     setStampVisible(true);
+    setConfettiVisible(true);
     stampScale.value = 0;
     stampOpacity.value = 0;
     stampScale.value = withSequence(
@@ -106,6 +109,7 @@ export default function SprintStudySessionScreen() {
         if (finished) runOnJS(onDone)();
       })
     );
+    setTimeout(() => setConfettiVisible(false), 3200);
   };
 
   const isAudioPhase = phase === "audio-cards" || phase === "audio-list" || phase === "audio-review";
@@ -909,6 +913,7 @@ export default function SprintStudySessionScreen() {
           </View>
         )}
       </ScrollView>
+      <ConfettiAnimation visible={confettiVisible} />
     </ThemedView>
   );
 }
