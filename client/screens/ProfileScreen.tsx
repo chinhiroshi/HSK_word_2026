@@ -133,7 +133,7 @@ export default function ProfileScreen() {
   const [upToDate, setUpToDate] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
-  const REVIEW_THRESHOLD = 10;
+  const REVIEW_THRESHOLD = 3;
 
   const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
     try {
