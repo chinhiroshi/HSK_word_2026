@@ -274,3 +274,22 @@ export async function resetSprintData(level?: HskLevel): Promise<void> {
   const currentLevel = level ?? await getSelectedHskLevel();
   await AsyncStorage.removeItem(getSprintKey(currentLevel));
 }
+
+const SPEAK_COUNT_KEY = "@chinese_master_speak_count";
+
+export async function incrementSpeakCount(): Promise<void> {
+  try {
+    const raw = await AsyncStorage.getItem(SPEAK_COUNT_KEY);
+    const current = parseInt(raw ?? "0", 10);
+    await AsyncStorage.setItem(SPEAK_COUNT_KEY, String(current + 1));
+  } catch {}
+}
+
+export async function getSpeakCount(): Promise<number> {
+  try {
+    const raw = await AsyncStorage.getItem(SPEAK_COUNT_KEY);
+    return parseInt(raw ?? "0", 10);
+  } catch {
+    return 0;
+  }
+}

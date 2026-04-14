@@ -28,7 +28,7 @@ import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
-import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
+import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio, getSpeakCount } from "@/lib/storage";
 import { speakChinese } from "@/lib/speech";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
@@ -133,26 +133,15 @@ export default function ProfileScreen() {
   const [upToDate, setUpToDate] = useState(false);
 
   const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
-  const REVIEW_THRESHOLD = 3;
+  const REVIEW_THRESHOLD = 5;
 
   const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
     try {
       const alreadyPrompted = await AsyncStorage.getItem(REVIEW_PROMPTED_KEY);
       if (alreadyPrompted === "true") return;
 
-      // 条件1: プレミアム会員 + 10語以上暗記済み
-      const totalMemorized = wordData.filter(
-        (w) => (w.textMemorized && (w.textUnmemorizedCount || 0) === 0) ||
-               (w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0)
-      ).length;
-      const premiumCondition = isPremium && totalMemorized >= REVIEW_THRESHOLD;
-
-      // 条件2: 無料ユーザーでも 10語以上閲覧 + ボタン2回以上タップ
-      const interactedCount = wordData.filter(
-        (w) => w.textMemorized || w.audioMemorized ||
-               (w.textUnmemorizedCount || 0) > 0 || (w.audioUnmemorizedCount || 0) > 0
-      ).length;
-      const totalButtonPresses = wordData.reduce(
+      // フラグ操作回数（暗記済み・暗記必要）
+      const flagPresses = wordData.reduce(
         (acc, w) =>
           acc +
           (w.textMemorized ? 1 : 0) +
@@ -161,9 +150,15 @@ export default function ProfileScreen() {
           (w.audioUnmemorizedCount || 0),
         0
       );
-      const freeCondition = interactedCount >= REVIEW_THRESHOLD && totalButtonPresses >= 2;
 
-      if (premiumCondition || freeCondition) {
+      // 発音ボタン押下回数
+      const speakCount = await getSpeakCount();
+
+      // 合計操作回数（フラグ + 発音）が閾値以上で要請
+      const totalInteractions = flagPresses + speakCount;
+      const condition = totalInteractions >= REVIEW_THRESHOLD;
+
+      if (condition) {
         await AsyncStorage.setItem(REVIEW_PROMPTED_KEY, "true");
         setTimeout(async () => {
           try {
@@ -176,7 +171,7 @@ export default function ProfileScreen() {
         }, 1500);
       }
     } catch {}
-  }, [isPremium]);
+  }, []);
 
   const loadData = useCallback(async () => {
     const level = await getSelectedHskLevel();

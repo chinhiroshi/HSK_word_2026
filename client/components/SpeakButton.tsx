@@ -14,6 +14,7 @@ import * as Haptics from "expo-haptics";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { speakChinese } from "@/lib/speech";
+import { incrementSpeakCount } from "@/lib/storage";
 
 interface SpeakButtonProps {
   text: string;
@@ -55,6 +56,7 @@ export function SpeakButton({ text, size = "medium" }: SpeakButtonProps) {
       true
     );
 
+    incrementSpeakCount().catch(() => {});
     await speakChinese(text);
     
     pulse.value = withSpring(1, springConfig);
