@@ -647,8 +647,8 @@ export default function SprintScreen() {
     if (index === 0) return;
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const sessionType = getSessionType(index);
     const wPD = sprintData.wordsPerDay ?? 10;
+    const sessionType = getSessionType(index, wPD);
     const sStamps = sprintData.specialStamps ?? [];
 
     if (sessionType === "test") {
@@ -665,7 +665,7 @@ export default function SprintScreen() {
         Alert.alert(`${t("session_type_test")} ${testNum}`, t("test_locked"), [{ text: t("ok") }]);
         return;
       }
-      if (prevTestCell !== null && !sStamps.includes(prevTestCell)) {
+      if (prevTestCell !== null && !sStamps.includes(prevTestCell) && !cDates[prevTestCell]) {
         Alert.alert(`${t("session_type_test")} ${testNum}`, t("test_locked"), [{ text: t("ok") }]);
         return;
       }
@@ -718,7 +718,8 @@ export default function SprintScreen() {
     [cellPositions, numGridRows]
   );
   const completedCount = Object.keys(completedDates).length;
-  const currentSessionType = isSetup ? getSessionType(currentPosition) : "flag";
+  const wordsPerDay = sprintData?.wordsPerDay ?? 10;
+  const currentSessionType = isSetup ? getSessionType(currentPosition, wordsPerDay) : "flag";
 
   const getSessionTypeLabel = (type: SprintSessionType) => {
     switch (type) {
@@ -820,21 +821,22 @@ export default function SprintScreen() {
               {rowSlots.map((cellIndex, colIdx) => {
                 if (cellIndex >= 0) {
                   const isCurrent = isSetup && cellIndex === currentPosition;
-                  const cellSessionType = getSessionType(cellIndex);
                   const wPD = sprintData?.wordsPerDay ?? 10;
-                  // Test cells: "completed" only when passed (in specialStamps)
+                  const cellSessionType = getSessionType(cellIndex, wPD);
+                  // Test cells: "completed" only when passed (in specialStamps) OR skipped (in completedDates)
                   // Study cells: completed when in completedDates
                   const isCompleted = isSetup && !isCurrent && (
                     cellSessionType === "test"
-                      ? specialStamps.includes(cellIndex)
+                      ? specialStamps.includes(cellIndex) || completedDates[cellIndex] != null
                       : completedDates[cellIndex] != null
                   );
                   const isSpecialStamp = specialStamps.includes(cellIndex);
                   const cellTestNum = cellSessionType === "test" ? getTestNumber(cellIndex, wPD) : undefined;
                   const prevTestForCell = cellSessionType === "test" ? getPreviousTestCell(cellIndex, wPD) : null;
                   // Lock test cells that can't be attempted yet (sequential lock)
+                  // Previous test must be either specially stamped (passed) OR in completedDates (skipped)
                   const testIsLocked = cellSessionType === "test" && !isCompleted && (
-                    (prevTestForCell !== null && !specialStamps.includes(prevTestForCell)) ||
+                    (prevTestForCell !== null && !specialStamps.includes(prevTestForCell) && !completedDates[prevTestForCell]) ||
                     cellIndex !== currentPosition
                   );
                   // Lock study cells that require premium words (word 51+ for non-HSK1)
