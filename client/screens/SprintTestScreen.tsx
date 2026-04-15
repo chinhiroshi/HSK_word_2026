@@ -55,6 +55,7 @@ interface AudioCardProps {
 }
 
 function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCardProps) {
+  const { t } = useI18n();
   const hasBadge = (word.audioUnmemorizedCount || 0) > 0;
   return (
     <View style={cardStyles.root}>
