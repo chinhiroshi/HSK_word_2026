@@ -79,22 +79,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
       icon: "repeat",
     },
     {
-      id: "4",
-      image: require("../../assets/images/onboarding-4.png"),
-      title: t("onboard_4_title"),
-      subtitle: t("onboard_4_subtitle"),
-      features: [t("onboard_4_p1"), t("onboard_4_p2"), t("onboard_4_p3")],
-      icon: "book-open",
-    },
-    {
-      id: "5",
-      image: require("../../assets/images/onboarding-5.png"),
-      title: t("onboard_5_title"),
-      subtitle: t("onboard_5_subtitle"),
-      features: [t("onboard_5_p1"), t("onboard_5_p2")],
-      icon: "zap",
-    },
-    {
       id: "6",
       image: require("../../assets/images/onboarding-6.png"),
       title: t("onboard_6_title"),
