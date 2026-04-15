@@ -6,6 +6,7 @@ import {
   Dimensions,
   FlatList,
   ViewToken,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Image } from "expo-image";
@@ -14,8 +15,10 @@ import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useI18n } from "@/contexts/LanguageContext";
+import { setSelectedHskLevel } from "@/lib/storage";
+import { HskLevel } from "@/types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -32,11 +35,22 @@ interface OnboardingScreenProps {
   onComplete: () => void;
 }
 
+const HSK_LEVEL_INFO: { level: HskLevel; wordCount: number; isFree: boolean }[] = [
+  { level: 1, wordCount: 150, isFree: true },
+  { level: 2, wordCount: 150, isFree: false },
+  { level: 3, wordCount: 300, isFree: false },
+  { level: 4, wordCount: 600, isFree: false },
+  { level: 5, wordCount: 1300, isFree: false },
+  { level: 6, wordCount: 2500, isFree: false },
+];
+
 export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
   const { t } = useI18n();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showLevelSelect, setShowLevelSelect] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState<HskLevel>(1);
   const flatListRef = useRef<FlatList>(null);
 
   const PAGES: OnboardingPage[] = [
@@ -120,7 +134,13 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   };
 
   const handleGetStarted = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowLevelSelect(true);
+  };
+
+  const handleLevelConfirm = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    await setSelectedHskLevel(selectedLevel);
     onComplete();
   };
 
@@ -159,6 +179,96 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
       </View>
     </View>
   );
+
+  if (showLevelSelect) {
+    return (
+      <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.levelSelectContent,
+            { paddingTop: insets.top + Spacing["2xl"], paddingBottom: insets.bottom + 100 },
+          ]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={[styles.levelIconBadge, { backgroundColor: `${theme.primary}15` }]}>
+            <Feather name="layers" size={24} color={theme.primary} />
+          </View>
+          <ThemedText style={styles.levelTitle}>{t("onboard_level_title")}</ThemedText>
+          <ThemedText style={[styles.levelSubtitle, { color: theme.textSecondary }]}>
+            {t("onboard_level_subtitle")}
+          </ThemedText>
+
+          <View style={styles.levelCards}>
+            {HSK_LEVEL_INFO.map(({ level, wordCount, isFree }) => {
+              const isSelected = selectedLevel === level;
+              return (
+                <Pressable
+                  key={level}
+                  testID={`button-level-${level}`}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    setSelectedLevel(level);
+                  }}
+                  style={[
+                    styles.levelCard,
+                    {
+                      backgroundColor: isSelected ? `${theme.primary}12` : theme.backgroundDefault,
+                      borderColor: isSelected ? theme.primary : theme.border,
+                      borderWidth: isSelected ? 2 : 1,
+                    },
+                  ]}
+                >
+                  <View style={styles.levelCardLeft}>
+                    <View style={[styles.levelBadge, { backgroundColor: isSelected ? theme.primary : `${theme.primary}20` }]}>
+                      <ThemedText style={[styles.levelBadgeText, { color: isSelected ? "#FFFFFF" : theme.primary }]}>
+                        {level}
+                      </ThemedText>
+                    </View>
+                    <View style={styles.levelCardInfo}>
+                      <ThemedText style={[styles.levelCardName, { color: theme.text }]}>
+                        HSK{level}  {t(`hsk_title_${level}` as any)}
+                      </ThemedText>
+                      <ThemedText style={[styles.levelCardWords, { color: theme.textSecondary }]}>
+                        {wordCount}{t("words_unit")}
+                      </ThemedText>
+                    </View>
+                  </View>
+                  <View style={styles.levelCardRight}>
+                    {isFree ? (
+                      <View style={[styles.freeBadge, { backgroundColor: Colors.light.success + "20" }]}>
+                        <ThemedText style={[styles.freeBadgeText, { color: Colors.light.success }]}>
+                          {t("onboard_level_free")}
+                        </ThemedText>
+                      </View>
+                    ) : (
+                      <ThemedText style={[styles.premiumNote, { color: theme.textSecondary }]}>
+                        {t("onboard_level_premium_note")}
+                      </ThemedText>
+                    )}
+                    {isSelected ? (
+                      <Feather name="check-circle" size={20} color={theme.primary} />
+                    ) : (
+                      <View style={[styles.emptyCircle, { borderColor: theme.border }]} />
+                    )}
+                  </View>
+                </Pressable>
+              );
+            })}
+          </View>
+        </ScrollView>
+
+        <View style={[styles.levelFooter, { paddingBottom: insets.bottom + Spacing.xl, backgroundColor: theme.backgroundRoot }]}>
+          <Pressable
+            testID="button-level-confirm"
+            style={[styles.nextButton, { backgroundColor: theme.primary }]}
+            onPress={handleLevelConfirm}
+          >
+            <ThemedText style={styles.nextButtonText}>{t("onboard_level_btn")}</ThemedText>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
@@ -342,5 +452,107 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
+  },
+  // ── Level Select ──
+  levelSelectContent: {
+    paddingHorizontal: Spacing.xl,
+    alignItems: "center",
+  },
+  levelIconBadge: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  levelTitle: {
+    fontSize: 26,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+    marginBottom: Spacing.sm,
+  },
+  levelSubtitle: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+    marginBottom: Spacing["2xl"],
+    lineHeight: 20,
+  },
+  levelCards: {
+    alignSelf: "stretch",
+    gap: Spacing.md,
+    marginBottom: Spacing.xl,
+  },
+  levelCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+  },
+  levelCardLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+    flex: 1,
+  },
+  levelBadge: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  levelBadgeText: {
+    fontSize: 18,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  levelCardInfo: {
+    gap: 2,
+  },
+  levelCardName: {
+    fontSize: 16,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  levelCardWords: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+  },
+  levelCardRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  freeBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.full,
+  },
+  freeBadgeText: {
+    fontSize: 11,
+    fontFamily: "Nunito_700Bold",
+  },
+  premiumNote: {
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+  },
+  emptyCircle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1.5,
+  },
+  levelFooter: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.lg,
   },
 });

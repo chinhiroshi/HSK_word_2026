@@ -293,6 +293,11 @@ const translations = {
     onboard_6_p4: "HSK級ごとに独立したスプリント進捗",
     onboard_next: "次へ",
     onboard_start: "始める",
+    onboard_level_title: "学習する級を選ぶ",
+    onboard_level_subtitle: "プロフィール画面からいつでも変更できます",
+    onboard_level_btn: "この級で学習を始める",
+    onboard_level_free: "全て無料",
+    onboard_level_premium_note: "最初50語は無料",
 
     // ── Test result ──
     correct_count: "{correct} / {total} 問正解",
@@ -623,6 +628,11 @@ const translations = {
     onboard_6_p4: "Independent sprint progress per HSK level",
     onboard_next: "Next",
     onboard_start: "Start",
+    onboard_level_title: "Choose Your Level",
+    onboard_level_subtitle: "You can change this anytime in Profile",
+    onboard_level_btn: "Start with This Level",
+    onboard_level_free: "Fully Free",
+    onboard_level_premium_note: "First 50 words free",
 
     // ── Test result ──
     correct_count: "{correct} / {total} correct",
