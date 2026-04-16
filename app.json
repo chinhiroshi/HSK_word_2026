@@ -8,9 +8,17 @@
     "scheme": "app.replit.hskhsk",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "locales": {
+      "ja": "./locales/ja.json",
+      "en": "./locales/en.json"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.replit.hskhsk"
+      "bundleIdentifier": "app.replit.hskhsk",
+      "infoPlist": {
+        "CFBundleDevelopmentRegion": "ja",
+        "CFBundleLocalizations": ["ja", "en"]
+      }
     },
     "android": {
       "adaptiveIcon": {

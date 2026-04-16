@@ -1,0 +1,6 @@
+{
+  "CFBundleDisplayName": "HSK単語帳",
+  "NSCameraUsageDescription": "カメラへのアクセスが必要です",
+  "NSMicrophoneUsageDescription": "マイクへのアクセスが必要です",
+  "NSPhotoLibraryUsageDescription": "写真ライブラリへのアクセスが必要です"
+}
