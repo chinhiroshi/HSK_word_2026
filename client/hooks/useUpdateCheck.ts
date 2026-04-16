@@ -35,7 +35,13 @@ export function useUpdateCheck() {
 
   const check = useCallback(async (): Promise<UpdateInfo> => {
     try {
-      const currentVersion = Constants.expoConfig?.version ?? "0.0.0";
+      // Use the native binary version (from App Store install) not the JS bundle version.
+      // Constants.nativeAppVersion reflects the CFBundleShortVersionString actually installed,
+      // so it correctly detects when a newer App Store binary is available.
+      const currentVersion =
+        Constants.nativeAppVersion ??
+        Constants.expoConfig?.version ??
+        "0.0.0";
       const res = await fetch(ITUNES_URL);
       const json = await res.json();
       if (json.resultCount > 0) {
