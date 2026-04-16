@@ -41,7 +41,7 @@ export default function MainTabNavigator() {
   return (
     <UpdateContext.Provider value={{ updateInfo, recheckUpdate }}>
       <Tab.Navigator
-        initialRouteName="StudyTab"
+        initialRouteName="SprintTab"
         screenOptions={{
           tabBarActiveTintColor: Colors.light.primary,
           tabBarInactiveTintColor: theme.tabIconDefault,
@@ -70,6 +70,16 @@ export default function MainTabNavigator() {
         }}
       >
         <Tab.Screen
+          name="SprintTab"
+          component={SprintStackNavigator}
+          options={{
+            title: t("tab_sprint"),
+            tabBarIcon: ({ color, size }) => (
+              <Feather name="map" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
           name="StudyTab"
           component={StudyStackNavigator}
           options={{
@@ -96,16 +106,6 @@ export default function MainTabNavigator() {
             title: t("tab_playback"),
             tabBarIcon: ({ color, size }) => (
               <Feather name="play-circle" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="SprintTab"
-          component={SprintStackNavigator}
-          options={{
-            title: t("tab_sprint"),
-            tabBarIcon: ({ color, size }) => (
-              <Feather name="map" size={size} color={color} />
             ),
           }}
         />
