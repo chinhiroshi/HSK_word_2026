@@ -921,7 +921,7 @@ export default function ProfileScreen() {
           <View style={styles.versionTextWrap}>
             <ThemedText style={styles.versionLabel}>{t("app_version")}</ThemedText>
             <ThemedText style={[styles.versionNumber, { color: theme.textSecondary }]}>
-              {Constants.expoConfig?.version ?? "—"}
+              {Constants.nativeAppVersion ?? Constants.expoConfig?.version ?? "—"}
               {updateInfo.available ? `  →  v${updateInfo.latestVersion}` : ""}
             </ThemedText>
           </View>
