@@ -339,6 +339,31 @@ export default function ProfileScreen() {
       ]}
       scrollIndicatorInsets={{ bottom: insets.bottom }}
     >
+      {/* アップデート通知バナー */}
+      {updateInfo.available ? (
+        <Pressable
+          testID="button-update-banner"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            if (updateInfo.storeUrl) {
+              Linking.openURL(updateInfo.storeUrl);
+            }
+          }}
+          style={[styles.updateBanner, { backgroundColor: Colors.light.primary }]}
+        >
+          <View style={styles.updateBannerLeft}>
+            <Feather name="arrow-up-circle" size={22} color="#fff" />
+            <View style={styles.updateBannerText}>
+              <ThemedText style={styles.updateBannerTitle}>{t("update_available")}</ThemedText>
+              <ThemedText style={styles.updateBannerSub}>
+                v{updateInfo.latestVersion}
+              </ThemedText>
+            </View>
+          </View>
+          <Feather name="chevron-right" size={18} color="#fff" />
+        </Pressable>
+      ) : null}
+
       <View style={styles.avatarSection}>
         <Image source={HSK_AVATARS[selectedLevel]} style={styles.avatar} contentFit="cover" />
         <ThemedText style={styles.userName}>HSK {selectedLevel}級 - {HSK_TITLES[selectedLevel]}</ThemedText>
@@ -887,30 +912,6 @@ export default function ProfileScreen() {
         </View>
       )}
 
-      {/* アップデート通知バナー */}
-      {updateInfo.available ? (
-        <Pressable
-          testID="button-update-banner"
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            if (updateInfo.storeUrl) {
-              Linking.openURL(updateInfo.storeUrl);
-            }
-          }}
-          style={[styles.updateBanner, { backgroundColor: Colors.light.primary }]}
-        >
-          <View style={styles.updateBannerLeft}>
-            <Feather name="arrow-up-circle" size={22} color="#fff" />
-            <View style={styles.updateBannerText}>
-              <ThemedText style={styles.updateBannerTitle}>{t("update_available")}</ThemedText>
-              <ThemedText style={styles.updateBannerSub}>
-                v{updateInfo.latestVersion}
-              </ThemedText>
-            </View>
-          </View>
-          <Feather name="chevron-right" size={18} color="#fff" />
-        </Pressable>
-      ) : null}
 
       {/* バージョン情報 */}
       <View style={[styles.versionCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
