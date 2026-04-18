@@ -788,10 +788,17 @@ export default function SprintScreen() {
             <Pressable
               testID="button-stamp-gallery"
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintStampGallery"); }}
-              style={[styles.stampGalleryBtn, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}
+              style={[styles.stampGalleryBtn, { backgroundColor: Colors.light.secondary }]}
             >
-              <Feather name="award" size={15} color={theme.primary} />
-              <ThemedText style={[styles.stampGalleryBtnText, { color: theme.primary }]}>{t("stamp_gallery_btn")}</ThemedText>
+              <Feather name="award" size={16} color="#FFFFFF" />
+              <ThemedText style={[styles.stampGalleryBtnText, { color: "#FFFFFF" }]}>{t("stamp_gallery_btn")}</ThemedText>
+              {Object.keys(sprintData?.completedDates ?? {}).length > 0 ? (
+                <View style={styles.stampCountBadge}>
+                  <ThemedText style={styles.stampCountText}>
+                    {Object.keys(sprintData?.completedDates ?? {}).length}
+                  </ThemedText>
+                </View>
+              ) : null}
             </Pressable>
           </View>
         </View>
@@ -969,8 +976,10 @@ const styles = StyleSheet.create({
   legendDot: { width: 9, height: 9, borderRadius: 5 },
   legendLabel: { fontSize: 11, fontFamily: "Nunito_400Regular" },
   topBarRight: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
-  stampGalleryBtn: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: Spacing.sm, paddingVertical: 6, borderRadius: BorderRadius.full, borderWidth: 1 },
-  stampGalleryBtnText: { fontSize: 12, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
+  stampGalleryBtn: { flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: Spacing.md, paddingVertical: 8, borderRadius: BorderRadius.full },
+  stampGalleryBtnText: { fontSize: 13, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  stampCountBadge: { backgroundColor: "rgba(255,255,255,0.3)", borderRadius: BorderRadius.full, minWidth: 18, height: 18, alignItems: "center", justifyContent: "center", paddingHorizontal: 4 },
+  stampCountText: { fontSize: 11, fontFamily: "Nunito_700Bold", color: "#FFFFFF" },
   resetLink: {
     flexDirection: "row",
     alignItems: "center",
