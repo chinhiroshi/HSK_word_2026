@@ -114,7 +114,7 @@ export default function SprintStampGalleryScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { sprintData, totalCells, currentLevel } = useSprint();
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
 
@@ -257,7 +257,7 @@ export default function SprintStampGalleryScreen() {
           >
             <Feather name="map" size={40} color={theme.textSecondary} />
             <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-              スプリントを開始すると{"\n"}パンダが集まります
+              {t("stamp_gallery_empty")}
             </ThemedText>
           </View>
         ) : (
@@ -358,7 +358,9 @@ export default function SprintStampGalleryScreen() {
                   <SpeakButton text={selectedQuote.chinese} size="small" />
                 </View>
                 <ThemedText style={[styles.modalPinyin, { color: theme.primary }]}>{selectedQuote.pinyin}</ThemedText>
-                <ThemedText style={[styles.modalJapanese, { color: theme.textSecondary }]}>{selectedQuote.japanese}</ThemedText>
+                <ThemedText style={[styles.modalJapanese, { color: theme.textSecondary }]}>
+                  {lang === "en" && selectedQuote.english ? selectedQuote.english : selectedQuote.japanese}
+                </ThemedText>
                 <Pressable
                   style={[styles.modalCloseBtn, { backgroundColor: theme.primary }]}
                   onPress={() => setSelectedQuote(null)}

@@ -21,7 +21,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     AsyncStorage.getItem(LANGUAGE_KEY).then((val) => {
-      if (val === "en" || val === "ja") setLangState(val);
+      if (val === "en" || val === "ja") {
+        setLangState(val);
+      } else {
+        try {
+          const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+          const isJapanese = locale.startsWith("ja");
+          setLangState(isJapanese ? "ja" : "en");
+        } catch {
+          setLangState("ja");
+        }
+      }
     });
   }, []);
 

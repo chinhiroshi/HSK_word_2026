@@ -149,11 +149,6 @@ export default function WordDetailScreen() {
           <ThemedText style={[styles.translation, { color: theme.textSecondary }]}>
             {lang === "en" && word.translationEn ? word.translationEn : word.translation}
           </ThemedText>
-          {lang === "ja" && word.translation && word.translationEn ? (
-            <ThemedText style={[styles.translationSub, { color: theme.textTertiary || theme.textSecondary }]}>
-              {word.translationEn}
-            </ThemedText>
-          ) : null}
           {(lang === "ja" ? word.posJa : word.posEn) ? (
             <View style={[styles.posBadge, { backgroundColor: `${theme.primary}15`, borderColor: `${theme.primary}30` }]}>
               <ThemedText style={[styles.posText, { color: theme.primary }]}>
@@ -204,11 +199,6 @@ export default function WordDetailScreen() {
           <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
             {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
           </ThemedText>
-          {lang === "ja" && word.exampleEnglish ? (
-            <ThemedText style={[styles.exampleTranslationSub, { color: theme.textTertiary || theme.textSecondary }]}>
-              {word.exampleEnglish}
-            </ThemedText>
-          ) : null}
         </View>
 
         {word.longExample ? (
@@ -228,11 +218,6 @@ export default function WordDetailScreen() {
             {(lang === "en" ? (word.longExampleEnglish || word.longExampleTranslation) : word.longExampleTranslation) ? (
               <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
                 {lang === "en" && word.longExampleEnglish ? word.longExampleEnglish : word.longExampleTranslation}
-              </ThemedText>
-            ) : null}
-            {lang === "ja" && word.longExampleEnglish ? (
-              <ThemedText style={[styles.exampleTranslationSub, { color: theme.textTertiary || theme.textSecondary }]}>
-                {word.longExampleEnglish}
               </ThemedText>
             ) : null}
           </View>

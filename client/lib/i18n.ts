@@ -336,6 +336,9 @@ const translations = {
     quote_literal: "直訳",
     quote_modern: "現代語訳",
     quote_source: "出典",
+
+    // ── Stamp gallery empty state ──
+    stamp_gallery_empty: "スプリントを開始すると\nパンダが集まります",
   },
 
   en: {
@@ -673,6 +676,9 @@ const translations = {
     quote_literal: "Literal",
     quote_modern: "Modern Meaning",
     quote_source: "Source",
+
+    // ── Stamp gallery empty state ──
+    stamp_gallery_empty: "Complete a sprint\nto collect pandas",
   },
 } as const;
 
