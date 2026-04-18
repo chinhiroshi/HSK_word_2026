@@ -56,7 +56,7 @@ export default function SprintStudySessionScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const safeHeaderPadding = headerHeight > 0 ? headerHeight : insets.top + 56;
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const { sprintData, completePhase, getStudyWords, getCellPhaseProgress, currentLevel } = useSprint();
 
   const sessionMode = route.params?.mode ?? "study";
@@ -639,16 +639,16 @@ export default function SprintStudySessionScreen() {
                           {item.exampleSentence}
                         </ThemedText>
                       ) : null}
-                      {item.exampleTranslation ? (
+                      {(lang === "en" ? (item.exampleEnglish || item.exampleTranslation) : item.exampleTranslation) ? (
                         <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary, fontSize: 11 }]} numberOfLines={2}>
-                          {item.exampleTranslation}
+                          {lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation}
                         </ThemedText>
                       ) : null}
                     </View>
                   ) : (
                     <View style={styles.wordInfoCol}>
                       <ThemedText style={[styles.wordRowText, { color: theme.textSecondary, fontSize: 15, fontFamily: "Nunito_600SemiBold" }]}>
-                        {item.translation}
+                        {lang === "en" && item.translationEn ? item.translationEn : item.translation}
                       </ThemedText>
                     </View>
                   )}
@@ -736,10 +736,12 @@ export default function SprintStudySessionScreen() {
                 </View>
                 {isTranslationRevealed ? (
                   <View style={[styles.translationRow, { borderTopColor: theme.border + "60" }]}>
-                    <ThemedText style={[styles.listTranslationText, { color: theme.text }]}>{item.translation}</ThemedText>
-                    {item.exampleTranslation ? (
+                    <ThemedText style={[styles.listTranslationText, { color: theme.text }]}>
+                      {lang === "en" && item.translationEn ? item.translationEn : item.translation}
+                    </ThemedText>
+                    {(lang === "en" ? (item.exampleEnglish || item.exampleTranslation) : item.exampleTranslation) ? (
                       <ThemedText style={[styles.listTranslationExample, { color: theme.textSecondary }]}>
-                        {item.exampleTranslation}
+                        {lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation}
                       </ThemedText>
                     ) : null}
                   </View>
@@ -965,6 +967,7 @@ interface AudioCardProps {
 
 function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCardProps) {
   const origNum = getOriginalWordNum(word.id);
+  const { lang } = useI18n();
   return (
     <>
       <View style={styles.memoBadgeRow}>
@@ -1026,8 +1029,17 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
         <Animated.View entering={FadeIn.duration(200)}>
           <View style={[styles.divider, { backgroundColor: theme.border }]} />
           <ThemedText style={[styles.translationText, { color: theme.textSecondary }]}>
-            {word.translation}
+            {lang === "en" && word.translationEn ? word.translationEn : word.translation}
           </ThemedText>
+          {(lang === "ja" ? word.posJa : word.posEn) ? (
+            <View style={{ flexDirection: "row", marginBottom: 6 }}>
+              <View style={{ backgroundColor: `${theme.primary}15`, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 99 }}>
+                <ThemedText style={{ fontSize: 11, fontFamily: "Nunito_600SemiBold", color: theme.primary }}>
+                  {lang === "ja" ? word.posJa : word.posEn}
+                </ThemedText>
+              </View>
+            </View>
+          ) : null}
           {word.exampleSentence ? (
             <View style={styles.exampleSection}>
               <View style={styles.exampleRow}>
@@ -1037,7 +1049,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
                 <SpeakButton text={word.exampleSentence} size="small" />
               </View>
               <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
-                {word.exampleTranslation}
+                {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
               </ThemedText>
             </View>
           ) : null}

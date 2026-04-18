@@ -43,7 +43,7 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Skip: If ≥70% of session words already labeled, user can skip with auto-stamp
   - Streak tracking across days; special stamp for Day 7 test clear
   - SprintContext manages state; stored at `@chinese_master_sprint`
-- **Word Detail**: View word details with example sentences
+- **Word Detail**: View word details with example sentences, English translations, and part of speech (品詞)
 - **Profile**: Track learning progress with separate statistics
   - HSK級セレクター (1〜6級): 学習する単語レベルを切り替え
   - 各級の進捗は独立して管理される
@@ -120,12 +120,16 @@ interface Word {
   word: string;              // Chinese characters
   pinyin: string;            // Romanization
   translation: string;       // Japanese meaning
+  translationEn?: string;    // English meaning
+  posJa?: string;            // Part of speech (Japanese, e.g. 動詞)
+  posEn?: string;            // Part of speech (English, e.g. verb)
   exampleSentence: string;
   examplePinyin: string;
   exampleTranslation: string;
-  exampleEnglish?: string;   // Optional English example translation
+  exampleEnglish?: string;   // English example translation
   longExample?: string;      // Extended example sentence (Chinese)
   longExampleTranslation?: string; // Extended example translation (Japanese)
+  longExampleEnglish?: string;     // Extended example translation (English)
   // Dual memorization tracking
   textMemorized: boolean;         // Text memorization status
   textUnmemorizedCount: number;   // Text "needs work" counter
@@ -144,7 +148,7 @@ interface Word {
 
 ## Development Notes
 - Text-to-speech uses `zh-CN` locale for Mandarin Chinese
-- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "9"
+- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "10"
 - Per-level storage: `@chinese_master_words_hsk{N}` for each level, `@chinese_master_hsk_level` for selected level
 - All HSK levels have data: HSK1 (150), HSK2 (150), HSK3 (300), HSK4 (600), HSK5 (1300), HSK6 (2500)
 - All HSK words include longExample and longExampleTranslation fields for extended example sentences

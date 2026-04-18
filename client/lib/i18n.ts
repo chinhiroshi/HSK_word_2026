@@ -75,6 +75,8 @@ const translations = {
     example_sentence: "例文",
     long_example: "長文例文",
     speak: "発音を聞く",
+    part_of_speech: "品詞",
+    meaning: "意味",
 
     // ── Audio Playback Screen ──
     playback_header: "音声再生",
@@ -410,6 +412,8 @@ const translations = {
     example_sentence: "Example",
     long_example: "Extended Example",
     speak: "Listen",
+    part_of_speech: "Part of Speech",
+    meaning: "Meaning",
 
     // ── Audio Playback Screen ──
     playback_header: "Audio Playback",

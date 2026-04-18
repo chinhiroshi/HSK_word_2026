@@ -6,12 +6,16 @@ export interface Word {
   word: string;
   pinyin: string;
   translation: string;
+  translationEn?: string;
+  posJa?: string;
+  posEn?: string;
   exampleSentence: string;
   examplePinyin: string;
   exampleTranslation: string;
   exampleEnglish?: string;
   longExample?: string;
   longExampleTranslation?: string;
+  longExampleEnglish?: string;
   isMemorized: boolean;
   unmemorizedCount: number;
   textMemorized: boolean;

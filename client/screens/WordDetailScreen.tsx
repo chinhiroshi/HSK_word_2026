@@ -24,6 +24,7 @@ import { getWord, toggleMemorized } from "@/lib/storage";
 import { getPinyin } from "@/lib/pinyin";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
+import type { Language } from "@/lib/i18n";
 
 type RouteProps = RouteProp<RootStackParamList, "WordDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -39,7 +40,7 @@ export default function WordDetailScreen() {
   const headerHeight = useHeaderHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
   const { wordId } = route.params;
@@ -146,8 +147,20 @@ export default function WordDetailScreen() {
             {word.pinyin || getPinyin(word.word)}
           </ThemedText>
           <ThemedText style={[styles.translation, { color: theme.textSecondary }]}>
-            {word.translation}
+            {lang === "en" && word.translationEn ? word.translationEn : word.translation}
           </ThemedText>
+          {lang === "ja" && word.translation && word.translationEn ? (
+            <ThemedText style={[styles.translationSub, { color: theme.textTertiary || theme.textSecondary }]}>
+              {word.translationEn}
+            </ThemedText>
+          ) : null}
+          {(lang === "ja" ? word.posJa : word.posEn) ? (
+            <View style={[styles.posBadge, { backgroundColor: `${theme.primary}15`, borderColor: `${theme.primary}30` }]}>
+              <ThemedText style={[styles.posText, { color: theme.primary }]}>
+                {lang === "ja" ? word.posJa : word.posEn}
+              </ThemedText>
+            </View>
+          ) : null}
 
           <View
             style={[styles.statusBadge, {
@@ -189,8 +202,13 @@ export default function WordDetailScreen() {
             {word.examplePinyin || getPinyin(word.exampleSentence)}
           </ThemedText>
           <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-            {word.exampleTranslation}
+            {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
           </ThemedText>
+          {lang === "ja" && word.exampleEnglish ? (
+            <ThemedText style={[styles.exampleTranslationSub, { color: theme.textTertiary || theme.textSecondary }]}>
+              {word.exampleEnglish}
+            </ThemedText>
+          ) : null}
         </View>
 
         {word.longExample ? (
@@ -207,9 +225,14 @@ export default function WordDetailScreen() {
             <ThemedText style={styles.exampleSentence}>
               {word.longExample}
             </ThemedText>
-            {word.longExampleTranslation ? (
+            {(lang === "en" ? (word.longExampleEnglish || word.longExampleTranslation) : word.longExampleTranslation) ? (
               <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-                {word.longExampleTranslation}
+                {lang === "en" && word.longExampleEnglish ? word.longExampleEnglish : word.longExampleTranslation}
+              </ThemedText>
+            ) : null}
+            {lang === "ja" && word.longExampleEnglish ? (
+              <ThemedText style={[styles.exampleTranslationSub, { color: theme.textTertiary || theme.textSecondary }]}>
+                {word.longExampleEnglish}
               </ThemedText>
             ) : null}
           </View>
@@ -286,7 +309,26 @@ const styles = StyleSheet.create({
   translation: {
     fontSize: 18,
     fontFamily: "Nunito_400Regular",
+    marginBottom: Spacing.xs,
+  },
+  translationSub: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    marginBottom: Spacing.sm,
+    opacity: 0.65,
+  },
+  posBadge: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
     marginBottom: Spacing.lg,
+    alignSelf: "center",
+  },
+  posText: {
+    fontSize: 13,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
   statusBadge: {
     flexDirection: "row",
@@ -330,6 +372,12 @@ const styles = StyleSheet.create({
   exampleTranslation: {
     fontSize: 16,
     fontFamily: "Nunito_400Regular",
+  },
+  exampleTranslationSub: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    marginTop: Spacing.xs,
+    opacity: 0.6,
   },
   sectionTitle: {
     fontSize: 18,

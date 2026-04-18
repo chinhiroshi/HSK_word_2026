@@ -12,6 +12,7 @@ import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
+import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getPinyin } from "@/lib/pinyin";
@@ -44,6 +45,7 @@ export function WordCard({
   onMarkMemorized,
 }: WordCardProps) {
   const { theme } = useTheme();
+  const { lang } = useI18n();
   const scale = useSharedValue(1);
   const markScale = useSharedValue(1);
 
@@ -140,6 +142,13 @@ export function WordCard({
                 <ThemedText style={[styles.pinyinText, { color: theme.textSecondary }]}>
                   {wordPinyin}
                 </ThemedText>
+              ) : null}
+              {(lang === "ja" ? word.posJa : word.posEn) ? (
+                <View style={[styles.posBadge, { backgroundColor: `${theme.primary}15` }]}>
+                  <ThemedText style={[styles.posText, { color: theme.primary }]}>
+                    {lang === "ja" ? word.posJa : word.posEn}
+                  </ThemedText>
+                </View>
               ) : null}
             </View>
             <SpeakButton text={speakText} size="small" />
@@ -297,6 +306,16 @@ const styles = StyleSheet.create({
   pinyinText: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
+  },
+  posBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.full,
+  },
+  posText: {
+    fontSize: 11,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
   markActions: {
     flexDirection: "row",
