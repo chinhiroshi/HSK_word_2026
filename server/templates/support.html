@@ -5,45 +5,47 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif;
-        background: #FAFAF9;
-        color: #222;
+        background: #F5F5F3;
+        color: #1a1a1a;
         line-height: 1.7;
         min-height: 100vh;
       }
 
+      /* ── Hero ── */
       .hero {
-        background: linear-gradient(135deg, #5B8C85 0%, #4a7a73 100%);
+        background: linear-gradient(150deg, #5B8C85 0%, #3d6b65 100%);
         color: #fff;
-        padding: 48px 20px 40px;
+        padding: 56px 24px 48px;
         text-align: center;
       }
       .hero-icon {
-        width: 80px;
-        height: 80px;
+        width: 76px;
+        height: 76px;
         border-radius: 18px;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
       }
       .hero h1 {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 700;
-        margin-bottom: 6px;
+        letter-spacing: -0.3px;
+        margin-bottom: 8px;
       }
       .hero .tagline {
         font-size: 14px;
-        opacity: 0.85;
+        opacity: 0.75;
+        letter-spacing: 0.2px;
       }
 
+      /* ── Nav ── */
       nav {
         background: #fff;
-        border-bottom: 1px solid #e5e5e5;
-        padding: 0 20px;
+        border-bottom: 1px solid #e8e8e8;
+        padding: 0 16px;
         display: flex;
         gap: 0;
         justify-content: center;
@@ -54,58 +56,60 @@
       }
       nav a {
         display: block;
-        padding: 12px 10px;
+        padding: 13px 10px;
         font-size: 13px;
         font-weight: 500;
-        color: #666;
+        color: #777;
         text-decoration: none;
         border-bottom: 2px solid transparent;
-        transition: all 0.2s;
+        transition: color 0.15s, border-color 0.15s;
+        white-space: nowrap;
       }
-      nav a:hover,
-      nav a.active {
+      nav a:hover, nav a.active {
         color: #5B8C85;
         border-bottom-color: #5B8C85;
       }
 
+      /* ── Container ── */
       .container {
-        max-width: 640px;
+        max-width: 660px;
         margin: 0 auto;
-        padding: 32px 20px 60px;
+        padding: 40px 20px 72px;
       }
 
-      section {
-        margin-bottom: 48px;
-      }
+      section { margin-bottom: 52px; }
+
       section h2 {
-        font-size: 20px;
+        font-size: 19px;
         font-weight: 700;
         color: #111;
-        margin-bottom: 16px;
-        padding-bottom: 8px;
+        margin-bottom: 18px;
+        padding-bottom: 10px;
         border-bottom: 2px solid #5B8C85;
+        letter-spacing: -0.2px;
       }
       section h3 {
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 600;
         color: #333;
-        margin: 20px 0 8px;
+        margin: 24px 0 10px;
       }
       section p {
-        font-size: 15px;
-        color: #444;
+        font-size: 14px;
+        color: #555;
         margin-bottom: 12px;
+        line-height: 1.75;
       }
 
       /* ── Plan cards ── */
       .plan-grid {
         display: grid;
-        gap: 16px;
+        gap: 14px;
         margin-top: 4px;
       }
       .plan-card {
         background: #fff;
-        border: 2px solid #e8e8e8;
+        border: 1.5px solid #e5e5e5;
         border-radius: 16px;
         padding: 24px 20px;
       }
@@ -117,32 +121,34 @@
       .plan-card.premium::before {
         content: "おすすめ";
         position: absolute;
-        top: 14px;
-        right: -24px;
+        top: 16px;
+        right: -22px;
         background: #E8956F;
         color: #fff;
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
-        padding: 4px 32px;
+        padding: 4px 30px;
         transform: rotate(45deg);
         letter-spacing: 0.5px;
       }
       .plan-name {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
         margin-bottom: 4px;
         color: #111;
       }
       .plan-price {
-        font-size: 28px;
+        font-size: 30px;
         font-weight: 800;
         color: #5B8C85;
-        margin-bottom: 16px;
+        margin: 8px 0 18px;
+        letter-spacing: -0.5px;
       }
       .plan-price span {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
-        color: #888;
+        color: #999;
+        letter-spacing: 0;
       }
       .plan-features {
         list-style: none;
@@ -150,51 +156,47 @@
         margin: 0;
       }
       .plan-features li {
-        font-size: 14px;
+        font-size: 13.5px;
         color: #555;
-        padding: 6px 0;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 7px 0;
+        border-bottom: 1px solid #f2f2f2;
         display: flex;
         align-items: flex-start;
-        gap: 8px;
-      }
-      .plan-features li:last-child {
-        border-bottom: none;
-      }
-      .plan-features li .check {
-        color: #10B981;
-        font-size: 16px;
-        flex-shrink: 0;
+        gap: 9px;
         line-height: 1.5;
       }
-      .plan-features li .cross {
-        color: #ccc;
-        font-size: 16px;
-        flex-shrink: 0;
-        line-height: 1.5;
-      }
+      .plan-features li:last-child { border-bottom: none; }
+      .plan-features li .check { color: #10B981; flex-shrink: 0; margin-top: 1px; }
+      .plan-features li .cross { color: #ccc; flex-shrink: 0; margin-top: 1px; }
 
       /* ── Word count table ── */
       .subscription-table {
         width: 100%;
         border-collapse: collapse;
-        margin: 12px 0;
-        font-size: 14px;
+        margin: 14px 0;
+        font-size: 13.5px;
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       }
       .subscription-table th,
       .subscription-table td {
-        padding: 10px 14px;
-        border: 1px solid #e8e8e8;
+        padding: 11px 14px;
+        border-bottom: 1px solid #f0f0f0;
         text-align: left;
       }
+      .subscription-table thead tr th { border-bottom: 2px solid #e8e8e8; }
+      .subscription-table tbody tr:last-child td { border-bottom: none; }
       .subscription-table th {
-        background: #f5f5f4;
+        background: #fafaf9;
         font-weight: 600;
-        color: #333;
+        color: #444;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
       }
-      .subscription-table td {
-        color: #555;
-      }
+      .subscription-table td { color: #555; }
       .badge-free {
         display: inline-block;
         background: #e8f5e9;
@@ -214,18 +216,19 @@
         border-radius: 20px;
       }
 
-      /* ── Restore button callout ── */
+      /* ── Info box ── */
       .info-box {
         background: #f0f8f7;
         border: 1px solid #b2dfdb;
         border-radius: 10px;
-        padding: 16px 18px;
-        margin-top: 16px;
+        padding: 14px 16px;
+        margin-top: 18px;
       }
       .info-box p {
-        font-size: 14px;
+        font-size: 13px;
         color: #2e5f5b;
         margin: 0;
+        line-height: 1.65;
       }
 
       /* ── Feature cards ── */
@@ -235,297 +238,224 @@
       }
       .feature-card {
         background: #fff;
-        border: 1px solid #e8e8e8;
-        border-radius: 12px;
+        border: 1px solid #ebebeb;
+        border-radius: 14px;
         padding: 20px;
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
       }
-      .feature-card .icon {
-        font-size: 28px;
-        margin-bottom: 8px;
-        display: block;
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #f0f8f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
       }
-      .feature-card h3 {
-        font-size: 16px;
+      .feature-icon svg { color: #5B8C85; }
+      .feature-body h3 {
+        font-size: 15px;
         font-weight: 600;
-        color: #222;
-        margin: 0 0 6px;
+        color: #111;
+        margin: 0 0 5px;
       }
-      .feature-card p {
-        font-size: 14px;
+      .feature-body p {
+        font-size: 13px;
         color: #666;
         margin: 0;
+        line-height: 1.65;
       }
 
       /* ── FAQ ── */
+      .faq-group { margin-bottom: 8px; }
+      .faq-group-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin: 20px 0 10px;
+      }
       .faq-item {
         background: #fff;
-        border: 1px solid #e8e8e8;
-        border-radius: 10px;
-        margin-bottom: 10px;
+        border: 1px solid #ebebeb;
+        border-radius: 12px;
+        margin-bottom: 8px;
         overflow: hidden;
       }
       .faq-item summary {
-        padding: 16px 20px;
-        font-size: 15px;
+        padding: 15px 18px;
+        font-size: 14px;
         font-weight: 600;
-        color: #333;
+        color: #222;
         cursor: pointer;
         list-style: none;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 12px;
       }
-      .faq-item summary::-webkit-details-marker {
-        display: none;
-      }
+      .faq-item summary::-webkit-details-marker { display: none; }
       .faq-item summary::after {
         content: "+";
-        font-size: 20px;
-        color: #999;
+        font-size: 18px;
+        color: #bbb;
         flex-shrink: 0;
-        margin-left: 12px;
-        transition: transform 0.2s;
+        font-weight: 400;
+        transition: color 0.15s;
       }
-      .faq-item[open] summary::after {
-        content: "−";
-      }
+      .faq-item[open] summary::after { content: "−"; color: #5B8C85; }
+      .faq-item[open] summary { color: #5B8C85; }
       .faq-item .answer {
-        padding: 0 20px 16px;
-        font-size: 14px;
-        color: #555;
-        line-height: 1.7;
+        padding: 0 18px 15px;
+        font-size: 13.5px;
+        color: #666;
+        line-height: 1.75;
+        border-top: 1px solid #f5f5f5;
+        margin-top: 0;
       }
       .faq-item .answer ol {
-        padding-left: 20px;
-        margin-top: 6px;
+        padding-left: 18px;
+        margin-top: 8px;
       }
-      .faq-item .answer li {
-        margin-bottom: 4px;
-      }
+      .faq-item .answer li { margin-bottom: 4px; }
+      .faq-item .answer strong { color: #444; }
 
       /* ── Contact ── */
       .contact-box {
         background: #fff;
-        border: 1px solid #e8e8e8;
-        border-radius: 12px;
-        padding: 24px;
+        border: 1px solid #ebebeb;
+        border-radius: 16px;
+        padding: 28px 24px;
         text-align: center;
       }
       .contact-box p {
         font-size: 14px;
         color: #666;
-        margin-bottom: 16px;
+        margin-bottom: 20px;
+        line-height: 1.7;
       }
       .contact-email {
         display: inline-block;
-        padding: 12px 28px;
+        padding: 13px 32px;
         background: #5B8C85;
         color: #fff;
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
         text-decoration: none;
-        border-radius: 8px;
-        transition: background 0.2s;
+        border-radius: 10px;
+        transition: background 0.15s;
+        letter-spacing: 0.1px;
       }
-      .contact-email:hover {
-        background: #4a7a73;
-      }
+      .contact-email:hover { background: #4a7a73; }
 
       /* ── Legal ── */
       .privacy-section h3 {
-        font-size: 15px;
+        font-size: 14px;
         font-weight: 600;
         color: #333;
-        margin: 16px 0 6px;
+        margin: 18px 0 6px;
       }
-      .privacy-section p,
-      .privacy-section li {
-        font-size: 14px;
+      .privacy-section p, .privacy-section li {
+        font-size: 13.5px;
         color: #555;
       }
       .privacy-section ul {
-        padding-left: 20px;
+        padding-left: 18px;
         margin-bottom: 12px;
       }
-      .privacy-section li {
-        margin-bottom: 4px;
-      }
+      .privacy-section li { margin-bottom: 4px; }
       .legal-links {
         display: flex;
-        gap: 16px;
+        gap: 12px;
         flex-wrap: wrap;
-        margin-top: 16px;
+        margin-top: 20px;
       }
       .legal-links a {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 10px 20px;
+        padding: 11px 20px;
         background: #5B8C85;
         color: #fff;
-        font-size: 14px;
+        font-size: 13.5px;
         font-weight: 600;
         text-decoration: none;
-        border-radius: 8px;
-        transition: background 0.2s;
+        border-radius: 10px;
+        transition: background 0.15s;
       }
-      .legal-links a:hover {
-        background: #4a7a73;
-      }
+      .legal-links a:hover { background: #4a7a73; }
 
+      /* ── Footer ── */
       footer {
         text-align: center;
-        padding: 24px 20px;
-        border-top: 1px solid #e8e8e8;
+        padding: 28px 20px;
+        border-top: 1px solid #e5e5e5;
         font-size: 12px;
-        color: #999;
+        color: #aaa;
+        background: #fff;
       }
       footer a {
         color: #5B8C85;
         text-decoration: none;
         margin: 0 8px;
       }
-      footer a:hover {
-        text-decoration: underline;
-      }
+      footer a:hover { text-decoration: underline; }
 
+      /* ── Responsive ── */
       @media (min-width: 540px) {
-        .plan-grid {
-          grid-template-columns: 1fr 1fr;
-        }
+        .plan-grid { grid-template-columns: 1fr 1fr; }
       }
       @media (min-width: 768px) {
-        .hero {
-          padding: 64px 32px 56px;
-        }
-        .hero-icon {
-          width: 96px;
-          height: 96px;
-        }
-        .hero h1 {
-          font-size: 30px;
-        }
-        .container {
-          padding: 40px 20px 80px;
-        }
-        .features {
-          grid-template-columns: 1fr 1fr;
-        }
+        .hero { padding: 72px 40px 64px; }
+        .hero h1 { font-size: 26px; }
+        .hero-icon { width: 88px; height: 88px; }
+        .container { padding: 48px 24px 80px; }
+        .features { grid-template-columns: 1fr 1fr; }
       }
 
+      /* ── Dark mode ── */
       @media (prefers-color-scheme: dark) {
-        body {
-          background: #111;
-          color: #e0e0e0;
-        }
-        .hero {
-          background: linear-gradient(135deg, #3d6b65 0%, #2d5550 100%);
-        }
-        nav {
-          background: #1a1a1a;
-          border-bottom-color: #333;
-        }
-        nav a {
-          color: #999;
-        }
-        nav a:hover,
-        nav a.active {
-          color: #7db5ad;
-          border-bottom-color: #7db5ad;
-        }
-        section h2 {
-          color: #f0f0f0;
-          border-bottom-color: #7db5ad;
-        }
-        section h3 {
-          color: #ddd;
-        }
-        section p {
-          color: #bbb;
-        }
-        .plan-card {
-          background: #1a1a1a;
-          border-color: #333;
-        }
-        .plan-card.premium {
-          border-color: #7db5ad;
-        }
-        .plan-name {
-          color: #e0e0e0;
-        }
-        .plan-price {
-          color: #7db5ad;
-        }
-        .plan-price span {
-          color: #666;
-        }
-        .plan-features li {
-          color: #aaa;
-          border-bottom-color: #2a2a2a;
-        }
-        .plan-features li .cross {
-          color: #444;
-        }
-        .info-box {
-          background: #1a2e2c;
-          border-color: #2e5550;
-        }
-        .info-box p {
-          color: #7db5ad;
-        }
-        .feature-card {
-          background: #1a1a1a;
-          border-color: #333;
-        }
-        .feature-card h3 {
-          color: #e0e0e0;
-        }
-        .feature-card p {
-          color: #999;
-        }
-        .faq-item {
-          background: #1a1a1a;
-          border-color: #333;
-        }
-        .faq-item summary {
-          color: #e0e0e0;
-        }
-        .faq-item summary::after {
-          color: #666;
-        }
-        .faq-item .answer {
-          color: #aaa;
-        }
-        .contact-box {
-          background: #1a1a1a;
-          border-color: #333;
-        }
-        .contact-box p {
-          color: #999;
-        }
-        .privacy-section h3 {
-          color: #ddd;
-        }
-        .privacy-section p,
-        .privacy-section li {
-          color: #aaa;
-        }
-        .subscription-table th {
-          background: #222;
-          color: #ddd;
-          border-color: #333;
-        }
-        .subscription-table td {
-          color: #aaa;
-          border-color: #333;
-        }
-        footer {
-          border-top-color: #333;
-          color: #666;
-        }
-        footer a {
-          color: #7db5ad;
-        }
+        body { background: #111; color: #ddd; }
+        .hero { background: linear-gradient(150deg, #3d6b65 0%, #2a4d49 100%); }
+        nav { background: #181818; border-bottom-color: #2a2a2a; }
+        nav a { color: #888; }
+        nav a:hover, nav a.active { color: #7db5ad; border-bottom-color: #7db5ad; }
+        section h2 { color: #eee; border-bottom-color: #7db5ad; }
+        section h3 { color: #ccc; }
+        section p { color: #aaa; }
+        .plan-card { background: #1c1c1c; border-color: #2e2e2e; }
+        .plan-card.premium { border-color: #5B8C85; }
+        .plan-name { color: #eee; }
+        .plan-price { color: #7db5ad; }
+        .plan-price span { color: #666; }
+        .plan-features li { color: #999; border-bottom-color: #252525; }
+        .plan-features li .cross { color: #3a3a3a; }
+        .subscription-table { background: #1c1c1c; box-shadow: none; }
+        .subscription-table th { background: #222; color: #aaa; border-color: #2a2a2a; }
+        .subscription-table td { color: #999; border-color: #252525; }
+        .subscription-table thead tr th { border-bottom-color: #2e2e2e; }
+        .info-box { background: #1a2e2c; border-color: #2e5550; }
+        .info-box p { color: #7db5ad; }
+        .feature-card { background: #1c1c1c; border-color: #2e2e2e; }
+        .feature-icon { background: #1a2e2c; }
+        .feature-body h3 { color: #eee; }
+        .feature-body p { color: #888; }
+        .faq-item { background: #1c1c1c; border-color: #2e2e2e; }
+        .faq-item summary { color: #ddd; }
+        .faq-item summary::after { color: #555; }
+        .faq-item[open] summary { color: #7db5ad; }
+        .faq-item[open] summary::after { color: #7db5ad; }
+        .faq-item .answer { color: #999; border-top-color: #252525; }
+        .faq-item .answer strong { color: #bbb; }
+        .faq-group-title { color: #666; }
+        .contact-box { background: #1c1c1c; border-color: #2e2e2e; }
+        .contact-box p { color: #888; }
+        footer { background: #181818; border-top-color: #2a2a2a; color: #555; }
+        footer a { color: #7db5ad; }
       }
     </style>
   </head>
@@ -534,7 +464,7 @@
     <div class="hero">
       <img src="/assets/images/app-icon.png" alt="App Icon" class="hero-icon" />
       <h1>HSK受験者が作った単語帳</h1>
-      <p class="tagline">HSK1〜6級対応 · 無料ではじめる中国語単語帳</p>
+      <p class="tagline">HSK1〜6級対応 · 約5,000語収録 · 無料ではじめる</p>
     </div>
 
     <nav>
@@ -552,7 +482,7 @@
       <section id="about">
         <h2>アプリについて</h2>
         <p>「HSK受験者が作った単語帳」は、HSK1〜6級の全単語約5,000語を収録した中国語語彙学習アプリです。無料でダウンロードして今すぐ学習をはじめられます。</p>
-        <p>文字暗記と音声暗記の2つのモードで、視覚・聴覚の両面から効率よく単語を定着させます。さらに7日間のスプリント機能でパンダスタンプを集めながらゲーム感覚で学習できます。</p>
+        <p>文字暗記・音声暗記の2モードで視覚・聴覚の両面から効率よく語彙を定着させます。7日間スプリント機能でパンダスタンプを集めながらゲーム感覚で継続できます。</p>
       </section>
 
       <!-- ── Pricing ── -->
@@ -561,18 +491,34 @@
         <p>まずは無料でお試しください。プレミアムプランに登録すると、全レベル・全単語にアクセスできます。</p>
 
         <div class="plan-grid">
-
           <div class="plan-card">
             <div class="plan-name">無料プラン</div>
             <div class="plan-price">¥0 <span>/ 永久無料</span></div>
             <ul class="plan-features">
-              <li><span class="check">&#10003;</span>HSK1級 全150語</li>
-              <li><span class="check">&#10003;</span>HSK2〜6級 各レベル最初の50語</li>
-              <li><span class="check">&#10003;</span>文字暗記モード</li>
-              <li><span class="check">&#10003;</span>音声暗記モード</li>
-              <li><span class="check">&#10003;</span>スプリント機能</li>
-              <li><span class="cross">&#10007;</span>HSK2〜6級 50語以降の単語</li>
-              <li><span class="cross">&#10007;</span>音声再生（未暗記フィルタ）の全範囲</li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                HSK1級 全150語
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                HSK2〜6級 各レベル最初の50語
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                文字暗記・音声暗記モード
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                スプリント機能
+              </li>
+              <li>
+                <svg class="cross" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                HSK2〜6級 50語以降の単語
+              </li>
+              <li>
+                <svg class="cross" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                音声再生の全範囲
+              </li>
             </ul>
           </div>
 
@@ -580,16 +526,32 @@
             <div class="plan-name">プレミアムプラン</div>
             <div class="plan-price">¥380 <span>/ 月（税込）</span></div>
             <ul class="plan-features">
-              <li><span class="check">&#10003;</span>HSK1〜6級 全約5,000語</li>
-              <li><span class="check">&#10003;</span>文字暗記モード（全語）</li>
-              <li><span class="check">&#10003;</span>音声暗記モード（全語）</li>
-              <li><span class="check">&#10003;</span>音声再生（全範囲）</li>
-              <li><span class="check">&#10003;</span>スプリント機能（全語）</li>
-              <li><span class="check">&#10003;</span>広告なし</li>
-              <li><span class="check">&#10003;</span>いつでもキャンセル可能</li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                HSK1〜6級 全約5,000語
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                文字暗記・音声暗記モード（全語）
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                音声再生（全範囲）
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                スプリント機能（全語）
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                広告なし
+              </li>
+              <li>
+                <svg class="check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                いつでもキャンセル可能
+              </li>
             </ul>
           </div>
-
         </div>
 
         <h3>HSK別収録語数</h3>
@@ -651,36 +613,67 @@
       <section id="features">
         <h2>主な機能</h2>
         <div class="features">
+
           <div class="feature-card">
-            <span class="icon" aria-hidden="true">&#x1F4D6;</span>
-            <h3>文字暗記モード</h3>
-            <p>漢字・ピンイン・例文を見ながら視覚的に記憶。暗記状況をフィルタリングして効率的に復習できます。</p>
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            </div>
+            <div class="feature-body">
+              <h3>文字暗記モード</h3>
+              <p>漢字・ピンイン・例文を見ながら視覚的に記憶。暗記状況をフィルタリングして効率的に復習できます。</p>
+            </div>
           </div>
+
           <div class="feature-card">
-            <span class="icon" aria-hidden="true">&#x1F3A7;</span>
-            <h3>音声暗記モード</h3>
-            <p>中国語を隠した状態で音声から意味を理解。リスニング力と語彙力を同時に強化します。</p>
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+            </div>
+            <div class="feature-body">
+              <h3>音声暗記モード</h3>
+              <p>中国語を隠した状態で音声から意味を理解。リスニング力と語彙力を同時に強化します。</p>
+            </div>
           </div>
+
           <div class="feature-card">
-            <span class="icon" aria-hidden="true">&#x1F50A;</span>
-            <h3>音声再生機能</h3>
-            <p>中国語・日本語・英語の例文を連続再生。0.5〜1.5倍速調整対応。通勤中のながら学習に最適。</p>
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </div>
+            <div class="feature-body">
+              <h3>音声再生機能</h3>
+              <p>中国語・日本語・英語の例文を連続再生。0.5〜1.5倍速調整対応。通勤中のながら学習に最適です。</p>
+            </div>
           </div>
+
           <div class="feature-card">
-            <span class="icon" aria-hidden="true">&#x1F43C;</span>
-            <h3>スプリント機能</h3>
-            <p>7日間のスタンプラリー形式で学習を進捗管理。60種類のパンダスタンプを集めながらゲーム感覚で継続できます。</p>
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>
+            </div>
+            <div class="feature-body">
+              <h3>スプリント機能</h3>
+              <p>7日間のスタンプラリー形式で学習を管理。60種類のパンダスタンプを集めながらゲーム感覚で継続できます。</p>
+            </div>
           </div>
+
           <div class="feature-card">
-            <span class="icon" aria-hidden="true">&#x1F4CA;</span>
-            <h3>進捗管理</h3>
-            <p>暗記済み・暗記必要・未暗記の3段階で進捗を可視化。HSK各級ごとに独立した進捗管理が可能です。</p>
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </div>
+            <div class="feature-body">
+              <h3>進捗管理</h3>
+              <p>暗記済み・暗記必要・未暗記の3段階で進捗を可視化。HSK各級ごとに独立した管理が可能です。</p>
+            </div>
           </div>
+
           <div class="feature-card">
-            <span class="icon" aria-hidden="true">&#x1F507;</span>
-            <h3>広告なし</h3>
-            <p>無料プランも含め、広告は一切表示されません。学習に集中できる環境を提供します。</p>
+            <div class="feature-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div class="feature-body">
+              <h3>単語詳細</h3>
+              <p>品詞・例文・英訳を詳細表示。長文例文や英語訳も収録し、HSK試験対策として幅広く活用できます。</p>
+            </div>
           </div>
+
         </div>
       </section>
 
@@ -688,7 +681,7 @@
       <section id="faq">
         <h2>よくある質問</h2>
 
-        <h3>料金・サブスクリプションについて</h3>
+        <p class="faq-group-title">料金・サブスクリプション</p>
 
         <details class="faq-item">
           <summary>無料で使える範囲はどこまでですか？</summary>
@@ -697,7 +690,7 @@
 
         <details class="faq-item">
           <summary>プレミアムプランの料金は？</summary>
-          <div class="answer">月額¥380（税込）です。サブスクリプションはApple App StoreまたはGoogle Playを通じて課金されます。いつでもキャンセル可能で、キャンセル後は当月末まで引き続きご利用いただけます。</div>
+          <div class="answer">月額¥380（税込）です。Apple App StoreまたはGoogle Playを通じて課金されます。いつでもキャンセル可能で、キャンセル後は当月末まで引き続きご利用いただけます。</div>
         </details>
 
         <details class="faq-item">
@@ -705,15 +698,15 @@
           <div class="answer">
             <strong>iOS（iPhone / iPad）の場合：</strong>
             <ol>
-              <li>設定アプリ を開く</li>
+              <li>設定アプリを開く</li>
               <li>画面上部の Apple ID をタップ</li>
               <li>「サブスクリプション」をタップ</li>
               <li>「HSK受験者が作った単語帳」を選択してキャンセル</li>
             </ol>
             <br />
-            <strong>Androidの場合：</strong>
+            <strong>Android の場合：</strong>
             <ol>
-              <li>Google Play ストア を開く</li>
+              <li>Google Play ストアを開く</li>
               <li>右上のアカウントアイコンをタップ</li>
               <li>「お支払いと定期購入」→「定期購入」をタップ</li>
               <li>「HSK受験者が作った単語帳」を選択してキャンセル</li>
@@ -725,7 +718,7 @@
 
         <details class="faq-item">
           <summary>機種変更・再インストール後にプレミアムを復元するには？</summary>
-          <div class="answer">アプリ内の「プロフィール」画面にある「購入を復元」ボタンをタップしてください。同じApple IDまたはGoogleアカウントでご購入された場合、自動的にプレミアムが有効になります。</div>
+          <div class="answer">アプリ内の「プロフィール」画面にある「購入を復元」ボタンをタップしてください。同じ Apple ID または Google アカウントでご購入された場合、自動的にプレミアムが有効になります。</div>
         </details>
 
         <details class="faq-item">
@@ -738,11 +731,16 @@
           <div class="answer">現在、無料トライアル期間は設けておりません。ただし、HSK1級の全語とHSK2〜6級各50語は無料でご利用いただけるため、まずは無料でアプリの学習機能をお試しください。</div>
         </details>
 
-        <h3>機能・学習方法について</h3>
+        <p class="faq-group-title">機能・学習方法</p>
 
         <details class="faq-item">
           <summary>文字暗記と音声暗記の違いは何ですか？</summary>
           <div class="answer">文字暗記モードでは漢字とピンインが表示され、視覚的に単語を覚えます。音声暗記モードでは中国語が隠された状態で音声を聴いて意味を理解する練習ができます。それぞれの暗記状況は独立して管理されます。</div>
+        </details>
+
+        <details class="faq-item">
+          <summary>スプリント機能とは何ですか？</summary>
+          <div class="answer">7日間のサイクルで学習を進めるスタンプラリー形式の機能です。学習・復習・テストの各セッションをクリアするとパンダスタンプが獲得できます。60種類のスタンプがあり、スタンプ帳で収集状況を確認できます。</div>
         </details>
 
         <details class="faq-item">
@@ -752,7 +750,7 @@
 
         <details class="faq-item">
           <summary>学習データを他のデバイスに引き継げますか？</summary>
-          <div class="answer">現在、学習データはお使いのデバイス内にのみ保存されます。デバイス間の同期機能は今後のアップデートで検討しています。なお、サブスクリプションは同じApple ID / Googleアカウントで別端末にも復元できます。</div>
+          <div class="answer">現在、学習データはお使いのデバイス内にのみ保存されます。デバイス間の同期機能は今後のアップデートで検討しています。なお、サブスクリプションは同じ Apple ID / Google アカウントで別端末にも復元できます。</div>
         </details>
 
         <details class="faq-item">
@@ -779,13 +777,13 @@
       <!-- ── Legal ── -->
       <section id="legal" class="privacy-section">
         <h2>プライバシーポリシー・利用規約</h2>
-        <p>最終更新日: 2026年4月11日</p>
+        <p>最終更新日: 2026年4月18日</p>
 
         <h3>プライバシーポリシー概要</h3>
-        <p>本アプリは、ユーザーの個人情報を収集しません。学習の進捗状況はお使いのデバイス内にのみ保存され、外部サーバーに送信されることはありません。サブスクリプションの課金処理はApple App Store / Google Play StoreおよびRevenueCatを通じて行われます。</p>
+        <p>本アプリは、ユーザーの個人情報を収集しません。学習の進捗状況はお使いのデバイス内にのみ保存され、外部サーバーに送信されることはありません。サブスクリプションの課金処理は Apple App Store / Google Play Store および RevenueCat を通じて行われます。</p>
 
         <h3>利用規約概要</h3>
-        <p>本アプリはHSK受験対策として中国語単語の学習支援サービスを提供します。プレミアムプラン（月額¥380）は自動更新され、期間終了の24時間前までにキャンセルしない限り更新されます。本アプリのご利用にはApple Inc.の標準使用許諾契約（EULA）も適用されます。</p>
+        <p>本アプリは HSK 受験対策として中国語単語の学習支援サービスを提供します。プレミアムプラン（月額¥380）は自動更新され、期間終了の24時間前までにキャンセルしない限り更新されます。本アプリのご利用には Apple Inc. の標準使用許諾契約（EULA）も適用されます。</p>
 
         <div class="legal-links">
           <a href="/privacy-policy">プライバシーポリシー（全文）</a>
@@ -808,9 +806,7 @@
         link.addEventListener('click', function(e) {
           e.preventDefault();
           var target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           document.querySelectorAll('nav a').forEach(function(l) { l.classList.remove('active'); });
           this.classList.add('active');
         });
