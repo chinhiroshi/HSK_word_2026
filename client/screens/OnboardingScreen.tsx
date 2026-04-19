@@ -114,15 +114,6 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 
   const PAGES: OnboardingPage[] = [
     {
-      id: "6",
-      title: t("onboard_6_title"),
-      subtitle: t("onboard_6_subtitle"),
-      features: [t("onboard_6_p1"), t("onboard_6_p2"), t("onboard_6_p3"), t("onboard_6_p4")],
-      icon: "award",
-      isSprintPage: true,
-      accentColor: secondary,
-    },
-    {
       id: "1",
       image: require("../../assets/images/onboarding-1.png"),
       title: t("onboard_1_title"),
@@ -148,6 +139,15 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
       features: [t("onboard_3_p1"), t("onboard_3_p2"), t("onboard_3_p3")],
       icon: "repeat",
       accentColor: theme.primary,
+    },
+    {
+      id: "6",
+      title: t("onboard_6_title"),
+      subtitle: t("onboard_6_subtitle"),
+      features: [t("onboard_6_p1"), t("onboard_6_p2"), t("onboard_6_p3"), t("onboard_6_p4")],
+      icon: "award",
+      isSprintPage: true,
+      accentColor: secondary,
     },
   ];
 

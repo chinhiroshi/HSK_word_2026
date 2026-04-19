@@ -20,17 +20,24 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Language>("ja");
 
   useEffect(() => {
+    // Detect OS locale first — Japanese OS always uses Japanese
+    let osIsJapanese = false;
+    try {
+      const locale = Intl.DateTimeFormat().resolvedOptions().locale ?? "";
+      osIsJapanese = locale.startsWith("ja") || locale.includes("-JP");
+    } catch {}
+
+    if (osIsJapanese) {
+      setLangState("ja");
+      return;
+    }
+
+    // Non-Japanese OS: respect saved preference, default to English
     AsyncStorage.getItem(LANGUAGE_KEY).then((val) => {
       if (val === "en" || val === "ja") {
         setLangState(val);
       } else {
-        try {
-          const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-          const isJapanese = locale.startsWith("ja");
-          setLangState(isJapanese ? "ja" : "en");
-        } catch {
-          setLangState("ja");
-        }
+        setLangState("en");
       }
     });
   }, []);
