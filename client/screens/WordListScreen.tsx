@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
-import { FlatList, View, StyleSheet, RefreshControl, Pressable, ScrollView } from "react-native";
+import { FlatList, View, StyleSheet, RefreshControl, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
@@ -246,11 +246,7 @@ export default function WordListScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
       <View style={[styles.header, { paddingTop: safeHeaderPadding + Spacing.sm }]}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterContainer}
-        >
+        <View style={styles.filterContainer}>
           <Pressable
             onPress={() => handleFilterChange("all")}
             style={[
@@ -377,7 +373,7 @@ export default function WordListScreen() {
               </ThemedText>
             </View>
           </Pressable>
-        </ScrollView>
+        </View>
       </View>
 
       <FlatList
@@ -417,6 +413,7 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.sm,
   },
   filterButton: {
