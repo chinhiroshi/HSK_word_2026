@@ -27,6 +27,7 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/lib/storage";
 import { speakChinese, stopSpeaking } from "@/lib/speech";
+import { tryRequestReview } from "@/lib/reviewPrompt";
 import { useSprint } from "@/contexts/SprintContext";
 import { getQuoteForStamp } from "@/data/quotes";
 import { useI18n } from "@/contexts/LanguageContext";
@@ -213,12 +214,18 @@ export default function SprintTestScreen() {
     }
   };
 
-  const handleFinish = async (cleared: boolean) => {
+  const handleFinish = async (cleared: boolean, fromTest: boolean = true) => {
     if (cleared) {
       setCompleting(true);
       await completeSession(true);
       setCompleting(false);
       triggerStamp(() => navigation.navigate("SprintHome"));
+      // Only trigger review on a genuine test pass, not the auto-clear/skip path.
+      if (fromTest) {
+        setTimeout(() => {
+          tryRequestReview("sprint_test_pass").catch(() => {});
+        }, 2000);
+      }
     } else {
       navigation.navigate("SprintHome");
     }
@@ -243,7 +250,7 @@ export default function SprintTestScreen() {
           <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
             {t("no_prev_words")}
           </ThemedText>
-          <Button onPress={() => handleFinish(true)} style={styles.actionButton}>
+          <Button onPress={() => handleFinish(true, false)} style={styles.actionButton}>
             {t("clear_and_continue")}
           </Button>
         </View>

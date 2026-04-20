@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch, ActivityIndicator } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as StoreReview from "expo-store-review";
+import {
+  tryRequestReview,
+  getReviewHistory,
+  clearReviewHistory,
+  ReviewPromptEntry,
+} from "@/lib/reviewPrompt";
 import Constants from "expo-constants";
 import {
   getNotificationEnabled,
@@ -152,15 +156,22 @@ export default function ProfileScreen() {
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [upToDate, setUpToDate] = useState(false);
+  const [reviewDevModalVisible, setReviewDevModalVisible] = useState(false);
+  const [reviewHistory, setReviewHistory] = useState<ReviewPromptEntry[]>([]);
+  const longPressConsumedRef = React.useRef(false);
 
-  const REVIEW_PROMPTED_KEY = "@chinese_master_review_prompted";
   const REVIEW_THRESHOLD = 5;
+
+  const openReviewDevModal = useCallback(async () => {
+    longPressConsumedRef.current = true;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const history = await getReviewHistory();
+    setReviewHistory(history);
+    setReviewDevModalVisible(true);
+  }, []);
 
   const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
     try {
-      const alreadyPrompted = await AsyncStorage.getItem(REVIEW_PROMPTED_KEY);
-      if (alreadyPrompted === "true") return;
-
       // フラグ操作回数（暗記済み・暗記必要）
       const flagPresses = wordData.reduce(
         (acc, w) =>
@@ -177,20 +188,11 @@ export default function ProfileScreen() {
 
       // 合計操作回数（フラグ + 発音）が閾値以上で要請
       const totalInteractions = flagPresses + speakCount;
-      const condition = totalInteractions >= REVIEW_THRESHOLD;
+      if (totalInteractions < REVIEW_THRESHOLD) return;
 
-      if (condition) {
-        await AsyncStorage.setItem(REVIEW_PROMPTED_KEY, "true");
-        setTimeout(async () => {
-          try {
-            if (await StoreReview.hasAction()) {
-              await StoreReview.requestReview();
-            }
-          } catch (e) {
-            console.warn("Auto review prompt failed:", e);
-          }
-        }, 1500);
-      }
+      setTimeout(() => {
+        tryRequestReview("profile_load").catch(() => {});
+      }, 1500);
     } catch {}
   }, []);
 
@@ -757,12 +759,17 @@ export default function ProfileScreen() {
 
       <Pressable
         testID="button-review-app"
+        delayLongPress={1200}
+        onLongPress={openReviewDevModal}
         onPress={async () => {
+          if (longPressConsumedRef.current) {
+            longPressConsumedRef.current = false;
+            return;
+          }
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           try {
-            if (await StoreReview.hasAction()) {
-              await StoreReview.requestReview();
-            } else {
+            const requested = await tryRequestReview("manual_button", { force: true });
+            if (!requested) {
               const storeUrl = Platform.select({
                 ios: "https://apps.apple.com/app/id{YOUR_APP_ID}",
                 android: "https://play.google.com/store/apps/details?id=com.hskhsk.app",
@@ -978,6 +985,97 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
       </View>
+      <Modal
+        visible={reviewDevModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setReviewDevModalVisible(false)}
+      >
+        <Pressable
+          style={styles.devModalBackdrop}
+          onPress={() => setReviewDevModalVisible(false)}
+        >
+          <Pressable
+            style={[styles.devModalCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.devModalHeader}>
+              <Feather name="activity" size={16} color={theme.textSecondary} />
+              <ThemedText style={[styles.devModalTitle, { color: theme.text }]}>
+                評価依頼ログ（開発用）
+              </ThemedText>
+            </View>
+
+            <ThemedText style={[styles.devModalSummary, { color: theme.textSecondary }]}>
+              累計: {reviewHistory.length}回 / 過去365日: {
+                reviewHistory.filter(e => e.requested && e.ts > Date.now() - 365 * 24 * 60 * 60 * 1000).length
+              }回
+            </ThemedText>
+
+            {reviewHistory.length === 0 ? (
+              <ThemedText style={[styles.devModalEmpty, { color: theme.textSecondary }]}>
+                まだ評価依頼を提案していません
+              </ThemedText>
+            ) : (
+              <View style={{ maxHeight: 320 }}>
+                {reviewHistory.slice().reverse().slice(0, 20).map((entry, idx) => {
+                  const d = new Date(entry.ts);
+                  const stamp = `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,"0")}/${d.getDate().toString().padStart(2,"0")} ${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}`;
+                  const statusColor = entry.requested
+                    ? Colors.light.success
+                    : entry.hadAction === false ? theme.textSecondary : Colors.light.alert;
+                  const statusLabel = entry.requested
+                    ? "実行"
+                    : entry.hadAction === false ? "未対応" : "ｽｷｯﾌﾟ";
+                  return (
+                    <View
+                      key={`${entry.ts}-${idx}`}
+                      style={[styles.devModalRow, { borderBottomColor: theme.border }]}
+                    >
+                      <View style={{ flex: 1 }}>
+                        <ThemedText style={[styles.devModalRowDate, { color: theme.text }]}>
+                          {stamp}
+                        </ThemedText>
+                        <ThemedText style={[styles.devModalRowTrigger, { color: theme.textSecondary }]}>
+                          {entry.trigger}
+                        </ThemedText>
+                      </View>
+                      <View style={[styles.devModalBadge, { backgroundColor: `${statusColor}22` }]}>
+                        <ThemedText style={[styles.devModalBadgeText, { color: statusColor }]}>
+                          {statusLabel}
+                        </ThemedText>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+
+            <View style={styles.devModalFooter}>
+              <Pressable
+                style={[styles.devModalButton, { backgroundColor: theme.backgroundSecondary }]}
+                onPress={async () => {
+                  await clearReviewHistory();
+                  const fresh = await getReviewHistory();
+                  setReviewHistory(fresh);
+                }}
+              >
+                <ThemedText style={[styles.devModalButtonText, { color: theme.text }]}>
+                  履歴をクリア
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                style={[styles.devModalButton, { backgroundColor: theme.primary }]}
+                onPress={() => setReviewDevModalVisible(false)}
+              >
+                <ThemedText style={[styles.devModalButtonText, { color: "#FFFFFF" }]}>
+                  閉じる
+                </ThemedText>
+              </Pressable>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </KeyboardAwareScrollViewCompat>
   );
 }
@@ -1474,5 +1572,83 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
     color: "#FFFFFF",
+  },
+  devModalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Spacing.lg,
+  },
+  devModalCard: {
+    width: "100%",
+    maxWidth: 420,
+    borderRadius: BorderRadius.xl,
+    borderWidth: 1,
+    padding: Spacing.lg,
+  },
+  devModalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  devModalTitle: {
+    fontSize: 15,
+    fontFamily: "Nunito_700Bold",
+    fontWeight: "700",
+  },
+  devModalSummary: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    marginBottom: Spacing.md,
+  },
+  devModalEmpty: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+    paddingVertical: Spacing.xl,
+  },
+  devModalRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  devModalRowDate: {
+    fontSize: 12,
+    fontFamily: "Nunito_600SemiBold",
+  },
+  devModalRowTrigger: {
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 1,
+  },
+  devModalBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.full,
+  },
+  devModalBadgeText: {
+    fontSize: 10,
+    fontFamily: "Nunito_700Bold",
+    fontWeight: "700",
+  },
+  devModalFooter: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: Spacing.sm,
+    marginTop: Spacing.lg,
+  },
+  devModalButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+  },
+  devModalButtonText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
 });
