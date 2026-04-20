@@ -30,7 +30,7 @@ export default function WordListScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<WordListRouteProp>();
 
-  const { startIndex, endIndex, wordIds, groupTitle } = route.params;
+  const { startIndex, endIndex } = route.params;
 
   const [allWords, setAllWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,9 +50,9 @@ export default function WordListScreen() {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: groupTitle ?? `${startIndex}-${endIndex}`,
+      headerTitle: `${startIndex}-${endIndex}`,
     });
-  }, [navigation, startIndex, endIndex, groupTitle]);
+  }, [navigation, startIndex, endIndex]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -61,12 +61,8 @@ export default function WordListScreen() {
   };
 
   const groupWords = useMemo(() => {
-    if (wordIds && wordIds.length > 0) {
-      const idSet = new Set(wordIds);
-      return allWords.filter((w) => idSet.has(w.id));
-    }
     return allWords.slice(startIndex - 1, endIndex);
-  }, [allWords, startIndex, endIndex, wordIds]);
+  }, [allWords, startIndex, endIndex]);
 
   const filteredWords = useMemo(() => {
     switch (filter) {

@@ -11,7 +11,7 @@ import { useScreenOptions } from "@/hooks/useScreenOptions";
 export type RootStackParamList = {
   Main: undefined;
   WordDetail: { wordId: string };
-  WordList: { startIndex: number; endIndex: number; wordIds?: string[]; groupTitle?: string };
+  WordList: { startIndex: number; endIndex: number };
   AudioWordList: { startIndex: number; endIndex: number };
   UnmemorizedList: { type: "text" | "audio" };
   Paywall: undefined;

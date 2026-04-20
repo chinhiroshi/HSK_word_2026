@@ -56,9 +56,6 @@ const translations = {
     filter_memorized: "暗記済み",
     filter_unmemorized: "未暗記",
     filter_needs_work: "暗記必要",
-    group_by_number: "番号順",
-    group_by_pos: "品詞別",
-    pos_other: "その他",
 
     // ── Audio Learning Screen ──
     audio_learning_header: "音声学習",
@@ -399,9 +396,6 @@ const translations = {
     filter_memorized: "Memorized",
     filter_unmemorized: "Not Started",
     filter_needs_work: "Needs Work",
-    group_by_number: "By Number",
-    group_by_pos: "By POS",
-    pos_other: "Other",
 
     // ── Audio Learning Screen ──
     audio_learning_header: "Audio Study",
