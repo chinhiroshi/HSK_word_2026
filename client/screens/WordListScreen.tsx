@@ -76,8 +76,59 @@ export default function WordListScreen() {
   useEffect(() => {
     navigation.setOptions({
       headerTitle: `${startIndex}-${endIndex}`,
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShowLongExample(prev => !prev);
+            }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 3,
+              paddingHorizontal: 8,
+              paddingVertical: 5,
+              borderRadius: 20,
+              backgroundColor: showLongExample ? `${theme.primary}20` : "transparent",
+              borderWidth: 1,
+              borderColor: showLongExample ? theme.primary : `${theme.textSecondary}40`,
+            }}
+            testID="toggle-long-example"
+          >
+            <Feather name="file-text" size={12} color={showLongExample ? theme.primary : theme.textSecondary} />
+            <ThemedText style={{ fontSize: 11, fontFamily: "Nunito_600SemiBold", color: showLongExample ? theme.primary : theme.textSecondary }}>
+              長文
+            </ThemedText>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setGroupByPos(prev => !prev);
+            }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 3,
+              paddingHorizontal: 8,
+              paddingVertical: 5,
+              borderRadius: 20,
+              backgroundColor: groupByPos ? `${theme.primary}20` : "transparent",
+              borderWidth: 1,
+              borderColor: groupByPos ? theme.primary : `${theme.textSecondary}40`,
+            }}
+            testID="toggle-group-pos"
+          >
+            <Feather name="tag" size={12} color={groupByPos ? theme.primary : theme.textSecondary} />
+            <ThemedText style={{ fontSize: 11, fontFamily: "Nunito_600SemiBold", color: groupByPos ? theme.primary : theme.textSecondary }}>
+              品詞
+            </ThemedText>
+          </Pressable>
+        </View>
+      ),
     });
-  }, [navigation, startIndex, endIndex]);
+  }, [navigation, startIndex, endIndex, showLongExample, groupByPos, theme]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -328,49 +379,6 @@ export default function WordListScreen() {
           </Pressable>
         </View>
 
-        {/* 表示設定（小さめ） */}
-        <View style={styles.displayRow}>
-          <ThemedText style={[styles.displayLabel, { color: theme.textSecondary }]}>
-            表示
-          </ThemedText>
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setShowLongExample(prev => !prev);
-            }}
-            style={[
-              styles.displayButton,
-              { backgroundColor: showLongExample ? `${theme.primary}20` : theme.backgroundSecondary,
-                borderColor: showLongExample ? theme.primary : "transparent",
-              },
-            ]}
-            testID="toggle-long-example"
-          >
-            <Feather name="file-text" size={12} color={showLongExample ? theme.primary : theme.textSecondary} />
-            <ThemedText style={[styles.displayButtonText, { color: showLongExample ? theme.primary : theme.textSecondary }]}>
-              長文
-            </ThemedText>
-          </Pressable>
-
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setGroupByPos(prev => !prev);
-            }}
-            style={[
-              styles.displayButton,
-              { backgroundColor: groupByPos ? `${theme.primary}20` : theme.backgroundSecondary,
-                borderColor: groupByPos ? theme.primary : "transparent",
-              },
-            ]}
-            testID="toggle-group-pos"
-          >
-            <Feather name="tag" size={12} color={groupByPos ? theme.primary : theme.textSecondary} />
-            <ThemedText style={[styles.displayButtonText, { color: groupByPos ? theme.primary : theme.textSecondary }]}>
-              品詞グループ
-            </ThemedText>
-          </Pressable>
-        </View>
       </View>
 
       <FlatList
@@ -447,30 +455,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
-  },
-  displayRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-    marginTop: Spacing.xs,
-  },
-  displayLabel: {
-    fontSize: 11,
-    fontFamily: "Nunito_600SemiBold",
-    marginRight: 2,
-  },
-  displayButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-  },
-  displayButtonText: {
-    fontSize: 11,
-    fontFamily: "Nunito_600SemiBold",
   },
   posHeader: {
     flexDirection: "row",
