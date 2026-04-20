@@ -1020,7 +1020,7 @@ export default function ProfileScreen() {
               <View style={{ maxHeight: 320 }}>
                 {reviewHistory.slice().reverse().slice(0, 20).map((entry, idx) => {
                   const d = new Date(entry.ts);
-                  const stamp = `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,"0")}/${d.getDate().toString().padStart(2,"0")} ${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}`;
+                  const stamp = `${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,"0")}/${d.getDate().toString().padStart(2,"0")} ${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}:${d.getSeconds().toString().padStart(2,"0")}`;
                   const statusColor = entry.requested
                     ? Colors.light.success
                     : entry.hadAction === false ? theme.textSecondary : Colors.light.alert;
