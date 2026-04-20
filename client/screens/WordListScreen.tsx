@@ -246,6 +246,7 @@ export default function WordListScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
       <View style={[styles.header, { paddingTop: safeHeaderPadding + Spacing.sm }]}>
+        {/* 絞り込みフィルター */}
         <View style={styles.filterContainer}>
           <Pressable
             onPress={() => handleFilterChange("all")}
@@ -314,7 +315,7 @@ export default function WordListScreen() {
             testID="filter-struggled"
           >
             <View style={styles.toggleContent}>
-              <Feather name="flag" size={14} color={filter === "struggled" ? "#FFFFFF" : Colors.light.alert} />
+              <Feather name="flag" size={13} color={filter === "struggled" ? "#FFFFFF" : Colors.light.alert} />
               <ThemedText
                 style={[
                   styles.filterButtonText,
@@ -325,29 +326,30 @@ export default function WordListScreen() {
               </ThemedText>
             </View>
           </Pressable>
+        </View>
 
+        {/* 表示設定（小さめ） */}
+        <View style={styles.displayRow}>
+          <ThemedText style={[styles.displayLabel, { color: theme.textSecondary }]}>
+            表示
+          </ThemedText>
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setShowLongExample(prev => !prev);
             }}
             style={[
-              styles.filterButton,
-              { backgroundColor: showLongExample ? theme.primary : theme.backgroundSecondary },
+              styles.displayButton,
+              { backgroundColor: showLongExample ? `${theme.primary}20` : theme.backgroundSecondary,
+                borderColor: showLongExample ? theme.primary : "transparent",
+              },
             ]}
             testID="toggle-long-example"
           >
-            <View style={styles.toggleContent}>
-              <Feather name="file-text" size={14} color={showLongExample ? "#FFFFFF" : theme.textSecondary} />
-              <ThemedText
-                style={[
-                  styles.filterButtonText,
-                  { color: showLongExample ? "#FFFFFF" : theme.textSecondary },
-                ]}
-              >
-                長文
-              </ThemedText>
-            </View>
+            <Feather name="file-text" size={12} color={showLongExample ? theme.primary : theme.textSecondary} />
+            <ThemedText style={[styles.displayButtonText, { color: showLongExample ? theme.primary : theme.textSecondary }]}>
+              長文
+            </ThemedText>
           </Pressable>
 
           <Pressable
@@ -356,22 +358,17 @@ export default function WordListScreen() {
               setGroupByPos(prev => !prev);
             }}
             style={[
-              styles.filterButton,
-              { backgroundColor: groupByPos ? theme.primary : theme.backgroundSecondary },
+              styles.displayButton,
+              { backgroundColor: groupByPos ? `${theme.primary}20` : theme.backgroundSecondary,
+                borderColor: groupByPos ? theme.primary : "transparent",
+              },
             ]}
             testID="toggle-group-pos"
           >
-            <View style={styles.toggleContent}>
-              <Feather name="tag" size={14} color={groupByPos ? "#FFFFFF" : theme.textSecondary} />
-              <ThemedText
-                style={[
-                  styles.filterButtonText,
-                  { color: groupByPos ? "#FFFFFF" : theme.textSecondary },
-                ]}
-              >
-                品詞
-              </ThemedText>
-            </View>
+            <Feather name="tag" size={12} color={groupByPos ? theme.primary : theme.textSecondary} />
+            <ThemedText style={[styles.displayButtonText, { color: groupByPos ? theme.primary : theme.textSecondary }]}>
+              品詞グループ
+            </ThemedText>
           </Pressable>
         </View>
       </View>
@@ -450,6 +447,30 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
+  },
+  displayRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    marginTop: Spacing.xs,
+  },
+  displayLabel: {
+    fontSize: 11,
+    fontFamily: "Nunito_600SemiBold",
+    marginRight: 2,
+  },
+  displayButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  displayButtonText: {
+    fontSize: 11,
+    fontFamily: "Nunito_600SemiBold",
   },
   posHeader: {
     flexDirection: "row",
