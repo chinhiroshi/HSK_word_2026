@@ -759,7 +759,7 @@ export default function ProfileScreen() {
 
       <Pressable
         testID="button-review-app"
-        delayLongPress={1200}
+        delayLongPress={3000}
         onLongPress={openReviewDevModal}
         onPress={async () => {
           if (longPressConsumedRef.current) {
