@@ -16,17 +16,41 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, markAsUnmemorized, clearUnmemorizedMark, markAsMemorized } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type WordListRouteProp = RouteProp<RootStackParamList, "WordList">;
 
 type FilterType = "all" | "memorized" | "unmemorized" | "struggled";
 
+// Part-of-speech display order (JA labels → EN labels)
+const POS_ORDER_JA = [
+  "名詞", "動詞", "形容詞", "副詞", "量詞", "代名詞",
+  "数詞", "接続詞", "前置詞", "助詞", "感嘆詞", "固有名詞",
+];
+const POS_ORDER_EN = [
+  "noun", "verb", "adjective", "adverb", "measure word", "pronoun",
+  "numeral", "conjunction", "preposition", "particle", "interjection", "proper noun",
+];
+const POS_OTHER_JA = "その他";
+const POS_OTHER_EN = "other";
+
+function posOrder(pos: string, lang: string): number {
+  const list = lang === "ja" ? POS_ORDER_JA : POS_ORDER_EN;
+  const idx = list.findIndex((p) => pos.toLowerCase().includes(p.toLowerCase()));
+  return idx === -1 ? 999 : idx;
+}
+
+type ListItem =
+  | { type: "word"; word: Word; originalIndex: number }
+  | { type: "header"; pos: string; count: number };
+
 export default function WordListScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
+  const { lang } = useI18n();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<WordListRouteProp>();
 
@@ -37,6 +61,7 @@ export default function WordListScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
   const [showLongExample, setShowLongExample] = useState(false);
+  const [groupByPos, setGroupByPos] = useState(false);
 
   const loadWords = useCallback(async () => {
     const data = await getWords();
@@ -71,7 +96,6 @@ export default function WordListScreen() {
       case "unmemorized":
         return groupWords.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0);
       case "struggled":
-        // Ever flagged at least once — memorized or not
         return groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0);
       default:
         return groupWords;
@@ -84,6 +108,47 @@ export default function WordListScreen() {
     const struggled = groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0).length;
     return { total: groupWords.length, memorized, unmemorized, struggled };
   }, [groupWords]);
+
+  // Build flat list data — either plain words or words with POS section headers
+  const listData = useMemo((): ListItem[] => {
+    if (!groupByPos) {
+      return filteredWords.map((word) => ({
+        type: "word",
+        word,
+        originalIndex: groupWords.indexOf(word) + startIndex,
+      }));
+    }
+
+    // Group by posJa (or posEn on EN mode)
+    const otherLabel = lang === "ja" ? POS_OTHER_JA : POS_OTHER_EN;
+    const map = new Map<string, Word[]>();
+    for (const word of filteredWords) {
+      const pos = (lang === "ja" ? word.posJa : word.posEn) || otherLabel;
+      if (!map.has(pos)) map.set(pos, []);
+      map.get(pos)!.push(word);
+    }
+
+    // Sort groups by canonical order
+    const sorted = Array.from(map.entries()).sort(([a], [b]) => {
+      const oa = posOrder(a, lang);
+      const ob = posOrder(b, lang);
+      if (oa !== ob) return oa - ob;
+      return a.localeCompare(b);
+    });
+
+    const items: ListItem[] = [];
+    for (const [pos, words] of sorted) {
+      items.push({ type: "header", pos, count: words.length });
+      for (const word of words) {
+        items.push({
+          type: "word",
+          word,
+          originalIndex: groupWords.indexOf(word) + startIndex,
+        });
+      }
+    }
+    return items;
+  }, [filteredWords, groupByPos, groupWords, startIndex, lang]);
 
   const handleMarkUnmemorized = async (wordId: string) => {
     const updatedWord = await markAsUnmemorized(wordId, "text");
@@ -115,20 +180,31 @@ export default function WordListScreen() {
     setFilter(newFilter);
   };
 
-  const renderWordItem = ({ item, index }: { item: Word; index: number }) => {
-    const originalIndex = filter === "all" 
-      ? startIndex + index
-      : allWords.indexOf(item) + 1;
+  const renderItem = ({ item }: { item: ListItem }) => {
+    if (item.type === "header") {
+      return (
+        <View style={[styles.posHeader, { borderLeftColor: theme.primary }]}>
+          <ThemedText style={[styles.posHeaderText, { color: theme.primary }]}>
+            {item.pos}
+          </ThemedText>
+          <View style={[styles.posHeaderBadge, { backgroundColor: `${theme.primary}18` }]}>
+            <ThemedText style={[styles.posHeaderCount, { color: theme.primary }]}>
+              {item.count}
+            </ThemedText>
+          </View>
+        </View>
+      );
+    }
 
     return (
       <WordCard
-        word={item}
-        index={originalIndex}
+        word={item.word}
+        index={item.originalIndex}
         showLongExample={showLongExample}
-        onPress={() => handleWordPress(item)}
-        onMarkUnmemorized={() => handleMarkUnmemorized(item.id)}
-        onClearMark={() => handleClearMark(item.id)}
-        onMarkMemorized={() => handleMarkMemorized(item.id)}
+        onPress={() => handleWordPress(item.word)}
+        onMarkUnmemorized={() => handleMarkUnmemorized(item.word.id)}
+        onClearMark={() => handleClearMark(item.word.id)}
+        onMarkMemorized={() => handleMarkMemorized(item.word.id)}
       />
     );
   };
@@ -277,6 +353,30 @@ export default function WordListScreen() {
               </ThemedText>
             </View>
           </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setGroupByPos(prev => !prev);
+            }}
+            style={[
+              styles.filterButton,
+              { backgroundColor: groupByPos ? theme.primary : theme.backgroundSecondary },
+            ]}
+            testID="toggle-group-pos"
+          >
+            <View style={styles.toggleContent}>
+              <Feather name="tag" size={14} color={groupByPos ? "#FFFFFF" : theme.textSecondary} />
+              <ThemedText
+                style={[
+                  styles.filterButtonText,
+                  { color: groupByPos ? "#FFFFFF" : theme.textSecondary },
+                ]}
+              >
+                品詞
+              </ThemedText>
+            </View>
+          </Pressable>
         </ScrollView>
       </View>
 
@@ -285,12 +385,14 @@ export default function WordListScreen() {
         contentContainerStyle={[
           styles.content,
           { paddingBottom: insets.bottom + Spacing.xl },
-          filteredWords.length === 0 && !loading && styles.emptyContainer,
+          listData.length === 0 && !loading && styles.emptyContainer,
         ]}
         scrollIndicatorInsets={{ bottom: insets.bottom }}
-        data={loading ? [] : filteredWords}
-        renderItem={renderWordItem}
-        keyExtractor={(item) => item.id}
+        data={loading ? [] : listData}
+        renderItem={renderItem}
+        keyExtractor={(item) =>
+          item.type === "header" ? `header-${item.pos}` : item.word.id
+        }
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -351,5 +453,30 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
+  },
+  posHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.xs,
+    paddingLeft: Spacing.sm,
+    borderLeftWidth: 3,
+  },
+  posHeaderText: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+    fontWeight: "700",
+    letterSpacing: 0.5,
+  },
+  posHeaderBadge: {
+    borderRadius: BorderRadius.full,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  posHeaderCount: {
+    fontSize: 12,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
 });
