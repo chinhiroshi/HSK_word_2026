@@ -86,7 +86,7 @@ function PandaStampGrid({ theme }: { theme: any }) {
             <ThemedText style={styles.specialBadgeText}>Special</ThemedText>
           </View>
           <ThemedText style={[styles.specialDescription, { color: theme.textSecondary }]}>
-            {"7日間テスト合格で獲得"}
+            {"スプリントのテスト合格で獲得"}
           </ThemedText>
         </View>
       </View>
