@@ -232,8 +232,38 @@ export default function TutorialSprintScreen() {
                       >
                         {w.translation}
                       </ThemedText>
+                      {w.exampleSentence ? (
+                        <View style={styles.exampleBlock}>
+                          <ThemedText
+                            style={[styles.exampleZh, { color: theme.text }]}
+                          >
+                            {w.exampleSentence}
+                          </ThemedText>
+                          {w.examplePinyin ? (
+                            <ThemedText
+                              style={[styles.examplePy, { color: theme.primary }]}
+                            >
+                              {w.examplePinyin}
+                            </ThemedText>
+                          ) : null}
+                          {w.exampleTranslation ? (
+                            <ThemedText
+                              style={[styles.exampleJa, { color: theme.textSecondary }]}
+                            >
+                              {w.exampleTranslation}
+                            </ThemedText>
+                          ) : null}
+                        </View>
+                      ) : null}
                     </View>
-                    <SpeakButton text={w.word} size="medium" />
+                    <SpeakButton
+                      text={
+                        w.exampleSentence
+                          ? `${w.word}。${w.exampleSentence}`
+                          : w.word
+                      }
+                      size="medium"
+                    />
                   </View>
 
                   <View style={styles.cardActions}>
@@ -424,6 +454,16 @@ const styles = StyleSheet.create({
   word: { fontSize: 28, fontFamily: "Nunito_700Bold" },
   pinyin: { fontSize: 14, fontFamily: "Nunito_400Regular" },
   translation: { fontSize: 15, fontFamily: "Nunito_600SemiBold", marginTop: 2 },
+  exampleBlock: {
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(0,0,0,0.06)",
+    gap: 2,
+  },
+  exampleZh: { fontSize: 15, fontFamily: "Nunito_600SemiBold" },
+  examplePy: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  exampleJa: { fontSize: 12, fontFamily: "Nunito_400Regular" },
   cardActions: { flexDirection: "row", gap: Spacing.sm },
   actionBtn: {
     flex: 1,
