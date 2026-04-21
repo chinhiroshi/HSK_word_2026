@@ -647,8 +647,8 @@ export default function SprintStudySessionScreen() {
                     </View>
                   ) : (
                     <View style={styles.wordInfoCol}>
-                      <ThemedText style={[styles.wordRowText, { color: theme.textSecondary, fontSize: 15, fontFamily: "Nunito_600SemiBold" }]}>
-                        {lang === "en" && item.translationEn ? item.translationEn : item.translation}
+                      <ThemedText style={[styles.wordRowText, { color: theme.textSecondary, letterSpacing: 4 }]}>
+                        {"●●●"}
                       </ThemedText>
                     </View>
                   )}
