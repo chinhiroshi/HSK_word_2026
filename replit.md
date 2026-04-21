@@ -34,6 +34,12 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - On iOS/Android via Expo Go: Full RevenueCat Preview API Mode with mock purchases
   - PaywallScreen shows real pricing from RevenueCat offerings, with loading states
   - ProfileScreen shows premium upgrade card or active subscription badge
+- **Onboarding Tutorial Sprint**: After initial onboarding (intro pages + HSK level select), new users are routed to SprintSetup → a 3-word TutorialSprintScreen → "はじめての一歩" panda stamp reward modal → main Sprint screen.
+  - Storage flags: `@chinese_master_tutorial_sprint_done`, `@chinese_master_tutorial_stamp_earned`
+  - Existing-user protection: on app launch, if onboarding is already complete, tutorial is auto-marked done so existing users never see it
+  - Tutorial uses first 3 words of selected HSK level; does NOT modify SprintData or word memorization state
+  - Routes via `SprintSetup` with `fromOnboarding: true` param → `navigation.replace("TutorialSprint")` after setup
+  - TutorialSprint stamp uses `panda-stamp-1.png` and is independent of `specialStamps` array
 - **Sprint (スプリント)**: Stamp-rally style 7-day learning cycle with snake grid map
   - 29-cell snake grid (4 columns) showing learning progress as a map
   - Setup: Choose daily study time (15/30/45 min or custom) to determine words/day

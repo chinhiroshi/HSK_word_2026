@@ -44,6 +44,7 @@ export default function SprintSetupScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<SetupRouteProp>();
   const isChange = !!(route.params as any)?.isChange;
+  const fromOnboarding = !!(route.params as any)?.fromOnboarding;
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
@@ -149,7 +150,11 @@ export default function SprintSetupScreen() {
       console.warn("Sprint setup failed:", e);
     }
     setLoading(false);
-    navigation.goBack();
+    if (fromOnboarding) {
+      navigation.replace("TutorialSprint");
+    } else {
+      navigation.goBack();
+    }
   };
 
   const handleStartWithReset = async () => {

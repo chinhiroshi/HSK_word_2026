@@ -28,6 +28,7 @@ import { SprintProvider } from "@/contexts/SprintContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const ONBOARDING_KEY = "@chinese_master_onboarding_complete";
+const TUTORIAL_DONE_KEY = "@chinese_master_tutorial_sprint_done";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +40,7 @@ export default function App() {
   });
 
   const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);
+  const [pendingTutorial, setPendingTutorial] = useState(false);
   const navigationRef = useRef<NavigationContainerRef<any>>(null);
 
   useEffect(() => {
@@ -48,7 +50,16 @@ export default function App() {
   const checkOnboardingStatus = async () => {
     try {
       const completed = await AsyncStorage.getItem(ONBOARDING_KEY);
-      setShowOnboarding(completed !== "true");
+      const isExistingUser = completed === "true";
+      // Existing-user protection: never show the onboarding tutorial sprint
+      // to anyone who installed before this feature shipped.
+      if (isExistingUser) {
+        const td = await AsyncStorage.getItem(TUTORIAL_DONE_KEY);
+        if (td == null) {
+          await AsyncStorage.setItem(TUTORIAL_DONE_KEY, "true");
+        }
+      }
+      setShowOnboarding(!isExistingUser);
     } catch {
       setShowOnboarding(true);
     }
@@ -58,8 +69,29 @@ export default function App() {
     try {
       await AsyncStorage.setItem(ONBOARDING_KEY, "true");
     } catch {}
+    setPendingTutorial(true);
     setShowOnboarding(false);
   }, []);
+
+  // After onboarding completes, jump to Sprint setup → tutorial practice.
+  useEffect(() => {
+    if (!pendingTutorial || showOnboarding !== false) return;
+    const timer = setTimeout(() => {
+      const ref = navigationRef.current;
+      if (!ref) return;
+      try {
+        ref.navigate("Main", {
+          screen: "SprintTab",
+          params: {
+            screen: "SprintSetup",
+            params: { fromOnboarding: true },
+          },
+        });
+      } catch {}
+      setPendingTutorial(false);
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [pendingTutorial, showOnboarding]);
 
   useEffect(() => {
     if ((fontsLoaded || fontError) && showOnboarding !== null) {

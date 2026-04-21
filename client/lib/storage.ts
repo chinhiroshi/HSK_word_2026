@@ -11,6 +11,39 @@ function getSprintKey(level: HskLevel): string {
 }
 
 const HSK_LEVEL_KEY = "@chinese_master_hsk_level";
+const TUTORIAL_DONE_KEY = "@chinese_master_tutorial_sprint_done";
+const TUTORIAL_STAMP_KEY = "@chinese_master_tutorial_stamp_earned";
+
+export async function getTutorialSprintDone(): Promise<boolean> {
+  try {
+    const v = await AsyncStorage.getItem(TUTORIAL_DONE_KEY);
+    return v === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function setTutorialSprintDone(done: boolean): Promise<void> {
+  try {
+    await AsyncStorage.setItem(TUTORIAL_DONE_KEY, done ? "true" : "false");
+  } catch {}
+}
+
+export async function getTutorialStampEarned(): Promise<boolean> {
+  try {
+    const v = await AsyncStorage.getItem(TUTORIAL_STAMP_KEY);
+    return v === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function setTutorialStampEarned(earned: boolean): Promise<void> {
+  try {
+    await AsyncStorage.setItem(TUTORIAL_STAMP_KEY, earned ? "true" : "false");
+  } catch {}
+}
+
 const DATA_VERSION_PREFIX = "@chinese_master_data_version_hsk";
 const WORDS_KEY_PREFIX = "@chinese_master_words_hsk";
 const CURRENT_DATA_VERSION = "10";
