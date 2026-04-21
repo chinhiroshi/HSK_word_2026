@@ -52,7 +52,6 @@ export default function SprintSetupScreen() {
   const { setupSprint } = useSprint();
 
   const WORD_OPTIONS = [
-    { label: `10${t("words_unit")}`, words: 10, description: t("words_10_desc") },
     { label: `20${t("words_unit")}`, words: 20, description: t("words_20_desc") },
     { label: `30${t("words_unit")}`, words: 30, description: t("words_30_desc") },
     { label: `50${t("words_unit")}`, words: 50, description: t("words_50_desc") },

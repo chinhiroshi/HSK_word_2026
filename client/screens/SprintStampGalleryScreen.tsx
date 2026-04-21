@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,10 +21,6 @@ import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint, getSessionType } from "@/contexts/SprintContext";
 import { getQuoteForStamp, Quote } from "@/data/quotes";
-import { getTutorialStampEarned } from "@/lib/storage";
-import { useFocusEffect } from "@react-navigation/native";
-
-const TUTORIAL_STAMP_IMAGE = require("../../assets/images/panda-stamp-1.png");
 
 // Panda stamp images (60 variants + 1 special)
 const PANDA_STAMPS: Record<number, any> = {
@@ -121,13 +117,6 @@ export default function SprintStampGalleryScreen() {
   const { t, lang } = useI18n();
   const { sprintData, totalCells, currentLevel } = useSprint();
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
-  const [tutorialEarned, setTutorialEarned] = useState(false);
-
-  useFocusEffect(
-    useCallback(() => {
-      getTutorialStampEarned().then(setTutorialEarned);
-    }, [])
-  );
 
   const wordsPerDay = sprintData?.wordsPerDay ?? 10;
   const completedDates = sprintData?.completedDates ?? {};
@@ -174,48 +163,6 @@ export default function SprintStampGalleryScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        {/* Tutorial / First Step stamp — shown first */}
-        <View
-          style={[
-            styles.tutorialCard,
-            {
-              backgroundColor: theme.backgroundDefault,
-              borderColor: tutorialEarned ? Colors.light.secondary : theme.border,
-            },
-          ]}
-        >
-          <View
-            style={[
-              styles.tutorialStampCircle,
-              {
-                borderColor: tutorialEarned ? Colors.light.secondary : theme.border,
-                borderWidth: tutorialEarned ? 2.5 : 1.5,
-                backgroundColor: tutorialEarned
-                  ? theme.backgroundDefault
-                  : theme.backgroundSubtle ?? "#F3F4F6",
-              },
-            ]}
-          >
-            {tutorialEarned ? (
-              <Image
-                source={TUTORIAL_STAMP_IMAGE}
-                style={styles.tutorialStampImage}
-                resizeMode="cover"
-              />
-            ) : (
-              <Feather name="lock" size={20} color={theme.textSecondary} />
-            )}
-          </View>
-          <View style={styles.tutorialTextWrap}>
-            <ThemedText style={[styles.tutorialTitle, { color: theme.text }]}>
-              No.0 · {t("tutorial_first_step")}
-            </ThemedText>
-            <ThemedText style={[styles.tutorialDesc, { color: theme.textSecondary }]}>
-              {t("tutorial_stamp_locked")}
-            </ThemedText>
-          </View>
-        </View>
-
         {/* Summary Card */}
         <View
           style={[
@@ -576,41 +523,5 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 15,
     fontFamily: "Nunito_700Bold",
-  },
-  tutorialCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
-    padding: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1.5,
-    marginBottom: Spacing.lg,
-  },
-  tutorialStampCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  tutorialStampImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    position: "absolute",
-  },
-  tutorialTextWrap: {
-    flex: 1,
-  },
-  tutorialTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
-    marginBottom: 2,
-  },
-  tutorialDesc: {
-    fontSize: 11,
-    fontFamily: "Nunito_400Regular",
   },
 });

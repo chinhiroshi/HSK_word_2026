@@ -143,14 +143,9 @@ const translations = {
 
     // ── Sprint Setup Screen ──
     sprint_setup_header: "スプリント設定",
-    words_10_desc: "お試しペース",
     words_20_desc: "初級・コツコツペース",
     words_30_desc: "標準ペース",
     words_50_desc: "集中ペース",
-    onboarding_practice_title: "オンボーディング練習",
-    onboarding_practice_desc: "はじめてのスプリントをもう一度体験する",
-    tutorial_first_step: "はじめての一歩",
-    tutorial_stamp_locked: "オンボーディング練習で獲得",
     words_placeholder: "語数を入力 (例: 40)",
     setting_up: "設定中...",
     start_sprint: "スプリントを開始",
@@ -488,14 +483,9 @@ const translations = {
 
     // ── Sprint Setup Screen ──
     sprint_setup_header: "Sprint Setup",
-    words_10_desc: "Trial pace",
     words_20_desc: "Easy, steady pace",
     words_30_desc: "Standard pace",
     words_50_desc: "Intensive pace",
-    onboarding_practice_title: "Onboarding Practice",
-    onboarding_practice_desc: "Try the first sprint tutorial again",
-    tutorial_first_step: "First Step",
-    tutorial_stamp_locked: "Earned via onboarding practice",
     words_placeholder: "Enter count (e.g. 40)",
     setting_up: "Setting up...",
     start_sprint: "Start Sprint",
