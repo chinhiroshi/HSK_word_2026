@@ -21,7 +21,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWords, initializeData } from "@/lib/storage";
+import { getWords, initializeData, getTutorialStampEarned } from "@/lib/storage";
 import { useSprint, getSessionType as getSessionTypeFn } from "@/contexts/SprintContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
@@ -617,6 +617,7 @@ export default function SprintScreen() {
   const [canSkip, setCanSkip] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCell, setSelectedCell] = useState(0);
+  const [tutorialEarned, setTutorialEarned] = useState(true);
 
   useFocusEffect(
     useCallback(() => {
@@ -625,6 +626,8 @@ export default function SprintScreen() {
         await initializeData();
         const allWords = await getWords();
         setWords(allWords);
+        const earned = await getTutorialStampEarned();
+        setTutorialEarned(earned);
       };
       load();
     }, [loadSprint])
@@ -644,7 +647,13 @@ export default function SprintScreen() {
       }
       return;
     }
-    if (index === 0) return;
+    if (index === 0) {
+      if (!tutorialEarned) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+        (navigation as any).navigate("TutorialSprint");
+      }
+      return;
+    }
 
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const wPD = sprintData.wordsPerDay ?? 10;
