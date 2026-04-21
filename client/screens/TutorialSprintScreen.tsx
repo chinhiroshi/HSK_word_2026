@@ -56,7 +56,7 @@ export default function TutorialSprintScreen() {
   const [meaningRevealed, setMeaningRevealed] = useState<Set<string>>(new Set());
   const [phase, setPhase] = useState<Phase>("text-list");
   const [cardIndex, setCardIndex] = useState(0);
-  const [cardReveal, setCardReveal] = useState(false);
+  const [cardReveal, setCardReveal] = useState<0 | 1 | 2>(0);
 
   const toggleMeaning = (id: string) => {
     Haptics.selectionAsync().catch(() => {});
@@ -101,7 +101,7 @@ export default function TutorialSprintScreen() {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setPhase("study-cards");
         setCardIndex(0);
-        setCardReveal(false);
+        setCardReveal(0);
       }, 350);
       return () => clearTimeout(t);
     }
@@ -111,7 +111,7 @@ export default function TutorialSprintScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     if (cardIndex < words.length - 1) {
       setCardIndex(cardIndex + 1);
-      setCardReveal(false);
+      setCardReveal(0);
     } else {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       setShowStamp(true);
@@ -180,7 +180,7 @@ export default function TutorialSprintScreen() {
           >
             {phase === "text-list"
               ? "まずは中国語と短文だけで意味を推測してみましょう。\n分からない時は「意味」をタップで日本語が出ます。3つ全部にマークしたら次へ進みます。"
-              : "音声を聞いて、頭の中で意味を思い出しましょう。\n「意味を見る」で答え合わせ、「次へ」で進みます。最後にスタンプがもらえます。"}
+              : "音声を聞いて、頭の中で意味を思い出しましょう。\n「文字を見る」→「意味を見る」で答え合わせ、「次へ」で進みます。最後にスタンプがもらえます。"}
           </ThemedText>
 
           <View style={styles.progressRow}>
@@ -198,7 +198,7 @@ export default function TutorialSprintScreen() {
                     width: `${
                       phase === "text-list"
                         ? (doneCount / total) * 50
-                        : 50 + ((cardIndex + (cardReveal ? 1 : 0)) / Math.max(1, total)) * 50
+                        : 50 + ((cardIndex + cardReveal / 2) / Math.max(1, total)) * 50
                     }%`,
                   },
                 ]}
@@ -433,76 +433,101 @@ export default function TutorialSprintScreen() {
                     },
                   ]}
                 >
-                  <View style={styles.cardTop}>
-                    <View style={styles.cardTextWrap}>
-                      <ThemedText style={[styles.word, { color: theme.text }]}>
-                        {w.word}
-                      </ThemedText>
-                      <ThemedText
-                        style={[styles.pinyin, { color: theme.textSecondary }]}
+                  {cardReveal === 0 ? (
+                    <View style={styles.audioOnlyWrap}>
+                      <View
+                        style={[
+                          styles.audioIconCircle,
+                          { backgroundColor: Colors.light.secondary + "18" },
+                        ]}
                       >
-                        {w.pinyin}
+                        <SpeakButton
+                          text={
+                            w.exampleSentence
+                              ? `${w.word}。${w.exampleSentence}`
+                              : w.word
+                          }
+                          size="large"
+                        />
+                      </View>
+                      <ThemedText
+                        style={[styles.audioPrompt, { color: theme.textSecondary }]}
+                      >
+                        音声を聴いて答えましょう
                       </ThemedText>
-                      {w.exampleSentence ? (
-                        <View style={styles.exampleBlock}>
-                          <ThemedText
-                            style={[styles.exampleZh, { color: theme.text }]}
-                          >
-                            {w.exampleSentence}
-                          </ThemedText>
-                          {w.examplePinyin ? (
-                            <ThemedText
-                              style={[styles.examplePy, { color: theme.primary }]}
-                            >
-                              {w.examplePinyin}
-                            </ThemedText>
-                          ) : null}
-                        </View>
-                      ) : null}
-                      {cardReveal ? (
-                        <View
-                          style={[
-                            styles.exampleBlock,
-                            { borderTopColor: theme.border },
-                          ]}
+                    </View>
+                  ) : (
+                    <View style={styles.cardTop}>
+                      <View style={styles.cardTextWrap}>
+                        <ThemedText style={[styles.word, { color: theme.text }]}>
+                          {w.word}
+                        </ThemedText>
+                        <ThemedText
+                          style={[styles.pinyin, { color: theme.textSecondary }]}
                         >
-                          <ThemedText
-                            style={[styles.translation, { color: theme.text }]}
-                          >
-                            {w.translation}
-                          </ThemedText>
-                          {w.exampleTranslation ? (
+                          {w.pinyin}
+                        </ThemedText>
+                        {w.exampleSentence ? (
+                          <View style={styles.exampleBlock}>
                             <ThemedText
-                              style={[
-                                styles.exampleJa,
-                                { color: theme.textSecondary, marginTop: 4 },
-                              ]}
+                              style={[styles.exampleZh, { color: theme.text }]}
                             >
-                              {w.exampleTranslation}
+                              {w.exampleSentence}
                             </ThemedText>
-                          ) : null}
-                        </View>
-                      ) : null}
+                            {w.examplePinyin ? (
+                              <ThemedText
+                                style={[styles.examplePy, { color: theme.primary }]}
+                              >
+                                {w.examplePinyin}
+                              </ThemedText>
+                            ) : null}
+                          </View>
+                        ) : null}
+                        {cardReveal >= 2 ? (
+                          <View
+                            style={[
+                              styles.exampleBlock,
+                              { borderTopColor: theme.border },
+                            ]}
+                          >
+                            <ThemedText
+                              style={[styles.translation, { color: theme.text }]}
+                            >
+                              {w.translation}
+                            </ThemedText>
+                            {w.exampleTranslation ? (
+                              <ThemedText
+                                style={[
+                                  styles.exampleJa,
+                                  { color: theme.textSecondary, marginTop: 4 },
+                                ]}
+                              >
+                                {w.exampleTranslation}
+                              </ThemedText>
+                            ) : null}
+                          </View>
+                        ) : null}
+                      </View>
+                      <View style={styles.cardTopRight}>
+                        <SpeakButton
+                          text={
+                            w.exampleSentence
+                              ? `${w.word}。${w.exampleSentence}`
+                              : w.word
+                          }
+                          size="medium"
+                        />
+                      </View>
                     </View>
-                    <View style={styles.cardTopRight}>
-                      <SpeakButton
-                        text={
-                          w.exampleSentence
-                            ? `${w.word}。${w.exampleSentence}`
-                            : w.word
-                        }
-                        size="medium"
-                      />
-                    </View>
-                  </View>
+                  )}
 
                   <View style={styles.cardActions}>
-                    {!cardReveal ? (
+                    {cardReveal < 2 ? (
                       <Pressable
                         testID={`button-tutorial-card-reveal-${cardIndex}`}
                         onPress={() => {
                           Haptics.selectionAsync().catch(() => {});
-                          setCardReveal(true);
+                          setCardReveal((cardReveal + 1) as 1 | 2);
                         }}
                         style={[
                           styles.actionBtn,
@@ -513,7 +538,7 @@ export default function TutorialSprintScreen() {
                         <ThemedText
                           style={[styles.actionBtnText, { color: theme.primary }]}
                         >
-                          意味を見る
+                          {cardReveal === 0 ? "文字を見る" : "意味を見る"}
                         </ThemedText>
                       </Pressable>
                     ) : null}
@@ -739,6 +764,23 @@ const styles = StyleSheet.create({
   exampleZh: { fontSize: 15, fontFamily: "Nunito_600SemiBold" },
   examplePy: { fontSize: 12, fontFamily: "Nunito_400Regular" },
   exampleJa: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  audioOnlyWrap: {
+    alignItems: "center",
+    paddingVertical: Spacing.xl,
+    gap: Spacing.md,
+  },
+  audioIconCircle: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  audioPrompt: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+  },
   cardActions: { flexDirection: "row", gap: Spacing.sm },
   actionBtn: {
     flex: 1,
