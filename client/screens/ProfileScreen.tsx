@@ -32,7 +32,7 @@ import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
-import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio, getSpeakCount } from "@/lib/storage";
+import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
 import { speakChinese } from "@/lib/speech";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
@@ -160,40 +160,12 @@ export default function ProfileScreen() {
   const [reviewHistory, setReviewHistory] = useState<ReviewPromptEntry[]>([]);
   const longPressConsumedRef = React.useRef(false);
 
-  const REVIEW_THRESHOLD = 5;
-
   const openReviewDevModal = useCallback(async () => {
     longPressConsumedRef.current = true;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const history = await getReviewHistory();
     setReviewHistory(history);
     setReviewDevModalVisible(true);
-  }, []);
-
-  const checkAndPromptReview = useCallback(async (wordData: Word[]) => {
-    try {
-      // フラグ操作回数（暗記済み・暗記必要）
-      const flagPresses = wordData.reduce(
-        (acc, w) =>
-          acc +
-          (w.textMemorized ? 1 : 0) +
-          (w.textUnmemorizedCount || 0) +
-          (w.audioMemorized ? 1 : 0) +
-          (w.audioUnmemorizedCount || 0),
-        0
-      );
-
-      // 発音ボタン押下回数
-      const speakCount = await getSpeakCount();
-
-      // 合計操作回数（フラグ + 発音）が閾値以上で要請
-      const totalInteractions = flagPresses + speakCount;
-      if (totalInteractions < REVIEW_THRESHOLD) return;
-
-      setTimeout(() => {
-        tryRequestReview("profile_load").catch(() => {});
-      }, 1500);
-    } catch {}
   }, []);
 
   const loadData = useCallback(async () => {
@@ -203,7 +175,6 @@ export default function ProfileScreen() {
     const data = await getWords();
     setWords(data);
     setLoading(false);
-    checkAndPromptReview(data);
     const notifOn = await getNotificationEnabled();
     setNotifEnabled(notifOn);
     const { hour, minute } = await getNotificationTime();
@@ -211,7 +182,7 @@ export default function ProfileScreen() {
     setNotifMinute(minute);
     const silentAudio = await getSilentModeAudio();
     setSilentModeAudioState(silentAudio);
-  }, [checkAndPromptReview]);
+  }, []);
 
   const handleNotifToggle = async (value: boolean) => {
     if (Platform.OS === "web") {

@@ -285,6 +285,7 @@ export async function incrementSpeakCount(): Promise<void> {
     const raw = await AsyncStorage.getItem(SPEAK_COUNT_KEY);
     const current = parseInt(raw ?? "0", 10);
     await AsyncStorage.setItem(SPEAK_COUNT_KEY, String(current + 1));
+    recordUserActionForReview().catch(() => {});
   } catch {}
 }
 
