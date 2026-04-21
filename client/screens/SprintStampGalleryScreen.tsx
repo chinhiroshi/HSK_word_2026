@@ -320,9 +320,9 @@ export default function SprintStampGalleryScreen() {
                     : theme.primary;
 
                   const handleStampPress = () => {
-                    if (isTutorial) return;
                     if (!isCompleted) return;
-                    const quote = getQuoteForStamp(cell.index, currentLevel);
+                    const lookupIndex = isTutorial ? 1 : cell.index;
+                    const quote = getQuoteForStamp(lookupIndex, currentLevel);
                     if (quote) setSelectedQuote(quote);
                   };
 

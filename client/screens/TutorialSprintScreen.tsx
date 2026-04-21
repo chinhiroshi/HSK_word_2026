@@ -521,7 +521,53 @@ export default function TutorialSprintScreen() {
                     </View>
                   )}
 
-                  <View style={styles.cardActions}>
+                  <View style={styles.choiceWrapper}>
+                    <View style={styles.choiceRow}>
+                      <Pressable
+                        testID={`button-tutorial-unmemorized-${cardIndex}`}
+                        onPress={handleCardNext}
+                        style={[
+                          styles.choiceBtn,
+                          {
+                            backgroundColor: Colors.light.alert + "15",
+                            borderColor: Colors.light.alert,
+                          },
+                        ]}
+                      >
+                        <Feather name="flag" size={20} color={Colors.light.alert} />
+                        <ThemedText
+                          style={[styles.choiceBtnText, { color: Colors.light.alert }]}
+                        >
+                          覚えてない
+                        </ThemedText>
+                      </Pressable>
+                      <Pressable
+                        testID={`button-tutorial-memorized-${cardIndex}`}
+                        onPress={handleCardNext}
+                        style={[
+                          styles.choiceBtn,
+                          {
+                            backgroundColor: Colors.light.success + "15",
+                            borderColor: Colors.light.success,
+                          },
+                        ]}
+                      >
+                        <Feather
+                          name={
+                            cardIndex < words.length - 1 ? "check" : "award"
+                          }
+                          size={20}
+                          color={Colors.light.success}
+                        />
+                        <ThemedText
+                          style={[styles.choiceBtnText, { color: Colors.light.success }]}
+                        >
+                          {cardIndex < words.length - 1
+                            ? "覚えた"
+                            : "覚えた・スタンプ獲得"}
+                        </ThemedText>
+                      </Pressable>
+                    </View>
                     {cardReveal < 2 ? (
                       <Pressable
                         testID={`button-tutorial-card-reveal-${cardIndex}`}
@@ -530,39 +576,21 @@ export default function TutorialSprintScreen() {
                           setCardReveal((cardReveal + 1) as 1 | 2);
                         }}
                         style={[
-                          styles.actionBtn,
-                          { backgroundColor: theme.primary + "15" },
+                          styles.revealBtn,
+                          {
+                            borderColor: theme.border,
+                            backgroundColor: theme.backgroundSecondary,
+                          },
                         ]}
                       >
-                        <Feather name="eye" size={16} color={theme.primary} />
+                        <Feather name="eye" size={14} color={theme.textSecondary} />
                         <ThemedText
-                          style={[styles.actionBtnText, { color: theme.primary }]}
+                          style={[styles.revealBtnText, { color: theme.textSecondary }]}
                         >
                           {cardReveal === 0 ? "文字を見る" : "意味を見る"}
                         </ThemedText>
                       </Pressable>
                     ) : null}
-                    <Pressable
-                      testID={`button-tutorial-card-next-${cardIndex}`}
-                      onPress={handleCardNext}
-                      style={[
-                        styles.actionBtn,
-                        { backgroundColor: Colors.light.success },
-                      ]}
-                    >
-                      <Feather
-                        name={
-                          cardIndex < words.length - 1 ? "chevron-right" : "award"
-                        }
-                        size={16}
-                        color="#fff"
-                      />
-                      <ThemedText
-                        style={[styles.actionBtnText, { color: "#fff" }]}
-                      >
-                        {cardIndex < words.length - 1 ? "次へ" : "スタンプを受け取る"}
-                      </ThemedText>
-                    </Pressable>
                   </View>
                 </View>
 
@@ -782,6 +810,34 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   cardActions: { flexDirection: "row", gap: Spacing.sm },
+  choiceWrapper: { gap: Spacing.sm, marginTop: Spacing.md },
+  choiceRow: { flexDirection: "row", gap: Spacing.md },
+  choiceBtn: {
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 2,
+    minHeight: 76,
+  },
+  choiceBtnText: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+  },
+  revealBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+  },
+  revealBtnText: { fontSize: 13, fontFamily: "Nunito_600SemiBold" },
   actionBtn: {
     flex: 1,
     flexDirection: "row",
