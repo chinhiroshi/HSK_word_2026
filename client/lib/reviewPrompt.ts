@@ -3,13 +3,17 @@ import * as StoreReview from "expo-store-review";
 
 const HISTORY_KEY = "@chinese_master_review_history_v1";
 const LEGACY_KEY = "@chinese_master_review_prompted";
+const ACTION_COUNT_KEY = "@chinese_master_review_action_count_v1";
 
 const MAX_PROMPTS_PER_YEAR = 3;
 const MIN_DAYS_BETWEEN_AUTO = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
+/** Trigger an automatic prompt when this many user actions accumulate. */
+export const ACTION_THRESHOLD = 5;
 
 export type ReviewTrigger =
   | "profile_load"
+  | "user_action_threshold"
   | "sprint_test_pass"
   | "sprint_session_complete"
   | "manual_button"
@@ -163,5 +167,30 @@ export async function clearReviewHistory(): Promise<void> {
   try {
     await AsyncStorage.removeItem(HISTORY_KEY);
     await AsyncStorage.removeItem(LEGACY_KEY);
+    await AsyncStorage.removeItem(ACTION_COUNT_KEY);
+  } catch {}
+}
+
+/**
+ * Records a single user action that should count toward the auto-review
+ * threshold (e.g. tapping memorized/unmemorized/speak). When the running
+ * count first reaches ACTION_THRESHOLD, schedules a single review prompt
+ * attempt via tryRequestReview("user_action_threshold"). After that,
+ * further actions are still counted but no longer re-trigger the prompt
+ * directly — the 60-day / 3-per-year cap inside tryRequestReview governs
+ * any future prompt timing through other triggers.
+ */
+export async function recordUserActionForReview(): Promise<void> {
+  try {
+    const raw = await AsyncStorage.getItem(ACTION_COUNT_KEY);
+    const prev = raw ? parseInt(raw, 10) || 0 : 0;
+    const next = prev + 1;
+    await AsyncStorage.setItem(ACTION_COUNT_KEY, String(next));
+    if (next === ACTION_THRESHOLD) {
+      // Fire after a short delay so the user sees the result of their action first.
+      setTimeout(() => {
+        tryRequestReview("user_action_threshold").catch(() => {});
+      }, 1200);
+    }
   } catch {}
 }
