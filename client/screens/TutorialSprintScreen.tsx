@@ -28,6 +28,8 @@ import {
   initializeData,
 } from "@/lib/storage";
 import { Word } from "@/types";
+import { getQuoteForStamp } from "@/data/quotes";
+import { useSprint } from "@/contexts/SprintContext";
 
 type NavigationProp = NativeStackNavigationProp<
   SprintStackParamList,
@@ -38,18 +40,23 @@ const TUTORIAL_WORD_COUNT = 3;
 const TUTORIAL_STAMP_IMAGE = require("../../assets/images/panda-stamp-1.png");
 
 type CardState = "pending" | "memorized" | "review";
+type Phase = "text-list" | "study-cards";
 
 export default function TutorialSprintScreen() {
   const navigation = useNavigation<NavigationProp>();
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { currentLevel } = useSprint();
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [states, setStates] = useState<CardState[]>([]);
   const [showStamp, setShowStamp] = useState(false);
   const [meaningRevealed, setMeaningRevealed] = useState<Set<string>>(new Set());
+  const [phase, setPhase] = useState<Phase>("text-list");
+  const [cardIndex, setCardIndex] = useState(0);
+  const [cardReveal, setCardReveal] = useState(false);
 
   const toggleMeaning = (id: string) => {
     Haptics.selectionAsync().catch(() => {});
@@ -89,14 +96,27 @@ export default function TutorialSprintScreen() {
   );
 
   useEffect(() => {
-    if (allDone && !showStamp) {
+    if (allDone && phase === "text-list") {
       const t = setTimeout(() => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        setShowStamp(true);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        setPhase("study-cards");
+        setCardIndex(0);
+        setCardReveal(false);
       }, 350);
       return () => clearTimeout(t);
     }
-  }, [allDone, showStamp]);
+  }, [allDone, phase]);
+
+  const handleCardNext = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (cardIndex < words.length - 1) {
+      setCardIndex(cardIndex + 1);
+      setCardReveal(false);
+    } else {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setShowStamp(true);
+    }
+  };
 
   const handleMark = (index: number, state: CardState) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -151,13 +171,16 @@ export default function TutorialSprintScreen() {
             <Feather name="award" size={22} color={Colors.light.secondary} />
           </View>
           <ThemedText style={styles.introTitle}>
-            まずは3つの単語で練習してみよう
+            {phase === "text-list"
+              ? "まずは3つの単語で練習してみよう"
+              : "学習カードで仕上げよう"}
           </ThemedText>
           <ThemedText
             style={[styles.introSubtitle, { color: theme.textSecondary }]}
           >
-            まずは中国語と短文だけで意味を推測してみましょう。{"\n"}
-            分からない時は「意味」をタップで日本語が出ます。3つ全部にマークすると特別なスタンプがもらえます。
+            {phase === "text-list"
+              ? "まずは中国語と短文だけで意味を推測してみましょう。\n分からない時は「意味」をタップで日本語が出ます。3つ全部にマークしたら次へ進みます。"
+              : "音声を聞いて、頭の中で意味を思い出しましょう。\n「意味を見る」で答え合わせ、「次へ」で進みます。最後にスタンプがもらえます。"}
           </ThemedText>
 
           <View style={styles.progressRow}>
@@ -172,7 +195,11 @@ export default function TutorialSprintScreen() {
                   styles.progressFill,
                   {
                     backgroundColor: Colors.light.secondary,
-                    width: `${(doneCount / total) * 100}%`,
+                    width: `${
+                      phase === "text-list"
+                        ? (doneCount / total) * 50
+                        : 50 + ((cardIndex + (cardReveal ? 1 : 0)) / Math.max(1, total)) * 50
+                    }%`,
                   },
                 ]}
               />
@@ -180,7 +207,9 @@ export default function TutorialSprintScreen() {
             <ThemedText
               style={[styles.progressText, { color: theme.textSecondary }]}
             >
-              {doneCount} / {total}
+              {phase === "text-list"
+                ? `${doneCount} / ${total}`
+                : `${Math.min(cardIndex + 1, total)} / ${total}`}
             </ThemedText>
           </View>
         </View>
@@ -204,7 +233,7 @@ export default function TutorialSprintScreen() {
               </ThemedText>
             </Pressable>
           </View>
-        ) : (
+        ) : phase === "text-list" ? (
           <View style={styles.cardList}>
             {words.map((w, i) => {
               const state = states[i] ?? "pending";
@@ -386,6 +415,146 @@ export default function TutorialSprintScreen() {
               </ThemedText>
             </Pressable>
           </View>
+        ) : (
+          // ----- Phase: study-cards (1 card at a time) -----
+          (() => {
+            const w = words[cardIndex];
+            if (!w) return null;
+            return (
+              <View style={styles.cardList}>
+                <View
+                  key={`study-${w.id}`}
+                  testID={`tutorial-study-card-${cardIndex}`}
+                  style={[
+                    styles.card,
+                    {
+                      backgroundColor: theme.backgroundDefault,
+                      borderColor: theme.primary + "55",
+                    },
+                  ]}
+                >
+                  <View style={styles.cardTop}>
+                    <View style={styles.cardTextWrap}>
+                      <ThemedText style={[styles.word, { color: theme.text }]}>
+                        {w.word}
+                      </ThemedText>
+                      <ThemedText
+                        style={[styles.pinyin, { color: theme.textSecondary }]}
+                      >
+                        {w.pinyin}
+                      </ThemedText>
+                      {w.exampleSentence ? (
+                        <View style={styles.exampleBlock}>
+                          <ThemedText
+                            style={[styles.exampleZh, { color: theme.text }]}
+                          >
+                            {w.exampleSentence}
+                          </ThemedText>
+                          {w.examplePinyin ? (
+                            <ThemedText
+                              style={[styles.examplePy, { color: theme.primary }]}
+                            >
+                              {w.examplePinyin}
+                            </ThemedText>
+                          ) : null}
+                        </View>
+                      ) : null}
+                      {cardReveal ? (
+                        <View
+                          style={[
+                            styles.exampleBlock,
+                            { borderTopColor: theme.border },
+                          ]}
+                        >
+                          <ThemedText
+                            style={[styles.translation, { color: theme.text }]}
+                          >
+                            {w.translation}
+                          </ThemedText>
+                          {w.exampleTranslation ? (
+                            <ThemedText
+                              style={[
+                                styles.exampleJa,
+                                { color: theme.textSecondary, marginTop: 4 },
+                              ]}
+                            >
+                              {w.exampleTranslation}
+                            </ThemedText>
+                          ) : null}
+                        </View>
+                      ) : null}
+                    </View>
+                    <View style={styles.cardTopRight}>
+                      <SpeakButton
+                        text={
+                          w.exampleSentence
+                            ? `${w.word}。${w.exampleSentence}`
+                            : w.word
+                        }
+                        size="medium"
+                      />
+                    </View>
+                  </View>
+
+                  <View style={styles.cardActions}>
+                    {!cardReveal ? (
+                      <Pressable
+                        testID={`button-tutorial-card-reveal-${cardIndex}`}
+                        onPress={() => {
+                          Haptics.selectionAsync().catch(() => {});
+                          setCardReveal(true);
+                        }}
+                        style={[
+                          styles.actionBtn,
+                          { backgroundColor: theme.primary + "15" },
+                        ]}
+                      >
+                        <Feather name="eye" size={16} color={theme.primary} />
+                        <ThemedText
+                          style={[styles.actionBtnText, { color: theme.primary }]}
+                        >
+                          意味を見る
+                        </ThemedText>
+                      </Pressable>
+                    ) : null}
+                    <Pressable
+                      testID={`button-tutorial-card-next-${cardIndex}`}
+                      onPress={handleCardNext}
+                      style={[
+                        styles.actionBtn,
+                        { backgroundColor: Colors.light.success },
+                      ]}
+                    >
+                      <Feather
+                        name={
+                          cardIndex < words.length - 1 ? "chevron-right" : "award"
+                        }
+                        size={16}
+                        color="#fff"
+                      />
+                      <ThemedText
+                        style={[styles.actionBtnText, { color: "#fff" }]}
+                      >
+                        {cardIndex < words.length - 1 ? "次へ" : "スタンプを受け取る"}
+                      </ThemedText>
+                    </Pressable>
+                  </View>
+                </View>
+
+                <Pressable
+                  testID="button-tutorial-skip-bottom-cards"
+                  onPress={handleSkip}
+                  style={styles.skipLink}
+                >
+                  <ThemedText
+                    style={[styles.skipLinkText, { color: theme.textSecondary }]}
+                  >
+                    スキップしてメイン画面へ
+                  </ThemedText>
+                </Pressable>
+              </View>
+            );
+          })()
         )}
       </ScrollView>
 
@@ -396,11 +565,13 @@ export default function TutorialSprintScreen() {
         onRequestClose={handleFinish}
       >
         <View style={styles.modalOverlay}>
-          <View
+          <ScrollView
             style={[
               styles.modalCard,
               { backgroundColor: theme.backgroundDefault },
             ]}
+            contentContainerStyle={styles.modalCardContent}
+            showsVerticalScrollIndicator={false}
           >
             <View
               style={[
@@ -432,6 +603,47 @@ export default function TutorialSprintScreen() {
               これからもスプリントを続けて、{"\n"}たくさんのスタンプを集めましょう。
             </ThemedText>
 
+            {(() => {
+              const q = getQuoteForStamp(1, currentLevel);
+              if (!q) return null;
+              return (
+                <View
+                  style={[
+                    styles.quoteCard,
+                    {
+                      backgroundColor: theme.backgroundSecondary,
+                      borderColor: theme.border,
+                    },
+                  ]}
+                >
+                  <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
+                  <ThemedText style={[styles.quoteZh, { color: theme.text }]}>
+                    {q.chinese}
+                  </ThemedText>
+                  <View style={styles.quoteSpeakRow}>
+                    <SpeakButton text={q.chinese} size="small" />
+                  </View>
+                  {q.pinyin ? (
+                    <ThemedText
+                      style={[styles.quotePy, { color: theme.primary }]}
+                    >
+                      {q.pinyin}
+                    </ThemedText>
+                  ) : null}
+                  <ThemedText
+                    style={[styles.quoteJa, { color: theme.textSecondary }]}
+                  >
+                    {q.japanese}
+                  </ThemedText>
+                  <ThemedText
+                    style={[styles.quoteSource, { color: theme.textSecondary }]}
+                  >
+                    — {q.source}
+                  </ThemedText>
+                </View>
+              );
+            })()}
+
             <Pressable
               testID="button-tutorial-finish"
               onPress={handleFinish}
@@ -444,7 +656,7 @@ export default function TutorialSprintScreen() {
                 スプリントを始める
               </ThemedText>
             </Pressable>
-          </View>
+          </ScrollView>
         </View>
       </Modal>
     </ThemedView>
@@ -565,10 +777,48 @@ const styles = StyleSheet.create({
   modalCard: {
     width: "100%",
     maxWidth: 360,
+    maxHeight: "90%",
     borderRadius: BorderRadius.xl,
+  },
+  modalCardContent: {
     padding: Spacing["2xl"],
     alignItems: "center",
     gap: Spacing.md,
+  },
+  quoteCard: {
+    alignSelf: "stretch",
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    padding: Spacing.lg,
+    alignItems: "center",
+    gap: 4,
+    marginTop: Spacing.sm,
+  },
+  quoteFlag: { fontSize: 22, marginBottom: 4 },
+  quoteZh: {
+    fontSize: 17,
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+    lineHeight: 24,
+    paddingTop: 2,
+  },
+  quoteSpeakRow: { marginVertical: 2 },
+  quotePy: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+  },
+  quoteJa: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+    lineHeight: 18,
+    marginTop: 4,
+  },
+  quoteSource: {
+    fontSize: 11,
+    fontFamily: "Nunito_600SemiBold",
+    marginTop: 4,
   },
   modalBadge: {
     paddingHorizontal: 12,

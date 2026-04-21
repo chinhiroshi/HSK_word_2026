@@ -321,8 +321,7 @@ export default function SprintSetupScreen() {
             </View>
           ) : null}
 
-          {/* Push Notification Section — hidden during onboarding (defaults to ON) */}
-          {fromOnboarding ? null : (
+          {/* Push Notification Section — defaults ON during onboarding, configurable */}
           <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
             <ThemedText style={[styles.notifTitle, { color: theme.text }]}>
               学習リマインダー
@@ -378,7 +377,6 @@ export default function SprintSetupScreen() {
               </Pressable>
             ) : null}
           </View>
-          )}
 
           {isChange ? (
             <View style={styles.changeButtonsContainer}>
