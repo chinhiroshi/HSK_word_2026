@@ -46,7 +46,7 @@ export async function setTutorialStampEarned(earned: boolean): Promise<void> {
 
 const DATA_VERSION_PREFIX = "@chinese_master_data_version_hsk";
 const WORDS_KEY_PREFIX = "@chinese_master_words_hsk";
-const CURRENT_DATA_VERSION = "10";
+const CURRENT_DATA_VERSION = "11";
 
 const OLD_WORDS_KEY = "@chinese_master_words";
 const OLD_DATA_VERSION_KEY = "@chinese_master_data_version";
