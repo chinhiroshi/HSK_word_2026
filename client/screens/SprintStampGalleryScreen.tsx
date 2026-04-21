@@ -21,6 +21,7 @@ import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint, getSessionType } from "@/contexts/SprintContext";
 import { getQuoteForStamp, Quote } from "@/data/quotes";
+import { HSK_QUOTES } from "@/data/hskQuotes";
 import { getTutorialStampEarned } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
@@ -321,8 +322,22 @@ export default function SprintStampGalleryScreen() {
 
                   const handleStampPress = () => {
                     if (!isCompleted) return;
-                    const lookupIndex = isTutorial ? 1 : cell.index;
-                    const quote = getQuoteForStamp(lookupIndex, currentLevel);
+                    if (isTutorial) {
+                      const hq = HSK_QUOTES[currentLevel as 1 | 2 | 3 | 4 | 5 | 6];
+                      if (hq) {
+                        setSelectedQuote({
+                          number: 0,
+                          flag: "🇨🇳",
+                          chinese: hq.original,
+                          pinyin: "",
+                          source: lang === "en" ? hq.sourceEn : hq.source,
+                          japanese: hq.literal,
+                          english: hq.literalEn,
+                        });
+                      }
+                      return;
+                    }
+                    const quote = getQuoteForStamp(cell.index, currentLevel);
                     if (quote) setSelectedQuote(quote);
                   };
 

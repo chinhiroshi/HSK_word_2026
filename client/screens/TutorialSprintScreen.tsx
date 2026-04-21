@@ -28,7 +28,7 @@ import {
   initializeData,
 } from "@/lib/storage";
 import { Word } from "@/types";
-import { getQuoteForStamp } from "@/data/quotes";
+import { HSK_QUOTES } from "@/data/hskQuotes";
 import { useSprint } from "@/contexts/SprintContext";
 
 type NavigationProp = NativeStackNavigationProp<
@@ -657,7 +657,7 @@ export default function TutorialSprintScreen() {
             </ThemedText>
 
             {(() => {
-              const q = getQuoteForStamp(1, currentLevel);
+              const q = HSK_QUOTES[currentLevel as 1 | 2 | 3 | 4 | 5 | 6];
               if (!q) return null;
               return (
                 <View
@@ -669,24 +669,16 @@ export default function TutorialSprintScreen() {
                     },
                   ]}
                 >
-                  <ThemedText style={styles.quoteFlag}>{q.flag}</ThemedText>
                   <ThemedText style={[styles.quoteZh, { color: theme.text }]}>
-                    {q.chinese}
+                    {q.original}
                   </ThemedText>
                   <View style={styles.quoteSpeakRow}>
-                    <SpeakButton text={q.chinese} size="small" />
+                    <SpeakButton text={q.original} size="small" />
                   </View>
-                  {q.pinyin ? (
-                    <ThemedText
-                      style={[styles.quotePy, { color: theme.primary }]}
-                    >
-                      {q.pinyin}
-                    </ThemedText>
-                  ) : null}
                   <ThemedText
                     style={[styles.quoteJa, { color: theme.textSecondary }]}
                   >
-                    {q.japanese}
+                    {q.literal}
                   </ThemedText>
                   <ThemedText
                     style={[styles.quoteSource, { color: theme.textSecondary }]}
