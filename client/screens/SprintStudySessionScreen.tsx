@@ -639,18 +639,9 @@ export default function SprintStudySessionScreen() {
                           {item.exampleSentence}
                         </ThemedText>
                       ) : null}
-                      {(lang === "en" ? (item.exampleEnglish || item.exampleTranslation) : item.exampleTranslation) ? (
-                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary, fontSize: 11 }]} numberOfLines={2}>
-                          {lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation}
-                        </ThemedText>
-                      ) : null}
                     </View>
                   ) : (
-                    <View style={styles.wordInfoCol}>
-                      <ThemedText style={[styles.wordRowText, { color: theme.textSecondary, letterSpacing: 4 }]}>
-                        {"●●●"}
-                      </ThemedText>
-                    </View>
+                    <View style={styles.wordInfoCol} />
                   )}
                   <View style={styles.rowActions}>
                     <Pressable
