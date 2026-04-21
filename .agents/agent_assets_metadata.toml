@@ -288,6 +288,24 @@ uri = "file://assets/images/panda-stamp-60.png"
 type = "image"
 title = "generated_image"
 
+[[generated]]
+id = "yX4gep5TwbzgU-tvHCyTw"
+uri = "file://assets/images/onboarding-1.png"
+type = "image"
+title = "panda reading book"
+
+[[generated]]
+id = "Zb5k3V9nAC6rKP72HSRM4"
+uri = "file://assets/images/onboarding-2.png"
+type = "image"
+title = "panda with headphones"
+
+[[generated]]
+id = "X5tnCw_w9B6YI_KIiOJ-u"
+uri = "file://assets/images/onboarding-3.png"
+type = "image"
+title = "panda sprint stamp rally"
+
 [[outputs]]
 id = "25ttI0-awxEyfFdb-9QYb"
 uri = "file://assets/images/icon.png"
