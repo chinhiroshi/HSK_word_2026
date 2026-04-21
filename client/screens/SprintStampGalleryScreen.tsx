@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -21,6 +21,8 @@ import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useSprint, getSessionType } from "@/contexts/SprintContext";
 import { getQuoteForStamp, Quote } from "@/data/quotes";
+import { getTutorialStampEarned } from "@/lib/storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 // Panda stamp images (60 variants + 1 special)
 const PANDA_STAMPS: Record<number, any> = {
@@ -117,14 +119,44 @@ export default function SprintStampGalleryScreen() {
   const { t, lang } = useI18n();
   const { sprintData, totalCells, currentLevel } = useSprint();
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
+  const [tutorialEarned, setTutorialEarned] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      let cancelled = false;
+      (async () => {
+        const earned = await getTutorialStampEarned();
+        if (!cancelled) setTutorialEarned(earned);
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, [])
+  );
 
   const wordsPerDay = sprintData?.wordsPerDay ?? 10;
   const completedDates = sprintData?.completedDates ?? {};
   const specialStamps = sprintData?.specialStamps ?? [];
   const isSetup = sprintData?.hasSetup ?? false;
 
-  const cells = useMemo(() => {
-    const result = [];
+  type Cell = {
+    index: number;
+    sessionType: ReturnType<typeof getSessionType> | "tutorial";
+    completedDate: string | null;
+    isSpecial: boolean;
+    isTutorial?: boolean;
+  };
+
+  const cells = useMemo<Cell[]>(() => {
+    const result: Cell[] = [];
+    // First cell (top-left) is reserved for the onboarding tutorial stamp.
+    result.push({
+      index: 0,
+      sessionType: "tutorial",
+      completedDate: tutorialEarned ? "" : null,
+      isSpecial: false,
+      isTutorial: true,
+    });
     for (let i = 1; i < totalCells; i++) {
       const sessionType = getSessionType(i, wordsPerDay);
       const completedDate = completedDates[i] ?? null;
@@ -132,24 +164,29 @@ export default function SprintStampGalleryScreen() {
       result.push({ index: i, sessionType, completedDate, isSpecial });
     }
     return result;
-  }, [totalCells, wordsPerDay, completedDates, specialStamps]);
+  }, [totalCells, wordsPerDay, completedDates, specialStamps, tutorialEarned]);
 
   // Simple sequential rows — left to right, top to bottom
-  const rows: (typeof cells[0] | null)[][] = [];
+  const rows: (Cell | null)[][] = [];
   for (let i = 0; i < cells.length; i += NUM_COLS) {
-    const row = cells.slice(i, i + NUM_COLS);
+    const row: (Cell | null)[] = cells.slice(i, i + NUM_COLS);
     while (row.length < NUM_COLS) row.push(null);
-    rows.push(row as any);
+    rows.push(row);
   }
 
-  const completedCount = cells.filter((c) => c.completedDate !== null).length;
-  const specialCount = cells.filter((c) => c.isSpecial).length;
-  const testCount = cells.filter(
+  // Exclude the tutorial cell from sprint stats so progress reflects the
+  // actual 7-day cycle, not the onboarding stamp.
+  const sprintCells = cells.filter((c) => !c.isTutorial);
+  const completedCount = sprintCells.filter((c) => c.completedDate !== null).length;
+  const specialCount = sprintCells.filter((c) => c.isSpecial).length;
+  const testCount = sprintCells.filter(
     (c) => c.sessionType === "test" && c.completedDate
   ).length;
 
   const progressPercent =
-    cells.length > 0 ? Math.round((completedCount / cells.length) * 100) : 0;
+    sprintCells.length > 0
+      ? Math.round((completedCount / sprintCells.length) * 100)
+      : 0;
 
   return (
     <ThemedView style={styles.container}>
@@ -272,14 +309,18 @@ export default function SprintStampGalleryScreen() {
                   const isCompleted = cell.completedDate !== null;
                   const isTest = cell.sessionType === "test";
                   const isSpecial = cell.isSpecial;
+                  const isTutorial = !!cell.isTutorial;
 
-                  const borderColor = isSpecial
+                  const borderColor = isTutorial
+                    ? Colors.light.secondary
+                    : isSpecial
                     ? Colors.light.alert
                     : isTest
                     ? "#7C3AED"
                     : theme.primary;
 
                   const handleStampPress = () => {
+                    if (isTutorial) return;
                     if (!isCompleted) return;
                     const quote = getQuoteForStamp(cell.index, currentLevel);
                     if (quote) setSelectedQuote(quote);
@@ -304,12 +345,22 @@ export default function SprintStampGalleryScreen() {
                       >
                         {isCompleted ? (
                           <Image
-                            source={getPandaImage(cell.index, isSpecial)}
+                            source={
+                              isTutorial
+                                ? PANDA_STAMPS[1]
+                                : getPandaImage(cell.index, isSpecial)
+                            }
                             style={[
                               styles.pandaImage,
                               { width: STAMP_SIZE - 6, height: STAMP_SIZE - 6, borderRadius: (STAMP_SIZE - 6) / 2 },
                             ]}
                             resizeMode="cover"
+                          />
+                        ) : isTutorial ? (
+                          <Feather
+                            name="award"
+                            size={Math.round(STAMP_SIZE * 0.42)}
+                            color={theme.border}
                           />
                         ) : (
                           <ThemedText
@@ -321,10 +372,19 @@ export default function SprintStampGalleryScreen() {
                       </View>
 
                       <View style={styles.stampMeta}>
-                        <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
-                          {`No.${cell.index}`}
+                        <ThemedText
+                          style={[
+                            styles.stampDate,
+                            {
+                              color: isTutorial
+                                ? Colors.light.secondary
+                                : theme.textSecondary,
+                            },
+                          ]}
+                        >
+                          {isTutorial ? "はじめての一歩" : `No.${cell.index}`}
                         </ThemedText>
-                        {isCompleted && cell.completedDate ? (
+                        {!isTutorial && isCompleted && cell.completedDate ? (
                           <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
                             {` ${formatDate(cell.completedDate)}`}
                           </ThemedText>

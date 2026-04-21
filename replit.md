@@ -40,6 +40,7 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Tutorial uses first 3 words of selected HSK level; does NOT modify SprintData or word memorization state
   - Routes via `SprintSetup` with `fromOnboarding: true` param → `navigation.replace("TutorialSprint")` after setup
   - TutorialSprint stamp uses `panda-stamp-1.png` and is independent of `specialStamps` array
+  - SprintStampGallery 表示: 「はじめての一歩」スタンプは常にグリッドの左上(最初のセル)に表示される。未獲得時は award アイコン、獲得済みは panda-stamp-1.png + secondary 色の枠。サマリーの集計(進捗%, スタンプ数, テスト数)からは除外され、純粋に7日サイクルの進捗を反映。
 - **Sprint (スプリント)**: Stamp-rally style 7-day learning cycle with snake grid map
   - 29-cell snake grid (4 columns) showing learning progress as a map
   - Setup: Choose daily study time (15/30/45 min or custom) to determine words/day
@@ -53,6 +54,7 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
 - **Profile**: Track learning progress with separate statistics
   - HSK級セレクター (1〜6級): 学習する単語レベルを切り替え
   - 各級の進捗は独立して管理される
+  - 「オンボーディングを再開」ボタン: ONBOARDING/TUTORIAL_DONE/TUTORIAL_STAMP フラグをクリアして reloadAppAsync() でアプリ再起動。商品説明から最初の3単語チュートリアルまで再体験可能（学習データやスプリント進捗は保持）。
   - 文字暗記 section: 暗記済み / 暗記必要 / 未暗記 counts
   - 音声暗記 section: 暗記済み / 暗記必要 / 未暗記 counts
   - Reset functionality for all data

@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch, ActivityIndicator } from "react-native";
+import { reloadAppAsync } from "expo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   tryRequestReview,
   getReviewHistory,
@@ -317,6 +319,45 @@ export default function ProfileScreen() {
     await resetProgress();
     await loadData();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
+  const performRestartOnboarding = async () => {
+    try {
+      await AsyncStorage.multiRemove([
+        "@chinese_master_onboarding_complete",
+        "@chinese_master_tutorial_sprint_done",
+        "@chinese_master_tutorial_stamp_earned",
+      ]);
+    } catch (e) {
+      console.warn("Failed to clear onboarding flags:", e);
+    }
+    try {
+      await reloadAppAsync();
+    } catch (e) {
+      console.warn("reloadAppAsync failed:", e);
+      if (Platform.OS === "web") {
+        try {
+          window.location.reload();
+        } catch {}
+      }
+    }
+  };
+
+  const handleRestartOnboarding = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    const title = "オンボーディングを再開";
+    const msg =
+      "アプリの紹介と最初の学習チュートリアルをもう一度表示します。学習データやスタンプはそのまま残ります。";
+    if (Platform.OS === "web") {
+      if (confirm(`${title}\n\n${msg}`)) {
+        performRestartOnboarding();
+      }
+    } else {
+      Alert.alert(title, msg, [
+        { text: t("cancel"), style: "cancel" },
+        { text: "再開する", onPress: performRestartOnboarding },
+      ]);
+    }
   };
 
   const hasWordsForLevel = totalWords > 0;
@@ -769,6 +810,30 @@ export default function ProfileScreen() {
             </ThemedText>
             <ThemedText style={[styles.reviewDesc, { color: theme.textSecondary }]}>
               {t("review_prompt_title")}
+            </ThemedText>
+          </View>
+          <Feather name="chevron-right" size={18} color={theme.textSecondary} />
+        </View>
+      </Pressable>
+
+      <Pressable
+        testID="button-restart-onboarding"
+        onPress={handleRestartOnboarding}
+        style={[
+          styles.reviewCard,
+          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+        ]}
+      >
+        <View style={styles.reviewContent}>
+          <View style={[styles.reviewIcon, { backgroundColor: theme.primary + "15" }]}>
+            <Feather name="refresh-cw" size={20} color={theme.primary} />
+          </View>
+          <View style={styles.reviewTextContainer}>
+            <ThemedText style={styles.reviewTitle}>
+              オンボーディングを再開
+            </ThemedText>
+            <ThemedText style={[styles.reviewDesc, { color: theme.textSecondary }]}>
+              商品説明から最初の練習までもう一度
             </ThemedText>
           </View>
           <Feather name="chevron-right" size={18} color={theme.textSecondary} />
