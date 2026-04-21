@@ -4,12 +4,20 @@ import * as StoreReview from "expo-store-review";
 const HISTORY_KEY = "@chinese_master_review_history_v1";
 const LEGACY_KEY = "@chinese_master_review_prompted";
 const ACTION_COUNT_KEY = "@chinese_master_review_action_count_v1";
+const ACTION_LAST_DEDUP_KEY = "@chinese_master_review_action_last_dedup_v1";
 
 const MAX_PROMPTS_PER_YEAR = 3;
 const MIN_DAYS_BETWEEN_AUTO = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
-/** Trigger an automatic prompt when this many user actions accumulate. */
+/** Trigger an automatic prompt when accumulated action weight reaches this. */
 export const ACTION_THRESHOLD = 5;
+
+/** Per-action weights. */
+export const ACTION_WEIGHTS = {
+  mark_memorized: 1,
+  mark_unmemorized: 1,
+  speak: 0.3,
+} as const;
 
 export type ReviewTrigger =
   | "profile_load"
@@ -171,22 +179,49 @@ export async function clearReviewHistory(): Promise<void> {
   } catch {}
 }
 
+interface RecordActionOptions {
+  /**
+   * Optional dedupe key. If the same key was used by the previous call,
+   * the weight is suppressed (treated as 0). Useful for the speak button:
+   * pressing the same word in a row should count as one tap.
+   */
+  dedupKey?: string;
+}
+
 /**
- * Records a single user action that should count toward the auto-review
- * threshold (e.g. tapping memorized/unmemorized/speak). When the running
- * count first reaches ACTION_THRESHOLD, schedules a single review prompt
- * attempt via tryRequestReview("user_action_threshold"). After that,
- * further actions are still counted but no longer re-trigger the prompt
- * directly — the 60-day / 3-per-year cap inside tryRequestReview governs
- * any future prompt timing through other triggers.
+ * Records a weighted user action toward the auto-review threshold.
+ * - Pass a per-action weight (e.g. 1 for mark, 0.3 for speak).
+ * - Use dedupKey="speak:<text>" to collapse consecutive same-target taps.
+ * When the accumulated weight first crosses ACTION_THRESHOLD, schedules a
+ * review prompt via tryRequestReview("user_action_threshold").
  */
-export async function recordUserActionForReview(): Promise<void> {
+export async function recordUserActionForReview(
+  weight: number,
+  options: RecordActionOptions = {}
+): Promise<void> {
   try {
+    const { dedupKey } = options;
+
+    // Suppress weight if same dedupKey as last call (consecutive same target).
+    if (dedupKey) {
+      const lastDedup = await AsyncStorage.getItem(ACTION_LAST_DEDUP_KEY);
+      if (lastDedup === dedupKey) {
+        return;
+      }
+      await AsyncStorage.setItem(ACTION_LAST_DEDUP_KEY, dedupKey);
+    } else {
+      // A non-dedupable action breaks the dedup chain.
+      await AsyncStorage.removeItem(ACTION_LAST_DEDUP_KEY);
+    }
+
+    if (weight <= 0) return;
+
     const raw = await AsyncStorage.getItem(ACTION_COUNT_KEY);
-    const prev = raw ? parseInt(raw, 10) || 0 : 0;
-    const next = prev + 1;
-    await AsyncStorage.setItem(ACTION_COUNT_KEY, String(next));
-    if (next === ACTION_THRESHOLD) {
+    const prev = raw ? parseFloat(raw) || 0 : 0;
+    const next = prev + weight;
+    await AsyncStorage.setItem(ACTION_COUNT_KEY, next.toFixed(2));
+
+    if (prev < ACTION_THRESHOLD && next >= ACTION_THRESHOLD) {
       // Fire after a short delay so the user sees the result of their action first.
       setTimeout(() => {
         tryRequestReview("user_action_threshold").catch(() => {});

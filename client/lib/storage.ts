@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Word, HskLevel, SprintData } from "@/types";
 import { mockWords } from "@/data/mockData";
-import { recordUserActionForReview } from "@/lib/reviewPrompt";
+import { recordUserActionForReview, ACTION_WEIGHTS } from "@/lib/reviewPrompt";
 
 const SPRINT_KEY_PREFIX = "@chinese_master_sprint_hsk";
 const SPRINT_KEY_LEGACY = "@chinese_master_sprint";
@@ -171,7 +171,7 @@ export async function markAsUnmemorized(wordId: string, type: MemorizationType =
     words[index].unmemorizedCount = (words[index].unmemorizedCount || 0) + 1;
     words[index].isMemorized = false;
     await saveWords(words);
-    recordUserActionForReview().catch(() => {});
+    recordUserActionForReview(ACTION_WEIGHTS.mark_unmemorized).catch(() => {});
     return words[index];
   }
   return undefined;
@@ -209,7 +209,7 @@ export async function markAsMemorized(wordId: string, type: MemorizationType = "
     }
     words[index].isMemorized = true;
     await saveWords(words);
-    recordUserActionForReview().catch(() => {});
+    recordUserActionForReview(ACTION_WEIGHTS.mark_memorized).catch(() => {});
     return words[index];
   }
   return undefined;
@@ -280,12 +280,14 @@ export async function resetSprintData(level?: HskLevel): Promise<void> {
 
 const SPEAK_COUNT_KEY = "@chinese_master_speak_count";
 
-export async function incrementSpeakCount(): Promise<void> {
+export async function incrementSpeakCount(text?: string): Promise<void> {
   try {
     const raw = await AsyncStorage.getItem(SPEAK_COUNT_KEY);
     const current = parseInt(raw ?? "0", 10);
     await AsyncStorage.setItem(SPEAK_COUNT_KEY, String(current + 1));
-    recordUserActionForReview().catch(() => {});
+    recordUserActionForReview(ACTION_WEIGHTS.speak, {
+      dedupKey: text ? `speak:${text}` : undefined,
+    }).catch(() => {});
   } catch {}
 }
 

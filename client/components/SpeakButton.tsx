@@ -56,7 +56,7 @@ export function SpeakButton({ text, size = "medium" }: SpeakButtonProps) {
       true
     );
 
-    incrementSpeakCount().catch(() => {});
+    incrementSpeakCount(text).catch(() => {});
     await speakChinese(text);
     
     pulse.value = withSpring(1, springConfig);
