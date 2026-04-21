@@ -5,18 +5,12 @@ const HISTORY_KEY = "@chinese_master_review_history_v1";
 const LEGACY_KEY = "@chinese_master_review_prompted";
 const ACTION_COUNT_KEY = "@chinese_master_review_action_count_v1";
 const ACTION_LAST_DEDUP_KEY = "@chinese_master_review_action_last_dedup_v1";
-const INSTALL_TS_KEY = "@chinese_master_install_ts_v1";
-const STUDY_DAYS_KEY = "@chinese_master_study_days_v1";
 
 const MAX_PROMPTS_PER_YEAR = 3;
 const MIN_DAYS_BETWEEN_AUTO = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** Trigger an automatic prompt when accumulated action weight reaches this. */
 export const ACTION_THRESHOLD = 5;
-/** Minimum hours since first launch before any auto prompt can fire. */
-export const MIN_HOURS_SINCE_INSTALL = 24;
-/** Alternative gate: if user studied on this many distinct days, bypass install age. */
-export const MIN_STUDY_DAYS = 2;
 
 /** Per-action weights. */
 export const ACTION_WEIGHTS = {
@@ -37,7 +31,6 @@ export type ReviewSkipReason =
   | "interval"
   | "yearly_cap"
   | "no_action"
-  | "too_new"
   | "error"
   | null;
 
@@ -47,71 +40,6 @@ export interface ReviewPromptEntry {
   hadAction: boolean;
   requested: boolean;
   skipReason?: ReviewSkipReason;
-}
-
-function todayKey(d: Date = new Date()): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-/** Stamp first-launch time if not set. Safe to call repeatedly. */
-export async function ensureInstallTimestamp(): Promise<number> {
-  try {
-    const raw = await AsyncStorage.getItem(INSTALL_TS_KEY);
-    if (raw) {
-      const n = parseInt(raw, 10);
-      if (!isNaN(n) && n > 0) return n;
-    }
-    const now = Date.now();
-    await AsyncStorage.setItem(INSTALL_TS_KEY, String(now));
-    return now;
-  } catch {
-    return Date.now();
-  }
-}
-
-export async function getInstallTimestamp(): Promise<number | null> {
-  try {
-    const raw = await AsyncStorage.getItem(INSTALL_TS_KEY);
-    if (raw) {
-      const n = parseInt(raw, 10);
-      if (!isNaN(n) && n > 0) return n;
-    }
-  } catch {}
-  return null;
-}
-
-async function recordStudyDay(): Promise<void> {
-  try {
-    const key = todayKey();
-    const raw = await AsyncStorage.getItem(STUDY_DAYS_KEY);
-    let days: string[] = [];
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) days = parsed.filter((x) => typeof x === "string");
-      } catch {}
-    }
-    if (!days.includes(key)) {
-      days.push(key);
-      // Keep last 60 days only.
-      if (days.length > 60) days = days.slice(-60);
-      await AsyncStorage.setItem(STUDY_DAYS_KEY, JSON.stringify(days));
-    }
-  } catch {}
-}
-
-export async function getStudyDayCount(): Promise<number> {
-  try {
-    const raw = await AsyncStorage.getItem(STUDY_DAYS_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed.length;
-    }
-  } catch {}
-  return 0;
 }
 
 export async function getReviewHistory(): Promise<ReviewPromptEntry[]> {
@@ -182,23 +110,6 @@ export async function tryRequestReview(
     const { force = false } = options;
 
     if (!force) {
-      // Gate: require either 24h since install OR >= 2 distinct study days.
-      const installTs = await ensureInstallTimestamp();
-      const hoursSinceInstall = (Date.now() - installTs) / (60 * 60 * 1000);
-      const studyDays = await getStudyDayCount();
-      const installOk = hoursSinceInstall >= MIN_HOURS_SINCE_INSTALL;
-      const studyOk = studyDays >= MIN_STUDY_DAYS;
-      if (!installOk && !studyOk) {
-        await appendHistory({
-          ts: Date.now(),
-          trigger,
-          hadAction: false,
-          requested: false,
-          skipReason: "too_new",
-        });
-        return false;
-      }
-
       const last = await getLastPromptDate();
       if (last) {
         const daysSince = (Date.now() - last.getTime()) / DAY_MS;
@@ -289,9 +200,6 @@ export async function recordUserActionForReview(
   options: RecordActionOptions = {}
 ): Promise<void> {
   try {
-    // Any user action counts toward "study days", even if dedupe suppresses weight.
-    recordStudyDay().catch(() => {});
-
     const { dedupKey } = options;
 
     // Suppress weight if same dedupKey as last call (consecutive same target).

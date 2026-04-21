@@ -10,7 +10,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 import "@/lib/notifications"; // register notification handler early
 import { refreshDailyQuoteIfEnabled } from "@/lib/notifications";
-import { ensureInstallTimestamp } from "@/lib/reviewPrompt";
 import {
   useFonts,
   Nunito_400Regular,
@@ -44,7 +43,6 @@ export default function App() {
 
   useEffect(() => {
     checkOnboardingStatus();
-    ensureInstallTimestamp().catch(() => {});
   }, []);
 
   const checkOnboardingStatus = async () => {
