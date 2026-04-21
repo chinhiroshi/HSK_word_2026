@@ -49,11 +49,11 @@ export default function TutorialSprintScreen() {
   const [loading, setLoading] = useState(true);
   const [states, setStates] = useState<CardState[]>([]);
   const [showStamp, setShowStamp] = useState(false);
-  const [exampleRevealed, setExampleRevealed] = useState<Set<string>>(new Set());
+  const [meaningRevealed, setMeaningRevealed] = useState<Set<string>>(new Set());
 
-  const toggleExample = (id: string) => {
+  const toggleMeaning = (id: string) => {
     Haptics.selectionAsync().catch(() => {});
-    setExampleRevealed((prev) => {
+    setMeaningRevealed((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
       else next.add(id);
@@ -156,8 +156,8 @@ export default function TutorialSprintScreen() {
           <ThemedText
             style={[styles.introSubtitle, { color: theme.textSecondary }]}
           >
-            発音を聴いて、覚えていれば「覚えた」、自信がなければ「あとで」を
-            タップしてください。3つ全部にマークすると特別なスタンプがもらえます。
+            まずは中国語と短文だけで意味を推測してみましょう。{"\n"}
+            分からない時は「意味」をタップで日本語が出ます。3つ全部にマークすると特別なスタンプがもらえます。
           </ThemedText>
 
           <View style={styles.progressRow}>
@@ -238,12 +238,14 @@ export default function TutorialSprintScreen() {
                       >
                         {w.pinyin}
                       </ThemedText>
-                      <ThemedText
-                        style={[styles.translation, { color: theme.text }]}
-                      >
-                        {w.translation}
-                      </ThemedText>
-                      {w.exampleSentence && exampleRevealed.has(w.id) ? (
+                      {meaningRevealed.has(w.id) ? (
+                        <ThemedText
+                          style={[styles.translation, { color: theme.text }]}
+                        >
+                          {w.translation}
+                        </ThemedText>
+                      ) : null}
+                      {w.exampleSentence ? (
                         <View style={styles.exampleBlock}>
                           <ThemedText
                             style={[styles.exampleZh, { color: theme.text }]}
@@ -257,7 +259,7 @@ export default function TutorialSprintScreen() {
                               {w.examplePinyin}
                             </ThemedText>
                           ) : null}
-                          {w.exampleTranslation ? (
+                          {meaningRevealed.has(w.id) && w.exampleTranslation ? (
                             <ThemedText
                               style={[styles.exampleJa, { color: theme.textSecondary }]}
                             >
@@ -276,43 +278,41 @@ export default function TutorialSprintScreen() {
                         }
                         size="medium"
                       />
-                      {w.exampleSentence ? (
-                        <Pressable
-                          testID={`button-tutorial-example-${i}`}
-                          onPress={() => toggleExample(w.id)}
+                      <Pressable
+                        testID={`button-tutorial-meaning-${i}`}
+                        onPress={() => toggleMeaning(w.id)}
+                        style={[
+                          styles.exampleToggle,
+                          {
+                            backgroundColor: meaningRevealed.has(w.id)
+                              ? theme.primary + "18"
+                              : theme.backgroundSecondary,
+                            borderColor: theme.border,
+                          },
+                        ]}
+                      >
+                        <Feather
+                          name={meaningRevealed.has(w.id) ? "eye" : "eye-off"}
+                          size={16}
+                          color={
+                            meaningRevealed.has(w.id)
+                              ? theme.primary
+                              : theme.textSecondary
+                          }
+                        />
+                        <ThemedText
                           style={[
-                            styles.exampleToggle,
+                            styles.exampleToggleText,
                             {
-                              backgroundColor: exampleRevealed.has(w.id)
-                                ? theme.primary + "18"
-                                : theme.backgroundSecondary,
-                              borderColor: theme.border,
+                              color: meaningRevealed.has(w.id)
+                                ? theme.primary
+                                : theme.textSecondary,
                             },
                           ]}
                         >
-                          <Feather
-                            name={exampleRevealed.has(w.id) ? "eye" : "eye-off"}
-                            size={16}
-                            color={
-                              exampleRevealed.has(w.id)
-                                ? theme.primary
-                                : theme.textSecondary
-                            }
-                          />
-                          <ThemedText
-                            style={[
-                              styles.exampleToggleText,
-                              {
-                                color: exampleRevealed.has(w.id)
-                                  ? theme.primary
-                                  : theme.textSecondary,
-                              },
-                            ]}
-                          >
-                            例文
-                          </ThemedText>
-                        </Pressable>
-                      ) : null}
+                          意味
+                        </ThemedText>
+                      </Pressable>
                     </View>
                   </View>
 

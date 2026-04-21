@@ -64,7 +64,7 @@ export default function SprintSetupScreen() {
   const [loading, setLoading] = useState(false);
   const [totalWords, setTotalWords] = useState(150);
 
-  const [notifEnabled, setNotifEnabled] = useState(false);
+  const [notifEnabled, setNotifEnabled] = useState(fromOnboarding);
   const [notifHour, setNotifHour] = useState(DEFAULT_NOTIF_HOUR);
   const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
   const [showIOSPicker, setShowIOSPicker] = useState(false);
@@ -321,7 +321,8 @@ export default function SprintSetupScreen() {
             </View>
           ) : null}
 
-          {/* Push Notification Section */}
+          {/* Push Notification Section — hidden during onboarding (defaults to ON) */}
+          {fromOnboarding ? null : (
           <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
             <ThemedText style={[styles.notifTitle, { color: theme.text }]}>
               学習リマインダー
@@ -377,6 +378,7 @@ export default function SprintSetupScreen() {
               </Pressable>
             ) : null}
           </View>
+          )}
 
           {isChange ? (
             <View style={styles.changeButtonsContainer}>
