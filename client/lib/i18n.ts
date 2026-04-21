@@ -143,6 +143,7 @@ const translations = {
 
     // ── Sprint Setup Screen ──
     sprint_setup_header: "スプリント設定",
+    words_10_desc: "入門ペース",
     words_20_desc: "初級・コツコツペース",
     words_30_desc: "標準ペース",
     words_50_desc: "集中ペース",
@@ -483,6 +484,7 @@ const translations = {
 
     // ── Sprint Setup Screen ──
     sprint_setup_header: "Sprint Setup",
+    words_10_desc: "Beginner pace",
     words_20_desc: "Easy, steady pace",
     words_30_desc: "Standard pace",
     words_50_desc: "Intensive pace",

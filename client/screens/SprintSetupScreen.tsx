@@ -52,6 +52,7 @@ export default function SprintSetupScreen() {
   const { setupSprint } = useSprint();
 
   const WORD_OPTIONS = [
+    { label: `10${t("words_unit")}`, words: 10, description: t("words_10_desc") },
     { label: `20${t("words_unit")}`, words: 20, description: t("words_20_desc") },
     { label: `30${t("words_unit")}`, words: 30, description: t("words_30_desc") },
     { label: `50${t("words_unit")}`, words: 50, description: t("words_50_desc") },
@@ -203,7 +204,7 @@ export default function SprintSetupScreen() {
             1日で覚える語数を選ぶ
           </ThemedText>
 
-          <View style={styles.optionsContainer}>
+          <View style={styles.optionsGrid}>
             {WORD_OPTIONS.map((opt) => {
               const isSelected = !showCustom && selectedWords === opt.words;
               return (
@@ -212,7 +213,7 @@ export default function SprintSetupScreen() {
                   testID={`button-words-${opt.words}`}
                   onPress={() => handleSelectPreset(opt.words)}
                   style={[
-                    styles.optionCard,
+                    styles.optionChip,
                     {
                       backgroundColor: isSelected ? theme.primary : theme.backgroundDefault,
                       borderColor: isSelected ? theme.primary : theme.border,
@@ -221,7 +222,7 @@ export default function SprintSetupScreen() {
                 >
                   <ThemedText
                     style={[
-                      styles.optionLabel,
+                      styles.optionChipLabel,
                       { color: isSelected ? "#fff" : theme.text },
                     ]}
                   >
@@ -229,17 +230,13 @@ export default function SprintSetupScreen() {
                   </ThemedText>
                   <ThemedText
                     style={[
-                      styles.optionDesc,
-                      { color: isSelected ? "rgba(255,255,255,0.8)" : theme.textSecondary },
+                      styles.optionChipDesc,
+                      { color: isSelected ? "rgba(255,255,255,0.85)" : theme.textSecondary },
                     ]}
+                    numberOfLines={1}
                   >
                     {opt.description}
                   </ThemedText>
-                  {isSelected ? (
-                    <View style={styles.checkIcon}>
-                      <Feather name="check" size={16} color="#fff" />
-                    </View>
-                  ) : null}
                 </Pressable>
               );
             })}
@@ -248,7 +245,7 @@ export default function SprintSetupScreen() {
               testID="button-time-custom"
               onPress={handleSelectCustom}
               style={[
-                styles.optionCard,
+                styles.optionChipWide,
                 {
                   backgroundColor: showCustom ? theme.primary : theme.backgroundDefault,
                   borderColor: showCustom ? theme.primary : theme.border,
@@ -257,7 +254,7 @@ export default function SprintSetupScreen() {
             >
               <ThemedText
                 style={[
-                  styles.optionLabel,
+                  styles.optionChipLabel,
                   { color: showCustom ? "#fff" : theme.text },
                 ]}
               >
@@ -265,17 +262,13 @@ export default function SprintSetupScreen() {
               </ThemedText>
               <ThemedText
                 style={[
-                  styles.optionDesc,
-                  { color: showCustom ? "rgba(255,255,255,0.8)" : theme.textSecondary },
+                  styles.optionChipDesc,
+                  { color: showCustom ? "rgba(255,255,255,0.85)" : theme.textSecondary },
                 ]}
+                numberOfLines={1}
               >
                 分数を入力する
               </ThemedText>
-              {showCustom ? (
-                <View style={styles.checkIcon}>
-                  <Feather name="check" size={16} color="#fff" />
-                </View>
-              ) : null}
             </Pressable>
           </View>
 
@@ -469,27 +462,27 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   flex: { flex: 1 },
   content: { paddingHorizontal: Spacing.lg },
-  header: { alignItems: "center", marginBottom: Spacing["2xl"] },
+  header: { alignItems: "center", marginBottom: Spacing.lg },
   flagIcon: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   title: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.xs,
     textAlign: "center",
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
-    lineHeight: 22,
+    lineHeight: 19,
   },
   sectionLabel: {
     fontSize: 13,
@@ -499,29 +492,39 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
-  optionsContainer: { gap: Spacing.md, marginBottom: Spacing.lg },
-  optionCard: {
-    padding: Spacing.lg,
+  optionsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  optionChip: {
+    width: "48%",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1.5,
-    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "center",
   },
-  optionLabel: {
-    fontSize: 18,
+  optionChipWide: {
+    width: "100%",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  optionChipLabel: {
+    fontSize: 16,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
-    marginRight: Spacing.md,
-    minWidth: 50,
   },
-  optionDesc: { fontSize: 13, fontFamily: "Nunito_400Regular", flex: 1 },
-  checkIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(255,255,255,0.3)",
-    justifyContent: "center",
-    alignItems: "center",
+  optionChipDesc: {
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
   },
   customInputContainer: {
     flexDirection: "row",

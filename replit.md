@@ -43,7 +43,7 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - SprintStampGallery 表示: 「はじめての一歩」スタンプは常にグリッドの左上(最初のセル)に表示される。未獲得時は award アイコン、獲得済みは panda-stamp-1.png + secondary 色の枠。サマリーの集計(進捗%, スタンプ数, テスト数)からは除外され、純粋に7日サイクルの進捗を反映。
 - **Sprint (スプリント)**: Stamp-rally style 7-day learning cycle with snake grid map
   - 29-cell snake grid (4 columns) showing learning progress as a map
-  - Setup: Choose daily study time (15/30/45 min or custom) to determine words/day
+  - Setup: Choose daily word count (10/20/30/50 or custom). Preset chips arranged as compact 2-column grid so the「決定」button is reachable without scrolling.
   - 7-day cycle: Day 1,2 = study; Day 3 = review; Day 4,5 = study; Day 6 = review; Day 7 = test
   - Study session: Show word cards, mark as memorized/unmemorized
   - Test session: Multiple-choice quiz; ≥70% correct = clear + special stamp
