@@ -33,6 +33,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
 import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
+import { CommonActions } from "@react-navigation/native";
 import { speakChinese } from "@/lib/speech";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
@@ -893,6 +894,41 @@ export default function ProfileScreen() {
             </ThemedText>
           </View>
 
+          <Pressable
+            testID="button-onboarding-practice"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.dispatch(
+                CommonActions.navigate({
+                  name: "Main",
+                  params: {
+                    screen: "SprintTab",
+                    params: { screen: "TutorialSprint" },
+                  },
+                })
+              );
+            }}
+            style={({ pressed }) => [
+              styles.onboardingCard,
+              {
+                backgroundColor: theme.backgroundDefault,
+                borderColor: theme.border,
+                opacity: pressed ? 0.85 : 1,
+              },
+            ]}
+          >
+            <View style={[styles.onboardingIcon, { backgroundColor: `${Colors.light.secondary}20` }]}>
+              <Feather name="play-circle" size={20} color={Colors.light.secondary} />
+            </View>
+            <View style={styles.onboardingTextWrap}>
+              <ThemedText style={styles.onboardingTitle}>{t("onboarding_practice_title")}</ThemedText>
+              <ThemedText style={[styles.onboardingDesc, { color: theme.textSecondary }]}>
+                {t("onboarding_practice_desc")}
+              </ThemedText>
+            </View>
+            <Feather name="chevron-right" size={20} color={theme.textSecondary} />
+          </Pressable>
+
           <Button onPress={handleResetProgress} style={styles.resetButton}>
             {t("reset_progress")}
           </Button>
@@ -1181,6 +1217,35 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     marginBottom: Spacing.xl,
+  },
+  onboardingCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    marginBottom: Spacing.md,
+  },
+  onboardingIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  onboardingTextWrap: {
+    flex: 1,
+  },
+  onboardingTitle: {
+    fontSize: 15,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+    marginBottom: 2,
+  },
+  onboardingDesc: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
   },
   langBtn: {
     borderWidth: 1,

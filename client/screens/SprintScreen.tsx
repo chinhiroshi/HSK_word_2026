@@ -20,8 +20,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
+import { Image } from "expo-image";
 import { Word } from "@/types";
-import { getWords, initializeData } from "@/lib/storage";
+import { getWords, initializeData, getTutorialStampEarned } from "@/lib/storage";
 import { useSprint, getSessionType as getSessionTypeFn } from "@/contexts/SprintContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
@@ -34,6 +35,8 @@ import {
   MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
 import { HskLevel } from "@/types";
+
+const TUTORIAL_STAMP_IMAGE = require("../../assets/images/panda-stamp-1.png");
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "audio-cards-only" | "audio-playback";
@@ -617,6 +620,7 @@ export default function SprintScreen() {
   const [canSkip, setCanSkip] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCell, setSelectedCell] = useState(0);
+  const [tutorialEarned, setTutorialEarned] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -625,6 +629,8 @@ export default function SprintScreen() {
         await initializeData();
         const allWords = await getWords();
         setWords(allWords);
+        const earned = await getTutorialStampEarned();
+        setTutorialEarned(earned);
       };
       load();
     }, [loadSprint])
@@ -821,6 +827,41 @@ export default function SprintScreen() {
           </View>
         ) : null}
 
+        {/* Tutorial / first-step stamp tile (only shown when earned to avoid affecting existing users) */}
+        {tutorialEarned ? (
+          <View
+            style={[
+              styles.tutorialTile,
+              {
+                backgroundColor: theme.backgroundDefault,
+                borderColor: Colors.light.secondary,
+              },
+            ]}
+          >
+            <View
+              style={[
+                styles.tutorialTileStamp,
+                { borderColor: Colors.light.secondary },
+              ]}
+            >
+              <Image
+                source={TUTORIAL_STAMP_IMAGE}
+                style={styles.tutorialTileImage}
+                contentFit="cover"
+              />
+            </View>
+            <View style={styles.tutorialTileTextWrap}>
+              <ThemedText style={[styles.tutorialTileTitle, { color: theme.text }]}>
+                {t("tutorial_first_step")}
+              </ThemedText>
+              <ThemedText style={[styles.tutorialTileDesc, { color: theme.textSecondary }]}>
+                {t("onboarding_practice_desc")}
+              </ThemedText>
+            </View>
+            <Feather name="check-circle" size={20} color={Colors.light.secondary} />
+          </View>
+        ) : null}
+
         {/* Free-form path grid */}
         <View style={styles.gridWrapper}>
           {pathGrid.map((rowSlots, rowIdx) => (
@@ -1006,4 +1047,30 @@ const styles = StyleSheet.create({
   modalOptionText: { flex: 1 },
   modalOptionTitle: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: 2 },
   modalOptionDesc: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  tutorialTile: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1.5,
+    marginBottom: Spacing.lg,
+  },
+  tutorialTileStamp: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    overflow: "hidden",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  tutorialTileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  tutorialTileTextWrap: { flex: 1 },
+  tutorialTileTitle: { fontSize: 14, fontFamily: "Nunito_700Bold", fontWeight: "700", marginBottom: 2 },
+  tutorialTileDesc: { fontSize: 11, fontFamily: "Nunito_400Regular" },
 });
