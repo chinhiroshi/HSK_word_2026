@@ -289,9 +289,8 @@ export default function ProfileScreen() {
 
   const handleRestartOnboarding = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const title = "オンボーディングを再開";
-    const msg =
-      "アプリの紹介と最初の学習チュートリアルをもう一度表示します。学習データやスタンプはそのまま残ります。";
+    const title = t("restart_onboarding");
+    const msg = t("restart_onboarding_msg");
     if (Platform.OS === "web") {
       if (confirm(`${title}\n\n${msg}`)) {
         performRestartOnboarding();
@@ -299,7 +298,7 @@ export default function ProfileScreen() {
     } else {
       Alert.alert(title, msg, [
         { text: t("cancel"), style: "cancel" },
-        { text: "再開する", onPress: performRestartOnboarding },
+        { text: t("restart_onboarding_btn"), onPress: performRestartOnboarding },
       ]);
     }
   };
@@ -774,10 +773,10 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.reviewTextContainer}>
             <ThemedText style={styles.reviewTitle}>
-              オンボーディングを再開
+              {t("restart_onboarding")}
             </ThemedText>
             <ThemedText style={[styles.reviewDesc, { color: theme.textSecondary }]}>
-              商品説明から最初の練習までもう一度
+              {t("restart_onboarding_subtitle")}
             </ThemedText>
           </View>
           <Feather name="chevron-right" size={18} color={theme.textSecondary} />

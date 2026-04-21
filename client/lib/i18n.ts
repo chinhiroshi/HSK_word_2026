@@ -340,6 +340,27 @@ const translations = {
 
     // ── Stamp gallery empty state ──
     stamp_gallery_empty: "スプリントを開始すると\nパンダが集まります",
+
+    // ── Tutorial Sprint Screen ──
+    tutorial_title_text_list: "まずは3つの単語で練習してみよう",
+    tutorial_title_cards: "学習カードで仕上げよう",
+    tutorial_subtitle_text_list: "まずは中国語と短文だけで意味を推測してみましょう。\n分からない時は「意味」をタップで日本語が出ます。3つ全部にマークしたら次へ進みます。",
+    tutorial_subtitle_cards: "音声を聞いて、頭の中で意味を思い出しましょう。\n「文字を見る」→「意味を見る」で答え合わせ、「次へ」で進みます。最後にスタンプがもらえます。",
+    tutorial_error_load: "単語の読み込みに失敗しました",
+    tutorial_skip_to_main: "スキップしてメイン画面へ",
+    tutorial_later: "あとで",
+    tutorial_memorized_stamp: "覚えた・スタンプ獲得",
+    tutorial_listen_answer: "音声を聴いて答えましょう",
+    tutorial_stamp_title: "はじめての一歩スタンプ獲得！",
+    tutorial_stamp_msg: "これからもスプリントを続けて、\nたくさんのスタンプを集めましょう。",
+    tutorial_start_sprint: "スプリントを始める",
+    tutorial_stamp_label: "はじめての一歩",
+
+    // ── Profile - Restart Onboarding ──
+    restart_onboarding: "オンボーディングを再開",
+    restart_onboarding_msg: "アプリの紹介と最初の学習チュートリアルをもう一度表示します。学習データやスタンプはそのまま残ります。",
+    restart_onboarding_btn: "再開する",
+    restart_onboarding_subtitle: "商品説明から最初の練習までもう一度",
   },
 
   en: {
@@ -681,6 +702,27 @@ const translations = {
 
     // ── Stamp gallery empty state ──
     stamp_gallery_empty: "Complete a sprint\nto collect pandas",
+
+    // ── Tutorial Sprint Screen ──
+    tutorial_title_text_list: "Practice with 3 words first",
+    tutorial_title_cards: "Finish with audio cards",
+    tutorial_subtitle_text_list: "Try to guess the meaning from Chinese and the example.\nTap 'Meaning' if you get stuck. Mark all 3 to continue.",
+    tutorial_subtitle_cards: "Listen to the audio and recall the meaning in your head.\nTap 'Show Character' → 'Show Meaning' to check. You'll get a stamp at the end.",
+    tutorial_error_load: "Failed to load words",
+    tutorial_skip_to_main: "Skip to main screen",
+    tutorial_later: "Later",
+    tutorial_memorized_stamp: "Memorized & Get Stamp",
+    tutorial_listen_answer: "Listen and answer",
+    tutorial_stamp_title: "First Step Stamp Earned!",
+    tutorial_stamp_msg: "Keep sprinting and collect more stamps!",
+    tutorial_start_sprint: "Start Sprint",
+    tutorial_stamp_label: "First Step",
+
+    // ── Profile - Restart Onboarding ──
+    restart_onboarding: "Restart Onboarding",
+    restart_onboarding_msg: "The app introduction and first tutorial will be shown again. Your study data and stamps will be kept.",
+    restart_onboarding_btn: "Restart",
+    restart_onboarding_subtitle: "From app intro to first practice",
   },
 } as const;
 

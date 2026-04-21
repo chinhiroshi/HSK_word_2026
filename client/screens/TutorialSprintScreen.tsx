@@ -30,6 +30,7 @@ import {
 import { Word } from "@/types";
 import { HSK_QUOTES } from "@/data/hskQuotes";
 import { useSprint } from "@/contexts/SprintContext";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<
   SprintStackParamList,
@@ -47,6 +48,7 @@ export default function TutorialSprintScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+  const { t } = useI18n();
   const { currentLevel } = useSprint();
 
   const [words, setWords] = useState<Word[]>([]);
@@ -172,15 +174,15 @@ export default function TutorialSprintScreen() {
           </View>
           <ThemedText style={styles.introTitle}>
             {phase === "text-list"
-              ? "まずは3つの単語で練習してみよう"
-              : "学習カードで仕上げよう"}
+              ? t("tutorial_title_text_list")
+              : t("tutorial_title_cards")}
           </ThemedText>
           <ThemedText
             style={[styles.introSubtitle, { color: theme.textSecondary }]}
           >
             {phase === "text-list"
-              ? "まずは中国語と短文だけで意味を推測してみましょう。\n分からない時は「意味」をタップで日本語が出ます。3つ全部にマークしたら次へ進みます。"
-              : "音声を聞いて、頭の中で意味を思い出しましょう。\n「文字を見る」→「意味を見る」で答え合わせ、「次へ」で進みます。最後にスタンプがもらえます。"}
+              ? t("tutorial_subtitle_text_list")
+              : t("tutorial_subtitle_cards")}
           </ThemedText>
 
           <View style={styles.progressRow}>
@@ -221,7 +223,7 @@ export default function TutorialSprintScreen() {
         ) : words.length === 0 ? (
           <View style={styles.loaderBox}>
             <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-              単語の読み込みに失敗しました
+              {t("tutorial_error_load")}
             </ThemedText>
             <Pressable
               testID="button-tutorial-skip"
@@ -229,7 +231,7 @@ export default function TutorialSprintScreen() {
               style={[styles.skipBtn, { borderColor: theme.border }]}
             >
               <ThemedText style={[styles.skipBtnText, { color: theme.text }]}>
-                スキップ
+                {t("skip")}
               </ThemedText>
             </Pressable>
           </View>
@@ -339,7 +341,7 @@ export default function TutorialSprintScreen() {
                             },
                           ]}
                         >
-                          意味
+                          {t("meaning")}
                         </ThemedText>
                       </Pressable>
                     </View>
@@ -369,7 +371,7 @@ export default function TutorialSprintScreen() {
                           { color: isReview ? "#fff" : Colors.light.alert },
                         ]}
                       >
-                        あとで
+                        {t("tutorial_later")}
                       </ThemedText>
                     </Pressable>
                     <Pressable
@@ -395,7 +397,7 @@ export default function TutorialSprintScreen() {
                           { color: isMemorized ? "#fff" : Colors.light.success },
                         ]}
                       >
-                        覚えた
+                        {t("memorized_label")}
                       </ThemedText>
                     </Pressable>
                   </View>
@@ -411,7 +413,7 @@ export default function TutorialSprintScreen() {
               <ThemedText
                 style={[styles.skipLinkText, { color: theme.textSecondary }]}
               >
-                スキップしてメイン画面へ
+                {t("tutorial_skip_to_main")}
               </ThemedText>
             </Pressable>
           </View>
@@ -453,7 +455,7 @@ export default function TutorialSprintScreen() {
                       <ThemedText
                         style={[styles.audioPrompt, { color: theme.textSecondary }]}
                       >
-                        音声を聴いて答えましょう
+                        {t("tutorial_listen_answer")}
                       </ThemedText>
                     </View>
                   ) : (
@@ -538,7 +540,7 @@ export default function TutorialSprintScreen() {
                         <ThemedText
                           style={[styles.choiceBtnText, { color: Colors.light.alert }]}
                         >
-                          覚えてない
+                          {t("choice_not_memorized")}
                         </ThemedText>
                       </Pressable>
                       <Pressable
@@ -563,8 +565,8 @@ export default function TutorialSprintScreen() {
                           style={[styles.choiceBtnText, { color: Colors.light.success }]}
                         >
                           {cardIndex < words.length - 1
-                            ? "覚えた"
-                            : "覚えた・スタンプ獲得"}
+                            ? t("memorized_label")
+                            : t("tutorial_memorized_stamp")}
                         </ThemedText>
                       </Pressable>
                     </View>
@@ -587,7 +589,7 @@ export default function TutorialSprintScreen() {
                         <ThemedText
                           style={[styles.revealBtnText, { color: theme.textSecondary }]}
                         >
-                          {cardReveal === 0 ? "文字を見る" : "意味を見る"}
+                          {cardReveal === 0 ? t("see_character") : t("see_meaning")}
                         </ThemedText>
                       </Pressable>
                     ) : null}
@@ -602,7 +604,7 @@ export default function TutorialSprintScreen() {
                   <ThemedText
                     style={[styles.skipLinkText, { color: theme.textSecondary }]}
                   >
-                    スキップしてメイン画面へ
+                    {t("tutorial_skip_to_main")}
                   </ThemedText>
                 </Pressable>
               </View>
@@ -648,12 +650,12 @@ export default function TutorialSprintScreen() {
             </View>
 
             <ThemedText style={[styles.modalTitle, { color: theme.text }]}>
-              はじめての一歩スタンプ獲得！
+              {t("tutorial_stamp_title")}
             </ThemedText>
             <ThemedText
               style={[styles.modalDesc, { color: theme.textSecondary }]}
             >
-              これからもスプリントを続けて、{"\n"}たくさんのスタンプを集めましょう。
+              {t("tutorial_stamp_msg")}
             </ThemedText>
 
             {(() => {
@@ -698,7 +700,7 @@ export default function TutorialSprintScreen() {
               ]}
             >
               <ThemedText style={styles.finishBtnText}>
-                スプリントを始める
+                {t("tutorial_start_sprint")}
               </ThemedText>
             </Pressable>
           </ScrollView>

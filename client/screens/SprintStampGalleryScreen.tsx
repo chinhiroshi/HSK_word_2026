@@ -397,7 +397,7 @@ export default function SprintStampGalleryScreen() {
                             },
                           ]}
                         >
-                          {isTutorial ? "はじめての一歩" : `No.${cell.index}`}
+                          {isTutorial ? t("tutorial_stamp_label") : `No.${cell.index}`}
                         </ThemedText>
                         {!isTutorial && isCompleted && cell.completedDate ? (
                           <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
