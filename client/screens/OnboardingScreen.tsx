@@ -529,6 +529,8 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     textAlign: "center",
     marginBottom: Spacing.sm,
+    lineHeight: 34,
+    paddingTop: 4,
   },
   subtitle: {
     fontSize: 15,
@@ -613,6 +615,8 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     textAlign: "center",
     marginBottom: Spacing.sm,
+    lineHeight: 36,
+    paddingTop: 4,
   },
   levelSubtitle: {
     fontSize: 14,

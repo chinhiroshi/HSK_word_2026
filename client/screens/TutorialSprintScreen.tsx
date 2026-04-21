@@ -49,6 +49,17 @@ export default function TutorialSprintScreen() {
   const [loading, setLoading] = useState(true);
   const [states, setStates] = useState<CardState[]>([]);
   const [showStamp, setShowStamp] = useState(false);
+  const [exampleRevealed, setExampleRevealed] = useState<Set<string>>(new Set());
+
+  const toggleExample = (id: string) => {
+    Haptics.selectionAsync().catch(() => {});
+    setExampleRevealed((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -232,7 +243,7 @@ export default function TutorialSprintScreen() {
                       >
                         {w.translation}
                       </ThemedText>
-                      {w.exampleSentence ? (
+                      {w.exampleSentence && exampleRevealed.has(w.id) ? (
                         <View style={styles.exampleBlock}>
                           <ThemedText
                             style={[styles.exampleZh, { color: theme.text }]}
@@ -256,14 +267,53 @@ export default function TutorialSprintScreen() {
                         </View>
                       ) : null}
                     </View>
-                    <SpeakButton
-                      text={
-                        w.exampleSentence
-                          ? `${w.word}。${w.exampleSentence}`
-                          : w.word
-                      }
-                      size="medium"
-                    />
+                    <View style={styles.cardTopRight}>
+                      <SpeakButton
+                        text={
+                          w.exampleSentence
+                            ? `${w.word}。${w.exampleSentence}`
+                            : w.word
+                        }
+                        size="medium"
+                      />
+                      {w.exampleSentence ? (
+                        <Pressable
+                          testID={`button-tutorial-example-${i}`}
+                          onPress={() => toggleExample(w.id)}
+                          style={[
+                            styles.exampleToggle,
+                            {
+                              backgroundColor: exampleRevealed.has(w.id)
+                                ? theme.primary + "18"
+                                : theme.backgroundSecondary,
+                              borderColor: theme.border,
+                            },
+                          ]}
+                        >
+                          <Feather
+                            name={exampleRevealed.has(w.id) ? "eye" : "eye-off"}
+                            size={16}
+                            color={
+                              exampleRevealed.has(w.id)
+                                ? theme.primary
+                                : theme.textSecondary
+                            }
+                          />
+                          <ThemedText
+                            style={[
+                              styles.exampleToggleText,
+                              {
+                                color: exampleRevealed.has(w.id)
+                                  ? theme.primary
+                                  : theme.textSecondary,
+                              },
+                            ]}
+                          >
+                            例文
+                          </ThemedText>
+                        </Pressable>
+                      ) : null}
+                    </View>
                   </View>
 
                   <View style={styles.cardActions}>
@@ -418,6 +468,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: "Nunito_700Bold",
     textAlign: "center",
+    lineHeight: 28,
+    paddingTop: 4,
   },
   introSubtitle: {
     fontSize: 13,
@@ -451,7 +503,18 @@ const styles = StyleSheet.create({
   },
   cardTop: { flexDirection: "row", gap: Spacing.md, alignItems: "flex-start" },
   cardTextWrap: { flex: 1, gap: 4 },
-  word: { fontSize: 28, fontFamily: "Nunito_700Bold" },
+  word: { fontSize: 28, fontFamily: "Nunito_700Bold", lineHeight: 40, paddingTop: 4 },
+  cardTopRight: { alignItems: "center", gap: Spacing.sm },
+  exampleToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  exampleToggleText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
   pinyin: { fontSize: 14, fontFamily: "Nunito_400Regular" },
   translation: { fontSize: 15, fontFamily: "Nunito_600SemiBold", marginTop: 2 },
   exampleBlock: {
