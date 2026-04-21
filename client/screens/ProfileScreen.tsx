@@ -1008,7 +1008,7 @@ export default function ProfileScreen() {
                           {stamp}
                         </ThemedText>
                         <ThemedText style={[styles.devModalRowTrigger, { color: theme.textSecondary }]}>
-                          {entry.trigger}
+                          {entry.trigger}{entry.skipReason ? ` · ${entry.skipReason}` : ""}
                         </ThemedText>
                       </View>
                       <View style={[styles.devModalBadge, { backgroundColor: `${statusColor}22` }]}>
