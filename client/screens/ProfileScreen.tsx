@@ -81,7 +81,7 @@ export default function ProfileScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { t, lang, setLang } = useI18n();
-  const { isPremium } = useSubscription();
+  const { isPremium, devPremiumOverride, setDevPremiumOverride } = useSubscription();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { updateInfo, recheckUpdate } = useAppUpdate();
 
@@ -964,6 +964,118 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
       </View>
+      {/* 開発者モード: プレミアム切り替え */}
+      <View style={[styles.devPremiumCard, { backgroundColor: theme.backgroundDefault, borderColor: `${theme.primary}40` }]}>
+        <View style={styles.devPremiumHeader}>
+          <View style={[styles.devPremiumIconWrap, { backgroundColor: `${theme.primary}15` }]}>
+            <Feather name="code" size={18} color={theme.primary} />
+          </View>
+          <View style={styles.devPremiumTitleWrap}>
+            <ThemedText style={[styles.devPremiumTitle, { color: theme.text }]}>
+              開発者モード
+            </ThemedText>
+            <ThemedText style={[styles.devPremiumSubtitle, { color: theme.textSecondary }]}>
+              {devPremiumOverride === null
+                ? `実際の状態 (${isPremium ? "プレミアム" : "非プレミアム"})`
+                : devPremiumOverride
+                ? "強制: プレミアム"
+                : "強制: 非プレミアム"}
+            </ThemedText>
+          </View>
+        </View>
+        <View style={styles.devPremiumButtons}>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setDevPremiumOverride(false);
+            }}
+            style={[
+              styles.devPremiumBtn,
+              {
+                backgroundColor: devPremiumOverride === false
+                  ? Colors.light.secondary
+                  : theme.backgroundSecondary,
+                borderColor: devPremiumOverride === false
+                  ? Colors.light.secondary
+                  : theme.border,
+              },
+            ]}
+          >
+            <Feather
+              name="lock"
+              size={14}
+              color={devPremiumOverride === false ? "#FFFFFF" : theme.textSecondary}
+            />
+            <ThemedText style={[
+              styles.devPremiumBtnText,
+              { color: devPremiumOverride === false ? "#FFFFFF" : theme.textSecondary },
+            ]}>
+              非プレミアム
+            </ThemedText>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setDevPremiumOverride(null);
+            }}
+            style={[
+              styles.devPremiumBtn,
+              {
+                backgroundColor: devPremiumOverride === null
+                  ? theme.primary
+                  : theme.backgroundSecondary,
+                borderColor: devPremiumOverride === null
+                  ? theme.primary
+                  : theme.border,
+              },
+            ]}
+          >
+            <Feather
+              name="refresh-cw"
+              size={14}
+              color={devPremiumOverride === null ? "#FFFFFF" : theme.textSecondary}
+            />
+            <ThemedText style={[
+              styles.devPremiumBtnText,
+              { color: devPremiumOverride === null ? "#FFFFFF" : theme.textSecondary },
+            ]}>
+              実際の状態
+            </ThemedText>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setDevPremiumOverride(true);
+            }}
+            style={[
+              styles.devPremiumBtn,
+              {
+                backgroundColor: devPremiumOverride === true
+                  ? Colors.light.success
+                  : theme.backgroundSecondary,
+                borderColor: devPremiumOverride === true
+                  ? Colors.light.success
+                  : theme.border,
+              },
+            ]}
+          >
+            <Feather
+              name="star"
+              size={14}
+              color={devPremiumOverride === true ? "#FFFFFF" : theme.textSecondary}
+            />
+            <ThemedText style={[
+              styles.devPremiumBtnText,
+              { color: devPremiumOverride === true ? "#FFFFFF" : theme.textSecondary },
+            ]}>
+              プレミアム
+            </ThemedText>
+          </Pressable>
+        </View>
+      </View>
+
       <Modal
         visible={reviewDevModalVisible}
         transparent
@@ -1629,5 +1741,58 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_600SemiBold",
     fontWeight: "600",
+  },
+  devPremiumCard: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1.5,
+    borderStyle: "dashed",
+  },
+  devPremiumHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  devPremiumIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: BorderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  devPremiumTitleWrap: {
+    flex: 1,
+  },
+  devPremiumTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+  },
+  devPremiumSubtitle: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
+  },
+  devPremiumButtons: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+  },
+  devPremiumBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 5,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  devPremiumBtnText: {
+    fontSize: 12,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
   },
 });
