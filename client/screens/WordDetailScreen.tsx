@@ -201,28 +201,6 @@ export default function WordDetailScreen() {
           </ThemedText>
         </View>
 
-        {word.longExample ? (
-          <View
-            style={[
-              styles.exampleCard,
-              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-            ]}
-          >
-            <View style={styles.exampleHeader}>
-              <ThemedText style={styles.sectionTitle}>{t("long_example")}</ThemedText>
-              <SpeakButton text={word.longExample} size="medium" />
-            </View>
-            <ThemedText style={styles.exampleSentence}>
-              {word.longExample}
-            </ThemedText>
-            {(lang === "en" ? (word.longExampleEnglish || word.longExampleTranslation) : word.longExampleTranslation) ? (
-              <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-                {lang === "en" && word.longExampleEnglish ? word.longExampleEnglish : word.longExampleTranslation}
-              </ThemedText>
-            ) : null}
-          </View>
-        ) : null}
-
         <Pressable
           onPress={handleToggleMemorized}
           style={[

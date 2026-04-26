@@ -197,6 +197,11 @@ export default function AudioPlaybackScreen() {
 
   const handleMarkUnmemorized = async () => {
     if (!currentWord) return;
+    if (!isPremium) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      navigation.navigate("Paywall");
+      return;
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     await markAsUnmemorized(currentWord.id, "audio");
     const data = await getWords();

@@ -8,15 +8,18 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getPinyin } from "@/lib/pinyin";
-import { speakChinese } from "@/lib/speech";
+import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 interface WordCardProps {
   word: Word;
@@ -38,7 +41,7 @@ const springConfig: WithSpringConfig = {
 export function WordCard({ 
   word, 
   index, 
-  showLongExample = true,
+  showLongExample: _showLongExample = true,
   onPress, 
   onMarkUnmemorized, 
   onClearMark,
@@ -46,6 +49,8 @@ export function WordCard({
 }: WordCardProps) {
   const { theme } = useTheme();
   const { lang } = useI18n();
+  const { isPremium } = useSubscription();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const scale = useSharedValue(1);
   const markScale = useSharedValue(1);
 
@@ -65,8 +70,19 @@ export function WordCard({
     scale.value = withSpring(1, springConfig);
   };
 
+  const requirePremium = (e: GestureResponderEvent): boolean => {
+    if (!isPremium) {
+      e.stopPropagation();
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      navigation.navigate("Paywall");
+      return true;
+    }
+    return false;
+  };
+
   const handleMarkUnmemorized = (e: GestureResponderEvent) => {
     e.stopPropagation();
+    if (requirePremium(e)) return;
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -76,6 +92,7 @@ export function WordCard({
 
   const handleClearMark = (e: GestureResponderEvent) => {
     e.stopPropagation();
+    if (requirePremium(e)) return;
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -85,6 +102,7 @@ export function WordCard({
 
   const handleMarkMemorized = (e: GestureResponderEvent) => {
     e.stopPropagation();
+    if (requirePremium(e)) return;
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -233,25 +251,6 @@ export function WordCard({
           <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
             {word.exampleSentence}
           </ThemedText>
-          {showLongExample && word.longExample ? (
-            <View style={styles.longExampleRow}>
-              <ThemedText style={[styles.longExample, { color: theme.textSecondary }]}>
-                {word.longExample}
-              </ThemedText>
-              <Pressable
-                testID={`button-speak-long-${word.id}`}
-                onPress={(e) => {
-                  e.stopPropagation();
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  speakChinese(word.longExample || "");
-                }}
-                style={[styles.longExampleSpeakButton, { backgroundColor: `${theme.primary}15` }]}
-                hitSlop={8}
-              >
-                <Feather name="volume-2" size={14} color={theme.primary} />
-              </Pressable>
-            </View>
-          ) : null}
         </View>
       </Pressable>
     </Animated.View>

@@ -15,6 +15,7 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, markAsUnmemorized, clearUnmemorizedMark, markAsMemorized } from "@/lib/storage";
 import { getPinyin } from "@/lib/pinyin";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -206,6 +207,7 @@ export default function AudioWordListScreen() {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<AudioWordListRouteProp>();
+  const { isPremium } = useSubscription();
 
   const { startIndex, endIndex } = route.params;
 
@@ -280,7 +282,17 @@ export default function AudioWordListScreen() {
     return { total: groupWords.length, memorized, unmemorized, struggled };
   }, [groupWords]);
 
+  const requirePremiumOrPaywall = (): boolean => {
+    if (!isPremium) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      navigation.navigate("Paywall");
+      return true;
+    }
+    return false;
+  };
+
   const handleMarkUnmemorized = async (wordId: string) => {
+    if (requirePremiumOrPaywall()) return;
     const updatedWord = await markAsUnmemorized(wordId, "audio");
     if (updatedWord) {
       setAllWords((prev) => prev.map((w) => (w.id === wordId ? updatedWord : w)));
@@ -288,6 +300,7 @@ export default function AudioWordListScreen() {
   };
 
   const handleClearMark = async (wordId: string) => {
+    if (requirePremiumOrPaywall()) return;
     const updatedWord = await clearUnmemorizedMark(wordId, "audio");
     if (updatedWord) {
       setAllWords((prev) => prev.map((w) => (w.id === wordId ? updatedWord : w)));
@@ -295,6 +308,7 @@ export default function AudioWordListScreen() {
   };
 
   const handleMarkMemorized = async (wordId: string) => {
+    if (requirePremiumOrPaywall()) return;
     const updatedWord = await markAsMemorized(wordId, "audio");
     if (updatedWord) {
       setAllWords((prev) => prev.map((w) => (w.id === wordId ? updatedWord : w)));

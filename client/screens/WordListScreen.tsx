@@ -60,7 +60,6 @@ export default function WordListScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
-  const [showLongExample, setShowLongExample] = useState(false);
   const [groupByPos, setGroupByPos] = useState(false);
 
   const loadWords = useCallback(async () => {
@@ -78,30 +77,6 @@ export default function WordListScreen() {
       headerTitle: `${startIndex}-${endIndex}`,
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginRight: 4 }}>
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setShowLongExample(prev => !prev);
-            }}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 3,
-              paddingHorizontal: 8,
-              paddingVertical: 5,
-              borderRadius: 20,
-              backgroundColor: showLongExample ? `${theme.primary}20` : "transparent",
-              borderWidth: 1,
-              borderColor: showLongExample ? theme.primary : `${theme.textSecondary}40`,
-            }}
-            testID="toggle-long-example"
-          >
-            <Feather name="file-text" size={12} color={showLongExample ? theme.primary : theme.textSecondary} />
-            <ThemedText style={{ fontSize: 11, fontFamily: "Nunito_600SemiBold", color: showLongExample ? theme.primary : theme.textSecondary }}>
-              長文
-            </ThemedText>
-          </Pressable>
-
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -128,7 +103,7 @@ export default function WordListScreen() {
         </View>
       ),
     });
-  }, [navigation, startIndex, endIndex, showLongExample, groupByPos, theme]);
+  }, [navigation, startIndex, endIndex, groupByPos, theme]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -251,7 +226,6 @@ export default function WordListScreen() {
       <WordCard
         word={item.word}
         index={item.originalIndex}
-        showLongExample={showLongExample}
         onPress={() => handleWordPress(item.word)}
         onMarkUnmemorized={() => handleMarkUnmemorized(item.word.id)}
         onClearMark={() => handleClearMark(item.word.id)}

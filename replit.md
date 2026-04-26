@@ -23,10 +23,12 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Set start AND end position for playback range
   - Free users limited to first 50 words (except HSK1 which is fully free); premium banner links to Paywall
 - **Subscription (Freemium Model)**:
-  - HSK1 is completely free (all groups accessible)
-  - HSK2-6: First 50 words per level are free (Group 1), Groups 2+ require ¥380/month subscription
-  - Locked groups show lock icon + "プレミアムで解放" text
-  - Tapping locked group opens Paywall modal
+  - **All words are viewable for free** (browse, listen TTS, see pinyin/translation/example)
+  - **Premium gates**:
+    - 覚えた / 覚えてない / 苦手 マークボタン（学習進捗のトラッキング）— タップで Paywall に遷移
+    - 音声再生（連続再生）は従来通り HSK1 全部・HSK2-6 は最初の50語のみ無料
+  - `isGroupLocked` は常に false を返す（グループロックは廃止）
+  - `isWordIndexLocked` は AudioPlayback の連続再生制限のみで使用継続
   - SubscriptionContext manages state via RevenueCat SDK (react-native-purchases)
   - RevenueCat handles purchase, restore, and entitlement checking ("premium" entitlement)
   - API key passed via app.config.js extra → Constants.expoConfig.extra.revenueCatApiKey

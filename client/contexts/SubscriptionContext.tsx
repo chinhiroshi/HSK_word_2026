@@ -139,12 +139,10 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   );
 
   const isGroupLocked = useCallback(
-    (groupIndex: number, hskLevel?: number) => {
-      if (isPremium) return false;
-      if (hskLevel !== undefined && isFreeLevel(hskLevel)) return false;
-      return groupIndex > 0;
+    (_groupIndex: number, _hskLevel?: number) => {
+      return false;
     },
-    [isPremium, isFreeLevel]
+    []
   );
 
   const isWordIndexLocked = useCallback(
