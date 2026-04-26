@@ -53,69 +53,61 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
         { 
           backgroundColor: theme.backgroundDefault, 
           borderColor: theme.border,
-          opacity: locked ? 0.7 : 1,
         },
       ]}
     >
       <View style={styles.groupHeader}>
-        <View style={[styles.groupIconContainer, { backgroundColor: locked ? `${theme.textSecondary}15` : `${theme.primary}15` }]}>
-          <Feather name={locked ? "lock" : "headphones"} size={20} color={locked ? theme.textSecondary : theme.primary} />
+        <View style={[styles.groupIconContainer, { backgroundColor: `${theme.primary}15` }]}>
+          <Feather name="headphones" size={20} color={theme.primary} />
         </View>
         <View style={styles.groupInfo}>
           <ThemedText style={styles.groupTitle}>
             {group.startIndex} - {group.endIndex}
           </ThemedText>
-          {locked ? (
-            <ThemedText style={[styles.lockedText, { color: theme.textSecondary }]}>
-              {t("premium_unlock")}
-            </ThemedText>
-          ) : (
-            <View style={styles.progressBarContainer}>
+          <View style={styles.progressBarContainer}>
+            <View 
+              style={[
+                styles.progressBar, 
+                { backgroundColor: theme.backgroundSecondary }
+              ]}
+            >
               <View 
                 style={[
-                  styles.progressBar, 
-                  { backgroundColor: theme.backgroundSecondary }
-                ]}
-              >
-                <View 
-                  style={[
-                    styles.progressFill, 
-                    { 
-                      width: `${progress}%`,
-                      backgroundColor: Colors.light.success,
-                    }
-                  ]} 
-                />
-              </View>
-              <ThemedText style={[styles.progressText, { color: theme.textSecondary }]}>
-                {progress}%
-              </ThemedText>
+                  styles.progressFill, 
+                  { 
+                    width: `${progress}%`,
+                    backgroundColor: Colors.light.success,
+                  }
+                ]} 
+              />
             </View>
-          )}
+            <ThemedText style={[styles.progressText, { color: theme.textSecondary }]}>
+              {progress}%
+            </ThemedText>
+          </View>
         </View>
-        {locked ? (
-          <Feather name="lock" size={18} color={theme.textSecondary} />
-        ) : (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+          {locked ? (
+            <Feather name="lock" size={14} color={theme.textSecondary} />
+          ) : null}
           <Feather name="chevron-right" size={20} color={theme.textSecondary} />
-        )}
+        </View>
       </View>
       
-      {locked ? null : (
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <Feather name="check-circle" size={14} color={Colors.light.success} />
-            <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
-              {group.memorizedCount}
-            </ThemedText>
-          </View>
-          <View style={styles.statItem}>
-            <Feather name="flag" size={14} color={Colors.light.secondary} />
-            <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-              {group.needsWorkCount}
-            </ThemedText>
-          </View>
+      <View style={styles.statsRow}>
+        <View style={styles.statItem}>
+          <Feather name="check-circle" size={14} color={Colors.light.success} />
+          <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
+            {group.memorizedCount}
+          </ThemedText>
         </View>
-      )}
+        <View style={styles.statItem}>
+          <Feather name="flag" size={14} color={Colors.light.secondary} />
+          <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
+            {group.needsWorkCount}
+          </ThemedText>
+        </View>
+      </View>
     </Pressable>
   );
 }
@@ -199,10 +191,6 @@ export default function AudioLearningScreen() {
 
   const handleGroupPress = (group: GroupInfo, groupIndex: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (isGroupLocked(groupIndex, currentHskLevel)) {
-      navigation.navigate("Paywall");
-      return;
-    }
     navigation.navigate("AudioWordList", {
       startIndex: group.startIndex,
       endIndex: group.endIndex,

@@ -22,10 +22,12 @@ interface WordCardProps {
   word: Word;
   index?: number;
   showLongExample?: boolean;
+  isLocked?: boolean;
   onPress: () => void;
   onMarkUnmemorized: () => void;
   onClearMark: () => void;
   onMarkMemorized?: () => void;
+  onPremiumPress?: () => void;
 }
 
 const springConfig: WithSpringConfig = {
@@ -39,13 +41,15 @@ export function WordCard({
   word, 
   index, 
   showLongExample = true,
+  isLocked = false,
   onPress, 
   onMarkUnmemorized, 
   onClearMark,
   onMarkMemorized,
+  onPremiumPress,
 }: WordCardProps) {
   const { theme } = useTheme();
-  const { lang } = useI18n();
+  const { lang, t } = useI18n();
   const scale = useSharedValue(1);
   const markScale = useSharedValue(1);
 
@@ -67,6 +71,11 @@ export function WordCard({
 
   const handleMarkUnmemorized = (e: GestureResponderEvent) => {
     e.stopPropagation();
+    if (isLocked) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      onPremiumPress?.();
+      return;
+    }
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -76,6 +85,11 @@ export function WordCard({
 
   const handleClearMark = (e: GestureResponderEvent) => {
     e.stopPropagation();
+    if (isLocked) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      onPremiumPress?.();
+      return;
+    }
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -85,6 +99,11 @@ export function WordCard({
 
   const handleMarkMemorized = (e: GestureResponderEvent) => {
     e.stopPropagation();
+    if (isLocked) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      onPremiumPress?.();
+      return;
+    }
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -155,8 +174,26 @@ export function WordCard({
           </View>
 
           <View style={styles.markActions}>
-            {isCurrentlyStruggling ? (
-              // State: currently struggling — show count + flag (increment) + check (mark memorized, keep history)
+            {isLocked ? (
+              <>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                  testID={`mark-unmemorized-${word.id}`}
+                >
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
+                </Pressable>
+                <Pressable
+                  onPress={handleMarkMemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                  testID={`mark-memorized-${word.id}`}
+                >
+                  <Feather name="check" size={16} color={theme.textSecondary} />
+                </Pressable>
+              </>
+            ) : isCurrentlyStruggling ? (
               <>
                 <View style={[styles.countBadge, { backgroundColor: Colors.light.secondary }]}>
                   <ThemedText style={styles.countText}>{unmemorizedCount}</ThemedText>
@@ -181,7 +218,6 @@ export function WordCard({
                 </Pressable>
               </>
             ) : isCurrentlyMemorized && hadDifficulty ? (
-              // State: memorized but has struggle history — show ghost history badge + re-flag button
               <>
                 <View style={[styles.historyBadge, { backgroundColor: `${Colors.light.alert}15`, borderColor: `${Colors.light.alert}50` }]}>
                   <Feather name="flag" size={10} color={Colors.light.alert} />
@@ -201,7 +237,6 @@ export function WordCard({
                 </Pressable>
               </>
             ) : (
-              // State: not started or memorized cleanly — show flag (and check if not yet memorized)
               <>
                 <Pressable
                   onPress={handleMarkUnmemorized}
@@ -229,30 +264,41 @@ export function WordCard({
           </View>
         </View>
 
-        <View style={styles.exampleRow}>
-          <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
-            {word.exampleSentence}
-          </ThemedText>
-          {showLongExample && word.longExample ? (
-            <View style={styles.longExampleRow}>
-              <ThemedText style={[styles.longExample, { color: theme.textSecondary }]}>
-                {word.longExample}
+        {isLocked ? (
+          <View style={styles.exampleRow}>
+            <View style={[styles.lockedExampleMask, { backgroundColor: `${theme.primary}08`, borderColor: `${theme.primary}20` }]}>
+              <Feather name="lock" size={13} color={theme.primary} />
+              <ThemedText style={[styles.lockedExampleText, { color: theme.primary }]}>
+                {t("premium_unlock")}
               </ThemedText>
-              <Pressable
-                testID={`button-speak-long-${word.id}`}
-                onPress={(e) => {
-                  e.stopPropagation();
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  speakChinese(word.longExample || "");
-                }}
-                style={[styles.longExampleSpeakButton, { backgroundColor: `${theme.primary}15` }]}
-                hitSlop={8}
-              >
-                <Feather name="volume-2" size={14} color={theme.primary} />
-              </Pressable>
             </View>
-          ) : null}
-        </View>
+          </View>
+        ) : (
+          <View style={styles.exampleRow}>
+            <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
+              {word.exampleSentence}
+            </ThemedText>
+            {showLongExample && word.longExample ? (
+              <View style={styles.longExampleRow}>
+                <ThemedText style={[styles.longExample, { color: theme.textSecondary }]}>
+                  {word.longExample}
+                </ThemedText>
+                <Pressable
+                  testID={`button-speak-long-${word.id}`}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    speakChinese(word.longExample || "");
+                  }}
+                  style={[styles.longExampleSpeakButton, { backgroundColor: `${theme.primary}15` }]}
+                  hitSlop={8}
+                >
+                  <Feather name="volume-2" size={14} color={theme.primary} />
+                </Pressable>
+              </View>
+            ) : null}
+          </View>
+        )}
       </Pressable>
     </Animated.View>
   );
@@ -389,5 +435,20 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
     marginTop: 2,
     lineHeight: 20,
+  },
+  lockedExampleMask: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 5,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    alignSelf: "flex-start",
+  },
+  lockedExampleText: {
+    fontSize: 12,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
 });

@@ -16,6 +16,8 @@ import { Word } from "@/types";
 import { getWords, markAsUnmemorized, clearUnmemorizedMark, markAsMemorized } from "@/lib/storage";
 import { getPinyin } from "@/lib/pinyin";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useI18n } from "@/contexts/LanguageContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type AudioWordListRouteProp = RouteProp<RootStackParamList, "AudioWordList">;
@@ -26,24 +28,29 @@ interface AudioWordCardProps {
   word: Word;
   index: number;
   isRevealed: boolean;
+  isLocked: boolean;
   onToggleReveal: () => void;
   onMarkUnmemorized: () => void;
   onClearMark: () => void;
   onMarkMemorized: () => void;
   onNavigateToDetail: () => void;
+  onPremiumPress: () => void;
 }
 
 function AudioWordCard({ 
   word, 
   index, 
   isRevealed,
+  isLocked,
   onToggleReveal,
   onMarkUnmemorized, 
   onClearMark, 
   onMarkMemorized,
   onNavigateToDetail,
+  onPremiumPress,
 }: AudioWordCardProps) {
   const { theme } = useTheme();
+  const { t } = useI18n();
 
   const unmemorizedCount = word.audioUnmemorizedCount || 0;
   const isCurrentlyMemorized = word.audioMemorized;
@@ -59,16 +66,19 @@ function AudioWordCard({
   const speakText = `${word.word}。${word.exampleSentence}`;
 
   const handleMarkUnmemorized = () => {
+    if (isLocked) { onPremiumPress(); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     onMarkUnmemorized();
   };
 
   const handleClearMark = () => {
+    if (isLocked) { onPremiumPress(); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onClearMark();
   };
 
   const handleMarkMemorized = () => {
+    if (isLocked) { onPremiumPress(); return; }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onMarkMemorized();
   };
@@ -118,8 +128,24 @@ function AudioWordCard({
           </Pressable>
 
           <View style={styles.markActions}>
-            {isCurrentlyStruggling ? (
-              // Currently struggling: count + flag (increment) + check (mark memorized, keep history)
+            {isLocked ? (
+              <>
+                <Pressable
+                  onPress={handleMarkUnmemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                >
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
+                </Pressable>
+                <Pressable
+                  onPress={handleMarkMemorized}
+                  style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                >
+                  <Feather name="check" size={16} color={theme.textSecondary} />
+                </Pressable>
+              </>
+            ) : isCurrentlyStruggling ? (
               <>
                 <View style={[styles.countBadge, { backgroundColor: Colors.light.secondary }]}>
                   <ThemedText style={styles.countText}>{unmemorizedCount}</ThemedText>
@@ -140,7 +166,6 @@ function AudioWordCard({
                 </Pressable>
               </>
             ) : isCurrentlyMemorized && hadDifficulty ? (
-              // Memorized with history: ghost badge + re-flag button
               <>
                 <View style={[styles.historyBadge, { backgroundColor: `${Colors.light.alert}15`, borderColor: `${Colors.light.alert}50` }]}>
                   <Feather name="flag" size={10} color={Colors.light.alert} />
@@ -157,7 +182,6 @@ function AudioWordCard({
                 </Pressable>
               </>
             ) : (
-              // Not started or memorized cleanly: flag + optional check
               <>
                 <Pressable
                   onPress={handleMarkUnmemorized}
@@ -184,15 +208,27 @@ function AudioWordCard({
         </View>
 
         {isRevealed ? (
-          <View style={styles.revealedContent}>
-            <ThemedText style={styles.word}>{word.word}</ThemedText>
-            <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
-              {word.pinyin || getPinyin(word.word)}
-            </ThemedText>
-            <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
-              {word.exampleSentence}
-            </ThemedText>
-          </View>
+          isLocked ? (
+            <Pressable
+              onPress={onPremiumPress}
+              style={[styles.lockedRevealBlock, { backgroundColor: `${theme.primary}08`, borderColor: `${theme.primary}20` }]}
+            >
+              <Feather name="lock" size={16} color={theme.primary} />
+              <ThemedText style={[styles.lockedRevealText, { color: theme.primary }]}>
+                {t("premium_unlock")}
+              </ThemedText>
+            </Pressable>
+          ) : (
+            <View style={styles.revealedContent}>
+              <ThemedText style={styles.word}>{word.word}</ThemedText>
+              <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
+                {word.pinyin || getPinyin(word.word)}
+              </ThemedText>
+              <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
+                {word.exampleSentence}
+              </ThemedText>
+            </View>
+          )
         ) : null}
       </View>
     </View>
@@ -206,6 +242,7 @@ export default function AudioWordListScreen() {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<AudioWordListRouteProp>();
+  const { isWordIndexLocked } = useSubscription();
 
   const { startIndex, endIndex } = route.params;
 
@@ -328,6 +365,9 @@ export default function AudioWordListScreen() {
       ? startIndex + index
       : allWords.indexOf(item) + 1;
 
+    const wordZeroIndex = allWords.indexOf(item);
+    const locked = wordZeroIndex >= 0 ? isWordIndexLocked(wordZeroIndex, item.hskLevel) : false;
+
     const isRevealed = revealAll || revealedIds.has(item.id);
 
     return (
@@ -335,11 +375,13 @@ export default function AudioWordListScreen() {
         word={item}
         index={originalIndex}
         isRevealed={isRevealed}
+        isLocked={locked}
         onToggleReveal={() => handleToggleReveal(item.id)}
         onMarkUnmemorized={() => handleMarkUnmemorized(item.id)}
         onClearMark={() => handleClearMark(item.id)}
         onMarkMemorized={() => handleMarkMemorized(item.id)}
         onNavigateToDetail={() => handleNavigateToDetail(item.id)}
+        onPremiumPress={() => navigation.navigate("Paywall")}
       />
     );
   };
@@ -639,5 +681,21 @@ const styles = StyleSheet.create({
   exampleSentence: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
+  },
+  lockedRevealBlock: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    marginLeft: 40,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
+  lockedRevealText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
 });

@@ -20,10 +20,11 @@ import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWord, toggleMemorized } from "@/lib/storage";
+import { getWord, getWords, toggleMemorized } from "@/lib/storage";
 import { getPinyin } from "@/lib/pinyin";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import type { Language } from "@/lib/i18n";
 
 type RouteProps = RouteProp<RootStackParamList, "WordDetail">;
@@ -43,10 +44,12 @@ export default function WordDetailScreen() {
   const { t, lang } = useI18n();
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
+  const { isWordIndexLocked } = useSubscription();
   const { wordId } = route.params;
 
   const [word, setWord] = useState<Word | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isLocked, setIsLocked] = useState(false);
 
   const checkScale = useSharedValue(1);
 
@@ -58,9 +61,15 @@ export default function WordDetailScreen() {
     const wordData = await getWord(wordId);
     if (wordData) {
       setWord(wordData);
+      // Determine lock status by finding word's 0-based index in the full list
+      const allWords = await getWords();
+      const wordIndex = allWords.findIndex((w) => w.id === wordId);
+      if (wordIndex >= 0) {
+        setIsLocked(isWordIndexLocked(wordIndex, wordData.hskLevel));
+      }
     }
     setLoading(false);
-  }, [wordId]);
+  }, [wordId, isWordIndexLocked]);
 
   useEffect(() => {
     loadData();
@@ -77,6 +86,12 @@ export default function WordDetailScreen() {
   const handleToggleMemorized = async () => {
     if (!word) return;
 
+    if (isLocked) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      navigation.navigate("Paywall");
+      return;
+    }
+
     checkScale.value = withSpring(1.3, springConfig, () => {
       checkScale.value = withSpring(1, springConfig);
     });
@@ -87,6 +102,11 @@ export default function WordDetailScreen() {
     if (updatedWord) {
       setWord(updatedWord);
     }
+  };
+
+  const handleLockedAudioPress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.navigate("Paywall");
   };
 
   if (loading) {
@@ -180,6 +200,7 @@ export default function WordDetailScreen() {
           </View>
         </View>
 
+        {/* Example sentence card */}
         <View
           style={[
             styles.exampleCard,
@@ -188,19 +209,44 @@ export default function WordDetailScreen() {
         >
           <View style={styles.exampleHeader}>
             <ThemedText style={styles.sectionTitle}>{t("example_sentence")}</ThemedText>
-            <SpeakButton text={word.exampleSentence} size="medium" />
+            {isLocked ? (
+              <Pressable
+                onPress={handleLockedAudioPress}
+                style={[styles.lockedAudioButton, { backgroundColor: theme.backgroundSecondary }]}
+                hitSlop={8}
+              >
+                <Feather name="lock" size={16} color={theme.textSecondary} />
+              </Pressable>
+            ) : (
+              <SpeakButton text={word.exampleSentence} size="medium" />
+            )}
           </View>
-          <ThemedText style={styles.exampleSentence}>
-            {word.exampleSentence}
-          </ThemedText>
-          <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
-            {word.examplePinyin || getPinyin(word.exampleSentence)}
-          </ThemedText>
-          <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-            {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
-          </ThemedText>
+          {isLocked ? (
+            <Pressable
+              onPress={handleLockedAudioPress}
+              style={[styles.lockedExampleBlock, { backgroundColor: `${theme.primary}08`, borderColor: `${theme.primary}20` }]}
+            >
+              <Feather name="lock" size={18} color={theme.primary} />
+              <ThemedText style={[styles.lockedExampleBlockText, { color: theme.primary }]}>
+                {t("premium_unlock")}
+              </ThemedText>
+            </Pressable>
+          ) : (
+            <>
+              <ThemedText style={styles.exampleSentence}>
+                {word.exampleSentence}
+              </ThemedText>
+              <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
+                {word.examplePinyin || getPinyin(word.exampleSentence)}
+              </ThemedText>
+              <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
+                {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
+              </ThemedText>
+            </>
+          )}
         </View>
 
+        {/* Long example card */}
         {word.longExample ? (
           <View
             style={[
@@ -210,16 +256,40 @@ export default function WordDetailScreen() {
           >
             <View style={styles.exampleHeader}>
               <ThemedText style={styles.sectionTitle}>{t("long_example")}</ThemedText>
-              <SpeakButton text={word.longExample} size="medium" />
+              {isLocked ? (
+                <Pressable
+                  onPress={handleLockedAudioPress}
+                  style={[styles.lockedAudioButton, { backgroundColor: theme.backgroundSecondary }]}
+                  hitSlop={8}
+                >
+                  <Feather name="lock" size={16} color={theme.textSecondary} />
+                </Pressable>
+              ) : (
+                <SpeakButton text={word.longExample} size="medium" />
+              )}
             </View>
-            <ThemedText style={styles.exampleSentence}>
-              {word.longExample}
-            </ThemedText>
-            {(lang === "en" ? (word.longExampleEnglish || word.longExampleTranslation) : word.longExampleTranslation) ? (
-              <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-                {lang === "en" && word.longExampleEnglish ? word.longExampleEnglish : word.longExampleTranslation}
-              </ThemedText>
-            ) : null}
+            {isLocked ? (
+              <Pressable
+                onPress={handleLockedAudioPress}
+                style={[styles.lockedExampleBlock, { backgroundColor: `${theme.primary}08`, borderColor: `${theme.primary}20` }]}
+              >
+                <Feather name="lock" size={18} color={theme.primary} />
+                <ThemedText style={[styles.lockedExampleBlockText, { color: theme.primary }]}>
+                  {t("premium_unlock")}
+                </ThemedText>
+              </Pressable>
+            ) : (
+              <>
+                <ThemedText style={styles.exampleSentence}>
+                  {word.longExample}
+                </ThemedText>
+                {(lang === "en" ? (word.longExampleEnglish || word.longExampleTranslation) : word.longExampleTranslation) ? (
+                  <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
+                    {lang === "en" && word.longExampleEnglish ? word.longExampleEnglish : word.longExampleTranslation}
+                  </ThemedText>
+                ) : null}
+              </>
+            )}
           </View>
         ) : null}
 
@@ -228,7 +298,9 @@ export default function WordDetailScreen() {
           style={[
             styles.toggleButton,
             {
-              backgroundColor: word.isMemorized
+              backgroundColor: isLocked
+                ? theme.primary
+                : word.isMemorized
                 ? Colors.light.alert
                 : Colors.light.success,
             },
@@ -237,12 +309,16 @@ export default function WordDetailScreen() {
         >
           <Animated.View style={[styles.toggleContent, checkAnimatedStyle]}>
             <Feather
-              name={word.isMemorized ? "x-circle" : "check-circle"}
+              name={isLocked ? "lock" : word.isMemorized ? "x-circle" : "check-circle"}
               size={24}
               color="#FFFFFF"
             />
             <ThemedText style={styles.toggleText} lightColor="#FFFFFF" darkColor="#FFFFFF">
-              {word.isMemorized ? t("mark_unmemorized") : t("mark_memorized")}
+              {isLocked
+                ? t("premium_unlock")
+                : word.isMemorized
+                ? t("mark_unmemorized")
+                : t("mark_memorized")}
             </ThemedText>
           </Animated.View>
         </Pressable>
@@ -386,5 +462,26 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  lockedAudioButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  lockedExampleBlock: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
+  lockedExampleBlockText: {
+    fontSize: 15,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
 });

@@ -17,6 +17,7 @@ import { Word } from "@/types";
 import { getWords, markAsUnmemorized, clearUnmemorizedMark, markAsMemorized } from "@/lib/storage";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type WordListRouteProp = RouteProp<RootStackParamList, "WordList">;
@@ -55,6 +56,7 @@ export default function WordListScreen() {
   const route = useRoute<WordListRouteProp>();
 
   const { startIndex, endIndex } = route.params;
+  const { isWordIndexLocked } = useSubscription();
 
   const [allWords, setAllWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -247,15 +249,21 @@ export default function WordListScreen() {
       );
     }
 
+    const wordZeroIndex = item.originalIndex - 1;
+    const hskLevel = item.word.hskLevel;
+    const locked = isWordIndexLocked(wordZeroIndex, hskLevel);
+
     return (
       <WordCard
         word={item.word}
         index={item.originalIndex}
         showLongExample={showLongExample}
+        isLocked={locked}
         onPress={() => handleWordPress(item.word)}
         onMarkUnmemorized={() => handleMarkUnmemorized(item.word.id)}
         onClearMark={() => handleClearMark(item.word.id)}
         onMarkMemorized={() => handleMarkMemorized(item.word.id)}
+        onPremiumPress={() => navigation.navigate("Paywall")}
       />
     );
   };
