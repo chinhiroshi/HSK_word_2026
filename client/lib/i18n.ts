@@ -41,7 +41,7 @@ const translations = {
 
     // ── Paywall additional ──
     paywall_hero_title: "全機能をアンロック",
-    paywall_hero_subtitle: "学習の進捗管理と連続音声再生でしっかり覚える",
+    paywall_hero_subtitle: "最初の50単語は無料でお試しいただけます",
     paywall_cancel_anytime: "いつでもキャンセル可能",
     paywall_subscribe: "サブスクリプションを開始",
     paywall_disclaimer: "サブスクリプションは自動更新されます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。",
@@ -249,14 +249,14 @@ const translations = {
 
     // ── Paywall Screen ──
     paywall_header: "プレミアム",
-    paywall_feature_all_words: "暗記マーク機能",
-    paywall_feature_all_words_desc: "覚えた・苦手・覚えてないをタップで記録",
-    paywall_feature_audio: "進捗トラッキング",
-    paywall_feature_audio_desc: "文字暗記・音声暗記の進捗を別々に管理",
-    paywall_feature_playback: "連続音声再生",
-    paywall_feature_playback_desc: "全HSK級の全単語を範囲指定で連続再生",
-    paywall_feature_tracking: "スプリント学習",
-    paywall_feature_tracking_desc: "7日サイクルのスタンプラリーで継続学習",
+    paywall_feature_all_words: "全HSK級の全単語",
+    paywall_feature_all_words_desc: "1級〜6級の全単語にアクセス",
+    paywall_feature_audio: "音声学習",
+    paywall_feature_audio_desc: "全単語の音声学習が可能",
+    paywall_feature_playback: "音声再生",
+    paywall_feature_playback_desc: "全範囲の連続再生が可能",
+    paywall_feature_tracking: "暗記トラッキング",
+    paywall_feature_tracking_desc: "全単語の進捗管理が可能",
     paywall_monthly: "月額プラン",
     paywall_per_month: "/月",
     paywall_restore: "購入を復元",
@@ -403,7 +403,7 @@ const translations = {
 
     // ── Paywall additional ──
     paywall_hero_title: "Unlock All Features",
-    paywall_hero_subtitle: "Track progress and play continuous audio to master every word",
+    paywall_hero_subtitle: "Try the first 50 words for free",
     paywall_cancel_anytime: "Cancel anytime",
     paywall_subscribe: "Start Subscription",
     paywall_disclaimer: "Subscription auto-renews. Cancel at least 24 hours before renewal to avoid being charged for the next period.",
@@ -611,14 +611,14 @@ const translations = {
 
     // ── Paywall Screen ──
     paywall_header: "Premium",
-    paywall_feature_all_words: "Memorization Marking",
-    paywall_feature_all_words_desc: "Tap to mark words as learned, weak, or unlearned",
-    paywall_feature_audio: "Progress Tracking",
-    paywall_feature_audio_desc: "Track text and audio learning progress separately",
-    paywall_feature_playback: "Continuous Playback",
-    paywall_feature_playback_desc: "Range-based continuous playback across all HSK levels",
-    paywall_feature_tracking: "Sprint Learning",
-    paywall_feature_tracking_desc: "7-day stamp-rally cycles for consistent practice",
+    paywall_feature_all_words: "All HSK Vocabulary",
+    paywall_feature_all_words_desc: "Access all words for HSK 1–6",
+    paywall_feature_audio: "Audio Study",
+    paywall_feature_audio_desc: "Audio study for all words",
+    paywall_feature_playback: "Audio Playback",
+    paywall_feature_playback_desc: "Continuous playback for all words",
+    paywall_feature_tracking: "Progress Tracking",
+    paywall_feature_tracking_desc: "Track all words' memorization",
     paywall_monthly: "Monthly Plan",
     paywall_per_month: "/mo",
     paywall_restore: "Restore Purchase",

@@ -19,8 +19,6 @@ import { incrementSpeakCount } from "@/lib/storage";
 interface SpeakButtonProps {
   text: string;
   size?: "small" | "medium" | "large";
-  locked?: boolean;
-  onLockedPress?: () => void;
 }
 
 const springConfig: WithSpringConfig = {
@@ -32,7 +30,7 @@ const springConfig: WithSpringConfig = {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export function SpeakButton({ text, size = "medium", locked = false, onLockedPress }: SpeakButtonProps) {
+export function SpeakButton({ text, size = "medium" }: SpeakButtonProps) {
   const { theme } = useTheme();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const scale = useSharedValue(1);
@@ -43,14 +41,6 @@ export function SpeakButton({ text, size = "medium", locked = false, onLockedPre
   }));
 
   const handlePress = async () => {
-    if (locked) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      scale.value = withSpring(0.9, springConfig, () => {
-        scale.value = withSpring(1, springConfig);
-      });
-      onLockedPress?.();
-      return;
-    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     scale.value = withSpring(0.9, springConfig, () => {
       scale.value = withSpring(1, springConfig);
@@ -76,12 +66,6 @@ export function SpeakButton({ text, size = "medium", locked = false, onLockedPre
   const buttonSize = size === "small" ? 32 : size === "large" ? 56 : 44;
   const iconSize = size === "small" ? 16 : size === "large" ? 28 : 22;
 
-  const bgColor = locked
-    ? `${Colors.light.primary}55`
-    : isSpeaking
-    ? Colors.light.secondary
-    : Colors.light.primary;
-
   return (
     <AnimatedPressable
       onPress={handlePress}
@@ -91,14 +75,14 @@ export function SpeakButton({ text, size = "medium", locked = false, onLockedPre
           width: buttonSize,
           height: buttonSize,
           borderRadius: buttonSize / 2,
-          backgroundColor: bgColor,
+          backgroundColor: isSpeaking ? Colors.light.secondary : Colors.light.primary,
         },
         animatedStyle,
       ]}
-      testID={locked ? "speak-button-locked" : "speak-button"}
+      testID="speak-button"
     >
       <Feather
-        name={locked ? "lock" : "volume-2"}
+        name={isSpeaking ? "volume-2" : "volume-2"}
         size={iconSize}
         color="#FFFFFF"
       />

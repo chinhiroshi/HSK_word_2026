@@ -81,7 +81,7 @@ export default function ProfileScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { t, lang, setLang } = useI18n();
-  const { isPremium, debugOverride, setDebugOverride } = useSubscription();
+  const { isPremium } = useSubscription();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { updateInfo, recheckUpdate } = useAppUpdate();
 
@@ -529,98 +529,6 @@ export default function ProfileScreen() {
           </View>
         </View>
       )}
-
-      {__DEV__ ? (
-        <View
-          style={[
-            styles.notifCard,
-            { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-          ]}
-        >
-          <View style={styles.notifContent}>
-            <View style={[styles.notifIcon, { backgroundColor: Colors.light.alert + "20" }]}>
-              <Feather name="tool" size={20} color={Colors.light.alert} />
-            </View>
-            <View style={styles.notifTextContainer}>
-              <ThemedText style={styles.notifTitle}>デバッグ: プレミアム状態</ThemedText>
-              <ThemedText style={[styles.notifSubtitle, { color: theme.textSecondary }]}>
-                {debugOverride === "on"
-                  ? "強制ON（無料状態テスト不可）"
-                  : debugOverride === "off"
-                  ? "強制OFF（無料状態でテスト中）"
-                  : `自動（現在: ${isPremium ? "プレミアム" : "無料"}）`}
-              </ThemedText>
-            </View>
-          </View>
-          <View style={{ flexDirection: "row", gap: 8, marginTop: 12 }}>
-            <Pressable
-              testID="button-debug-premium-auto"
-              onPress={() => setDebugOverride(null)}
-              style={[
-                styles.debugBtn,
-                {
-                  backgroundColor:
-                    debugOverride === null ? theme.primary : theme.backgroundSecondary,
-                  borderColor: debugOverride === null ? theme.primary : theme.border,
-                },
-              ]}
-            >
-              <ThemedText
-                style={[
-                  styles.debugBtnText,
-                  { color: debugOverride === null ? "#FFFFFF" : theme.text },
-                ]}
-              >
-                自動
-              </ThemedText>
-            </Pressable>
-            <Pressable
-              testID="button-debug-premium-on"
-              onPress={() => setDebugOverride("on")}
-              style={[
-                styles.debugBtn,
-                {
-                  backgroundColor:
-                    debugOverride === "on" ? Colors.light.success : theme.backgroundSecondary,
-                  borderColor:
-                    debugOverride === "on" ? Colors.light.success : theme.border,
-                },
-              ]}
-            >
-              <ThemedText
-                style={[
-                  styles.debugBtnText,
-                  { color: debugOverride === "on" ? "#FFFFFF" : theme.text },
-                ]}
-              >
-                強制ON
-              </ThemedText>
-            </Pressable>
-            <Pressable
-              testID="button-debug-premium-off"
-              onPress={() => setDebugOverride("off")}
-              style={[
-                styles.debugBtn,
-                {
-                  backgroundColor:
-                    debugOverride === "off" ? Colors.light.alert : theme.backgroundSecondary,
-                  borderColor:
-                    debugOverride === "off" ? Colors.light.alert : theme.border,
-                },
-              ]}
-            >
-              <ThemedText
-                style={[
-                  styles.debugBtnText,
-                  { color: debugOverride === "off" ? "#FFFFFF" : theme.text },
-                ]}
-              >
-                強制OFF
-              </ThemedText>
-            </Pressable>
-          </View>
-        </View>
-      ) : null}
 
       {/* Language toggle */}
       <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
@@ -1359,24 +1267,6 @@ const styles = StyleSheet.create({
   notifDesc: {
     fontSize: 12,
     fontFamily: "Nunito_400Regular",
-  },
-  notifSubtitle: {
-    fontSize: 12,
-    fontFamily: "Nunito_400Regular",
-    marginTop: 2,
-  },
-  debugBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  debugBtnText: {
-    fontSize: 13,
-    fontWeight: "700",
-    fontFamily: "Nunito_700Bold",
   },
   notifInfoBox: {
     flexDirection: "row",

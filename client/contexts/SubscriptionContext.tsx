@@ -10,9 +10,6 @@ const REVENUECAT_API_KEY =
   "appl_BVVXQEBFhgNtNBvWEACExXHMPJc";
 const PREMIUM_ENTITLEMENT_ID = "premium";
 const FREE_WORDS_LIMIT = 50;
-const DEBUG_OVERRIDE_KEY = "@chinese_master_debug_premium_override";
-
-export type DebugPremiumOverride = "on" | "off" | null;
 
 interface SubscriptionState {
   isPremium: boolean;
@@ -29,8 +26,6 @@ interface SubscriptionContextType extends SubscriptionState {
   availablePackages: PurchasesPackage[];
   currentOffering: string | null;
   initError: string | null;
-  debugOverride: DebugPremiumOverride;
-  setDebugOverride: (value: DebugPremiumOverride) => Promise<void>;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType>({
@@ -45,8 +40,6 @@ const SubscriptionContext = createContext<SubscriptionContextType>({
   availablePackages: [],
   currentOffering: null,
   initError: null,
-  debugOverride: null,
-  setDebugOverride: async () => {},
 });
 
 export function useSubscription() {
@@ -58,40 +51,13 @@ async function checkPremiumStatus(customerInfo: CustomerInfo): Promise<boolean> 
 }
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
-  const [revenueCatPremium, setRevenueCatPremium] = useState(false);
-  const [debugOverride, setDebugOverrideState] = useState<DebugPremiumOverride>(null);
+  const [isPremium, setIsPremium] = useState(false);
   const [loading, setLoading] = useState(true);
   const [availablePackages, setAvailablePackages] = useState<PurchasesPackage[]>([]);
   const [currentOffering, setCurrentOffering] = useState<string | null>(null);
   const [initError, setInitError] = useState<string | null>(null);
 
-  const isPremium =
-    debugOverride === "on" ? true : debugOverride === "off" ? false : revenueCatPremium;
-
-  const setDebugOverride = useCallback(async (value: DebugPremiumOverride) => {
-    setDebugOverrideState(value);
-    try {
-      if (value === null) {
-        await AsyncStorage.removeItem(DEBUG_OVERRIDE_KEY);
-      } else {
-        await AsyncStorage.setItem(DEBUG_OVERRIDE_KEY, value);
-      }
-    } catch (e) {
-      console.warn("[SubscriptionContext] Failed to persist debug override:", e);
-    }
-  }, []);
-
   useEffect(() => {
-    (async () => {
-      try {
-        const stored = await AsyncStorage.getItem(DEBUG_OVERRIDE_KEY);
-        if (stored === "on" || stored === "off") {
-          setDebugOverrideState(stored);
-        }
-      } catch (e) {
-        console.warn("[SubscriptionContext] Failed to load debug override:", e);
-      }
-    })();
     initializeRevenueCat();
   }, []);
 
@@ -113,7 +79,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       console.log("[RevenueCat] Getting customer info...");
       const customerInfo = await Purchases.getCustomerInfo();
       const premium = await checkPremiumStatus(customerInfo);
-      setRevenueCatPremium(premium);
+      setIsPremium(premium);
       console.log("[RevenueCat] Premium status:", premium);
       console.log("[RevenueCat] Active entitlements:", Object.keys(customerInfo.entitlements.active));
 
@@ -153,7 +119,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       }
 
       Purchases.addCustomerInfoUpdateListener((info) => {
-        checkPremiumStatus(info).then(setRevenueCatPremium);
+        checkPremiumStatus(info).then(setIsPremium);
       });
     } catch (e: any) {
       console.warn("[RevenueCat] Initialization failed:", e?.message || e);
@@ -173,10 +139,12 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   );
 
   const isGroupLocked = useCallback(
-    (_groupIndex: number, _hskLevel?: number) => {
-      return false;
+    (groupIndex: number, hskLevel?: number) => {
+      if (isPremium) return false;
+      if (hskLevel !== undefined && isFreeLevel(hskLevel)) return false;
+      return groupIndex > 0;
     },
-    []
+    [isPremium, isFreeLevel]
   );
 
   const isWordIndexLocked = useCallback(
@@ -205,7 +173,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
       const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
       const premium = await checkPremiumStatus(customerInfo);
-      setRevenueCatPremium(premium);
+      setIsPremium(premium);
       console.log("[RevenueCat] Purchase result - premium:", premium);
       return { success: premium };
     } catch (e: any) {
@@ -239,7 +207,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       console.log("[RevenueCat] Restoring purchases...");
       const customerInfo = await Purchases.restorePurchases();
       const premium = await checkPremiumStatus(customerInfo);
-      setRevenueCatPremium(premium);
+      setIsPremium(premium);
       console.log("[RevenueCat] Restore result - premium:", premium);
       if (!premium) {
         return { success: false, error: "復元可能なサブスクリプションが見つかりませんでした。" };
@@ -266,8 +234,6 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         availablePackages,
         currentOffering,
         initError,
-        debugOverride,
-        setDebugOverride,
       }}
     >
       {children}

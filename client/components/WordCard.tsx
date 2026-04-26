@@ -8,19 +8,15 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
-import { MaskedPremium } from "@/components/MaskedPremium";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
-import { useSubscription } from "@/contexts/SubscriptionContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getPinyin } from "@/lib/pinyin";
-import type { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { speakChinese } from "@/lib/speech";
 
 interface WordCardProps {
   word: Word;
@@ -42,7 +38,7 @@ const springConfig: WithSpringConfig = {
 export function WordCard({ 
   word, 
   index, 
-  showLongExample = false,
+  showLongExample = true,
   onPress, 
   onMarkUnmemorized, 
   onClearMark,
@@ -50,8 +46,6 @@ export function WordCard({
 }: WordCardProps) {
   const { theme } = useTheme();
   const { lang } = useI18n();
-  const { isPremium } = useSubscription();
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const scale = useSharedValue(1);
   const markScale = useSharedValue(1);
 
@@ -71,19 +65,8 @@ export function WordCard({
     scale.value = withSpring(1, springConfig);
   };
 
-  const requirePremium = (e: GestureResponderEvent): boolean => {
-    if (!isPremium) {
-      e.stopPropagation();
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      navigation.navigate("Paywall");
-      return true;
-    }
-    return false;
-  };
-
   const handleMarkUnmemorized = (e: GestureResponderEvent) => {
     e.stopPropagation();
-    if (requirePremium(e)) return;
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -93,7 +76,6 @@ export function WordCard({
 
   const handleClearMark = (e: GestureResponderEvent) => {
     e.stopPropagation();
-    if (requirePremium(e)) return;
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -103,7 +85,6 @@ export function WordCard({
 
   const handleMarkMemorized = (e: GestureResponderEvent) => {
     e.stopPropagation();
-    if (requirePremium(e)) return;
     markScale.value = withSpring(1.3, springConfig, () => {
       markScale.value = withSpring(1, springConfig);
     });
@@ -122,10 +103,8 @@ export function WordCard({
     ? Colors.light.success
     : "transparent";
 
+  const speakText = `${word.word}。${word.exampleSentence}`;
   const wordPinyin = word.pinyin || getPinyin(word.word);
-  const handleLockedSpeak = () => {
-    navigation.navigate("Paywall");
-  };
 
   return (
     <Animated.View
@@ -172,7 +151,7 @@ export function WordCard({
                 </View>
               ) : null}
             </View>
-            <SpeakButton text={word.word} size="small" />
+            <SpeakButton text={speakText} size="small" />
           </View>
 
           <View style={styles.markActions}>
@@ -251,46 +230,26 @@ export function WordCard({
         </View>
 
         <View style={styles.exampleRow}>
-          <View style={styles.exampleLine}>
-            <View style={styles.exampleTextWrap}>
-              <MaskedPremium isLocked={!isPremium}>
-                <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
-                  {word.exampleSentence}
-                </ThemedText>
-              </MaskedPremium>
-            </View>
-            <SpeakButton
-              text={word.exampleSentence}
-              size="small"
-              locked={!isPremium}
-              onLockedPress={handleLockedSpeak}
-            />
-          </View>
-
+          <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
+            {word.exampleSentence}
+          </ThemedText>
           {showLongExample && word.longExample ? (
-            <View style={styles.longExampleLine}>
-              <View style={styles.exampleTextWrap}>
-                <MaskedPremium isLocked={!isPremium}>
-                  <ThemedText style={[styles.longExample, { color: theme.text }]}>
-                    {word.longExample}
-                  </ThemedText>
-                  {word.longExampleTranslation ? (
-                    <ThemedText
-                      style={[styles.longExampleTranslation, { color: theme.textSecondary }]}
-                    >
-                      {lang === "en" && word.longExampleEnglish
-                        ? word.longExampleEnglish
-                        : word.longExampleTranslation}
-                    </ThemedText>
-                  ) : null}
-                </MaskedPremium>
-              </View>
-              <SpeakButton
-                text={word.longExample}
-                size="small"
-                locked={!isPremium}
-                onLockedPress={handleLockedSpeak}
-              />
+            <View style={styles.longExampleRow}>
+              <ThemedText style={[styles.longExample, { color: theme.textSecondary }]}>
+                {word.longExample}
+              </ThemedText>
+              <Pressable
+                testID={`button-speak-long-${word.id}`}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  speakChinese(word.longExample || "");
+                }}
+                style={[styles.longExampleSpeakButton, { backgroundColor: `${theme.primary}15` }]}
+                hitSlop={8}
+              >
+                <Feather name="volume-2" size={14} color={theme.primary} />
+              </Pressable>
             </View>
           ) : null}
         </View>
@@ -401,28 +360,29 @@ const styles = StyleSheet.create({
   exampleRow: {
     paddingLeft: 40,
   },
-  exampleLine: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  exampleTextWrap: {
-    flex: 1,
-  },
   exampleSentence: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
   },
-  longExampleLine: {
+  longExampleRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: Spacing.sm,
-    marginTop: Spacing.xs,
+    marginTop: 4,
+    gap: Spacing.xs,
   },
   longExample: {
+    flex: 1,
     fontSize: 15,
     fontFamily: "Nunito_400Regular",
     lineHeight: 22,
+  },
+  longExampleSpeakButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 0,
   },
   longExampleTranslation: {
     fontSize: 13,

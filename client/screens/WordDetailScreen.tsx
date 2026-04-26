@@ -17,9 +17,7 @@ import Animated, {
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
-import { MaskedPremium } from "@/components/MaskedPremium";
 import { useTheme } from "@/hooks/useTheme";
-import { useSubscription } from "@/contexts/SubscriptionContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWord, toggleMemorized } from "@/lib/storage";
@@ -43,14 +41,9 @@ export default function WordDetailScreen() {
   const safeHeaderPadding = useSafeHeaderPadding();
   const { theme } = useTheme();
   const { t, lang } = useI18n();
-  const { isPremium } = useSubscription();
   const route = useRoute<RouteProps>();
   const navigation = useNavigation<NavigationProp>();
   const { wordId } = route.params;
-
-  const handleLockedSpeak = () => {
-    navigation.navigate("Paywall");
-  };
 
   const [word, setWord] = useState<Word | null>(null);
   const [loading, setLoading] = useState(true);
@@ -195,24 +188,17 @@ export default function WordDetailScreen() {
         >
           <View style={styles.exampleHeader}>
             <ThemedText style={styles.sectionTitle}>{t("example_sentence")}</ThemedText>
-            <SpeakButton
-              text={word.exampleSentence}
-              size="medium"
-              locked={!isPremium}
-              onLockedPress={handleLockedSpeak}
-            />
+            <SpeakButton text={word.exampleSentence} size="medium" />
           </View>
-          <MaskedPremium isLocked={!isPremium} showLabel>
-            <ThemedText style={styles.exampleSentence}>
-              {word.exampleSentence}
-            </ThemedText>
-            <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
-              {word.examplePinyin || getPinyin(word.exampleSentence)}
-            </ThemedText>
-            <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-              {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
-            </ThemedText>
-          </MaskedPremium>
+          <ThemedText style={styles.exampleSentence}>
+            {word.exampleSentence}
+          </ThemedText>
+          <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
+            {word.examplePinyin || getPinyin(word.exampleSentence)}
+          </ThemedText>
+          <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
+            {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
+          </ThemedText>
         </View>
 
         {word.longExample ? (
@@ -224,25 +210,16 @@ export default function WordDetailScreen() {
           >
             <View style={styles.exampleHeader}>
               <ThemedText style={styles.sectionTitle}>{t("long_example")}</ThemedText>
-              <SpeakButton
-                text={word.longExample}
-                size="medium"
-                locked={!isPremium}
-                onLockedPress={handleLockedSpeak}
-              />
+              <SpeakButton text={word.longExample} size="medium" />
             </View>
-            <MaskedPremium isLocked={!isPremium} showLabel>
-              <ThemedText style={styles.longExampleSentence}>
-                {word.longExample}
+            <ThemedText style={styles.exampleSentence}>
+              {word.longExample}
+            </ThemedText>
+            {(lang === "en" ? (word.longExampleEnglish || word.longExampleTranslation) : word.longExampleTranslation) ? (
+              <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
+                {lang === "en" && word.longExampleEnglish ? word.longExampleEnglish : word.longExampleTranslation}
               </ThemedText>
-              {word.longExampleTranslation ? (
-                <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-                  {lang === "en" && word.longExampleEnglish
-                    ? word.longExampleEnglish
-                    : word.longExampleTranslation}
-                </ThemedText>
-              ) : null}
-            </MaskedPremium>
+            ) : null}
           </View>
         ) : null}
 
@@ -370,13 +347,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
     lineHeight: 32,
-    marginBottom: Spacing.sm,
-  },
-  longExampleSentence: {
-    fontSize: 18,
-    fontWeight: "600",
-    fontFamily: "Nunito_600SemiBold",
-    lineHeight: 28,
     marginBottom: Spacing.sm,
   },
   examplePinyin: {

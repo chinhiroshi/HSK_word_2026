@@ -60,8 +60,8 @@ export default function WordListScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
-  const [groupByPos, setGroupByPos] = useState(false);
   const [showLongExample, setShowLongExample] = useState(false);
+  const [groupByPos, setGroupByPos] = useState(false);
 
   const loadWords = useCallback(async () => {
     const data = await getWords();
@@ -96,11 +96,12 @@ export default function WordListScreen() {
             }}
             testID="toggle-long-example"
           >
-            <Feather name="align-left" size={12} color={showLongExample ? theme.primary : theme.textSecondary} />
+            <Feather name="file-text" size={12} color={showLongExample ? theme.primary : theme.textSecondary} />
             <ThemedText style={{ fontSize: 11, fontFamily: "Nunito_600SemiBold", color: showLongExample ? theme.primary : theme.textSecondary }}>
               長文
             </ThemedText>
           </Pressable>
+
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -127,7 +128,7 @@ export default function WordListScreen() {
         </View>
       ),
     });
-  }, [navigation, startIndex, endIndex, groupByPos, showLongExample, theme]);
+  }, [navigation, startIndex, endIndex, showLongExample, groupByPos, theme]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
