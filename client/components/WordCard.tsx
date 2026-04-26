@@ -122,7 +122,7 @@ export function WordCard({
     ? Colors.light.success
     : "transparent";
 
-  const speakText = `${word.word}。${word.exampleSentence}`;
+  const speakText = isLocked ? word.word : `${word.word}。${word.exampleSentence}`;
   const wordPinyin = word.pinyin || getPinyin(word.word);
 
   return (

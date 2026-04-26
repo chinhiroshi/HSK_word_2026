@@ -63,7 +63,7 @@ function AudioWordCard({
     ? Colors.light.success
     : "transparent";
 
-  const speakText = `${word.word}。${word.exampleSentence}`;
+  const speakText = isLocked ? word.word : `${word.word}。${word.exampleSentence}`;
 
   const handleMarkUnmemorized = () => {
     if (isLocked) { onPremiumPress(); return; }
