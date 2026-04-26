@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
+import { MaskedPremium } from "@/components/MaskedPremium";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
@@ -41,7 +42,7 @@ const springConfig: WithSpringConfig = {
 export function WordCard({ 
   word, 
   index, 
-  showLongExample: _showLongExample = true,
+  showLongExample = false,
   onPress, 
   onMarkUnmemorized, 
   onClearMark,
@@ -121,8 +122,10 @@ export function WordCard({
     ? Colors.light.success
     : "transparent";
 
-  const speakText = `${word.word}。${word.exampleSentence}`;
   const wordPinyin = word.pinyin || getPinyin(word.word);
+  const handleLockedSpeak = () => {
+    navigation.navigate("Paywall");
+  };
 
   return (
     <Animated.View
@@ -169,7 +172,7 @@ export function WordCard({
                 </View>
               ) : null}
             </View>
-            <SpeakButton text={speakText} size="small" />
+            <SpeakButton text={word.word} size="small" />
           </View>
 
           <View style={styles.markActions}>
@@ -248,9 +251,48 @@ export function WordCard({
         </View>
 
         <View style={styles.exampleRow}>
-          <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
-            {word.exampleSentence}
-          </ThemedText>
+          <View style={styles.exampleLine}>
+            <View style={styles.exampleTextWrap}>
+              <MaskedPremium isLocked={!isPremium}>
+                <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
+                  {word.exampleSentence}
+                </ThemedText>
+              </MaskedPremium>
+            </View>
+            <SpeakButton
+              text={word.exampleSentence}
+              size="small"
+              locked={!isPremium}
+              onLockedPress={handleLockedSpeak}
+            />
+          </View>
+
+          {showLongExample && word.longExample ? (
+            <View style={styles.longExampleLine}>
+              <View style={styles.exampleTextWrap}>
+                <MaskedPremium isLocked={!isPremium}>
+                  <ThemedText style={[styles.longExample, { color: theme.text }]}>
+                    {word.longExample}
+                  </ThemedText>
+                  {word.longExampleTranslation ? (
+                    <ThemedText
+                      style={[styles.longExampleTranslation, { color: theme.textSecondary }]}
+                    >
+                      {lang === "en" && word.longExampleEnglish
+                        ? word.longExampleEnglish
+                        : word.longExampleTranslation}
+                    </ThemedText>
+                  ) : null}
+                </MaskedPremium>
+              </View>
+              <SpeakButton
+                text={word.longExample}
+                size="small"
+                locked={!isPremium}
+                onLockedPress={handleLockedSpeak}
+              />
+            </View>
+          ) : null}
         </View>
       </Pressable>
     </Animated.View>
@@ -359,29 +401,28 @@ const styles = StyleSheet.create({
   exampleRow: {
     paddingLeft: 40,
   },
+  exampleLine: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  exampleTextWrap: {
+    flex: 1,
+  },
   exampleSentence: {
     fontSize: 14,
     fontFamily: "Nunito_400Regular",
   },
-  longExampleRow: {
+  longExampleLine: {
     flexDirection: "row",
     alignItems: "flex-start",
-    marginTop: 4,
-    gap: Spacing.xs,
+    gap: Spacing.sm,
+    marginTop: Spacing.xs,
   },
   longExample: {
-    flex: 1,
     fontSize: 15,
     fontFamily: "Nunito_400Regular",
     lineHeight: 22,
-  },
-  longExampleSpeakButton: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 0,
   },
   longExampleTranslation: {
     fontSize: 13,

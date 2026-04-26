@@ -23,12 +23,17 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Set start AND end position for playback range
   - Free users limited to first 50 words (except HSK1 which is fully free); premium banner links to Paywall
 - **Subscription (Freemium Model)**:
-  - **All words are viewable for free** (browse, listen TTS, see pinyin/translation/example)
+  - **Free**: 単語本体（中国語・ピンイン・訳・品詞）と単語の発音再生（SpeakButton）は全単語で利用可能
   - **Premium gates**:
     - 覚えた / 覚えてない / 苦手 マークボタン（学習進捗のトラッキング）— タップで Paywall に遷移
+    - 例文（短文・長文）の表示は MaskedPremium で覆われる（iOS/Android は BlurView、Web は半透明オーバーレイ）。タップで Paywall に遷移
+    - 例文の発音再生（短文・長文の SpeakButton）は錠アイコン表示でロック、タップで Paywall に遷移
     - 音声再生（連続再生）は従来通り HSK1 全部・HSK2-6 は最初の50語のみ無料
   - `isGroupLocked` は常に false を返す（グループロックは廃止）
   - `isWordIndexLocked` は AudioPlayback の連続再生制限のみで使用継続
+  - `MaskedPremium` コンポーネントが例文マスキングを担当。`SpeakButton` は `locked` / `onLockedPress` props で例文音声をゲート
+  - WordListScreen のヘッダー右に「長文」トグル（align-left アイコン）。ON で WordCard の長文例文行を表示（マスク済み）
+  - WordDetailScreen も同様: 例文カード本文を MaskedPremium で覆い、長文があれば長文カードを追加表示（同じくマスク + ロック付き発音ボタン）
   - SubscriptionContext manages state via RevenueCat SDK (react-native-purchases)
   - RevenueCat handles purchase, restore, and entitlement checking ("premium" entitlement)
   - API key passed via app.config.js extra → Constants.expoConfig.extra.revenueCatApiKey
