@@ -238,7 +238,7 @@ function AudioWordCard({
 export default function AudioWordListScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
-  const safeHeaderPadding = headerHeight > 0 ? headerHeight : insets.top + 56;
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<AudioWordListRouteProp>();

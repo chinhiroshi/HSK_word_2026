@@ -54,7 +54,7 @@ export default function SprintStudySessionScreen() {
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
-  const safeHeaderPadding = headerHeight > 0 ? headerHeight : insets.top + 56;
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const { theme } = useTheme();
   const { t, lang } = useI18n();
   const { sprintData, completePhase, getStudyWords, getCellPhaseProgress, currentLevel } = useSprint();
