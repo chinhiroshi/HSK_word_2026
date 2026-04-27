@@ -47,6 +47,7 @@ export default function SprintSetupScreen() {
   const fromOnboarding = !!(route.params as any)?.fromOnboarding;
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const { theme } = useTheme();
   const { t } = useI18n();
   const { setupSprint } = useSprint();
@@ -185,7 +186,7 @@ export default function SprintSetupScreen() {
         <ScrollView
           contentContainerStyle={[
             styles.content,
-            { paddingTop: headerHeight + Spacing.xl, paddingBottom: insets.bottom + Spacing["3xl"] },
+            { paddingTop: safeHeaderPadding + Spacing.xl, paddingBottom: insets.bottom + Spacing["3xl"] },
           ]}
           keyboardShouldPersistTaps="handled"
         >

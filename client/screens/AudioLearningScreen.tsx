@@ -115,6 +115,7 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
 export default function AudioLearningScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
@@ -219,7 +220,7 @@ export default function AudioLearningScreen() {
         style={[
           styles.summaryCard,
           {
-            marginTop: headerHeight + Spacing.md,
+            marginTop: safeHeaderPadding + Spacing.md,
             backgroundColor: theme.backgroundDefault,
             borderColor: theme.border,
           },

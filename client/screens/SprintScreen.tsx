@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -607,6 +608,8 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
 export default function SprintScreen() {
   const navigation = useNavigation<NavigationProp>();
   const headerHeight = useHeaderHeight();
+  const insets = useSafeAreaInsets();
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { t } = useI18n();
@@ -757,7 +760,7 @@ export default function SprintScreen() {
   if (loading) {
     return (
       <ThemedView style={styles.container}>
-        <View style={[styles.centered, { paddingTop: headerHeight + Spacing.xl }]}>
+        <View style={[styles.centered, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
           <ThemedText style={{ color: theme.textSecondary }}>{t("loading")}</ThemedText>
         </View>
       </ThemedView>
@@ -769,7 +772,7 @@ export default function SprintScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingTop: headerHeight + Spacing.xl, paddingBottom: tabBarHeight + Spacing["3xl"] },
+          { paddingTop: safeHeaderPadding + Spacing.xl, paddingBottom: tabBarHeight + Spacing["3xl"] },
         ]}
       >
         <View style={styles.topBar}>

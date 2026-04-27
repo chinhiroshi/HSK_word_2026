@@ -78,6 +78,7 @@ const HSK_WORD_COUNTS: Record<HskLevel, number> = {
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { t, lang, setLang } = useI18n();
@@ -311,7 +312,7 @@ export default function ProfileScreen() {
       contentContainerStyle={[
         styles.content,
         {
-          paddingTop: headerHeight + Spacing.xl,
+          paddingTop: safeHeaderPadding + Spacing.xl,
           paddingBottom: tabBarHeight + Spacing.xl,
         },
       ]}

@@ -122,6 +122,7 @@ export default function SprintTestScreen() {
   const navigation = useNavigation<NavigationProp>();
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const { theme } = useTheme();
   const { completeSession, getTestWords, sprintData, currentLevel } = useSprint();
 
@@ -233,7 +234,7 @@ export default function SprintTestScreen() {
 
   if (loading) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <ThemedText style={{ color: theme.textSecondary }}>{t("preparing_test")}</ThemedText>
         </View>
@@ -243,7 +244,7 @@ export default function SprintTestScreen() {
 
   if (cardWords.length === 0) {
     return (
-      <ThemedView style={[styles.container, { paddingTop: headerHeight + Spacing.xl }]}>
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <Feather name="check-circle" size={56} color={Colors.light.success} />
           <ThemedText style={styles.emptyTitle}>{t("no_test_words")}</ThemedText>
@@ -276,7 +277,7 @@ export default function SprintTestScreen() {
         ) : null}
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={[styles.resultScrollContent, { paddingTop: headerHeight + Spacing.xl }]}
+          contentContainerStyle={[styles.resultScrollContent, { paddingTop: safeHeaderPadding + Spacing.xl }]}
         >
           <Animated.View entering={FadeIn} style={styles.resultInner}>
             <View style={[styles.scoreCircle, { borderColor: cleared ? Colors.light.success : Colors.light.alert }]}>
@@ -336,7 +337,7 @@ export default function SprintTestScreen() {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingTop: headerHeight + Spacing.xl, paddingBottom: insets.bottom + Spacing["3xl"] },
+          { paddingTop: safeHeaderPadding + Spacing.xl, paddingBottom: insets.bottom + Spacing["3xl"] },
         ]}
       >
         <View style={styles.progressSection}>

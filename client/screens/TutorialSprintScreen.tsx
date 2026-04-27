@@ -47,6 +47,7 @@ export default function TutorialSprintScreen() {
   const navigation = useNavigation<NavigationProp>();
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
+  const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const { theme } = useTheme();
   const { t } = useI18n();
   const { currentLevel } = useSprint();
@@ -157,7 +158,7 @@ export default function TutorialSprintScreen() {
         contentContainerStyle={[
           styles.content,
           {
-            paddingTop: headerHeight + Spacing.lg,
+            paddingTop: safeHeaderPadding + Spacing.lg,
             paddingBottom: insets.bottom + Spacing["3xl"],
           },
         ]}
