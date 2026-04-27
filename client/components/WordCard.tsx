@@ -266,12 +266,9 @@ export function WordCard({
 
         {isLocked ? (
           <View style={styles.exampleRow}>
-            <View style={[styles.lockedExampleMask, { backgroundColor: `${theme.primary}08`, borderColor: `${theme.primary}20` }]}>
-              <Feather name="lock" size={13} color={theme.primary} />
-              <ThemedText style={[styles.lockedExampleText, { color: theme.primary }]}>
-                {t("premium_unlock")}
-              </ThemedText>
-            </View>
+            <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
+              {word.exampleSentence}
+            </ThemedText>
           </View>
         ) : (
           <View style={styles.exampleRow}>
