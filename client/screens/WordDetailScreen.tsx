@@ -221,29 +221,17 @@ export default function WordDetailScreen() {
               <SpeakButton text={word.exampleSentence} size="medium" />
             )}
           </View>
-          {isLocked ? (
-            <Pressable
-              onPress={handleLockedAudioPress}
-              style={[styles.lockedExampleBlock, { backgroundColor: `${theme.primary}08`, borderColor: `${theme.primary}20` }]}
-            >
-              <Feather name="lock" size={18} color={theme.primary} />
-              <ThemedText style={[styles.lockedExampleBlockText, { color: theme.primary }]}>
-                {t("premium_unlock")}
-              </ThemedText>
-            </Pressable>
-          ) : (
-            <>
-              <ThemedText style={styles.exampleSentence}>
-                {word.exampleSentence}
-              </ThemedText>
-              <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
-                {word.examplePinyin || getPinyin(word.exampleSentence)}
-              </ThemedText>
-              <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
-                {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
-              </ThemedText>
-            </>
-          )}
+          <>
+            <ThemedText style={styles.exampleSentence}>
+              {word.exampleSentence}
+            </ThemedText>
+            <ThemedText style={[styles.examplePinyin, { color: theme.primary }]}>
+              {word.examplePinyin || getPinyin(word.exampleSentence)}
+            </ThemedText>
+            <ThemedText style={[styles.exampleTranslation, { color: theme.textSecondary }]}>
+              {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
+            </ThemedText>
+          </>
         </View>
 
         {/* Long example card */}

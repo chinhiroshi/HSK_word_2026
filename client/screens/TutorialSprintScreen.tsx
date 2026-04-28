@@ -40,7 +40,7 @@ type NavigationProp = NativeStackNavigationProp<
 >;
 
 const TUTORIAL_WORD_COUNT = 3;
-const TUTORIAL_STAMP_IMAGE = require("../../assets/images/panda-stamp-1.png");
+const TUTORIAL_STAMP_IMAGE = require("../../assets/images/panda-stamp-tutorial.png");
 
 type CardState = "pending" | "memorized" | "review";
 type Phase = "text-list" | "study-cards";

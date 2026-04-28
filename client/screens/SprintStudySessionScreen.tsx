@@ -6,6 +6,7 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -38,7 +39,7 @@ import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { getQuoteForStamp } from "@/data/quotes";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
-import { PlantIcon } from "@/components/SprintCellIcons";
+import { getPandaImage } from "@/data/pandaStamps";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -387,6 +388,8 @@ export default function SprintStudySessionScreen() {
 
     // ----- POST STAMP SCREEN -----
     if (showPostStamp) {
+      const isSpecial = sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false;
+      const stampImage = getPandaImage(studiedCellIndex, isSpecial);
       return (
         <ThemedView style={styles.container}>
           <ScrollView
@@ -394,8 +397,8 @@ export default function SprintStudySessionScreen() {
             showsVerticalScrollIndicator={false}
           >
             <Animated.View entering={FadeIn} style={styles.completeInner}>
-              <View style={[styles.stampCircle, { backgroundColor: Colors.light.success, marginBottom: Spacing.lg }]}>
-                <PlantIcon size={80} color="#fff" />
+              <View style={[styles.stampCircle, { backgroundColor: "transparent", marginBottom: Spacing.lg }]}>
+                <Image source={stampImage} style={{ width: 150, height: 150, borderRadius: 75 }} resizeMode="cover" />
               </View>
               <ThemedText style={styles.stampLabel}>{t("stamp_earned")}</ThemedText>
               <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
@@ -447,8 +450,12 @@ export default function SprintStudySessionScreen() {
       <ThemedView style={styles.container}>
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
-            <View style={[styles.stampCircle, { backgroundColor: Colors.light.success }]}>
-              <PlantIcon size={80} color="#fff" />
+            <View style={[styles.stampCircle, { backgroundColor: "transparent" }]}>
+              <Image
+                source={getPandaImage(studiedCellIndex, sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false)}
+                style={{ width: 150, height: 150, borderRadius: 75 }}
+                resizeMode="cover"
+              />
             </View>
             <ThemedText style={styles.stampLabel}>{t("stamp_earned")}</ThemedText>
           </Animated.View>

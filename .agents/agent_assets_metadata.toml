@@ -306,6 +306,12 @@ uri = "file://assets/images/onboarding-3.png"
 type = "image"
 title = "panda sprint stamp rally"
 
+[[generated]]
+id = "AkD_6i_M-z5qOII8I_MKa"
+uri = "file://assets/images/panda-stamp-tutorial.png"
+type = "image"
+title = "panda astronaut stamp"
+
 [[outputs]]
 id = "25ttI0-awxEyfFdb-9QYb"
 uri = "file://assets/images/icon.png"
