@@ -22,7 +22,7 @@ import { useSubscription } from "@/contexts/SubscriptionContext";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type WordListRouteProp = RouteProp<RootStackParamList, "WordList">;
 
-type FilterType = "all" | "memorized" | "unmemorized" | "struggled";
+type FilterType = "all" | "memorized" | "unmemorized";
 
 // Part-of-speech display order (JA labels → EN labels)
 const POS_ORDER_JA = [
@@ -147,9 +147,7 @@ export default function WordListScreen() {
       case "memorized":
         return groupWords.filter((w) => w.textMemorized);
       case "unmemorized":
-        return groupWords.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0);
-      case "struggled":
-        return groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0);
+        return groupWords.filter((w) => !w.textMemorized);
       default:
         return groupWords;
     }
@@ -157,9 +155,8 @@ export default function WordListScreen() {
 
   const stats = useMemo(() => {
     const memorized = groupWords.filter((w) => w.textMemorized).length;
-    const unmemorized = groupWords.filter((w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0).length;
-    const struggled = groupWords.filter((w) => (w.textUnmemorizedCount || 0) > 0).length;
-    return { total: groupWords.length, memorized, unmemorized, struggled };
+    const unmemorized = groupWords.filter((w) => !w.textMemorized).length;
+    return { total: groupWords.length, memorized, unmemorized };
   }, [groupWords]);
 
   // Build flat list data — either plain words or words with POS section headers
@@ -285,16 +282,7 @@ export default function WordListScreen() {
       return (
         <View style={styles.emptyFilterState}>
           <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-            マークした単語がありません
-          </ThemedText>
-        </View>
-      );
-    }
-    if (filter === "struggled") {
-      return (
-        <View style={styles.emptyFilterState}>
-          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-            苦手歴のある単語がありません
+            まだの単語がありません
           </ThemedText>
         </View>
       );
@@ -364,27 +352,6 @@ export default function WordListScreen() {
             </ThemedText>
           </Pressable>
 
-          <Pressable
-            onPress={() => handleFilterChange("struggled")}
-            style={[
-              styles.filterButton,
-              filter === "struggled" && { backgroundColor: Colors.light.alert },
-              filter !== "struggled" && { backgroundColor: theme.backgroundSecondary },
-            ]}
-            testID="filter-struggled"
-          >
-            <View style={styles.toggleContent}>
-              <Feather name="flag" size={13} color={filter === "struggled" ? "#FFFFFF" : Colors.light.alert} />
-              <ThemedText
-                style={[
-                  styles.filterButtonText,
-                  { color: filter === "struggled" ? "#FFFFFF" : Colors.light.alert },
-                ]}
-              >
-                苦手歴 ({stats.struggled})
-              </ThemedText>
-            </View>
-          </Pressable>
         </View>
 
       </View>
