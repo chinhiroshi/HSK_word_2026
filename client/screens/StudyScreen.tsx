@@ -74,7 +74,7 @@ export default function StudyScreen() {
       (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
     ).length;
     const needsWork = words.filter(
-      (w) => (w.textUnmemorizedCount || 0) > 0
+      (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) === 0
     ).length;
     return { total: words.length, memorized, needsWork };
   }, [words]);
@@ -87,7 +87,7 @@ export default function StudyScreen() {
         (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
       ).length;
       const unmemorizedCount = groupWords.filter(
-        (w) => (w.textUnmemorizedCount || 0) > 0
+        (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) === 0
       ).length;
 
       result.push({
