@@ -8,6 +8,7 @@ import {
   Modal,
   Pressable,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useSafeHeaderPadding } from "@/hooks/useSafeHeaderPadding";
@@ -343,48 +344,106 @@ export default function SprintStampGalleryScreen() {
 
                   return (
                     <Pressable key={colIdx} style={[styles.stampWrapper, { width: STAMP_SIZE }]} onPress={handleStampPress}>
-                      <View
-                        style={[
-                          styles.stampCircle,
-                          {
-                            width: STAMP_SIZE,
-                            height: STAMP_SIZE,
-                            borderRadius: STAMP_SIZE / 2,
-                            borderColor: isCompleted ? borderColor : theme.border,
-                            borderWidth: isCompleted ? 2.5 : 1.5,
-                            backgroundColor: isCompleted
-                              ? theme.backgroundDefault
-                              : theme.backgroundSubtle ?? "#F3F4F6",
-                          },
-                        ]}
-                      >
-                        {isCompleted ? (
-                          <Image
-                            source={
-                              isTutorial
-                                ? PANDA_STAMPS[1]
-                                : getPandaImage(cell.index, isSpecial)
-                            }
-                            style={[
-                              styles.pandaImage,
-                              { width: STAMP_SIZE - 6, height: STAMP_SIZE - 6, borderRadius: (STAMP_SIZE - 6) / 2 },
-                            ]}
-                            resizeMode="cover"
-                          />
-                        ) : isTutorial ? (
-                          <Feather
-                            name="award"
-                            size={Math.round(STAMP_SIZE * 0.42)}
-                            color={theme.border}
-                          />
-                        ) : (
-                          <ThemedText
-                            style={[styles.stampNumber, { color: theme.border, fontSize: STAMP_SIZE * 0.26 }]}
+                      {/* Tutorial stamp: special gold gradient border */}
+                      {isTutorial ? (
+                        isCompleted ? (
+                          <LinearGradient
+                            colors={["#FFD700", "#FFA500", "#FF6B35", "#FFD700"]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={{
+                              width: STAMP_SIZE + 6,
+                              height: STAMP_SIZE + 6,
+                              borderRadius: (STAMP_SIZE + 6) / 2,
+                              justifyContent: "center",
+                              alignItems: "center",
+                            }}
                           >
-                            {cell.index}
-                          </ThemedText>
-                        )}
-                      </View>
+                            <View style={{
+                              width: STAMP_SIZE,
+                              height: STAMP_SIZE,
+                              borderRadius: STAMP_SIZE / 2,
+                              backgroundColor: theme.backgroundDefault,
+                              justifyContent: "center",
+                              alignItems: "center",
+                              overflow: "hidden",
+                            }}>
+                              <Image
+                                source={PANDA_STAMPS[1]}
+                                style={{ width: STAMP_SIZE - 4, height: STAMP_SIZE - 4, borderRadius: (STAMP_SIZE - 4) / 2 }}
+                                resizeMode="cover"
+                              />
+                            </View>
+                            {/* Crown overlay */}
+                            <View style={{
+                              position: "absolute",
+                              top: -2,
+                              right: -2,
+                              backgroundColor: "#FFD700",
+                              borderRadius: 10,
+                              width: 20,
+                              height: 20,
+                              justifyContent: "center",
+                              alignItems: "center",
+                              borderWidth: 1.5,
+                              borderColor: "#fff",
+                            }}>
+                              <Feather name="star" size={11} color="#fff" />
+                            </View>
+                          </LinearGradient>
+                        ) : (
+                          <View style={{
+                            width: STAMP_SIZE + 6,
+                            height: STAMP_SIZE + 6,
+                            borderRadius: (STAMP_SIZE + 6) / 2,
+                            justifyContent: "center",
+                            alignItems: "center",
+                            borderWidth: 2,
+                            borderColor: "#FFD700",
+                            borderStyle: "dashed",
+                            backgroundColor: theme.backgroundSubtle ?? "#F3F4F6",
+                          }}>
+                            <Feather
+                              name="star"
+                              size={Math.round(STAMP_SIZE * 0.42)}
+                              color="#FFD700"
+                            />
+                          </View>
+                        )
+                      ) : (
+                        <View
+                          style={[
+                            styles.stampCircle,
+                            {
+                              width: STAMP_SIZE,
+                              height: STAMP_SIZE,
+                              borderRadius: STAMP_SIZE / 2,
+                              borderColor: isCompleted ? borderColor : theme.border,
+                              borderWidth: isCompleted ? 2.5 : 1.5,
+                              backgroundColor: isCompleted
+                                ? theme.backgroundDefault
+                                : theme.backgroundSubtle ?? "#F3F4F6",
+                            },
+                          ]}
+                        >
+                          {isCompleted ? (
+                            <Image
+                              source={getPandaImage(cell.index, isSpecial)}
+                              style={[
+                                styles.pandaImage,
+                                { width: STAMP_SIZE - 6, height: STAMP_SIZE - 6, borderRadius: (STAMP_SIZE - 6) / 2 },
+                              ]}
+                              resizeMode="cover"
+                            />
+                          ) : (
+                            <ThemedText
+                              style={[styles.stampNumber, { color: theme.border, fontSize: STAMP_SIZE * 0.26 }]}
+                            >
+                              {cell.index}
+                            </ThemedText>
+                          )}
+                        </View>
+                      )}
 
                       <View style={styles.stampMeta}>
                         <ThemedText
@@ -392,8 +451,9 @@ export default function SprintStampGalleryScreen() {
                             styles.stampDate,
                             {
                               color: isTutorial
-                                ? Colors.light.secondary
+                                ? "#FFA500"
                                 : theme.textSecondary,
+                              fontFamily: isTutorial ? "Nunito_700Bold" : "Nunito_400Regular",
                             },
                           ]}
                         >

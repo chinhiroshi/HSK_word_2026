@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -6,7 +6,9 @@ import {
   ScrollView,
   Modal,
   ActivityIndicator,
+  Animated,
 } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -56,6 +58,8 @@ export default function TutorialSprintScreen() {
   const [loading, setLoading] = useState(true);
   const [states, setStates] = useState<CardState[]>([]);
   const [showStamp, setShowStamp] = useState(false);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  const rotateAnim = useRef(new Animated.Value(0)).current;
   const [meaningRevealed, setMeaningRevealed] = useState<Set<string>>(new Set());
   const [phase, setPhase] = useState<Phase>("text-list");
   const [cardIndex, setCardIndex] = useState(0);
@@ -92,6 +96,23 @@ export default function TutorialSprintScreen() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (showStamp) {
+      const pulse = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulseAnim, { toValue: 1.12, duration: 800, useNativeDriver: true }),
+          Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+        ])
+      );
+      const rotate = Animated.loop(
+        Animated.timing(rotateAnim, { toValue: 1, duration: 8000, useNativeDriver: true })
+      );
+      pulse.start();
+      rotate.start();
+      return () => { pulse.stop(); rotate.stop(); };
+    }
+  }, [showStamp]);
 
   const allDone = useMemo(
     () => states.length > 0 && states.every((s) => s !== "pending"),
@@ -629,25 +650,66 @@ export default function TutorialSprintScreen() {
             contentContainerStyle={styles.modalCardContent}
             showsVerticalScrollIndicator={false}
           >
-            <View
-              style={[
-                styles.modalBadge,
-                { backgroundColor: Colors.light.secondary + "18" },
-              ]}
+            <LinearGradient
+              colors={["#FFD700", "#FFA500"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.modalBadgeGold}
             >
-              <ThemedText
-                style={[styles.modalBadgeText, { color: Colors.light.secondary }]}
-              >
-                Special
+              <Feather name="star" size={11} color="#fff" />
+              <ThemedText style={styles.modalBadgeGoldText}>
+                Special Stamp
               </ThemedText>
-            </View>
+              <Feather name="star" size={11} color="#fff" />
+            </LinearGradient>
 
             <View style={styles.stampWrap}>
-              <Image
-                source={TUTORIAL_STAMP_IMAGE}
-                style={styles.stampImg}
-                contentFit="contain"
-              />
+              {/* Rotating outer ring */}
+              <Animated.View
+                style={[
+                  styles.stampRing,
+                  {
+                    transform: [{
+                      rotate: rotateAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ["0deg", "360deg"],
+                      }),
+                    }],
+                  },
+                ]}
+              >
+                <LinearGradient
+                  colors={["#FFD700", "#FFA500", "#FF6B35", "#FFD700"]}
+                  style={styles.stampRingGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                />
+              </Animated.View>
+
+              {/* Pulsing stamp */}
+              <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+                <View style={styles.stampInnerBg}>
+                  <Image
+                    source={TUTORIAL_STAMP_IMAGE}
+                    style={styles.stampImg}
+                    contentFit="contain"
+                  />
+                </View>
+              </Animated.View>
+
+              {/* Sparkle stars */}
+              <View style={[styles.sparkle, { top: 0, right: 12 }]}>
+                <Feather name="star" size={14} color="#FFD700" />
+              </View>
+              <View style={[styles.sparkle, { top: 14, left: 4 }]}>
+                <Feather name="star" size={10} color="#FFA500" />
+              </View>
+              <View style={[styles.sparkle, { bottom: 4, right: 8 }]}>
+                <Feather name="star" size={12} color="#FFD700" />
+              </View>
+              <View style={[styles.sparkle, { bottom: 10, left: 10 }]}>
+                <Feather name="star" size={9} color="#FFA500" />
+              </View>
             </View>
 
             <ThemedText style={[styles.modalTitle, { color: theme.text }]}>
@@ -923,13 +985,51 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     letterSpacing: 0.5,
   },
+  modalBadgeGold: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
+    borderRadius: BorderRadius.full,
+  },
+  modalBadgeGoldText: {
+    fontSize: 11,
+    fontFamily: "Nunito_700Bold",
+    letterSpacing: 0.8,
+    color: "#fff",
+  },
   stampWrap: {
-    width: 140,
-    height: 140,
+    width: 180,
+    height: 180,
     justifyContent: "center",
     alignItems: "center",
   },
-  stampImg: { width: 140, height: 140 },
+  stampRing: {
+    position: "absolute",
+    width: 175,
+    height: 175,
+    borderRadius: 87.5,
+    overflow: "hidden",
+  },
+  stampRingGradient: {
+    width: 175,
+    height: 175,
+    borderRadius: 87.5,
+  },
+  stampInnerBg: {
+    width: 155,
+    height: 155,
+    borderRadius: 77.5,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  stampImg: { width: 148, height: 148 },
+  sparkle: {
+    position: "absolute",
+  },
   modalTitle: {
     fontSize: 19,
     fontFamily: "Nunito_700Bold",
