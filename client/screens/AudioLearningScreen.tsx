@@ -159,8 +159,12 @@ export default function AudioLearningScreen() {
       const endIndex = Math.min(i + GROUP_SIZE, totalWords);
       const groupWords = words.slice(i, endIndex);
       
-      const memorizedCount = groupWords.filter((w) => w.audioMemorized).length;
-      const needsWorkCount = groupWords.filter((w) => !w.audioMemorized).length;
+      const memorizedCount = groupWords.filter(
+        (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
+      ).length;
+      const needsWorkCount = groupWords.filter(
+        (w) => (w.audioUnmemorizedCount || 0) > 0
+      ).length;
       
       result.push({
         startIndex,
@@ -175,8 +179,12 @@ export default function AudioLearningScreen() {
   }, [words]);
 
   const totalStats = useMemo(() => {
-    const memorized = words.filter((w) => w.audioMemorized).length;
-    const needsWork = words.filter((w) => !w.audioMemorized).length;
+    const memorized = words.filter(
+      (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
+    ).length;
+    const needsWork = words.filter(
+      (w) => (w.audioUnmemorizedCount || 0) > 0
+    ).length;
     return { total: words.length, memorized, needsWork };
   }, [words]);
 
