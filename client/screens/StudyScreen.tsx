@@ -70,12 +70,8 @@ export default function StudyScreen() {
   };
 
   const totalStats = useMemo(() => {
-    const memorized = words.filter(
-      (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
-    ).length;
-    const needsWork = words.filter(
-      (w) => (w.textUnmemorizedCount || 0) > 0
-    ).length;
+    const memorized = words.filter((w) => w.textMemorized).length;
+    const needsWork = words.filter((w) => !w.textMemorized).length;
     return { total: words.length, memorized, needsWork };
   }, [words]);
 
@@ -83,12 +79,8 @@ export default function StudyScreen() {
     const result: WordGroup[] = [];
     for (let i = 0; i < words.length; i += GROUP_SIZE) {
       const groupWords = words.slice(i, Math.min(i + GROUP_SIZE, words.length));
-      const memorizedCount = groupWords.filter(
-        (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
-      ).length;
-      const unmemorizedCount = groupWords.filter(
-        (w) => (w.textUnmemorizedCount || 0) > 0
-      ).length;
+      const memorizedCount = groupWords.filter((w) => w.textMemorized).length;
+      const unmemorizedCount = groupWords.filter((w) => !w.textMemorized).length;
 
       result.push({
         id: `group-${i}`,
