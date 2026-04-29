@@ -628,6 +628,7 @@ export default function SprintScreen() {
   const [canSkip, setCanSkip] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedCell, setSelectedCell] = useState(0);
+  const [reminderModalVisible, setReminderModalVisible] = useState(false);
   const [tutorialEarned, setTutorialEarned] = useState(true);
 
   useFocusEffect(
@@ -919,35 +920,74 @@ export default function SprintScreen() {
         </View>
 
         {isSetup ? (
-          <Pressable
-            testID="button-reset-sprint"
-            onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintSetup", { isChange: true }); }}
-            style={({ pressed }) => [
-              styles.resetLink,
-              { backgroundColor: theme.backgroundDefault, borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
-            ]}
-          >
-            <Feather name="settings" size={15} color={theme.textSecondary} />
-            <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>{t("change_settings")}</ThemedText>
-          </Pressable>
+          <View style={styles.bottomActionRow}>
+            <Pressable
+              testID="button-reset-sprint"
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); navigation.navigate("SprintSetup", { isChange: true }); }}
+              style={({ pressed }) => [
+                styles.resetLink,
+                { backgroundColor: theme.backgroundDefault, borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Feather name="settings" size={15} color={theme.textSecondary} />
+              <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>{t("change_settings")}</ThemedText>
+            </Pressable>
+            <Pressable
+              testID="button-open-sprint-reminder"
+              onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setReminderModalVisible(true); }}
+              style={({ pressed }) => [
+                styles.resetLink,
+                { backgroundColor: theme.backgroundDefault, borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
+              ]}
+            >
+              <Feather name="bell" size={15} color={theme.textSecondary} />
+              <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>{t("reminder_settings")}</ThemedText>
+            </Pressable>
+          </View>
         ) : null}
-
-        <View style={styles.reminderWrapper}>
-          <NotificationReminderCard
-            title={t("sprint_reminder_title")}
-            description={t("sprint_reminder_desc")}
-            infoText={t("sprint_reminder_info")}
-            iconName="bell"
-            accentColor={Colors.light.secondary}
-            testIdPrefix="sprint-notif"
-            getEnabled={getSprintNotifEnabled}
-            getTime={getSprintNotifTime}
-            enable={enableSprintNotification}
-            disable={disableSprintNotification}
-            sendTest={sendTestSprintNotification}
-          />
-        </View>
       </ScrollView>
+
+      <Modal
+        visible={reminderModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setReminderModalVisible(false)}
+      >
+        <Pressable
+          style={styles.reminderOverlay}
+          onPress={() => setReminderModalVisible(false)}
+        >
+          <Pressable
+            style={[styles.reminderSheet, { backgroundColor: theme.backgroundDefault }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.reminderSheetHeader}>
+              <ThemedText style={styles.reminderSheetTitle}>{t("reminder_settings")}</ThemedText>
+              <Pressable
+                testID="button-close-sprint-reminder"
+                onPress={() => setReminderModalVisible(false)}
+                style={({ pressed }) => [styles.reminderCloseBtn, { opacity: pressed ? 0.6 : 1 }]}
+                hitSlop={10}
+              >
+                <Feather name="x" size={22} color={theme.textSecondary} />
+              </Pressable>
+            </View>
+            <NotificationReminderCard
+              title={t("sprint_reminder_title")}
+              description={t("sprint_reminder_desc")}
+              infoText={t("sprint_reminder_info")}
+              iconName="bell"
+              accentColor={Colors.light.secondary}
+              testIdPrefix="sprint-notif"
+              getEnabled={getSprintNotifEnabled}
+              getTime={getSprintNotifTime}
+              enable={enableSprintNotification}
+              disable={disableSprintNotification}
+              sendTest={sendTestSprintNotification}
+            />
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <SessionModal
         visible={modalVisible}
@@ -1030,7 +1070,39 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   resetLinkText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
-  reminderWrapper: { marginTop: Spacing.xl },
+  bottomActionRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  reminderOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Spacing.xl,
+  },
+  reminderSheet: {
+    width: "100%",
+    maxWidth: 480,
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    gap: Spacing.md,
+  },
+  reminderSheetHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  reminderSheetTitle: {
+    fontSize: 16,
+    fontFamily: "Nunito_700Bold",
+  },
+  reminderCloseBtn: {
+    padding: Spacing.xs,
+  },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "flex-end" },
   modalSheet: { borderTopLeftRadius: BorderRadius.xl, borderTopRightRadius: BorderRadius.xl, padding: Spacing.xl, paddingBottom: Spacing["3xl"], gap: Spacing.md },
   modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: "center", marginBottom: Spacing.sm },

@@ -67,7 +67,7 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
     - 本文: 「HSK{N}: 暗記済み M/T (P%)・要復習 K」+ 状況別の推奨アクション (未開始/進行中/もうすぐ/制覇済)
     - 識別子: `chinese-master-study-reminder`、データ: `{ screen: "study" }` で文字学習タブへ遷移
     - 設定キー: `@chinese_master_study_notif_enabled` / `_hour` / `_minute`
-  - **スプリントリマインダー (スプリント画面の最下部)**: 毎日のスプリント学習継続を促す通知。
+  - **スプリントリマインダー (スプリント画面「リマインダー設定」ボタン → モーダル)**: 「設定を変更する」ボタンの隣に「リマインダー設定」ボタンを配置。タップするとモーダルが開き、その中で通知の ON/OFF・時刻・テスト送信を設定できる (画面に直接表示しない)。毎日のスプリント学習継続を促す通知。
     - タイトル: スプリント関連の励ましメッセージ
     - 本文: ランダムな中国名言 (QUOTES から)
     - 識別子: `chinese-master-sprint-reminder`、データ: `{ screen: "sprint" }` でスプリントタブへ遷移
