@@ -360,7 +360,7 @@ export default function WordListScreen() {
                 { color: filter === "unmemorized" ? "#FFFFFF" : Colors.light.secondary },
               ]}
             >
-              まだ ({stats.unmemorized})
+              未暗記 ({stats.unmemorized})
             </ThemedText>
           </Pressable>
 
