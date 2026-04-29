@@ -29,6 +29,7 @@ interface WordGroup {
   words: Word[];
   memorizedCount: number;
   unmemorizedCount: number;
+  notMemorizedCount: number;
 }
 
 export default function StudyScreen() {
@@ -92,6 +93,9 @@ export default function StudyScreen() {
       const unmemorizedCount = groupWords.filter(
         (w) => (w.textUnmemorizedCount || 0) > 0
       ).length;
+      const notMemorizedCount = groupWords.filter(
+        (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0
+      ).length;
 
       result.push({
         id: `group-${i}`,
@@ -100,6 +104,7 @@ export default function StudyScreen() {
         words: groupWords,
         memorizedCount,
         unmemorizedCount,
+        notMemorizedCount,
       });
     }
     return result;
@@ -167,6 +172,13 @@ export default function StudyScreen() {
             <Feather name="flag" size={14} color={Colors.light.secondary} />
             <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
               {item.unmemorizedCount}
+            </ThemedText>
+          </View>
+
+          <View style={[styles.statBadge, { backgroundColor: `${Colors.light.alert}20` }]}>
+            <Feather name="x-circle" size={14} color={Colors.light.alert} />
+            <ThemedText style={[styles.statText, { color: Colors.light.alert }]}>
+              {item.notMemorizedCount}
             </ThemedText>
           </View>
 

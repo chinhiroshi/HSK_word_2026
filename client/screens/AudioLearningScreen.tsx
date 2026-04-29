@@ -27,6 +27,7 @@ interface GroupInfo {
   endIndex: number;
   memorizedCount: number;
   needsWorkCount: number;
+  notMemorizedCount: number;
   totalCount: number;
 }
 
@@ -107,6 +108,12 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
             {group.needsWorkCount}
           </ThemedText>
         </View>
+        <View style={styles.statItem}>
+          <Feather name="x-circle" size={14} color={Colors.light.alert} />
+          <ThemedText style={[styles.statText, { color: Colors.light.alert }]}>
+            {group.notMemorizedCount}
+          </ThemedText>
+        </View>
       </View>
     </Pressable>
   );
@@ -165,12 +172,16 @@ export default function AudioLearningScreen() {
       const needsWorkCount = groupWords.filter(
         (w) => (w.audioUnmemorizedCount || 0) > 0
       ).length;
+      const notMemorizedCount = groupWords.filter(
+        (w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0
+      ).length;
       
       result.push({
         startIndex,
         endIndex,
         memorizedCount,
         needsWorkCount,
+        notMemorizedCount,
         totalCount: groupWords.length,
       });
     }
