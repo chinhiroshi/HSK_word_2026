@@ -35,7 +35,7 @@ import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
-import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
+import { getWords, resetProgress, resetNeedsWork, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
 import { speakChinese } from "@/lib/speech";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
@@ -262,6 +262,35 @@ export default function ProfileScreen() {
 
   const performReset = async () => {
     await resetProgress();
+    await loadData();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  };
+
+  const handleResetNeedsWork = (type: "text" | "audio") => {
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    const title = type === "text" ? t("reset_text_needs_work") : t("reset_audio_needs_work");
+    if (Platform.OS === "web") {
+      if (confirm(t("reset_needs_work_confirm"))) {
+        performResetNeedsWork(type);
+      }
+    } else {
+      Alert.alert(
+        title,
+        t("reset_needs_work_confirm"),
+        [
+          { text: t("cancel"), style: "cancel" },
+          {
+            text: t("reset_btn"),
+            style: "destructive",
+            onPress: () => performResetNeedsWork(type),
+          },
+        ]
+      );
+    }
+  };
+
+  const performResetNeedsWork = async (type: "text" | "audio") => {
+    await resetNeedsWork(type);
     await loadData();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
@@ -836,6 +865,18 @@ export default function ProfileScreen() {
                 </ThemedText>
               </View>
             </View>
+            {textStats.needsWork > 0 ? (
+              <Pressable
+                testID="button-reset-text-needs-work"
+                onPress={() => handleResetNeedsWork("text")}
+                style={[styles.needsWorkResetBtn, { borderColor: Colors.light.secondary + "60", backgroundColor: Colors.light.secondary + "10" }]}
+              >
+                <Feather name="rotate-ccw" size={13} color={Colors.light.secondary} />
+                <ThemedText style={[styles.needsWorkResetText, { color: Colors.light.secondary }]}>
+                  {t("reset_text_needs_work")}
+                </ThemedText>
+              </Pressable>
+            ) : null}
           </View>
 
           <View
@@ -888,6 +929,18 @@ export default function ProfileScreen() {
                 </ThemedText>
               </View>
             </View>
+            {audioStats.needsWork > 0 ? (
+              <Pressable
+                testID="button-reset-audio-needs-work"
+                onPress={() => handleResetNeedsWork("audio")}
+                style={[styles.needsWorkResetBtn, { borderColor: Colors.light.secondary + "60", backgroundColor: Colors.light.secondary + "10" }]}
+              >
+                <Feather name="rotate-ccw" size={13} color={Colors.light.secondary} />
+                <ThemedText style={[styles.needsWorkResetText, { color: Colors.light.secondary }]}>
+                  {t("reset_audio_needs_work")}
+                </ThemedText>
+              </Pressable>
+            ) : null}
           </View>
 
           <View
@@ -1302,6 +1355,21 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     marginBottom: Spacing.xl,
+  },
+  needsWorkResetBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: Spacing.md,
+    paddingVertical: 8,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    alignSelf: "flex-start",
+  },
+  needsWorkResetText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
   },
   langBtn: {
     borderWidth: 1,
