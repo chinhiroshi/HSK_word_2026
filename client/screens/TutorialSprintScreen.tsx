@@ -20,6 +20,7 @@ import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { SpeakButton } from "@/components/SpeakButton";
+import { ShareStampSheet } from "@/components/ShareStampSheet";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
@@ -58,6 +59,7 @@ export default function TutorialSprintScreen() {
   const [loading, setLoading] = useState(true);
   const [states, setStates] = useState<CardState[]>([]);
   const [showStamp, setShowStamp] = useState(false);
+  const [showShare, setShowShare] = useState(false);
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const [meaningRevealed, setMeaningRevealed] = useState<Set<string>>(new Set());
@@ -755,6 +757,31 @@ export default function TutorialSprintScreen() {
             })()}
 
             <Pressable
+              testID="button-tutorial-share"
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+                setShowShare(true);
+              }}
+              style={[
+                styles.shareInlineBtn,
+                {
+                  borderColor: Colors.light.secondary,
+                  backgroundColor: theme.backgroundDefault,
+                },
+              ]}
+            >
+              <Feather name="share-2" size={16} color={Colors.light.secondary} />
+              <ThemedText
+                style={[
+                  styles.shareInlineBtnText,
+                  { color: Colors.light.secondary },
+                ]}
+              >
+                {t("share_action")}
+              </ThemedText>
+            </Pressable>
+
+            <Pressable
               testID="button-tutorial-finish"
               onPress={handleFinish}
               style={[
@@ -769,6 +796,26 @@ export default function TutorialSprintScreen() {
           </ScrollView>
         </View>
       </Modal>
+
+      {(() => {
+        const q = HSK_QUOTES[currentLevel as 1 | 2 | 3 | 4 | 5 | 6];
+        return (
+          <ShareStampSheet
+            visible={showShare}
+            onClose={() => setShowShare(false)}
+            stampImage={TUTORIAL_STAMP_IMAGE}
+            stampLabel={t("tutorial_stamp_title")}
+            hskLevel={currentLevel}
+            stampCount={1}
+            isSpecial
+            quote={
+              q
+                ? { chinese: q.original, japanese: q.literal, source: q.source }
+                : null
+            }
+          />
+        );
+      })()}
     </ThemedView>
   );
 }
@@ -1042,11 +1089,26 @@ const styles = StyleSheet.create({
     lineHeight: 19,
   },
   finishBtn: {
-    marginTop: Spacing.md,
+    marginTop: Spacing.sm,
     alignSelf: "stretch",
     paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.full,
     alignItems: "center",
+  },
+  shareInlineBtn: {
+    marginTop: Spacing.md,
+    alignSelf: "stretch",
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1.5,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+  },
+  shareInlineBtnText: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
   },
   finishBtnText: {
     color: "#fff",

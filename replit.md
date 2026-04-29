@@ -46,6 +46,11 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Routes via `SprintSetup` with `fromOnboarding: true` param → `navigation.replace("TutorialSprint")` after setup
   - TutorialSprint stamp uses `panda-stamp-1.png` and is independent of `specialStamps` array
   - SprintStampGallery 表示: 「はじめての一歩」スタンプは常にグリッドの左上(最初のセル)に表示される。未獲得時は award アイコン、獲得済みは panda-stamp-1.png + secondary 色の枠。サマリーの集計(進捗%, スタンプ数, テスト数)からは除外され、純粋に7日サイクルの進捗を反映。
+- **SNS シェア機能**: スタンプ獲得モーダルとスタンプ帳の李白引用ポップアップに「シェア」ボタンを追加
+  - `client/components/ShareStampSheet.tsx`: react-native-view-shot + expo-sharing による画像化シェア
+  - パンダスタンプ画像 + HSK級 + 学習進捗 + 集めたスタンプ数 + 名言 + ユーザーコメント (140字以内) を 1枚の PNG としてキャプチャ
+  - キャプチャ失敗時は React Native `Share.share` でテキストフォールバック (#中国語マスター #HSK #中国語学習)
+  - 配置: TutorialSprintScreen "はじめての一歩" モーダル, SprintStampGalleryScreen 引用ポップアップ
 - **Sprint (スプリント)**: Stamp-rally style 7-day learning cycle with snake grid map
   - 29-cell snake grid (4 columns) showing learning progress as a map
   - Setup: Choose daily word count (10/20/30/50 or custom). Preset chips arranged as compact 2-column grid so the「決定」button is reachable without scrolling.

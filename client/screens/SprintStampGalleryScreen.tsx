@@ -17,6 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { SpeakButton } from "@/components/SpeakButton";
+import { ShareStampSheet } from "@/components/ShareStampSheet";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
@@ -48,6 +49,12 @@ export default function SprintStampGalleryScreen() {
   const { t, lang } = useI18n();
   const { sprintData, totalCells, currentLevel } = useSprint();
   const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
+  const [selectedStamp, setSelectedStamp] = useState<{
+    image: any;
+    label: string;
+    isSpecial: boolean;
+  } | null>(null);
+  const [showShare, setShowShare] = useState(false);
   const [tutorialEarned, setTutorialEarned] = useState(false);
 
   useFocusEffect(
@@ -262,11 +269,23 @@ export default function SprintStampGalleryScreen() {
                           japanese: hq.literal,
                           english: hq.literalEn,
                         });
+                        setSelectedStamp({
+                          image: TUTORIAL_STAMP,
+                          label: t("tutorial_stamp_label"),
+                          isSpecial: true,
+                        });
                       }
                       return;
                     }
                     const quote = getQuoteForStamp(cell.index, currentLevel);
-                    if (quote) setSelectedQuote(quote);
+                    if (quote) {
+                      setSelectedQuote(quote);
+                      setSelectedStamp({
+                        image: getPandaImage(cell.index, isSpecial),
+                        label: `No.${cell.index}`,
+                        isSpecial,
+                      });
+                    }
                   };
 
                   return (
@@ -423,17 +442,53 @@ export default function SprintStampGalleryScreen() {
                 <ThemedText style={[styles.modalJapanese, { color: theme.textSecondary }]}>
                   {lang === "en" && selectedQuote.english ? selectedQuote.english : selectedQuote.japanese}
                 </ThemedText>
-                <Pressable
-                  style={[styles.modalCloseBtn, { backgroundColor: theme.primary }]}
-                  onPress={() => setSelectedQuote(null)}
-                >
-                  <ThemedText style={styles.modalCloseBtnText}>{t("close")}</ThemedText>
-                </Pressable>
+                <View style={styles.modalActionRow}>
+                  <Pressable
+                    style={[styles.modalShareBtn, { borderColor: theme.primary }]}
+                    onPress={() => setShowShare(true)}
+                    testID="button-gallery-share"
+                  >
+                    <Feather name="share-2" size={16} color={theme.primary} />
+                    <ThemedText style={[styles.modalShareBtnText, { color: theme.primary }]}>
+                      {t("share_action")}
+                    </ThemedText>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.modalCloseBtnHalf, { backgroundColor: theme.primary }]}
+                    onPress={() => setSelectedQuote(null)}
+                  >
+                    <ThemedText style={styles.modalCloseBtnText}>{t("close")}</ThemedText>
+                  </Pressable>
+                </View>
               </>
             ) : null}
           </Pressable>
         </Pressable>
       </Modal>
+
+      {selectedStamp ? (
+        <ShareStampSheet
+          visible={showShare}
+          onClose={() => setShowShare(false)}
+          stampImage={selectedStamp.image}
+          stampLabel={selectedStamp.label}
+          hskLevel={currentLevel}
+          stampCount={completedCount}
+          isSpecial={selectedStamp.isSpecial}
+          quote={
+            selectedQuote
+              ? {
+                  chinese: selectedQuote.chinese,
+                  japanese:
+                    lang === "en" && selectedQuote.english
+                      ? selectedQuote.english
+                      : selectedQuote.japanese,
+                  source: selectedQuote.source,
+                }
+              : null
+          }
+        />
+      ) : null}
     </ThemedView>
   );
 }
@@ -585,5 +640,30 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 15,
     fontFamily: "Nunito_700Bold",
+  },
+  modalActionRow: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  modalShareBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1.5,
+  },
+  modalShareBtnText: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
+  },
+  modalCloseBtnHalf: {
+    flex: 1,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.sm,
+    alignItems: "center",
   },
 });

@@ -870,11 +870,7 @@ export default function ProfileScreen() {
         </View>
       </Pressable>
 
-      {hasWordsForLevel ? (
-        <Button onPress={handleResetProgress} style={styles.resetButton}>
-          {t("reset_progress")}
-        </Button>
-      ) : (
+      {!hasWordsForLevel ? (
         <View
           style={[
             styles.emptyCard,
@@ -886,7 +882,7 @@ export default function ProfileScreen() {
             HSK {selectedLevel}級の単語データは準備中です
           </ThemedText>
         </View>
-      )}
+      ) : null}
 
 
       {/* バージョン情報 */}
@@ -1044,6 +1040,12 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
       </View>
+
+      {hasWordsForLevel ? (
+        <Button onPress={handleResetProgress} style={styles.resetButton}>
+          {t("reset_progress")}
+        </Button>
+      ) : null}
 
       <Modal
         visible={reviewDevModalVisible}

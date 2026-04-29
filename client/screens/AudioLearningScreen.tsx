@@ -227,7 +227,7 @@ export default function AudioLearningScreen() {
         style={[
           styles.summaryCard,
           {
-            marginTop: safeHeaderPadding + Spacing.md,
+            marginTop: safeHeaderPadding + Spacing.lg,
             backgroundColor: theme.backgroundDefault,
             borderColor: theme.border,
           },
