@@ -102,7 +102,7 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
           </ThemedText>
         </View>
         <View style={styles.statItem}>
-          <Feather name="x-circle" size={14} color={Colors.light.alert} />
+          <Feather name="flag" size={14} color={Colors.light.alert} />
           <ThemedText style={[styles.statText, { color: Colors.light.alert }]}>
             {group.notMemorizedCount}
           </ThemedText>

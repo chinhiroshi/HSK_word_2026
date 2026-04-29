@@ -159,7 +159,7 @@ export default function StudyScreen() {
           </View>
 
           <View style={[styles.statBadge, { backgroundColor: `${Colors.light.alert}20` }]}>
-            <Feather name="x-circle" size={14} color={Colors.light.alert} />
+            <Feather name="flag" size={14} color={Colors.light.alert} />
             <ThemedText style={[styles.statText, { color: Colors.light.alert }]}>
               {item.notMemorizedCount}
             </ThemedText>
