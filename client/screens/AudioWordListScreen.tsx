@@ -22,7 +22,7 @@ import { useI18n } from "@/contexts/LanguageContext";
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type AudioWordListRouteProp = RouteProp<RootStackParamList, "AudioWordList">;
 
-type FilterType = "all" | "memorized" | "unmemorized";
+type FilterType = "all" | "memorized" | "unmemorized" | "struggled";
 
 interface AudioWordCardProps {
   word: Word;
@@ -302,7 +302,9 @@ export default function AudioWordListScreen() {
       case "memorized":
         return groupWords.filter((w) => w.audioMemorized);
       case "unmemorized":
-        return groupWords.filter((w) => !w.audioMemorized);
+        return groupWords.filter((w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0);
+      case "struggled":
+        return groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
       default:
         return groupWords;
     }
@@ -310,8 +312,9 @@ export default function AudioWordListScreen() {
 
   const stats = useMemo(() => {
     const memorized = groupWords.filter((w) => w.audioMemorized).length;
-    const unmemorized = groupWords.filter((w) => !w.audioMemorized).length;
-    return { total: groupWords.length, memorized, unmemorized };
+    const unmemorized = groupWords.filter((w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0).length;
+    const struggled = groupWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0).length;
+    return { total: groupWords.length, memorized, unmemorized, struggled };
   }, [groupWords]);
 
   const handleMarkUnmemorized = async (wordId: string) => {
@@ -400,7 +403,16 @@ export default function AudioWordListScreen() {
       return (
         <View style={styles.emptyFilterState}>
           <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-            まだの単語がありません
+            マークした単語がありません
+          </ThemedText>
+        </View>
+      );
+    }
+    if (filter === "struggled") {
+      return (
+        <View style={styles.emptyFilterState}>
+          <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
+            苦手歴のある単語がありません
           </ThemedText>
         </View>
       );
@@ -470,6 +482,26 @@ export default function AudioWordListScreen() {
             </ThemedText>
           </Pressable>
 
+          <Pressable
+            onPress={() => handleFilterChange("struggled")}
+            style={[
+              styles.filterButton,
+              filter === "struggled" && { backgroundColor: Colors.light.alert },
+              filter !== "struggled" && { backgroundColor: theme.backgroundSecondary },
+            ]}
+          >
+            <View style={styles.filterButtonInner}>
+              <Feather name="flag" size={14} color={filter === "struggled" ? "#FFFFFF" : Colors.light.alert} />
+              <ThemedText
+                style={[
+                  styles.filterButtonText,
+                  { color: filter === "struggled" ? "#FFFFFF" : Colors.light.alert },
+                ]}
+              >
+                苦手歴 ({stats.struggled})
+              </ThemedText>
+            </View>
+          </Pressable>
         </ScrollView>
       </View>
 
