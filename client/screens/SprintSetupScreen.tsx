@@ -19,9 +19,9 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
+import { ActivityIndicator } from "react-native";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
@@ -176,6 +176,8 @@ export default function SprintSetupScreen() {
 
   const notifTimeLabel = `${padTwo(notifHour)}:${padTwo(notifMinute)}`;
 
+  const stickyBarHeight = isChange ? 168 : 96;
+
   return (
     <ThemedView style={styles.container}>
       <KeyboardAvoidingView
@@ -186,7 +188,10 @@ export default function SprintSetupScreen() {
         <ScrollView
           contentContainerStyle={[
             styles.content,
-            { paddingTop: safeHeaderPadding + Spacing.xl, paddingBottom: insets.bottom + Spacing["3xl"] },
+            {
+              paddingTop: safeHeaderPadding + Spacing.xl,
+              paddingBottom: insets.bottom + stickyBarHeight + Spacing.xl,
+            },
           ]}
           keyboardShouldPersistTaps="handled"
         >
@@ -379,43 +384,90 @@ export default function SprintSetupScreen() {
             ) : null}
           </View>
 
-          {isChange ? (
-            <View style={styles.changeButtonsContainer}>
-              <Button
-                testID="button-change-keep-data"
-                onPress={handleStart}
-                disabled={!canStart || loading}
-                style={styles.startButton}
-              >
-                {loading ? t("setting_up") : t("keep_data_change")}
-              </Button>
-              <Pressable
-                testID="button-change-reset-data"
-                onPress={handleStartWithReset}
-                disabled={!canStart || loading}
-                style={({ pressed }) => [
-                  styles.resetDataButton,
-                  { borderColor: Colors.light.alert + "60", opacity: pressed ? 0.7 : 1 },
-                ]}
-              >
-                <Feather name="refresh-cw" size={15} color={Colors.light.alert} />
-                <ThemedText style={[styles.resetDataButtonText, { color: Colors.light.alert }]}>
-                  {loading ? t("setting_up") : t("reset_data_change")}
-                </ThemedText>
-              </Pressable>
-            </View>
-          ) : (
-            <Button
-              testID="button-start-sprint"
-              onPress={handleStart}
-              disabled={!canStart || loading}
-              style={styles.startButton}
-            >
-              {loading ? t("setting_up") : t("start_sprint")}
-            </Button>
-          )}
         </ScrollView>
       </KeyboardAvoidingView>
+
+      <View
+        style={[
+          styles.stickyBar,
+          {
+            backgroundColor: theme.backgroundDefault,
+            borderTopColor: theme.border,
+            paddingBottom: insets.bottom + Spacing.sm,
+          },
+        ]}
+      >
+        {isChange ? (
+          <>
+            <Pressable
+              testID="button-change-keep-data"
+              onPress={handleStart}
+              disabled={!canStart || loading}
+              style={({ pressed }) => [
+                styles.subscribeButton,
+                {
+                  backgroundColor: theme.primary,
+                  opacity: !canStart ? 0.4 : loading ? 0.7 : pressed ? 0.92 : 1,
+                  transform: [{ scale: pressed ? 0.99 : 1 }],
+                  shadowColor: theme.primary,
+                },
+              ]}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <View style={styles.subscribeButtonInner}>
+                  <ThemedText style={styles.subscribeButtonText}>
+                    {t("keep_data_change")}
+                  </ThemedText>
+                  <Feather name="arrow-right" size={20} color="#FFFFFF" />
+                </View>
+              )}
+            </Pressable>
+            <Pressable
+              testID="button-change-reset-data"
+              onPress={handleStartWithReset}
+              disabled={!canStart || loading}
+              style={({ pressed }) => [
+                styles.resetDataInlineButton,
+                { opacity: !canStart ? 0.4 : pressed ? 0.6 : 1 },
+              ]}
+              hitSlop={8}
+            >
+              <Feather name="refresh-cw" size={14} color={Colors.light.alert} />
+              <ThemedText style={[styles.resetDataInlineText, { color: Colors.light.alert }]}>
+                {loading ? t("setting_up") : t("reset_data_change")}
+              </ThemedText>
+            </Pressable>
+          </>
+        ) : (
+          <Pressable
+            testID="button-start-sprint"
+            onPress={handleStart}
+            disabled={!canStart || loading}
+            style={({ pressed }) => [
+              styles.subscribeButton,
+              {
+                backgroundColor: theme.primary,
+                opacity: !canStart ? 0.4 : loading ? 0.7 : pressed ? 0.92 : 1,
+                transform: [{ scale: pressed ? 0.99 : 1 }],
+                shadowColor: theme.primary,
+              },
+            ]}
+          >
+            {loading ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <View style={styles.subscribeButtonInner}>
+                <ThemedText style={styles.subscribeButtonText}>
+                  {t("start_sprint")}
+                </ThemedText>
+                <Feather name="arrow-right" size={20} color="#FFFFFF" />
+              </View>
+            )}
+          </Pressable>
+        )}
+      </View>
 
       {/* iOS Time Picker Modal */}
       {Platform.OS === "ios" && showIOSPicker ? (
@@ -618,18 +670,54 @@ const styles = StyleSheet.create({
   },
   notifTimeRight: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
   notifTimeValue: { fontSize: 17, fontFamily: "Nunito_700Bold" },
-  startButton: { marginTop: Spacing.sm },
-  changeButtonsContainer: { gap: Spacing.md, marginTop: Spacing.sm },
-  resetDataButton: {
+  stickyBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 12,
+  },
+  subscribeButton: {
+    paddingVertical: Spacing.lg,
+    borderRadius: BorderRadius.full,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  subscribeButtonInner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: Spacing.sm,
-    borderRadius: 999,
-    borderWidth: 1.5,
-    paddingVertical: Spacing.md,
   },
-  resetDataButtonText: { fontSize: 15, fontFamily: "Nunito_600SemiBold" },
+  subscribeButtonText: {
+    fontSize: 18,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    color: "#FFFFFF",
+  },
+  resetDataInlineButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+  },
+  resetDataInlineText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    textDecorationLine: "underline" as const,
+  },
   iosPickerOverlay: {
     flex: 1,
     justifyContent: "flex-end",
