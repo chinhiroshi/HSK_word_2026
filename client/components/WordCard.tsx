@@ -182,7 +182,7 @@ export function WordCard({
                   hitSlop={8}
                   testID={`mark-unmemorized-${word.id}`}
                 >
-                  <Feather name="x-circle" size={16} color={theme.textSecondary} />
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
                 </Pressable>
                 <Pressable
                   onPress={handleMarkMemorized}
@@ -205,7 +205,7 @@ export function WordCard({
                   testID={`mark-unmemorized-${word.id}`}
                 >
                   <Animated.View style={markAnimatedStyle}>
-                    <Feather name="x-circle" size={16} color={Colors.light.secondary} />
+                    <Feather name="flag" size={16} color={Colors.light.secondary} />
                   </Animated.View>
                 </Pressable>
                 <Pressable
@@ -220,7 +220,7 @@ export function WordCard({
             ) : isCurrentlyMemorized && hadDifficulty ? (
               <>
                 <View style={[styles.historyBadge, { backgroundColor: `${Colors.light.alert}15`, borderColor: `${Colors.light.alert}50` }]}>
-                  <Feather name="x-circle" size={10} color={Colors.light.alert} />
+                  <Feather name="flag" size={10} color={Colors.light.alert} />
                   <ThemedText style={[styles.historyBadgeText, { color: Colors.light.alert }]}>
                     {`×${unmemorizedCount}`}
                   </ThemedText>
@@ -232,7 +232,7 @@ export function WordCard({
                   testID={`mark-unmemorized-${word.id}`}
                 >
                   <Animated.View style={markAnimatedStyle}>
-                    <Feather name="x-circle" size={16} color={theme.textSecondary} />
+                    <Feather name="flag" size={16} color={theme.textSecondary} />
                   </Animated.View>
                 </Pressable>
               </>
@@ -245,7 +245,7 @@ export function WordCard({
                   testID={`mark-unmemorized-${word.id}`}
                 >
                   <Animated.View style={markAnimatedStyle}>
-                    <Feather name="x-circle" size={16} color={theme.textSecondary} />
+                    <Feather name="flag" size={16} color={theme.textSecondary} />
                   </Animated.View>
                 </Pressable>
                 {!isCurrentlyMemorized && onMarkMemorized ? (

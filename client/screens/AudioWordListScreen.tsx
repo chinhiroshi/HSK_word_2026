@@ -135,7 +135,7 @@ function AudioWordCard({
                   style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
                   hitSlop={8}
                 >
-                  <Feather name="x-circle" size={16} color={theme.textSecondary} />
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
                 </Pressable>
                 <Pressable
                   onPress={handleMarkMemorized}
@@ -155,7 +155,7 @@ function AudioWordCard({
                   style={[styles.markButton, { backgroundColor: `${Colors.light.secondary}20` }]}
                   hitSlop={8}
                 >
-                  <Feather name="x-circle" size={16} color={Colors.light.secondary} />
+                  <Feather name="flag" size={16} color={Colors.light.secondary} />
                 </Pressable>
                 <Pressable
                   onPress={handleMarkMemorized}
@@ -168,7 +168,7 @@ function AudioWordCard({
             ) : isCurrentlyMemorized && hadDifficulty ? (
               <>
                 <View style={[styles.historyBadge, { backgroundColor: `${Colors.light.alert}15`, borderColor: `${Colors.light.alert}50` }]}>
-                  <Feather name="x-circle" size={10} color={Colors.light.alert} />
+                  <Feather name="flag" size={10} color={Colors.light.alert} />
                   <ThemedText style={[styles.historyBadgeText, { color: Colors.light.alert }]}>
                     {`×${unmemorizedCount}`}
                   </ThemedText>
@@ -178,7 +178,7 @@ function AudioWordCard({
                   style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
                   hitSlop={8}
                 >
-                  <Feather name="x-circle" size={16} color={theme.textSecondary} />
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
                 </Pressable>
               </>
             ) : (
@@ -188,7 +188,7 @@ function AudioWordCard({
                   style={[styles.markButton, { backgroundColor: theme.backgroundSecondary }]}
                   hitSlop={8}
                 >
-                  <Feather name="x-circle" size={16} color={theme.textSecondary} />
+                  <Feather name="flag" size={16} color={theme.textSecondary} />
                 </Pressable>
                 {!isCurrentlyMemorized ? (
                   <Pressable
