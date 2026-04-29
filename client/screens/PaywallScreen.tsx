@@ -9,10 +9,12 @@ import * as WebBrowser from "expo-web-browser";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius, Colors } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { getApiUrl } from "@/lib/query-client";
 import { useI18n } from "@/contexts/LanguageContext";
+
+const STICKY_BAR_HEIGHT = 156;
 
 export default function PaywallScreen() {
   const insets = useSafeAreaInsets();
@@ -75,133 +77,154 @@ export default function PaywallScreen() {
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.backgroundRoot }]}
-      contentContainerStyle={[
-        styles.content,
-        { paddingTop: insets.top + 60, paddingBottom: insets.bottom + Spacing.xl },
-      ]}
-    >
-      <View style={styles.heroSection}>
-        <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}20` }]}>
-          <Feather name="unlock" size={40} color={theme.primary} />
+    <View style={[styles.container, { backgroundColor: theme.backgroundRoot }]}>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.content,
+          {
+            paddingTop: insets.top + 60,
+            paddingBottom: insets.bottom + STICKY_BAR_HEIGHT + Spacing.xl,
+          },
+        ]}
+      >
+        <View style={styles.heroSection}>
+          <View style={[styles.iconCircle, { backgroundColor: `${theme.primary}20` }]}>
+            <Feather name="unlock" size={40} color={theme.primary} />
+          </View>
+          <ThemedText style={styles.heroTitle}>
+            {t("paywall_hero_title")}
+          </ThemedText>
+          <ThemedText style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
+            {t("paywall_hero_subtitle")}
+          </ThemedText>
         </View>
-        <ThemedText style={styles.heroTitle}>
-          {t("paywall_hero_title")}
-        </ThemedText>
-        <ThemedText style={[styles.heroSubtitle, { color: theme.textSecondary }]}>
-          {t("paywall_hero_subtitle")}
-        </ThemedText>
-      </View>
 
-      <View style={styles.featuresSection}>
-        {FEATURES.map((feature, index) => (
-          <View
-            key={index}
-            style={[
-              styles.featureRow,
-              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-            ]}
+        <View style={styles.featuresSection}>
+          {FEATURES.map((feature, index) => (
+            <View
+              key={index}
+              style={[
+                styles.featureRow,
+                { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+              ]}
+            >
+              <View style={[styles.featureIcon, { backgroundColor: `${theme.primary}15` }]}>
+                <Feather name={feature.icon} size={20} color={theme.primary} />
+              </View>
+              <View style={styles.featureText}>
+                <ThemedText style={styles.featureTitle}>{feature.title}</ThemedText>
+                <ThemedText style={[styles.featureDesc, { color: theme.textSecondary }]}>
+                  {feature.desc}
+                </ThemedText>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        {initError && Platform.OS !== "web" && !Constants.appOwnership ? (
+          <View style={[styles.errorBanner, { backgroundColor: "#FEF2F2", borderColor: "#FECACA" }]}>
+            <Feather name="alert-circle" size={16} color="#DC2626" />
+            <ThemedText style={styles.errorBannerText}>{initError}</ThemedText>
+          </View>
+        ) : null}
+
+        <ThemedText style={[styles.disclaimer, { color: theme.textSecondary }]}>
+          {t("paywall_disclaimer")}
+        </ThemedText>
+
+        <View style={styles.legalLinks}>
+          <Pressable
+            testID="link-privacy-policy"
+            onPress={async () => {
+              try {
+                const url = new URL("/privacy-policy", getApiUrl()).toString();
+                await WebBrowser.openBrowserAsync(url);
+              } catch {}
+            }}
           >
-            <View style={[styles.featureIcon, { backgroundColor: `${theme.primary}15` }]}>
-              <Feather name={feature.icon} size={20} color={theme.primary} />
-            </View>
-            <View style={styles.featureText}>
-              <ThemedText style={styles.featureTitle}>{feature.title}</ThemedText>
-              <ThemedText style={[styles.featureDesc, { color: theme.textSecondary }]}>
-                {feature.desc}
-              </ThemedText>
-            </View>
-          </View>
-        ))}
-      </View>
-
-      {initError && Platform.OS !== "web" && !Constants.appOwnership ? (
-        <View style={[styles.errorBanner, { backgroundColor: "#FEF2F2", borderColor: "#FECACA" }]}>
-          <Feather name="alert-circle" size={16} color="#DC2626" />
-          <ThemedText style={styles.errorBannerText}>{initError}</ThemedText>
+            <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
+              {t("privacy_policy")}
+            </ThemedText>
+          </Pressable>
+          <ThemedText style={[styles.legalSeparator, { color: theme.textSecondary }]}>|</ThemedText>
+          <Pressable
+            testID="link-terms-of-use"
+            onPress={async () => {
+              try {
+                const url = new URL("/terms", getApiUrl()).toString();
+                await WebBrowser.openBrowserAsync(url);
+              } catch {}
+            }}
+          >
+            <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
+              {t("terms_of_use")}
+            </ThemedText>
+          </Pressable>
         </View>
-      ) : null}
+      </ScrollView>
 
-      <View style={styles.priceSection}>
-        <View
-          style={[
-            styles.priceCard,
-            { backgroundColor: theme.primary, borderColor: theme.primary },
-          ]}
-        >
-          <ThemedText style={styles.priceLabel}>{t("paywall_monthly")}</ThemedText>
-          <View style={styles.priceRow}>
-            <ThemedText style={styles.priceAmount}>{priceString}</ThemedText>
-            <ThemedText style={styles.pricePeriod}>{t("paywall_per_month")}</ThemedText>
-          </View>
-          <ThemedText style={styles.priceNote}>
+      <View
+        style={[
+          styles.stickyBar,
+          {
+            backgroundColor: theme.backgroundDefault,
+            borderTopColor: theme.border,
+            paddingBottom: insets.bottom + Spacing.sm,
+          },
+        ]}
+      >
+        <View style={styles.priceLine}>
+          <ThemedText style={styles.priceLineAmount}>{priceString}</ThemedText>
+          <ThemedText style={[styles.priceLinePeriod, { color: theme.textSecondary }]}>
+            {t("paywall_per_month")}
+          </ThemedText>
+          <View style={[styles.priceLineDot, { backgroundColor: theme.textSecondary }]} />
+          <ThemedText style={[styles.priceLineNote, { color: theme.textSecondary }]}>
             {t("paywall_cancel_anytime")}
           </ThemedText>
         </View>
-      </View>
 
-      <Pressable
-        testID="button-subscribe"
-        style={[styles.subscribeButton, { backgroundColor: theme.primary, opacity: purchasing ? 0.7 : 1 }]}
-        onPress={handlePurchase}
-        disabled={purchasing}
-      >
-        {purchasing ? (
-          <ActivityIndicator color="#FFFFFF" />
-        ) : (
-          <ThemedText style={styles.subscribeButtonText}>
-            {t("paywall_subscribe")}
-          </ThemedText>
-        )}
-      </Pressable>
-
-      <Pressable
-        testID="button-restore"
-        style={styles.restoreButton}
-        onPress={handleRestore}
-        disabled={restoring}
-      >
-        {restoring ? (
-          <ActivityIndicator color={theme.primary} size="small" />
-        ) : (
-          <ThemedText style={[styles.restoreButtonText, { color: theme.primary }]}>
-            {t("paywall_restore")}
-          </ThemedText>
-        )}
-      </Pressable>
-
-      <ThemedText style={[styles.disclaimer, { color: theme.textSecondary }]}>
-        {t("paywall_disclaimer")}
-      </ThemedText>
-
-      <View style={styles.legalLinks}>
         <Pressable
-          testID="link-privacy-policy"
-          onPress={async () => {
-            try {
-              const url = new URL("/privacy-policy", getApiUrl()).toString();
-              await WebBrowser.openBrowserAsync(url);
-            } catch {}
-          }}
+          testID="button-subscribe"
+          style={({ pressed }) => [
+            styles.subscribeButton,
+            {
+              backgroundColor: theme.primary,
+              opacity: purchasing ? 0.7 : pressed ? 0.92 : 1,
+              transform: [{ scale: pressed ? 0.99 : 1 }],
+              shadowColor: theme.primary,
+            },
+          ]}
+          onPress={handlePurchase}
+          disabled={purchasing}
         >
-          <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
-            {t("privacy_policy")}
-          </ThemedText>
+          {purchasing ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <View style={styles.subscribeButtonInner}>
+              <ThemedText style={styles.subscribeButtonText}>
+                {t("paywall_subscribe")}
+              </ThemedText>
+              <Feather name="arrow-right" size={20} color="#FFFFFF" />
+            </View>
+          )}
         </Pressable>
-        <ThemedText style={[styles.legalSeparator, { color: theme.textSecondary }]}>|</ThemedText>
+
         <Pressable
-          testID="link-terms-of-use"
-          onPress={async () => {
-            try {
-              const url = new URL("/terms", getApiUrl()).toString();
-              await WebBrowser.openBrowserAsync(url);
-            } catch {}
-          }}
+          testID="button-restore"
+          style={styles.restoreButton}
+          onPress={handleRestore}
+          disabled={restoring}
+          hitSlop={8}
         >
-          <ThemedText style={[styles.legalLinkText, { color: theme.primary }]}>
-            {t("terms_of_use")}
-          </ThemedText>
+          {restoring ? (
+            <ActivityIndicator color={theme.primary} size="small" />
+          ) : (
+            <ThemedText style={[styles.restoreButtonText, { color: theme.textSecondary }]}>
+              {t("paywall_restore")}
+            </ThemedText>
+          )}
         </Pressable>
       </View>
 
@@ -248,12 +271,15 @@ export default function PaywallScreen() {
           </View>
         </View>
       </Modal>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  scrollContainer: {
     flex: 1,
   },
   content: {
@@ -330,63 +356,79 @@ const styles = StyleSheet.create({
     color: "#DC2626",
     lineHeight: 18,
   },
-  priceSection: {
-    marginBottom: Spacing.xl,
+  stickyBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 12,
   },
-  priceCard: {
-    padding: Spacing.xl,
-    borderRadius: BorderRadius.xl,
-    borderWidth: 2,
-    alignItems: "center",
-  },
-  priceLabel: {
-    fontSize: 14,
-    fontFamily: "Nunito_600SemiBold",
-    color: "rgba(255,255,255,0.8)",
-    marginBottom: Spacing.xs,
-  },
-  priceRow: {
+  priceLine: {
     flexDirection: "row",
     alignItems: "baseline",
-    marginBottom: Spacing.xs,
+    justifyContent: "center",
+    marginBottom: Spacing.sm,
+    flexWrap: "wrap",
   },
-  priceAmount: {
-    fontSize: 24,
+  priceLineAmount: {
+    fontSize: 22,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
-    color: "#FFFFFF",
   },
-  pricePeriod: {
-    fontSize: 16,
+  priceLinePeriod: {
+    fontSize: 14,
     fontFamily: "Nunito_400Regular",
-    color: "rgba(255,255,255,0.8)",
-    marginLeft: 4,
+    marginLeft: 2,
   },
-  priceNote: {
-    fontSize: 13,
+  priceLineDot: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    marginHorizontal: Spacing.sm,
+    alignSelf: "center",
+    opacity: 0.5,
+  },
+  priceLineNote: {
+    fontSize: 12,
     fontFamily: "Nunito_400Regular",
-    color: "rgba(255,255,255,0.7)",
   },
   subscribeButton: {
     paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.full,
     alignItems: "center",
-    marginBottom: Spacing.md,
+    justifyContent: "center",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+  subscribeButtonInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
   },
   subscribeButtonText: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     color: "#FFFFFF",
   },
   restoreButton: {
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.sm,
     alignItems: "center",
-    marginBottom: Spacing.xl,
   },
   restoreButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: "Nunito_600SemiBold",
+    textDecorationLine: "underline" as const,
   },
   disclaimer: {
     fontSize: 11,
