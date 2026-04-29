@@ -298,7 +298,7 @@ const translations = {
     onboard_level_subtitle: "プロフィール画面からいつでも変更できます",
     onboard_level_btn: "この級で学習を始める",
     onboard_level_free: "全て無料",
-    onboard_level_premium_note: "最初50語は無料",
+    onboard_level_premium_note: "閲覧は無料・学習補助機能はプレミアム",
 
     // ── Test result ──
     correct_count: "{correct} / {total} 問正解",
@@ -662,7 +662,7 @@ const translations = {
     onboard_level_subtitle: "You can change this anytime in Profile",
     onboard_level_btn: "Start with This Level",
     onboard_level_free: "Fully Free",
-    onboard_level_premium_note: "First 50 words free",
+    onboard_level_premium_note: "Browse free; Premium for study tools",
 
     // ── Test result ──
     correct_count: "{correct} / {total} correct",
