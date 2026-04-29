@@ -185,7 +185,10 @@ export default function AudioLearningScreen() {
     const needsWork = words.filter(
       (w) => (w.audioUnmemorizedCount || 0) > 0
     ).length;
-    return { total: words.length, memorized, needsWork };
+    const unmemorized = words.filter(
+      (w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0
+    ).length;
+    return { total: words.length, memorized, needsWork, unmemorized };
   }, [words]);
 
   const currentHskLevel = words.length > 0 ? words[0].hskLevel : undefined;
@@ -251,6 +254,15 @@ export default function AudioLearningScreen() {
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
               {t("audio_needs_work")}
+            </ThemedText>
+          </View>
+          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
+          <View style={styles.summaryItem}>
+            <ThemedText style={[styles.summaryValue, { color: theme.textSecondary }]}>
+              {totalStats.unmemorized}
+            </ThemedText>
+            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+              {t("filter_unmemorized")}
             </ThemedText>
           </View>
         </View>

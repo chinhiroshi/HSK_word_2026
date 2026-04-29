@@ -76,7 +76,10 @@ export default function StudyScreen() {
     const needsWork = words.filter(
       (w) => (w.textUnmemorizedCount || 0) > 0
     ).length;
-    return { total: words.length, memorized, needsWork };
+    const unmemorized = words.filter(
+      (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0
+    ).length;
+    return { total: words.length, memorized, needsWork, unmemorized };
   }, [words]);
 
   const groups = useMemo(() => {
@@ -232,6 +235,15 @@ export default function StudyScreen() {
               ) : null}
             </View>
           </Pressable>
+          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
+          <View style={styles.summaryItem}>
+            <ThemedText style={[styles.summaryValue, { color: theme.textSecondary }]}>
+              {totalStats.unmemorized}
+            </ThemedText>
+            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+              {t("filter_unmemorized")}
+            </ThemedText>
+          </View>
         </View>
       </View>
 
