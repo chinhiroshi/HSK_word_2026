@@ -40,8 +40,8 @@ const translations = {
     terms_of_use: "利用規約",
 
     // ── Paywall additional ──
-    paywall_hero_title: "全機能をアンロック",
-    paywall_hero_subtitle: "最初の50単語は無料でお試しいただけます",
+    paywall_hero_title: "全HSK級をアンロック",
+    paywall_hero_subtitle: "HSK1級は全て無料、HSK2〜6級は最初の50単語まで無料でお試しいただけます",
     paywall_cancel_anytime: "いつでもキャンセル可能",
     paywall_subscribe: "サブスクリプションを開始",
     paywall_disclaimer: "サブスクリプションは自動更新されます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。",
@@ -98,7 +98,7 @@ const translations = {
     start_pos: "開始位置",
     end_pos: "終了位置",
     show_text: "テキスト表示",
-    free_limit_banner: "無料版は最初の{n}語のみ再生可能です",
+    free_limit_banner: "無料版はHSK2〜6級の最初の{n}語のみ再生可能です（HSK1級は全て無料）",
     playback_order_info: "順序: 中国語1回 → 日本語1回 → 中国語例文2回 → 日本語例文訳1回 → 中国語例文2回 → 英語1回",
 
     // ── Stamp Gallery ──
@@ -247,14 +247,14 @@ const translations = {
 
     // ── Paywall Screen ──
     paywall_header: "プレミアム",
-    paywall_feature_all_words: "全HSK級の全単語",
-    paywall_feature_all_words_desc: "1級〜6級の全単語にアクセス",
+    paywall_feature_all_words: "HSK2〜6級の全単語",
+    paywall_feature_all_words_desc: "HSK2〜6級の51単語目以降を全てアンロック（HSK1級は元々無料）",
     paywall_feature_audio: "音声学習",
-    paywall_feature_audio_desc: "全単語の音声学習が可能",
+    paywall_feature_audio_desc: "HSK2〜6級の全単語で音声学習が可能",
     paywall_feature_playback: "音声再生",
-    paywall_feature_playback_desc: "全範囲の連続再生が可能",
-    paywall_feature_tracking: "暗記トラッキング",
-    paywall_feature_tracking_desc: "全単語の進捗管理が可能",
+    paywall_feature_playback_desc: "HSK2〜6級でも全範囲の連続再生が可能",
+    paywall_feature_tracking: "詳しい例文の閲覧",
+    paywall_feature_tracking_desc: "全単語の長い例文・英語訳を閲覧可能",
     paywall_monthly: "月額プラン",
     paywall_per_month: "/月",
     paywall_restore: "購入を復元",
@@ -283,7 +283,7 @@ const translations = {
     onboard_4_p2: "長い例文で実践的な使い方も学べる",
     onboard_4_p3: "文字カードを見ながら学習も可能",
     onboard_5_title: "さあ、始めましょう！",
-    onboard_5_subtitle: "最初の50単語は無料でお試しいただけます",
+    onboard_5_subtitle: "HSK1級は全て無料、HSK2〜6級は最初の50単語まで無料でお試しいただけます",
     onboard_5_p1: "今すぐ学習をスタート",
     onboard_5_p2: "自分のペースで着実にレベルアップ",
     onboard_6_title: "スプリントで楽しく続ける",
@@ -404,8 +404,8 @@ const translations = {
     terms_of_use: "Terms of Use",
 
     // ── Paywall additional ──
-    paywall_hero_title: "Unlock All Features",
-    paywall_hero_subtitle: "Try the first 50 words for free",
+    paywall_hero_title: "Unlock All HSK Levels",
+    paywall_hero_subtitle: "HSK1 is fully free; for HSK2–6 the first 50 words are free to try",
     paywall_cancel_anytime: "Cancel anytime",
     paywall_subscribe: "Start Subscription",
     paywall_disclaimer: "Subscription auto-renews. Cancel at least 24 hours before renewal to avoid being charged for the next period.",
@@ -462,7 +462,7 @@ const translations = {
     start_pos: "Start",
     end_pos: "End",
     show_text: "Show Text",
-    free_limit_banner: "Free version: first {n} words only",
+    free_limit_banner: "Free plan: only the first {n} words of HSK 2–6 can be played (HSK 1 is fully free)",
     playback_order_info: "Order: CN ×1 → JP ×1 → Example ×2 → JP Example ×1 → Example ×2 → EN ×1",
 
     // ── Stamp Gallery ──
@@ -611,14 +611,14 @@ const translations = {
 
     // ── Paywall Screen ──
     paywall_header: "Premium",
-    paywall_feature_all_words: "All HSK Vocabulary",
-    paywall_feature_all_words_desc: "Access all words for HSK 1–6",
+    paywall_feature_all_words: "All HSK 2–6 Vocabulary",
+    paywall_feature_all_words_desc: "Unlock every word past the first 50 in HSK 2–6 (HSK 1 is already free)",
     paywall_feature_audio: "Audio Study",
-    paywall_feature_audio_desc: "Audio study for all words",
+    paywall_feature_audio_desc: "Audio study for all words in HSK 2–6",
     paywall_feature_playback: "Audio Playback",
-    paywall_feature_playback_desc: "Continuous playback for all words",
-    paywall_feature_tracking: "Progress Tracking",
-    paywall_feature_tracking_desc: "Track all words' memorization",
+    paywall_feature_playback_desc: "Continuous playback for the full range in HSK 2–6",
+    paywall_feature_tracking: "Detailed Example Sentences",
+    paywall_feature_tracking_desc: "View long example sentences and English translations for every word",
     paywall_monthly: "Monthly Plan",
     paywall_per_month: "/mo",
     paywall_restore: "Restore Purchase",
@@ -647,7 +647,7 @@ const translations = {
     onboard_4_p2: "Extended examples for real-world usage",
     onboard_4_p3: "Study with flashcard view too",
     onboard_5_title: "Let's Start!",
-    onboard_5_subtitle: "Try the first 50 words for free",
+    onboard_5_subtitle: "HSK1 is fully free; for HSK2–6 the first 50 words are free to try",
     onboard_5_p1: "Start learning right now",
     onboard_5_p2: "Level up at your own pace",
     onboard_6_title: "Sprint to Stay Motivated",

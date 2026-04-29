@@ -28,7 +28,6 @@ interface WordGroup {
   endIndex: number;
   words: Word[];
   memorizedCount: number;
-  unmemorizedCount: number;
   notMemorizedCount: number;
 }
 
@@ -87,9 +86,6 @@ export default function StudyScreen() {
       const memorizedCount = groupWords.filter(
         (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
       ).length;
-      const unmemorizedCount = groupWords.filter(
-        (w) => (w.textUnmemorizedCount || 0) > 0
-      ).length;
       const notMemorizedCount = groupWords.filter(
         (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0
       ).length;
@@ -100,7 +96,6 @@ export default function StudyScreen() {
         endIndex: Math.min(i + GROUP_SIZE, words.length),
         words: groupWords,
         memorizedCount,
-        unmemorizedCount,
         notMemorizedCount,
       });
     }
@@ -125,8 +120,6 @@ export default function StudyScreen() {
   };
 
   const renderGroupItem = ({ item, index }: { item: WordGroup; index: number }) => {
-    const totalInGroup = item.words.length;
-    const neutralCount = totalInGroup - item.memorizedCount - item.unmemorizedCount;
     const locked = isGroupLocked(index, currentHskLevel);
 
     return (
@@ -169,12 +162,6 @@ export default function StudyScreen() {
             <Feather name="x-circle" size={14} color={Colors.light.alert} />
             <ThemedText style={[styles.statText, { color: Colors.light.alert }]}>
               {item.notMemorizedCount}
-            </ThemedText>
-          </View>
-
-          <View style={[styles.statBadge, { backgroundColor: theme.backgroundSecondary }]}>
-            <ThemedText style={[styles.statText, { color: theme.textSecondary }]}>
-              {neutralCount}
             </ThemedText>
           </View>
         </View>
