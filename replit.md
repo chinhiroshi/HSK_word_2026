@@ -61,6 +61,20 @@ A mobile vocabulary learning app for Chinese language study. Users can browse Ch
   - Streak tracking across days; special stamp for Day 7 test clear
   - SprintContext manages state; stored at `@chinese_master_sprint`
 - **Word Detail**: View word details with example sentences, English translations, and part of speech (品詞)
+- **プッシュ通知 (リマインダー)**: 2 種類のリマインダーを別画面で管理
+  - **学習リマインダー (プロフィール)**: 毎日決まった時刻に、現在の HSK 級と暗記状況に応じた応援メッセージを送信。
+    - タイトル: ランダムな励ましメッセージ
+    - 本文: 「HSK{N}: 暗記済み M/T (P%)・要復習 K」+ 状況別の推奨アクション (未開始/進行中/もうすぐ/制覇済)
+    - 識別子: `chinese-master-study-reminder`、データ: `{ screen: "study" }` で文字学習タブへ遷移
+    - 設定キー: `@chinese_master_study_notif_enabled` / `_hour` / `_minute`
+  - **スプリントリマインダー (スプリント画面の最下部)**: 毎日のスプリント学習継続を促す通知。
+    - タイトル: スプリント関連の励ましメッセージ
+    - 本文: ランダムな中国名言 (QUOTES から)
+    - 識別子: `chinese-master-sprint-reminder`、データ: `{ screen: "sprint" }` でスプリントタブへ遷移
+    - 設定キー: `@chinese_master_sprint_notif_enabled` / `_hour` / `_minute`
+  - 共通 UI: `client/components/NotificationReminderCard.tsx` — トグル + 時刻ピッカー (iOS spinner / Android default) + 5秒テスト送信
+  - アプリ起動時: `refreshDailyNotificationsIfEnabled()` が両方を再スケジュール (学習通知の本文を最新の統計で更新、スプリント通知の名言を入れ替え)
+  - レガシー移行: 旧 `@chinese_master_notifications_enabled` (Profile のスプリント風通知) は学習リマインダーへ自動移行 (`@chinese_master_notif_migration_v2_done` フラグで一度のみ実行)
 - **Profile**: Track learning progress with separate statistics
   - HSK級セレクター (1〜6級): 学習する単語レベルを切り替え
   - 各級の進捗は独立して管理される

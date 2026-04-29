@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch } from "react-native";
 import { reloadAppAsync } from "expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
@@ -10,15 +10,13 @@ import {
 } from "@/lib/reviewPrompt";
 import Constants from "expo-constants";
 import {
-  getNotificationEnabled,
-  getNotificationTime,
-  enableSprintNotification,
-  disableSprintNotification,
-  sendTestNotification,
-  DEFAULT_NOTIF_HOUR,
-  DEFAULT_NOTIF_MINUTE,
+  getStudyNotifEnabled,
+  getStudyNotifTime,
+  enableStudyNotification,
+  disableStudyNotification,
+  sendTestStudyNotification,
 } from "@/lib/notifications";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import { NotificationReminderCard } from "@/components/NotificationReminderCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -95,11 +93,6 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
-  const [notifEnabled, setNotifEnabled] = useState(false);
-  const [notifHour, setNotifHour] = useState(DEFAULT_NOTIF_HOUR);
-  const [notifMinute, setNotifMinute] = useState(DEFAULT_NOTIF_MINUTE);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [testNotifSent, setTestNotifSent] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [upToDate, setUpToDate] = useState(false);
@@ -122,63 +115,9 @@ export default function ProfileScreen() {
     const data = await getWords();
     setWords(data);
     setLoading(false);
-    const notifOn = await getNotificationEnabled();
-    setNotifEnabled(notifOn);
-    const { hour, minute } = await getNotificationTime();
-    setNotifHour(hour);
-    setNotifMinute(minute);
     const silentAudio = await getSilentModeAudio();
     setSilentModeAudioState(silentAudio);
   }, []);
-
-  const handleNotifToggle = async (value: boolean) => {
-    if (Platform.OS === "web") {
-      Alert.alert(t("daily_reminder"), t("notif_web_msg"));
-      return;
-    }
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    if (value) {
-      const ok = await enableSprintNotification(notifHour, notifMinute);
-      if (ok) {
-        setNotifEnabled(true);
-        const timeStr = `${String(notifHour).padStart(2, "0")}:${String(notifMinute).padStart(2, "0")}`;
-        Alert.alert(t("notif_set_title"), `${timeStr}`);
-      } else {
-        Alert.alert(t("notif_error_title"), t("notif_web_msg"));
-      }
-    } else {
-      await disableSprintNotification();
-      setNotifEnabled(false);
-    }
-  };
-
-  const handleTimeChange = async (_: any, selectedDate?: Date) => {
-    if (!selectedDate) {
-      if (Platform.OS === "android") setShowTimePicker(false);
-      return;
-    }
-    const newHour = selectedDate.getHours();
-    const newMinute = selectedDate.getMinutes();
-    setNotifHour(newHour);
-    setNotifMinute(newMinute);
-    // Android: dialog closes on confirm, save immediately
-    if (Platform.OS === "android") {
-      setShowTimePicker(false);
-      if (notifEnabled) {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        await enableSprintNotification(newHour, newMinute);
-      }
-    }
-    // iOS: user taps 完了 button which calls handleIOSPickerDone
-  };
-
-  const handleIOSPickerDone = async () => {
-    setShowTimePicker(false);
-    if (notifEnabled) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      await enableSprintNotification(notifHour, notifMinute);
-    }
-  };
 
   const handleSilentModeAudioToggle = async (value: boolean) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -657,117 +596,19 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      <View
-        style={[
-          styles.notifCard,
-          { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-        ]}
-      >
-        {/* Toggle row */}
-        <View style={styles.notifContent}>
-          <View style={[styles.notifIcon, { backgroundColor: notifEnabled ? theme.primary + "15" : theme.textSecondary + "12" }]}>
-            <Feather
-              name={notifEnabled ? "bell" : "bell-off"}
-              size={20}
-              color={notifEnabled ? theme.primary : theme.textSecondary}
-            />
-          </View>
-          <View style={styles.notifTextContainer}>
-            <ThemedText style={styles.notifTitle}>{t("daily_reminder")}</ThemedText>
-            <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
-              {t("sprint_header")}
-            </ThemedText>
-          </View>
-          <Switch
-            testID="switch-notification"
-            value={notifEnabled}
-            onValueChange={handleNotifToggle}
-            trackColor={{ false: theme.border, true: theme.primary + "80" }}
-            thumbColor={notifEnabled ? theme.primary : theme.textSecondary}
-          />
-        </View>
-
-        {/* Description (always visible) */}
-        <View style={[styles.notifInfoBox, { backgroundColor: theme.backgroundSubtle ?? theme.border + "30", borderColor: theme.border }]}>
-          <Feather name="info" size={13} color={theme.textSecondary} />
-          <ThemedText style={[styles.notifInfoText, { color: theme.textSecondary }]}>
-            {t("review_prompt_title")}
-          </ThemedText>
-        </View>
-
-        {/* Time picker row — shown when enabled */}
-        {notifEnabled ? (
-          <>
-            <View style={[styles.notifDivider, { backgroundColor: theme.border }]} />
-            <Pressable
-              testID="button-notif-time"
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setShowTimePicker(true);
-              }}
-              style={styles.notifTimeRow}
-            >
-              <Feather name="clock" size={16} color={theme.primary} />
-              <ThemedText style={[styles.notifTimeLabel, { color: theme.text }]}>{t("notif_time")}</ThemedText>
-              <ThemedText style={[styles.notifTimeValue, { color: theme.primary }]}>
-                {`${String(notifHour).padStart(2, "0")}:${String(notifMinute).padStart(2, "0")}`}
-              </ThemedText>
-              <Feather name="chevron-right" size={16} color={theme.textSecondary} />
-            </Pressable>
-
-            {/* iOS: inline picker inside the card */}
-            {showTimePicker && Platform.OS === "ios" ? (
-              <View style={styles.iOSPickerWrapper}>
-                <DateTimePicker
-                  value={(() => { const d = new Date(); d.setHours(notifHour, notifMinute, 0, 0); return d; })()}
-                  mode="time"
-                  display="spinner"
-                  onChange={handleTimeChange}
-                  locale="ja-JP"
-                />
-                <Pressable
-                  onPress={handleIOSPickerDone}
-                  style={[styles.iOSPickerDone, { backgroundColor: theme.primary }]}
-                >
-                  <ThemedText style={styles.iOSPickerDoneText}>{t("done")}</ThemedText>
-                </Pressable>
-              </View>
-            ) : null}
-
-            {/* Android: modal picker */}
-            {showTimePicker && Platform.OS === "android" ? (
-              <DateTimePicker
-                value={(() => { const d = new Date(); d.setHours(notifHour, notifMinute, 0, 0); return d; })()}
-                mode="time"
-                display="default"
-                onChange={handleTimeChange}
-              />
-            ) : null}
-
-            <View style={[styles.notifDivider, { backgroundColor: theme.border }]} />
-            <Pressable
-              testID="button-test-notification"
-              onPress={async () => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                const ok = await sendTestNotification();
-                if (ok) {
-                  setTestNotifSent(true);
-                  setTimeout(() => setTestNotifSent(false), 6000);
-                }
-              }}
-              style={styles.notifTimeRow}
-            >
-              <Feather name="send" size={16} color={testNotifSent ? Colors.light.success : theme.primary} />
-              <ThemedText style={[styles.notifTimeLabel, { color: theme.text, flex: 1 }]}>
-                {t("send_test_notif")}
-              </ThemedText>
-              <ThemedText style={[styles.notifTimeValue, { color: testNotifSent ? Colors.light.success : theme.textSecondary, fontSize: 12 }]}>
-                {testNotifSent ? t("test_notif_sent") : t("test_notif_hint")}
-              </ThemedText>
-            </Pressable>
-          </>
-        ) : null}
-      </View>
+      <NotificationReminderCard
+        title={t("study_reminder_title")}
+        description={t("study_reminder_desc")}
+        infoText={t("study_reminder_info")}
+        iconName="book-open"
+        accentColor={theme.primary}
+        testIdPrefix="study-notif"
+        getEnabled={getStudyNotifEnabled}
+        getTime={getStudyNotifTime}
+        enable={enableStudyNotification}
+        disable={disableStudyNotification}
+        sendTest={sendTestStudyNotification}
+      />
 
       {/* マナーモードでも音を出す設定 */}
       {Platform.OS === "ios" ? (

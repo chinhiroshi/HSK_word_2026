@@ -27,6 +27,14 @@ import { useSprint, getSessionType as getSessionTypeFn } from "@/contexts/Sprint
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
 import { useI18n } from "@/contexts/LanguageContext";
+import { NotificationReminderCard } from "@/components/NotificationReminderCard";
+import {
+  getSprintNotifEnabled,
+  getSprintNotifTime,
+  enableSprintNotification,
+  disableSprintNotification,
+  sendTestSprintNotification,
+} from "@/lib/notifications";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import {
   PlantIcon, MonsterIcon, TreeIcon, CloudIcon, MountainIcon, FlowerIcon,
@@ -923,6 +931,22 @@ export default function SprintScreen() {
             <ThemedText style={[styles.resetLinkText, { color: theme.textSecondary }]}>{t("change_settings")}</ThemedText>
           </Pressable>
         ) : null}
+
+        <View style={styles.reminderWrapper}>
+          <NotificationReminderCard
+            title={t("sprint_reminder_title")}
+            description={t("sprint_reminder_desc")}
+            infoText={t("sprint_reminder_info")}
+            iconName="bell"
+            accentColor={Colors.light.secondary}
+            testIdPrefix="sprint-notif"
+            getEnabled={getSprintNotifEnabled}
+            getTime={getSprintNotifTime}
+            enable={enableSprintNotification}
+            disable={disableSprintNotification}
+            sendTest={sendTestSprintNotification}
+          />
+        </View>
       </ScrollView>
 
       <SessionModal
@@ -1006,6 +1030,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   resetLinkText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
+  reminderWrapper: { marginTop: Spacing.xl },
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.45)", justifyContent: "flex-end" },
   modalSheet: { borderTopLeftRadius: BorderRadius.xl, borderTopRightRadius: BorderRadius.xl, padding: Spacing.xl, paddingBottom: Spacing["3xl"], gap: Spacing.md },
   modalHandle: { width: 40, height: 4, borderRadius: 2, alignSelf: "center", marginBottom: Spacing.sm },
