@@ -272,9 +272,12 @@ const styles = StyleSheet.create({
   },
   summaryValue: {
     fontSize: 24,
+    lineHeight: 32,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     marginBottom: Spacing.xs,
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
   summaryLabel: {
     fontSize: 12,
