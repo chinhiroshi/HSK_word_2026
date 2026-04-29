@@ -277,29 +277,6 @@ export async function resetWordsOnly(): Promise<void> {
   await saveWords(resetWords);
 }
 
-export async function resetNeedsWork(type: "text" | "audio" | "both"): Promise<void> {
-  const words = await getWords();
-  const updated = words.map((w) => {
-    const next = { ...w };
-    if (type === "text" || type === "both") {
-      if ((w.textUnmemorizedCount || 0) > 0) {
-        next.textUnmemorizedCount = 0;
-        next.textMemorized = false;
-        next.unmemorizedCount = 0;
-        next.isMemorized = false;
-      }
-    }
-    if (type === "audio" || type === "both") {
-      if ((w.audioUnmemorizedCount || 0) > 0) {
-        next.audioUnmemorizedCount = 0;
-        next.audioMemorized = false;
-      }
-    }
-    return next;
-  });
-  await saveWords(updated);
-}
-
 export async function resetProgress(): Promise<void> {
   await resetWordsOnly();
   await resetSprintData();
