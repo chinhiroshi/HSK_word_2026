@@ -27,7 +27,6 @@ interface GroupInfo {
   endIndex: number;
   memorizedCount: number;
   needsWorkCount: number;
-  notStartedCount: number;
   totalCount: number;
 }
 
@@ -108,12 +107,6 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
             {group.needsWorkCount}
           </ThemedText>
         </View>
-        <View style={styles.statItem}>
-          <Feather name="circle" size={14} color={theme.textSecondary} />
-          <ThemedText style={[styles.statText, { color: theme.textSecondary }]}>
-            {group.notStartedCount}
-          </ThemedText>
-        </View>
       </View>
     </Pressable>
   );
@@ -172,14 +165,12 @@ export default function AudioLearningScreen() {
       const needsWorkCount = groupWords.filter(
         (w) => (w.audioUnmemorizedCount || 0) > 0
       ).length;
-      const notStartedCount = groupWords.length - memorizedCount - needsWorkCount;
-
+      
       result.push({
         startIndex,
         endIndex,
         memorizedCount,
         needsWorkCount,
-        notStartedCount,
         totalCount: groupWords.length,
       });
     }
@@ -194,8 +185,7 @@ export default function AudioLearningScreen() {
     const needsWork = words.filter(
       (w) => (w.audioUnmemorizedCount || 0) > 0
     ).length;
-    const notStarted = words.length - memorized - needsWork;
-    return { total: words.length, memorized, needsWork, notStarted };
+    return { total: words.length, memorized, needsWork };
   }, [words]);
 
   const currentHskLevel = words.length > 0 ? words[0].hskLevel : undefined;
@@ -261,15 +251,6 @@ export default function AudioLearningScreen() {
             </ThemedText>
             <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
               {t("audio_needs_work")}
-            </ThemedText>
-          </View>
-          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
-          <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: theme.textSecondary }]}>
-              {totalStats.notStarted}
-            </ThemedText>
-            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              {t("not_yet")}
             </ThemedText>
           </View>
         </View>

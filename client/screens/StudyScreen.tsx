@@ -76,8 +76,7 @@ export default function StudyScreen() {
     const needsWork = words.filter(
       (w) => (w.textUnmemorizedCount || 0) > 0
     ).length;
-    const notStarted = words.length - memorized - needsWork;
-    return { total: words.length, memorized, needsWork, notStarted };
+    return { total: words.length, memorized, needsWork };
   }, [words]);
 
   const groups = useMemo(() => {
@@ -169,7 +168,6 @@ export default function StudyScreen() {
           </View>
 
           <View style={[styles.statBadge, { backgroundColor: theme.backgroundSecondary }]}>
-            <Feather name="circle" size={14} color={theme.textSecondary} />
             <ThemedText style={[styles.statText, { color: theme.textSecondary }]}>
               {neutralCount}
             </ThemedText>
@@ -234,15 +232,6 @@ export default function StudyScreen() {
               ) : null}
             </View>
           </Pressable>
-          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
-          <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: theme.textSecondary }]}>
-              {totalStats.notStarted}
-            </ThemedText>
-            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              {t("not_yet")}
-            </ThemedText>
-          </View>
         </View>
       </View>
 
