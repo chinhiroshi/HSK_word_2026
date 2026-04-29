@@ -248,7 +248,7 @@ const translations = {
     // ── Paywall Screen ──
     paywall_header: "プレミアム",
     paywall_feature_all_words: "スプリント完全解放",
-    paywall_feature_all_words_desc: "HSK2〜6級の全範囲を、7日サイクルで計画的に。",
+    paywall_feature_all_words_desc: "HSK2〜6級の全範囲を計画的に学習。定期テストでパンダスタンプを集めよう。",
     paywall_feature_audio: "耳で覚える",
     paywall_feature_audio_desc: "全例文の音声を再生。耳から自然に定着。",
     paywall_feature_playback: "スキマ時間が学習時間",
@@ -612,7 +612,7 @@ const translations = {
     // ── Paywall Screen ──
     paywall_header: "Premium",
     paywall_feature_all_words: "Sprint Fully Unlocked",
-    paywall_feature_all_words_desc: "Full HSK 2–6 range on a planned 7-day cycle.",
+    paywall_feature_all_words_desc: "Study all of HSK 2–6 with a plan. Take regular tests and collect panda stamps.",
     paywall_feature_audio: "Learn by Listening",
     paywall_feature_audio_desc: "Play any example sentence, anytime.",
     paywall_feature_playback: "Spare Minutes = Study Time",
