@@ -26,7 +26,6 @@ interface GroupInfo {
   startIndex: number;
   endIndex: number;
   memorizedCount: number;
-  needsWorkCount: number;
   notMemorizedCount: number;
   totalCount: number;
 }
@@ -103,12 +102,6 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
           </ThemedText>
         </View>
         <View style={styles.statItem}>
-          <Feather name="flag" size={14} color={Colors.light.secondary} />
-          <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-            {group.needsWorkCount}
-          </ThemedText>
-        </View>
-        <View style={styles.statItem}>
           <Feather name="x-circle" size={14} color={Colors.light.alert} />
           <ThemedText style={[styles.statText, { color: Colors.light.alert }]}>
             {group.notMemorizedCount}
@@ -169,9 +162,6 @@ export default function AudioLearningScreen() {
       const memorizedCount = groupWords.filter(
         (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
       ).length;
-      const needsWorkCount = groupWords.filter(
-        (w) => (w.audioUnmemorizedCount || 0) > 0
-      ).length;
       const notMemorizedCount = groupWords.filter(
         (w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0
       ).length;
@@ -180,7 +170,6 @@ export default function AudioLearningScreen() {
         startIndex,
         endIndex,
         memorizedCount,
-        needsWorkCount,
         notMemorizedCount,
         totalCount: groupWords.length,
       });
@@ -193,13 +182,10 @@ export default function AudioLearningScreen() {
     const memorized = words.filter(
       (w) => w.audioMemorized && (w.audioUnmemorizedCount || 0) === 0
     ).length;
-    const needsWork = words.filter(
-      (w) => (w.audioUnmemorizedCount || 0) > 0
-    ).length;
     const unmemorized = words.filter(
       (w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0
     ).length;
-    return { total: words.length, memorized, needsWork, unmemorized };
+    return { total: words.length, memorized, unmemorized };
   }, [words]);
 
   const currentHskLevel = words.length > 0 ? words[0].hskLevel : undefined;
@@ -210,6 +196,13 @@ export default function AudioLearningScreen() {
       startIndex: group.startIndex,
       endIndex: group.endIndex,
     });
+  };
+
+  const handleNotMemorizedPress = () => {
+    if (totalStats.unmemorized > 0) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      navigation.navigate("UnmemorizedList", { type: "audio", filter: "notMemorized" });
+    }
   };
 
   const renderGroupItem = ({ item, index }: { item: GroupInfo; index: number }) => (
@@ -259,23 +252,23 @@ export default function AudioLearningScreen() {
             </ThemedText>
           </View>
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
-          <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: Colors.light.secondary }]}>
-              {totalStats.needsWork}
-            </ThemedText>
-            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              {t("audio_needs_work")}
-            </ThemedText>
-          </View>
-          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
-          <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: theme.textSecondary }]}>
+          <Pressable
+            style={styles.summaryItem}
+            onPress={handleNotMemorizedPress}
+            testID="not-memorized-button-audio"
+          >
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.alert }]}>
               {totalStats.unmemorized}
             </ThemedText>
-            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              {t("filter_unmemorized")}
-            </ThemedText>
-          </View>
+            <View style={styles.summaryLabelRow}>
+              <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
+                {t("filter_unmemorized")}
+              </ThemedText>
+              {totalStats.unmemorized > 0 ? (
+                <Feather name="chevron-right" size={14} color={Colors.light.alert} />
+              ) : null}
+            </View>
+          </Pressable>
         </View>
       </View>
 
@@ -332,6 +325,11 @@ const styles = StyleSheet.create({
   summaryLabel: {
     fontSize: 12,
     fontFamily: "Nunito_400Regular",
+  },
+  summaryLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 2,
   },
   summaryDivider: {
     width: 1,

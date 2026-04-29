@@ -74,13 +74,10 @@ export default function StudyScreen() {
     const memorized = words.filter(
       (w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0
     ).length;
-    const needsWork = words.filter(
-      (w) => (w.textUnmemorizedCount || 0) > 0
-    ).length;
     const unmemorized = words.filter(
       (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0
     ).length;
-    return { total: words.length, memorized, needsWork, unmemorized };
+    return { total: words.length, memorized, unmemorized };
   }, [words]);
 
   const groups = useMemo(() => {
@@ -120,10 +117,10 @@ export default function StudyScreen() {
     });
   };
 
-  const handleNeedsWorkPress = () => {
-    if (totalStats.needsWork > 0) {
+  const handleNotMemorizedPress = () => {
+    if (totalStats.unmemorized > 0) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      navigation.navigate("UnmemorizedList", { type: "text" });
+      navigation.navigate("UnmemorizedList", { type: "text", filter: "notMemorized" });
     }
   };
 
@@ -165,13 +162,6 @@ export default function StudyScreen() {
             <Feather name="check" size={14} color={Colors.light.success} />
             <ThemedText style={[styles.statText, { color: Colors.light.success }]}>
               {item.memorizedCount}
-            </ThemedText>
-          </View>
-
-          <View style={[styles.statBadge, { backgroundColor: `${Colors.light.secondary}20` }]}>
-            <Feather name="flag" size={14} color={Colors.light.secondary} />
-            <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-              {item.unmemorizedCount}
             </ThemedText>
           </View>
 
@@ -232,30 +222,21 @@ export default function StudyScreen() {
           <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
           <Pressable
             style={styles.summaryItem}
-            onPress={handleNeedsWorkPress}
-            testID="needs-work-button"
+            onPress={handleNotMemorizedPress}
+            testID="not-memorized-button"
           >
-            <ThemedText style={[styles.summaryValue, { color: Colors.light.secondary }]}>
-              {totalStats.needsWork}
+            <ThemedText style={[styles.summaryValue, { color: Colors.light.alert }]}>
+              {totalStats.unmemorized}
             </ThemedText>
             <View style={styles.summaryLabelRow}>
               <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-                {t("text_needs_work")}
+                {t("filter_unmemorized")}
               </ThemedText>
-              {totalStats.needsWork > 0 ? (
-                <Feather name="chevron-right" size={14} color={Colors.light.secondary} />
+              {totalStats.unmemorized > 0 ? (
+                <Feather name="chevron-right" size={14} color={Colors.light.alert} />
               ) : null}
             </View>
           </Pressable>
-          <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
-          <View style={styles.summaryItem}>
-            <ThemedText style={[styles.summaryValue, { color: theme.textSecondary }]}>
-              {totalStats.unmemorized}
-            </ThemedText>
-            <ThemedText style={[styles.summaryLabel, { color: theme.textSecondary }]}>
-              {t("filter_unmemorized")}
-            </ThemedText>
-          </View>
         </View>
       </View>
 

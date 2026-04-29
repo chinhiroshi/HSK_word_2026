@@ -13,7 +13,7 @@ export type RootStackParamList = {
   WordDetail: { wordId: string };
   WordList: { startIndex: number; endIndex: number };
   AudioWordList: { startIndex: number; endIndex: number };
-  UnmemorizedList: { type: "text" | "audio" };
+  UnmemorizedList: { type: "text" | "audio"; filter?: "needsWork" | "notMemorized" };
   Paywall: undefined;
 };
 

@@ -28,7 +28,7 @@ export default function UnmemorizedListScreen() {
   const { t } = useI18n();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteProps>();
-  const { type } = route.params;
+  const { type, filter = "needsWork" } = route.params;
 
   const [allWords, setAllWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,10 +45,14 @@ export default function UnmemorizedListScreen() {
   }, [loadWords]);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerTitle: type === "text" ? t("unmemorized_text_header") : t("unmemorized_audio_header"),
-    });
-  }, [navigation, type]);
+    let title: string;
+    if (filter === "notMemorized") {
+      title = type === "text" ? t("not_memorized_text_header") : t("not_memorized_audio_header");
+    } else {
+      title = type === "text" ? t("unmemorized_text_header") : t("unmemorized_audio_header");
+    }
+    navigation.setOptions({ headerTitle: title });
+  }, [navigation, type, filter, t]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -65,10 +69,20 @@ export default function UnmemorizedListScreen() {
 
   const unmemorizedWords = useMemo(() => {
     if (type === "text") {
+      if (filter === "notMemorized") {
+        return allWords.filter(
+          (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0
+        );
+      }
       return allWords.filter((w) => (w.textUnmemorizedCount || 0) > 0);
     }
+    if (filter === "notMemorized") {
+      return allWords.filter(
+        (w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0
+      );
+    }
     return allWords.filter((w) => (w.audioUnmemorizedCount || 0) > 0);
-  }, [allWords, type]);
+  }, [allWords, type, filter]);
 
   const handleMarkUnmemorized = async (wordId: string) => {
     const updatedWord = await markAsUnmemorized(wordId, type);
@@ -116,7 +130,7 @@ export default function UnmemorizedListScreen() {
     return (
       <View style={styles.emptyState}>
         <ThemedText style={[styles.emptyText, { color: theme.textSecondary }]}>
-          暗記必要な単語がありません
+          {filter === "notMemorized" ? t("empty_no_not_memorized") : t("empty_no_needs_work")}
         </ThemedText>
       </View>
     );

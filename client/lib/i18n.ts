@@ -49,9 +49,7 @@ const translations = {
     // ── Study Screen ──
     study_header: "中国語マスター",
     text_memorized: "文字暗記済み",
-    text_needs_work: "文字暗記必要",
     audio_memorized_label: "音声暗記済み",
-    audio_needs_work: "音声暗記必要",
     filter_all: "すべて",
     filter_memorized: "暗記済み",
     filter_unmemorized: "未暗記",
@@ -328,6 +326,10 @@ const translations = {
     // ── Unmemorized List Screen ──
     unmemorized_text_header: "暗記必要な単語",
     unmemorized_audio_header: "暗記必要な単語（音声）",
+    not_memorized_text_header: "未暗記の単語",
+    not_memorized_audio_header: "未暗記の単語（音声）",
+    empty_no_needs_work: "暗記必要な単語がありません",
+    empty_no_not_memorized: "未暗記の単語がありません",
 
     // ── Empty states ──
     empty_no_words: "単語がありません",
@@ -411,9 +413,7 @@ const translations = {
     // ── Study Screen ──
     study_header: "Chinese Master",
     text_memorized: "Text Memorized",
-    text_needs_work: "Text Needs Work",
     audio_memorized_label: "Audio Memorized",
-    audio_needs_work: "Audio Needs Work",
     filter_all: "All",
     filter_memorized: "Memorized",
     filter_unmemorized: "Not Started",
@@ -690,6 +690,10 @@ const translations = {
     // ── Unmemorized List Screen ──
     unmemorized_text_header: "Words Needing Work",
     unmemorized_audio_header: "Words Needing Work (Audio)",
+    not_memorized_text_header: "Not Memorized Words",
+    not_memorized_audio_header: "Not Memorized Words (Audio)",
+    empty_no_needs_work: "No words need more practice",
+    empty_no_not_memorized: "No unmemorized words",
 
     // ── Empty states ──
     empty_no_words: "No words found",
