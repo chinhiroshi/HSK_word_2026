@@ -786,120 +786,88 @@ export default function ProfileScreen() {
 
       {hasWordsForLevel ? (
         <>
-          <View
-            style={[
-              styles.statsCard,
-              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-            ]}
-          >
-            <View style={styles.statsTitleRow}>
-              <Feather name="book-open" size={18} color={theme.primary} />
-              <ThemedText style={styles.statsTitle}>{t("text_memorization")}</ThemedText>
-            </View>
+          <View style={styles.statsCardRow}>
+            <View
+              style={[
+                styles.statsCardCompact,
+                { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+              ]}
+            >
+              <View style={styles.statsTitleRow}>
+                <Feather name="book-open" size={16} color={theme.primary} />
+                <ThemedText style={styles.statsTitleCompact}>{t("text_memorization")}</ThemedText>
+              </View>
 
-            <View style={styles.progressContainer}>
-              <ProgressBar progress={textPercentage} height={8} />
-              <ThemedText style={[styles.progressText, { color: theme.primary }]}>
-                {textPercentage}%
-              </ThemedText>
-            </View>
-
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
-                  {textStats.memorized}
-                </ThemedText>
-                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  {t("memorized")}
+              <View style={styles.progressContainer}>
+                <ProgressBar progress={textPercentage} height={6} />
+                <ThemedText style={[styles.progressTextCompact, { color: theme.primary }]}>
+                  {textPercentage}%
                 </ThemedText>
               </View>
 
-              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+              <View style={styles.statsRow}>
+                <View style={styles.statItem}>
+                  <ThemedText style={[styles.statValueCompact, { color: Colors.light.success }]}>
+                    {textStats.memorized}
+                  </ThemedText>
+                  <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                    {t("memorized")}
+                  </ThemedText>
+                </View>
 
-              <View style={styles.statItem}>
-                <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
-                  {textStats.needsWork}
-                </ThemedText>
-                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  {t("needs_work")}
-                </ThemedText>
-              </View>
+                <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
 
-              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-              <View style={styles.statItem}>
-                <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
-                  {textStats.notStarted}
-                </ThemedText>
-                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  {t("not_started")}
-                </ThemedText>
-              </View>
-            </View>
-          </View>
-
-          <View
-            style={[
-              styles.statsCard,
-              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-            ]}
-          >
-            <View style={styles.statsTitleRow}>
-              <Feather name="headphones" size={18} color={theme.primary} />
-              <ThemedText style={styles.statsTitle}>{t("audio_memorization")}</ThemedText>
-            </View>
-
-            <View style={styles.progressContainer}>
-              <ProgressBar progress={audioPercentage} height={8} />
-              <ThemedText style={[styles.progressText, { color: theme.primary }]}>
-                {audioPercentage}%
-              </ThemedText>
-            </View>
-
-            <View style={styles.statsRow}>
-              <View style={styles.statItem}>
-                <ThemedText style={[styles.statValue, { color: Colors.light.success }]}>
-                  {audioStats.memorized}
-                </ThemedText>
-                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  {t("memorized")}
-                </ThemedText>
-              </View>
-
-              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-              <View style={styles.statItem}>
-                <ThemedText style={[styles.statValue, { color: Colors.light.secondary }]}>
-                  {audioStats.needsWork}
-                </ThemedText>
-                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  {t("needs_work")}
-                </ThemedText>
-              </View>
-
-              <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
-
-              <View style={styles.statItem}>
-                <ThemedText style={[styles.statValue, { color: theme.textSecondary }]}>
-                  {audioStats.notStarted}
-                </ThemedText>
-                <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
-                  {t("not_started")}
-                </ThemedText>
+                <View style={styles.statItem}>
+                  <ThemedText style={[styles.statValueCompact, { color: theme.primary }]}>
+                    {totalWords}
+                  </ThemedText>
+                  <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                    {t("total_words")}
+                  </ThemedText>
+                </View>
               </View>
             </View>
-          </View>
 
-          <View
-            style={[
-              styles.totalCard,
-              { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
-            ]}
-          >
-            <ThemedText style={styles.totalLabel}>{t("total_words")}</ThemedText>
-            <ThemedText style={[styles.totalValue, { color: theme.primary }]}>
-              {totalWords}
-            </ThemedText>
+            <View
+              style={[
+                styles.statsCardCompact,
+                { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+              ]}
+            >
+              <View style={styles.statsTitleRow}>
+                <Feather name="headphones" size={16} color={theme.primary} />
+                <ThemedText style={styles.statsTitleCompact}>{t("audio_memorization")}</ThemedText>
+              </View>
+
+              <View style={styles.progressContainer}>
+                <ProgressBar progress={audioPercentage} height={6} />
+                <ThemedText style={[styles.progressTextCompact, { color: theme.primary }]}>
+                  {audioPercentage}%
+                </ThemedText>
+              </View>
+
+              <View style={styles.statsRow}>
+                <View style={styles.statItem}>
+                  <ThemedText style={[styles.statValueCompact, { color: Colors.light.success }]}>
+                    {audioStats.memorized}
+                  </ThemedText>
+                  <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                    {t("memorized")}
+                  </ThemedText>
+                </View>
+
+                <View style={[styles.statDivider, { backgroundColor: theme.border }]} />
+
+                <View style={styles.statItem}>
+                  <ThemedText style={[styles.statValueCompact, { color: theme.primary }]}>
+                    {totalWords}
+                  </ThemedText>
+                  <ThemedText style={[styles.statLabel, { color: theme.textSecondary }]}>
+                    {t("total_words")}
+                  </ThemedText>
+                </View>
+              </View>
+            </View>
           </View>
 
           <Button onPress={handleResetProgress} style={styles.resetButton}>
@@ -1236,28 +1204,50 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: Spacing.md,
   },
+  statsCardRow: {
+    flexDirection: "row",
+    gap: Spacing.sm,
+    marginBottom: Spacing.xl,
+  },
+  statsCardCompact: {
+    flex: 1,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
   statsTitleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
-    marginBottom: Spacing.md,
+    gap: Spacing.xs,
+    marginBottom: Spacing.sm,
   },
   statsTitle: {
     fontSize: 16,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
   },
+  statsTitleCompact: {
+    fontSize: 13,
+    fontWeight: "600",
+    fontFamily: "Nunito_600SemiBold",
+  },
   progressContainer: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.md,
-    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
   },
   progressText: {
     fontSize: 14,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     minWidth: 40,
+  },
+  progressTextCompact: {
+    fontSize: 11,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    minWidth: 30,
   },
   statsRow: {
     flexDirection: "row",
@@ -1272,6 +1262,12 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
     marginBottom: Spacing.xs,
+  },
+  statValueCompact: {
+    fontSize: 18,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
+    marginBottom: 2,
   },
   statLabel: {
     fontSize: 11,
