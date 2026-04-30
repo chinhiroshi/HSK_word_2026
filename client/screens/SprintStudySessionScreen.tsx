@@ -243,28 +243,10 @@ export default function SprintStudySessionScreen() {
     }
   };
 
-  // 未判定の単語を自動で「覚えた」としてマークする
-  const autoMarkUnmarkedAsMemorized = async () => {
-    const type = isAudioPhase ? "audio" : "text";
-    // Read from ref to get the latest choices and avoid stale-closure races
-    // (e.g. tapping a flag and immediately pressing 完了).
-    const currentChoices = type === "audio" ? audioChoicesRef.current : textChoicesRef.current;
-    const unmarked = words.filter((w) => !currentChoices[w.id]);
-    if (unmarked.length === 0) return;
-    await Promise.all(unmarked.map((w) => markAsMemorized(w.id, type)));
-    const updates: Record<string, "memorized" | "unmemorized"> = {};
-    unmarked.forEach((w) => { updates[w.id] = "memorized"; });
-    if (type === "audio") {
-      audioChoicesRef.current = { ...audioChoicesRef.current, ...updates };
-      setAudioChoices((prev) => ({ ...prev, ...updates }));
-    } else {
-      textChoicesRef.current = { ...textChoicesRef.current, ...updates };
-      setTextChoices((prev) => ({ ...prev, ...updates }));
-    }
-  };
-
   const handleListNext = async () => {
-    await autoMarkUnmarkedAsMemorized();
+    // Note: We intentionally do NOT auto-mark unmarked words as memorized.
+    // The user explicitly chooses memorized (check) or unmemorized (flag);
+    // anything left untouched keeps its previous state.
     if (phase === "text-list") {
       const hasUnmemorized = words.some((w) => textChoicesRef.current[w.id] === "unmemorized");
       if (hasUnmemorized) {
@@ -777,7 +759,7 @@ export default function SprintStudySessionScreen() {
               <View style={[styles.unmarkedHint, { backgroundColor: theme.backgroundSecondary }]}>
                 <Feather name="flag" size={13} color={theme.textSecondary} />
                 <ThemedText style={[styles.unmarkedHintText, { color: theme.textSecondary }]}>
-                  覚えていない単語にフラグを立ててください
+                  覚えた単語はチェック、覚えていない単語はフラグを押してください
                 </ThemedText>
               </View>
               <Button testID="button-list-next" onPress={handleListNext} style={{ flex: 1 }}>
