@@ -75,6 +75,10 @@ export default function SprintStudySessionScreen() {
   const [revealLevel, setRevealLevel] = useState<RevealLevel>(0);
   const [textChoices, setTextChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [audioChoices, setAudioChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
+  // Refs mirror the latest choices synchronously to avoid stale-closure races
+  // when the user taps a flag and immediately presses 完了.
+  const textChoicesRef = useRef<Record<string, "memorized" | "unmemorized">>({});
+  const audioChoicesRef = useRef<Record<string, "memorized" | "unmemorized">>({});
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
   const [allRevealed, setAllRevealed] = useState(false); // true = hide Chinese characters in text-list
   const [translationRevealedIds, setTranslationRevealedIds] = useState<Set<string>>(new Set());
@@ -146,6 +150,8 @@ export default function SprintStudySessionScreen() {
     });
     setTextChoices(initText);
     setAudioChoices(initAudio);
+    textChoicesRef.current = initText;
+    audioChoicesRef.current = initAudio;
 
     if (sessionMode === "audio-cards-only") {
       // Start directly at audio-cards with words not yet audio-memorized
@@ -220,6 +226,13 @@ export default function SprintStudySessionScreen() {
         : Haptics.ImpactFeedbackStyle.Medium
     );
     const type = isAudioPhase ? "audio" : "text";
+    // Update ref synchronously BEFORE the await so any concurrent press of 完了
+    // sees the latest choice and won't overwrite it via auto-mark.
+    if (type === "audio") {
+      audioChoicesRef.current = { ...audioChoicesRef.current, [wordId]: choice };
+    } else {
+      textChoicesRef.current = { ...textChoicesRef.current, [wordId]: choice };
+    }
     await (choice === "memorized"
       ? markAsMemorized(wordId, type)
       : markAsUnmemorized(wordId, type));
@@ -233,15 +246,19 @@ export default function SprintStudySessionScreen() {
   // 未判定の単語を自動で「覚えた」としてマークする
   const autoMarkUnmarkedAsMemorized = async () => {
     const type = isAudioPhase ? "audio" : "text";
-    const currentChoices = type === "audio" ? audioChoices : textChoices;
+    // Read from ref to get the latest choices and avoid stale-closure races
+    // (e.g. tapping a flag and immediately pressing 完了).
+    const currentChoices = type === "audio" ? audioChoicesRef.current : textChoicesRef.current;
     const unmarked = words.filter((w) => !currentChoices[w.id]);
     if (unmarked.length === 0) return;
     await Promise.all(unmarked.map((w) => markAsMemorized(w.id, type)));
     const updates: Record<string, "memorized" | "unmemorized"> = {};
     unmarked.forEach((w) => { updates[w.id] = "memorized"; });
     if (type === "audio") {
+      audioChoicesRef.current = { ...audioChoicesRef.current, ...updates };
       setAudioChoices((prev) => ({ ...prev, ...updates }));
     } else {
+      textChoicesRef.current = { ...textChoicesRef.current, ...updates };
       setTextChoices((prev) => ({ ...prev, ...updates }));
     }
   };
@@ -249,7 +266,7 @@ export default function SprintStudySessionScreen() {
   const handleListNext = async () => {
     await autoMarkUnmarkedAsMemorized();
     if (phase === "text-list") {
-      const hasUnmemorized = words.some((w) => textChoices[w.id] === "unmemorized");
+      const hasUnmemorized = words.some((w) => textChoicesRef.current[w.id] === "unmemorized");
       if (hasUnmemorized) {
         setListFilter("unmemorized");
         setPhase("text-review");
@@ -260,7 +277,7 @@ export default function SprintStudySessionScreen() {
       setListFilter("all");
       setPhase("complete");
     } else if (phase === "audio-list") {
-      const hasUnmemorized = words.some((w) => audioChoices[w.id] === "unmemorized");
+      const hasUnmemorized = words.some((w) => audioChoicesRef.current[w.id] === "unmemorized");
       if (hasUnmemorized) {
         setListFilter("unmemorized");
         setPhase("audio-review");
