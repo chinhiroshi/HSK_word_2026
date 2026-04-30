@@ -82,6 +82,7 @@ export default function SprintStudySessionScreen() {
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
   const [isPartialComplete, setIsPartialComplete] = useState(false);
+  const [listBarHeight, setListBarHeight] = useState(130);
   const [stampVisible, setStampVisible] = useState(false);
   const [showPostStamp, setShowPostStamp] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
@@ -611,7 +612,7 @@ export default function SprintStudySessionScreen() {
         <FlatList
           data={filteredWords}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ paddingBottom: 90 + tabBarHeight }}
+          contentContainerStyle={{ paddingBottom: listBarHeight + tabBarHeight + Spacing.md }}
           renderItem={({ item }) => {
             const globalIdx = words.indexOf(item) + 1;
             const choice = isAudioListPhase ? audioChoices[item.id] : textChoices[item.id];
@@ -750,7 +751,10 @@ export default function SprintStudySessionScreen() {
         />
 
         {/* Next button */}
-        <View style={[styles.listNextBar, { bottom: tabBarHeight, paddingBottom: Spacing.md, borderTopColor: theme.border, backgroundColor: theme.backgroundDefault }]}>
+        <View
+          style={[styles.listNextBar, { bottom: tabBarHeight, paddingBottom: Spacing.md, borderTopColor: theme.border, backgroundColor: theme.backgroundDefault }]}
+          onLayout={(e) => setListBarHeight(e.nativeEvent.layout.height)}
+        >
           {!isReviewPhase ? (
             <View style={styles.listNextBarInner}>
               <View style={[styles.unmarkedHint, { backgroundColor: theme.backgroundSecondary }]}>
