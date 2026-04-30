@@ -312,6 +312,66 @@ uri = "file://assets/images/panda-stamp-tutorial.png"
 type = "image"
 title = "panda astronaut stamp"
 
+[[generated]]
+id = "9Iy_AllrH6JNA3N5C6vVq"
+uri = "file://assets/images/panda-stamp-3.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "fszHYl2aQQipovmJ164yk"
+uri = "file://assets/images/panda-stamp-4.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "hXXjXUUmnKWnZWam_GgDA"
+uri = "file://assets/images/panda-stamp-5.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "C56eH_izjjKrnuPuKvUS5"
+uri = "file://assets/images/panda-stamp-6.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "Fn_vG5x2lkQzbPJGJrPi-"
+uri = "file://assets/images/panda-stamp-7.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "r84TblQnRkBPOFBipGTL5"
+uri = "file://assets/images/panda-stamp-8.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "oFpWgvn9DZbJ6BDQYn1TW"
+uri = "file://assets/images/panda-stamp-9.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "crD0ATb1mE6oNtRLo6Rzi"
+uri = "file://assets/images/panda-stamp-10.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "zaz5mZBiiaFbaksKaJdHF"
+uri = "file://assets/images/panda-stamp-11.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "9JhOkpeQHjrY-w3y77TgU"
+uri = "file://assets/images/panda-stamp-12.png"
+type = "image"
+title = "generated_image"
+
 [[outputs]]
 id = "25ttI0-awxEyfFdb-9QYb"
 uri = "file://assets/images/icon.png"
