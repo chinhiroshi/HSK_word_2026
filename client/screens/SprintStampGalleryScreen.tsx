@@ -34,6 +34,10 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const STAMP_SIZE = Math.floor(
   (SCREEN_WIDTH - Spacing.lg * 2 - (NUM_COLS - 1) * Spacing.md) / NUM_COLS
 );
+const DEV_COLS = 5;
+const DEV_SIZE = Math.floor(
+  (SCREEN_WIDTH - Spacing.lg * 2 - (DEV_COLS - 1) * Spacing.sm) / DEV_COLS
+);
 
 function formatDate(dateStr: string): string {
   const [, month, day] = dateStr.split("-");
@@ -56,6 +60,7 @@ export default function SprintStampGalleryScreen() {
   } | null>(null);
   const [showShare, setShowShare] = useState(false);
   const [tutorialEarned, setTutorialEarned] = useState(false);
+  const [showDevPreview, setShowDevPreview] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -418,6 +423,21 @@ export default function SprintStampGalleryScreen() {
             ))}
           </View>
         )}
+
+        {/* Dev: stamp preview button — only visible in development */}
+        {__DEV__ ? (
+          <Pressable
+            testID="button-dev-stamp-preview"
+            onPress={() => setShowDevPreview(true)}
+            style={({ pressed }) => [
+              styles.devBtn,
+              { borderColor: "#7C3AED", opacity: pressed ? 0.7 : 1 },
+            ]}
+          >
+            <Feather name="eye" size={14} color="#7C3AED" />
+            <ThemedText style={styles.devBtnText}>全スタンプ確認 (DEV)</ThemedText>
+          </Pressable>
+        ) : null}
       </ScrollView>
       {/* Quote Modal */}
       <Modal
@@ -488,6 +508,113 @@ export default function SprintStampGalleryScreen() {
               : null
           }
         />
+      ) : null}
+
+      {/* Dev-only: full stamp preview modal */}
+      {__DEV__ ? (
+        <Modal
+          visible={showDevPreview}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setShowDevPreview(false)}
+        >
+          <View style={styles.devOverlay}>
+            <View style={[styles.devSheet, { backgroundColor: theme.backgroundDefault }]}>
+              {/* Header */}
+              <View style={[styles.devSheetHeader, { borderBottomColor: theme.border }]}>
+                <View>
+                  <ThemedText style={styles.devSheetTitle}>全スタンプ確認</ThemedText>
+                  <ThemedText style={[styles.devSheetSub, { color: theme.textSecondary }]}>
+                    開発用 — 本番では非表示
+                  </ThemedText>
+                </View>
+                <Pressable
+                  onPress={() => setShowDevPreview(false)}
+                  hitSlop={12}
+                  style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
+                >
+                  <Feather name="x" size={24} color={theme.textSecondary} />
+                </Pressable>
+              </View>
+
+              <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.devScrollContent}>
+                {/* Tutorial stamp */}
+                <ThemedText style={[styles.devSectionTitle, { color: theme.primary }]}>
+                  はじめての一歩スタンプ
+                </ThemedText>
+                <View style={styles.devStampRow}>
+                  <View style={styles.devStampItem}>
+                    <LinearGradient
+                      colors={["#FFD700", "#FFA500", "#FF6B35", "#FFD700"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        width: DEV_SIZE + 6,
+                        height: DEV_SIZE + 6,
+                        borderRadius: (DEV_SIZE + 6) / 2,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <View style={{
+                        width: DEV_SIZE,
+                        height: DEV_SIZE,
+                        borderRadius: DEV_SIZE / 2,
+                        backgroundColor: theme.backgroundDefault,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        overflow: "hidden",
+                      }}>
+                        <Image
+                          source={TUTORIAL_STAMP}
+                          style={{ width: DEV_SIZE - 4, height: DEV_SIZE - 4, borderRadius: (DEV_SIZE - 4) / 2 }}
+                          resizeMode="cover"
+                        />
+                      </View>
+                    </LinearGradient>
+                    <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]}>tutorial</ThemedText>
+                  </View>
+                </View>
+
+                {/* Special stamp */}
+                <ThemedText style={[styles.devSectionTitle, { color: "#7C3AED" }]}>
+                  スペシャルスタンプ (テスト合格)
+                </ThemedText>
+                <View style={styles.devStampRow}>
+                  <View style={styles.devStampItem}>
+                    <View style={[styles.devStampCircle, { borderColor: Colors.light.alert, backgroundColor: theme.backgroundDefault }]}>
+                      <Image
+                        source={PANDA_SPECIAL}
+                        style={{ width: DEV_SIZE - 6, height: DEV_SIZE - 6, borderRadius: (DEV_SIZE - 6) / 2 }}
+                        resizeMode="cover"
+                      />
+                    </View>
+                    <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]}>special</ThemedText>
+                  </View>
+                </View>
+
+                {/* Regular stamps 1–60 */}
+                <ThemedText style={[styles.devSectionTitle, { color: theme.primary }]}>
+                  通常スタンプ (1〜60)
+                </ThemedText>
+                <View style={styles.devGrid}>
+                  {Object.entries(PANDA_STAMPS).map(([num, src]) => (
+                    <View key={num} style={styles.devStampItem}>
+                      <View style={[styles.devStampCircle, { borderColor: theme.primary, backgroundColor: theme.backgroundDefault }]}>
+                        <Image
+                          source={src}
+                          style={{ width: DEV_SIZE - 6, height: DEV_SIZE - 6, borderRadius: (DEV_SIZE - 6) / 2 }}
+                          resizeMode="cover"
+                        />
+                      </View>
+                      <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]}>No.{num}</ThemedText>
+                    </View>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+          </View>
+        </Modal>
       ) : null}
     </ThemedView>
   );
@@ -665,5 +792,92 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.sm,
     alignItems: "center",
+  },
+  devBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    alignSelf: "center",
+    marginTop: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full ?? 999,
+    borderWidth: 1,
+    borderStyle: "dashed",
+  },
+  devBtnText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    color: "#7C3AED",
+  },
+  devOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    justifyContent: "flex-end",
+  },
+  devSheet: {
+    borderTopLeftRadius: BorderRadius.xl,
+    borderTopRightRadius: BorderRadius.xl,
+    maxHeight: "90%",
+    paddingBottom: Spacing["3xl"],
+  },
+  devSheetHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    marginBottom: Spacing.md,
+  },
+  devSheetTitle: {
+    fontSize: 17,
+    fontFamily: "Nunito_700Bold",
+  },
+  devSheetSub: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
+  },
+  devScrollContent: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing["3xl"],
+  },
+  devSectionTitle: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.sm,
+  },
+  devStampRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  devGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  devStampItem: {
+    alignItems: "center",
+    gap: 4,
+    width: DEV_SIZE + 6,
+  },
+  devStampCircle: {
+    width: DEV_SIZE,
+    height: DEV_SIZE,
+    borderRadius: DEV_SIZE / 2,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  devStampLabel: {
+    fontSize: 9,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
   },
 });
