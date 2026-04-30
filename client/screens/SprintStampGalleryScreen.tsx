@@ -27,7 +27,7 @@ import { HSK_QUOTES } from "@/data/hskQuotes";
 import { getTutorialStampEarned } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
-import { TUTORIAL_STAMP, PANDA_STAMPS, PANDA_SPECIAL, getPandaImage } from "@/data/pandaStamps";
+import { TUTORIAL_STAMP, PANDA_STAMPS, PANDA_SPECIALS, getPandaImage } from "@/data/pandaStamps";
 
 const NUM_COLS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -576,21 +576,23 @@ export default function SprintStampGalleryScreen() {
                   </View>
                 </View>
 
-                {/* Special stamp */}
+                {/* Special stamps */}
                 <ThemedText style={[styles.devSectionTitle, { color: "#7C3AED" }]}>
-                  スペシャルスタンプ (テスト合格)
+                  スペシャルスタンプ (テスト合格) — 全{PANDA_SPECIALS.length}種
                 </ThemedText>
-                <View style={styles.devStampRow}>
-                  <View style={styles.devStampItem}>
-                    <View style={[styles.devStampCircle, { borderColor: Colors.light.alert, backgroundColor: theme.backgroundDefault }]}>
-                      <Image
-                        source={PANDA_SPECIAL}
-                        style={{ width: DEV_SIZE - 6, height: DEV_SIZE - 6, borderRadius: (DEV_SIZE - 6) / 2 }}
-                        resizeMode="cover"
-                      />
+                <View style={styles.devGrid}>
+                  {PANDA_SPECIALS.map((src, idx) => (
+                    <View key={`special-${idx}`} style={styles.devStampItem}>
+                      <View style={[styles.devStampCircle, { borderColor: Colors.light.alert, backgroundColor: theme.backgroundDefault }]}>
+                        <Image
+                          source={src}
+                          style={{ width: DEV_SIZE - 6, height: DEV_SIZE - 6, borderRadius: (DEV_SIZE - 6) / 2 }}
+                          resizeMode="cover"
+                        />
+                      </View>
+                      <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]}>S.{idx + 1}</ThemedText>
                     </View>
-                    <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]}>special</ThemedText>
-                  </View>
+                  ))}
                 </View>
 
                 {/* Regular stamps 1–60 */}

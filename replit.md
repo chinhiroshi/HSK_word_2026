@@ -1,191 +1,27 @@
 # 中国語マスター (Chinese Master)
 
 ## Overview
-A mobile vocabulary learning app for Chinese language study. Users can browse Chinese words, listen to pronunciations, track memorization progress, and take shuffle tests to reinforce learning.
+中国語マスター is a mobile vocabulary learning application designed to help users master Chinese words. It features intuitive browsing of vocabulary, audio pronunciations, progress tracking, and interactive shuffle tests. The app aims to provide a comprehensive and engaging platform for Chinese language learners, from beginners to advanced students. It operates on a freemium model, offering HSK1 content fully free and gating advanced features for HSK2-6 behind a subscription, making it accessible while providing premium content.
 
-## Features
-- **Study Screen (文字暗記)**: Browse Chinese vocabulary in 50-word groups
-  - Group cards show memorized/unmemorized counts
-  - Click group to view word list
-  - Each word card shows: Chinese word, example sentence, TTS button
-  - Filter by: All / Memorized / Unmemorized (marked)
-  - Mark words with flag (unmemorized) or check (memorized) buttons
-  - Uses text memorization tracking (textMemorized, textUnmemorizedCount)
-- **Audio Learning (音声暗記)**: 50-word groups like Study but with hidden Chinese characters
-  - Group cards showing audio memorization progress
-  - Eye icon in header toggles visibility for all cards in group
-  - Tap card to reveal Chinese word and example sentence
-  - Audio-first learning approach with separate tracking
-  - Uses audio memorization tracking (audioMemorized, audioUnmemorizedCount)
-- **Audio Playback**: Continuous vocabulary audio playback
-  - Sequence: Chinese 1x → Japanese 1x → Chinese example 2x → Japanese example 1x → Chinese example 2x → English 1x
-  - Filter for unmemorized words only
-  - Set start AND end position for playback range
-  - Free users limited to first 50 words (except HSK1 which is fully free); premium banner links to Paywall
-- **Subscription (Freemium Model)**:
-  - HSK1 is completely free (all features, all groups)
-  - HSK2-6: All word lists are browsable for free (word, pinyin, translation, short example, single-word audio). Past word 50, the following are gated and require ¥380/month subscription:
-    - 記憶管理: mark-as-memorized / mark-as-needs-work buttons
-    - 例文の音声再生: TTS playback for example sentences (single-word audio remains free)
-    - 詳しい例文 (longExample / longExampleTranslation / longExampleEnglish)
-    - 音声連続再生 (Audio Playback tab)
-    - 音声学習: reveal of Chinese characters in AudioWordList
-    - スプリント: study sessions past word 50, all tests after Test 1
-  - Group cards show a lock icon as a hint, but groups remain tappable; per-feature locks open the Paywall modal
-  - SubscriptionContext manages state via RevenueCat SDK (react-native-purchases)
-  - RevenueCat handles purchase, restore, and entitlement checking ("premium" entitlement)
-  - API key passed via app.config.js extra → Constants.expoConfig.extra.revenueCatApiKey
-  - On web: RevenueCat runs in Preview API Mode (limited functionality expected)
-  - On iOS/Android via Expo Go: Full RevenueCat Preview API Mode with mock purchases
-  - PaywallScreen shows real pricing from RevenueCat offerings, with loading states
-  - ProfileScreen shows premium upgrade card or active subscription badge
-- **Onboarding Tutorial Sprint**: After initial onboarding (intro pages + HSK level select), new users are routed to SprintSetup → a 3-word TutorialSprintScreen → "はじめての一歩" panda stamp reward modal → main Sprint screen.
-  - Storage flags: `@chinese_master_tutorial_sprint_done`, `@chinese_master_tutorial_stamp_earned`
-  - Existing-user protection: on app launch, if onboarding is already complete, tutorial is auto-marked done so existing users never see it
-  - Tutorial uses first 3 words of selected HSK level; does NOT modify SprintData or word memorization state
-  - Routes via `SprintSetup` with `fromOnboarding: true` param → `navigation.replace("TutorialSprint")` after setup
-  - TutorialSprint stamp uses `panda-stamp-1.png` and is independent of `specialStamps` array
-  - SprintStampGallery 表示: 「はじめての一歩」スタンプは常にグリッドの左上(最初のセル)に表示される。未獲得時は award アイコン、獲得済みは panda-stamp-1.png + secondary 色の枠。サマリーの集計(進捗%, スタンプ数, テスト数)からは除外され、純粋に7日サイクルの進捗を反映。
-- **SNS シェア機能**: スタンプ獲得モーダルとスタンプ帳の李白引用ポップアップに「シェア」ボタンを追加
-  - `client/components/ShareStampSheet.tsx`: react-native-view-shot + expo-sharing による画像化シェア
-  - パンダスタンプ画像 + HSK級 + 学習進捗 + 集めたスタンプ数 + 名言 + ユーザーコメント (140字以内) を 1枚の PNG としてキャプチャ
-  - キャプチャ失敗時は React Native `Share.share` でテキストフォールバック (#中国語マスター #HSK #中国語学習)
-  - 配置: TutorialSprintScreen "はじめての一歩" モーダル, SprintStampGalleryScreen 引用ポップアップ
-- **Sprint (スプリント)**: Stamp-rally style 7-day learning cycle with snake grid map
-  - 29-cell snake grid (4 columns) showing learning progress as a map
-  - Setup: Choose daily word count (10/20/30/50 or custom). Preset chips arranged as compact 2-column grid so the「決定」button is reachable without scrolling.
-  - 7-day cycle: Day 1,2 = study; Day 3 = review; Day 4,5 = study; Day 6 = review; Day 7 = test
-  - Study session: Show word cards, mark as memorized/unmemorized
-  - Test session: Multiple-choice quiz; ≥70% correct = clear + special stamp
-  - Skip: If ≥70% of session words already labeled, user can skip with auto-stamp
-  - Streak tracking across days; special stamp for Day 7 test clear
-  - SprintContext manages state; stored at `@chinese_master_sprint`
-- **Word Detail**: View word details with example sentences, English translations, and part of speech (品詞)
-- **プッシュ通知 (リマインダー)**: 2 種類のリマインダーを別画面で管理
-  - **学習リマインダー (プロフィール)**: 毎日決まった時刻に、現在の HSK 級と暗記状況に応じた応援メッセージを送信。
-    - タイトル: ランダムな励ましメッセージ
-    - 本文: 「HSK{N}: 暗記済み M/T (P%)・要復習 K」+ 状況別の推奨アクション (未開始/進行中/もうすぐ/制覇済)
-    - 識別子: `chinese-master-study-reminder`、データ: `{ screen: "study" }` で文字学習タブへ遷移
-    - 設定キー: `@chinese_master_study_notif_enabled` / `_hour` / `_minute`
-  - **スプリントリマインダー (スプリント画面「リマインダー設定」ボタン → モーダル)**: 「設定を変更する」ボタンの隣に「リマインダー設定」ボタンを配置。タップするとモーダルが開き、その中で通知の ON/OFF・時刻・テスト送信を設定できる (画面に直接表示しない)。毎日のスプリント学習継続を促す通知。
-    - タイトル: スプリント関連の励ましメッセージ
-    - 本文: ランダムな中国名言 (QUOTES から)
-    - 識別子: `chinese-master-sprint-reminder`、データ: `{ screen: "sprint" }` でスプリントタブへ遷移
-    - 設定キー: `@chinese_master_sprint_notif_enabled` / `_hour` / `_minute`
-  - 共通 UI: `client/components/NotificationReminderCard.tsx` — トグル + 時刻ピッカー (iOS spinner / Android default) + 5秒テスト送信
-  - アプリ起動時: `refreshDailyNotificationsIfEnabled()` が両方を再スケジュール (学習通知の本文を最新の統計で更新、スプリント通知の名言を入れ替え)
-  - レガシー移行: 旧 `@chinese_master_notifications_enabled` (Profile のスプリント風通知) は学習リマインダーへ自動移行 (`@chinese_master_notif_migration_v2_done` フラグで一度のみ実行)
-- **Profile**: Track learning progress with separate statistics
-  - HSK級セレクター (1〜6級): 学習する単語レベルを切り替え
-  - 各級の進捗は独立して管理される
-  - 「オンボーディングを再開」ボタン: ONBOARDING/TUTORIAL_DONE/TUTORIAL_STAMP フラグをクリアして reloadAppAsync() でアプリ再起動。商品説明から最初の3単語チュートリアルまで再体験可能（学習データやスプリント進捗は保持）。
-  - 文字暗記 section: 暗記済み / 暗記必要 / 未暗記 counts
-  - 音声暗記 section: 暗記済み / 暗記必要 / 未暗記 counts
-  - Reset functionality for all data
-- **Text-to-Speech**: Native Chinese pronunciation for all words and sentences
+## User Preferences
+I want iterative development. Ask before making major changes. I prefer clear and concise explanations.
 
-## Tech Stack
-- **Frontend**: React Native with Expo
-- **Backend**: Express.js (minimal, for static serving)
-- **Storage**: AsyncStorage for local data persistence
-- **Subscription**: RevenueCat (react-native-purchases) for in-app purchases
-- **TTS**: expo-speech for Chinese pronunciation
-- **Fonts**: Nunito (Google Fonts)
-- **Icons**: Feather Icons (@expo/vector-icons)
+## System Architecture
+The application is built with React Native and Expo, utilizing a minimal Express.js backend for static serving. Data persistence is handled locally using AsyncStorage. The UI/UX features a calming teal primary color and warm coral secondary color, with distinct success and alert indicators.
 
-## Project Structure
-```
-client/
-├── App.tsx              # Root component with providers
-├── components/          # Reusable UI components
-│   ├── WordCard.tsx     # Word list item with speak button
-│   ├── SpeakButton.tsx  # Text-to-speech trigger
-│   ├── VideoThumbnail.tsx
-│   ├── EmptyState.tsx
-│   ├── ProgressBar.tsx
-│   └── ...
-├── screens/             # Screen components
-│   ├── StudyScreen.tsx  # Word list with filtering
-│   ├── WordDetailScreen.tsx # Single word view
-│   ├── TestSelectScreen.tsx # Test type selection
-│   ├── TestScreen.tsx   # Quiz interface
-│   ├── VideosScreen.tsx # Video gallery
-│   └── ProfileScreen.tsx # Stats and settings
-├── navigation/          # React Navigation setup
-│   ├── RootStackNavigator.tsx
-│   ├── MainTabNavigator.tsx
-│   └── [Stack navigators for each tab]
-├── lib/                 # Utility functions
-│   ├── storage.ts       # AsyncStorage operations
-│   ├── speech.ts        # TTS wrapper
-│   └── testUtils.ts     # Quiz generation
-├── data/
-│   └── mockData.ts      # Sample Chinese vocabulary
-├── types/
-│   └── index.ts         # TypeScript interfaces
-└── constants/
-    └── theme.ts         # Colors, spacing, typography
+Key architectural decisions include:
+- **Dual Memorization Tracking**: Separate tracking for text-based and audio-based memorization allows for varied learning styles.
+- **Freemium Model Integration**: Subscription management is handled via RevenueCat, offering HSK1 for free and gating advanced features like detailed examples, full audio playback, and advanced tests for higher HSK levels.
+- **Dynamic Content Delivery**: Word data is categorized by HSK level (1-6), with varying word counts.
+- **Notification System**: Two distinct reminder types (study and sprint) are managed, with user-configurable timings and personalized messages.
+- **Sprint Learning Cycle**: A 7-day, 29-cell snake grid map guides users through a structured learning path involving study, review, and test sessions, culminating in special stamp rewards.
+- **Social Sharing**: Integration with `react-native-view-shot` and `expo-sharing` allows users to share their achievements (panda stamps, progress, quotes) as PNG images.
+- **Onboarding and Tutorial**: A guided onboarding process includes an introductory tutorial sprint for new users, ensuring a smooth start.
+- **Text-to-Speech (TTS)**: `expo-speech` is used for native Chinese pronunciation of words and example sentences.
 
-server/
-├── index.ts             # Express server
-└── routes.ts            # API routes (minimal)
-```
-
-## Navigation Structure
-- **5 Bottom Tabs**: 文字学習, 音声学習, 音声再生, スプリント, プロフィール
-- **Stack Screens**: WordDetail, WordList (from Study), AudioWordList (from Audio Learning), SprintSetup, SprintStudySession, SprintTest (from Sprint)
-
-## Color Palette
-- Primary: #5B8C85 (Calming teal)
-- Secondary: #E8956F (Warm coral)
-- Success: #10B981 (Green - memorized)
-- Alert: #F59E0B (Amber - not memorized)
-- Background: #FAFAF9 (Light), #111827 (Dark)
-
-## Data Model
-```typescript
-type HskLevel = 1 | 2 | 3 | 4 | 5 | 6;
-
-interface Word {
-  id: string;
-  hskLevel: HskLevel;       // HSK level (1-6)
-  word: string;              // Chinese characters
-  pinyin: string;            // Romanization
-  translation: string;       // Japanese meaning
-  translationEn?: string;    // English meaning
-  posJa?: string;            // Part of speech (Japanese, e.g. 動詞)
-  posEn?: string;            // Part of speech (English, e.g. verb)
-  exampleSentence: string;
-  examplePinyin: string;
-  exampleTranslation: string;
-  exampleEnglish?: string;   // English example translation
-  longExample?: string;      // Extended example sentence (Chinese)
-  longExampleTranslation?: string; // Extended example translation (Japanese)
-  longExampleEnglish?: string;     // Extended example translation (English)
-  // Dual memorization tracking
-  textMemorized: boolean;         // Text memorization status
-  textUnmemorizedCount: number;   // Text "needs work" counter
-  audioMemorized: boolean;        // Audio memorization status
-  audioUnmemorizedCount: number;  // Audio "needs work" counter
-  // Legacy fields (kept for compatibility)
-  isMemorized: boolean;
-  unmemorizedCount: number;
-  videoIds: string[];
-}
-```
-
-## Workflows
-- `Start Backend`: Runs Express server on port 5000
-- `Start Frontend`: Runs Expo dev server on port 8081
-
-## Development Notes
-- Text-to-speech uses `zh-CN` locale for Mandarin Chinese
-- Data persisted in AsyncStorage with `@chinese_master_` prefix, version "10"
-- Per-level storage: `@chinese_master_words_hsk{N}` for each level, `@chinese_master_hsk_level` for selected level
-- All HSK levels have data: HSK1 (150), HSK2 (150), HSK3 (300), HSK4 (600), HSK5 (1300), HSK6 (2500)
-- All HSK words include longExample and longExampleTranslation fields for extended example sentences
-- Dual memorization system: text (文字暗記) and audio (音声暗記) tracked separately
-- Three states per type: 暗記済み (memorized), 暗記必要 (needs work), 未暗記 (not started)
-- Mark logic accepts "text" or "audio" type parameter for storage functions
-- Audio playback sequence includes example sentences for reinforcement
-- Haptic feedback on key interactions
+## External Dependencies
+- **RevenueCat (react-native-purchases)**: For in-app purchase and subscription management.
+- **AsyncStorage**: Local data persistence.
+- **Expo**: Core framework for React Native development, including `expo-speech` for TTS.
+- **Feather Icons (@expo/vector-icons)**: For UI iconography.
+- **Google Fonts (Nunito)**: For consistent typography.

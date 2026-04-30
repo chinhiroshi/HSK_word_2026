@@ -15,7 +15,7 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 
-const PANDA_SPECIAL = require("../../assets/images/panda-stamp-special.png");
+import { getSpecialPandaImage } from "@/data/pandaStamps";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -270,7 +270,7 @@ export default function SprintTestScreen() {
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
             <View style={[styles.stampCircle, { backgroundColor: Colors.light.alert, borderWidth: 4, borderColor: "#fff" }]}>
-              <Image source={PANDA_SPECIAL} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
+              <Image source={getSpecialPandaImage(testCellIndexRef.current)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
             </View>
             <ThemedText style={styles.stampLabel}>{t("special_stamp_acquired")}</ThemedText>
           </Animated.View>
