@@ -880,6 +880,27 @@ export default function ProfileScreen() {
             </ThemedText>
           </Pressable>
         </View>
+
+        <Pressable
+          testID="button-view-panda-stamps"
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate("PandaStampDev");
+          }}
+          style={[
+            styles.devLinkRow,
+            {
+              backgroundColor: theme.backgroundSecondary,
+              borderColor: theme.border,
+            },
+          ]}
+        >
+          <Feather name="grid" size={16} color={theme.primary} />
+          <ThemedText style={[styles.devLinkText, { color: theme.text }]}>
+            パンダスタンプ一覧を表示
+          </ThemedText>
+          <Feather name="chevron-right" size={16} color={theme.textSecondary} />
+        </Pressable>
       </View>
 
       {hasWordsForLevel ? (
@@ -1634,5 +1655,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  devLinkRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+  },
+  devLinkText: {
+    flex: 1,
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
 });

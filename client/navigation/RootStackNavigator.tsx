@@ -6,6 +6,7 @@ import WordListScreen from "@/screens/WordListScreen";
 import AudioWordListScreen from "@/screens/AudioWordListScreen";
 import UnmemorizedListScreen from "@/screens/UnmemorizedListScreen";
 import PaywallScreen from "@/screens/PaywallScreen";
+import PandaStampDevScreen from "@/screens/PandaStampDevScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 
 export type RootStackParamList = {
@@ -15,6 +16,7 @@ export type RootStackParamList = {
   AudioWordList: { startIndex: number; endIndex: number };
   UnmemorizedList: { type: "text" | "audio"; filter?: "needsWork" | "notMemorized" };
   Paywall: undefined;
+  PandaStampDev: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -64,6 +66,14 @@ export default function RootStackNavigator() {
         options={{
           presentation: "modal",
           headerTitle: "",
+        }}
+      />
+      <Stack.Screen
+        name="PandaStampDev"
+        component={PandaStampDevScreen}
+        options={{
+          presentation: "card",
+          headerTitle: "Panda Stamps (Dev)",
         }}
       />
     </Stack.Navigator>
