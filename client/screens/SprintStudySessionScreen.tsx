@@ -197,6 +197,13 @@ export default function SprintStudySessionScreen() {
     };
   }, [currentIndex, phase]);
 
+  // Reset per-row reveal state when switching filter tabs (全部 / まだ / 覚えた / 苦手歴)
+  // so that meanings/words shown via the eye icon don't carry over across tabs.
+  useEffect(() => {
+    setRevealedIds(new Set());
+    setTranslationRevealedIds(new Set());
+  }, [listFilter]);
+
   // Dynamic header: eye button for list phases → toggle hide/show Chinese characters
   useEffect(() => {
     if (phase === "text-list" || phase === "text-review" || phase === "audio-list" || phase === "audio-review") {
