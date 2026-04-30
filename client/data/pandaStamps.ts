@@ -275,8 +275,32 @@ export function getSpecialPandaImage(cellIndex: number): any {
   return PANDA_SPECIALS[i];
 }
 
+// Deterministic play order for the 210 regular stamps.
+// Stamps 1-12 are kept in sequence; stamps 13-210 are shuffled with a
+// fixed seed so nearby sprint cells show thematically varied pandas.
+export const PANDA_STAMP_ORDER: number[] = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+  118, 148, 93, 15, 67, 89, 154, 149, 90, 112, 52, 24,
+  50, 162, 82, 37, 78, 21, 121, 203, 150, 85, 48, 153,
+  57, 104, 29, 144, 174, 200, 209, 100, 116, 139, 60, 51,
+  129, 180, 147, 125, 196, 114, 188, 46, 25, 189, 191, 167,
+  161, 45, 152, 91, 179, 202, 92, 187, 137, 80, 64, 22,
+  96, 47, 186, 146, 172, 20, 207, 98, 30, 145, 108, 160,
+  128, 163, 56, 42, 14, 107, 120, 166, 171, 106, 62, 195,
+  87, 192, 130, 113, 181, 33, 102, 95, 32, 40, 34, 35,
+  193, 175, 197, 184, 84, 99, 205, 79, 44, 28, 66, 190,
+  124, 97, 194, 210, 127, 170, 110, 43, 105, 38, 73, 178,
+  142, 39, 208, 183, 173, 58, 19, 94, 54, 168, 204, 177,
+  16, 71, 53, 109, 159, 199, 182, 151, 88, 126, 111, 135,
+  157, 83, 185, 164, 156, 201, 198, 122, 68, 119, 141, 176,
+  72, 76, 86, 18, 123, 23, 65, 81, 13, 75, 138, 140,
+  70, 74, 133, 136, 131, 158, 27, 132, 26, 115, 103, 41,
+  206, 134, 117, 55, 69, 155, 77, 49, 59, 101, 63, 36,
+  31, 17, 169, 61, 143, 165,
+];
+
 export function getPandaImage(cellIndex: number, isSpecial: boolean): any {
   if (isSpecial) return getSpecialPandaImage(cellIndex);
-  const variant = ((cellIndex - 1) % 210) + 1;
-  return PANDA_STAMPS[variant];
+  const i = ((cellIndex - 1) % PANDA_STAMP_ORDER.length + PANDA_STAMP_ORDER.length) % PANDA_STAMP_ORDER.length;
+  return PANDA_STAMPS[PANDA_STAMP_ORDER[i]];
 }
