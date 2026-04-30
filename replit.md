@@ -15,6 +15,7 @@ Key architectural decisions include:
 - **Dynamic Content Delivery**: Word data is categorized by HSK level (1-6), with varying word counts.
 - **Notification System**: Two distinct reminder types (study and sprint) are managed, with user-configurable timings and personalized messages.
 - **Sprint Learning Cycle**: A 7-day, 29-cell snake grid map guides users through a structured learning path involving study, review, and test sessions, culminating in special stamp rewards.
+- **Panda Stamp Library**: 210 regular panda stamps (panda-stamp-1.png … panda-stamp-210.png) covering emotions (joy, anger, sadness) and fun daily-life scenes, cycled deterministically via `getPandaImage(cellIndex, false)`. 35 special costume-themed stamps (panda-stamp-special.png … panda-stamp-special-35.png) awarded on test clears, cycled via `getSpecialPandaImage(cellIndex)`. Both helpers live in `client/data/pandaStamps.ts`.
 - **Social Sharing**: Integration with `react-native-view-shot` and `expo-sharing` allows users to share their achievements (panda stamps, progress, quotes) as PNG images.
 - **Onboarding and Tutorial**: A guided onboarding process includes an introductory tutorial sprint for new users, ensuring a smooth start.
 - **Text-to-Speech (TTS)**: `expo-speech` is used for native Chinese pronunciation of words and example sentences.
