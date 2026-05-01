@@ -1,0 +1,124 @@
+{
+  "id": "ecb3f8e2-559e-4dab-ae0d-ad4b1f92db2c",
+  "createdAt": "2026-05-01T10:54:01.517Z",
+  "runtimeVersion": "exposdk:54.0.0",
+  "launchAsset": {
+    "key": "bundle-1777632841517-3229",
+    "contentType": "application/javascript",
+    "url": "https://ed99fe2f-7189-42c2-9311-88756dc5ca58-00-512x4qitq4t7.janeway.replit.dev/1777632841517-3229/_expo/static/js/android/bundle.js"
+  },
+  "assets": [],
+  "metadata": {},
+  "extra": {
+    "eas": {},
+    "expoClient": {
+      "name": "HSK受講者が作ったHSK単語帳",
+      "slug": "hskhsk",
+      "version": "2.32.0",
+      "orientation": "portrait",
+      "icon": "./assets/images/icon.png",
+      "scheme": "app.replit.hskhsk",
+      "userInterfaceStyle": "automatic",
+      "newArchEnabled": true,
+      "locales": {
+        "ja": "./locales/ja.json",
+        "en": "./locales/en.json"
+      },
+      "ios": {
+        "supportsTablet": true,
+        "bundleIdentifier": "app.replit.hskhsk",
+        "infoPlist": {
+          "CFBundleDevelopmentRegion": "ja",
+          "CFBundleLocalizations": [
+            "ja",
+            "en"
+          ]
+        }
+      },
+      "android": {
+        "adaptiveIcon": {
+          "backgroundColor": "#5B8C85",
+          "foregroundImage": "./assets/images/icon.png",
+          "foregroundImageUrl": "https://ed99fe2f-7189-42c2-9311-88756dc5ca58-00-512x4qitq4t7.janeway.replit.dev/assets/./assets/images/icon.png"
+        },
+        "edgeToEdgeEnabled": true,
+        "predictiveBackGestureEnabled": false,
+        "package": "app.replit.hskhsk",
+        "permissions": [
+          "android.permission.RECORD_AUDIO",
+          "android.permission.MODIFY_AUDIO_SETTINGS"
+        ]
+      },
+      "web": {
+        "output": "single",
+        "favicon": "./assets/images/favicon.png"
+      },
+      "plugins": [
+        [
+          "expo-splash-screen",
+          {
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 200,
+            "resizeMode": "contain",
+            "backgroundColor": "#FAFAF9",
+            "dark": {
+              "backgroundColor": "#111827"
+            }
+          }
+        ],
+        "expo-web-browser",
+        "expo-audio"
+      ],
+      "experiments": {
+        "reactCompiler": true
+      },
+      "_internal": {
+        "isDebug": false,
+        "projectRoot": "/home/runner/workspace",
+        "dynamicConfigPath": "/home/runner/workspace/app.config.js",
+        "staticConfigPath": "/home/runner/workspace/app.json",
+        "packageJsonPath": "/home/runner/workspace/package.json",
+        "pluginHistory": {
+          "expo-splash-screen": {
+            "name": "expo-splash-screen",
+            "version": "31.0.13"
+          },
+          "expo-web-browser": {
+            "name": "expo-web-browser",
+            "version": "15.0.11"
+          },
+          "expo-audio": {
+            "name": "expo-audio",
+            "version": "1.1.1"
+          }
+        }
+      },
+      "sdkVersion": "54.0.0",
+      "platforms": [
+        "ios",
+        "android",
+        "web"
+      ],
+      "extra": {
+        "revenueCatApiKey": "test_jiqDlGrYpKroywFSKaTabjOJOdR"
+      },
+      "androidStatusBar": {
+        "backgroundColor": "#FAFAF9"
+      },
+      "iconUrl": "https://ed99fe2f-7189-42c2-9311-88756dc5ca58-00-512x4qitq4t7.janeway.replit.dev/assets/./assets/images/icon.png",
+      "hostUri": "ed99fe2f-7189-42c2-9311-88756dc5ca58-00-512x4qitq4t7.janeway.replit.dev/android"
+    },
+    "expoGo": {
+      "debuggerHost": "ed99fe2f-7189-42c2-9311-88756dc5ca58-00-512x4qitq4t7.janeway.replit.dev/android",
+      "developer": {
+        "tool": "expo-cli",
+        "projectRoot": "/home/runner/workspace"
+      },
+      "packagerOpts": {
+        "dev": false
+      },
+      "mainModuleName": "client/index"
+    },
+    "scopeKey": "@anonymous/hskhsk-07a92e41-06f5-4490-99e6-1b6d377f8714"
+  }
+}
