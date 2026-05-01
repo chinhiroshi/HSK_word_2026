@@ -17,7 +17,10 @@
       "bundleIdentifier": "app.replit.hskhsk",
       "infoPlist": {
         "CFBundleDevelopmentRegion": "ja",
-        "CFBundleLocalizations": ["ja", "en"]
+        "CFBundleLocalizations": [
+          "ja",
+          "en"
+        ]
       }
     },
     "android": {
@@ -51,6 +54,13 @@
     ],
     "experiments": {
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "revenueCatApiKey": "test_jiqDlGrYpKroywFSKaTabjOJOdR",
+      "eas": {
+        "projectId": "54aa5f09-8fc8-4c3f-90b7-c8ed0c07246e"
+      }
+    },
+    "owner": "chinhiroshi"
   }
 }
