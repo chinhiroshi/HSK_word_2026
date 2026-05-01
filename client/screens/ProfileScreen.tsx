@@ -39,7 +39,7 @@ import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { useAppUpdate } from "@/navigation/MainTabNavigator";
+import { useAppUpdate } from "@/hooks/useAppUpdate";
 import { useI18n } from "@/contexts/LanguageContext";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
