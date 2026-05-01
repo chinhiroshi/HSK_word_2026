@@ -772,8 +772,8 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
       </View>
-      {/* 開発者モード: プレミアム切り替え */}
-      <View style={[styles.devPremiumCard, { backgroundColor: theme.backgroundDefault, borderColor: `${theme.primary}40` }]}>
+      {/* 開発者モード: プレミアム切り替え（開発中のみ表示） */}
+      {__DEV__ ? <View style={[styles.devPremiumCard, { backgroundColor: theme.backgroundDefault, borderColor: `${theme.primary}40` }]}>
         <View style={styles.devPremiumHeader}>
           <View style={[styles.devPremiumIconWrap, { backgroundColor: `${theme.primary}15` }]}>
             <Feather name="code" size={18} color={theme.primary} />
@@ -882,7 +882,7 @@ export default function ProfileScreen() {
             </ThemedText>
           </Pressable>
         </View>
-      </View>
+      </View> : null}
 
       {hasWordsForLevel ? (
         <Button onPress={handleResetProgress} style={styles.resetButton}>
