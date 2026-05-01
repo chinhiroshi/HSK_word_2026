@@ -17,14 +17,6 @@
       "autoIncrement": true
     }
   },
-  "update": {
-    "production": {
-      "channel": "production",
-      "runtimeVersion": {
-        "policy": "appVersion"
-      }
-    }
-  },
   "submit": {
     "production": {}
   }
