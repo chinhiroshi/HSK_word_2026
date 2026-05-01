@@ -8,15 +8,6 @@
     "scheme": "app.replit.hskhsk",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/871e0fc5-7b8c-4679-9141-2cdf27cbada4",
-      "enabled": true,
-      "checkAutomatically": "ON_LOAD",
-      "fallbackToCacheTimeout": 0
-    },
     "locales": {
       "ja": "./locales/ja.json",
       "en": "./locales/en.json"
@@ -60,11 +51,6 @@
     ],
     "experiments": {
       "reactCompiler": true
-    },
-    "extra": {
-      "eas": {
-        "projectId": "871e0fc5-7b8c-4679-9141-2cdf27cbada4"
-      }
     }
   }
 }

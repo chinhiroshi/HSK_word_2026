@@ -654,8 +654,8 @@ export default function ProfileScreen() {
             const requested = await tryRequestReview("manual_button", { force: true });
             if (!requested) {
               const storeUrl = Platform.select({
-                ios: "https://apps.apple.com/jp/app/id6758777391?action=write-review",
-                android: "https://play.google.com/store/apps/details?id=app.replit.hskhsk",
+                ios: "https://apps.apple.com/app/id{YOUR_APP_ID}",
+                android: "https://play.google.com/store/apps/details?id=com.hskhsk.app",
                 default: "",
               });
               if (storeUrl) {
@@ -748,9 +748,7 @@ export default function ProfileScreen() {
               setUpToDate(false);
               const result = await recheckUpdate();
               setCheckingUpdate(false);
-              if (result.available && result.storeUrl) {
-                Linking.openURL(result.storeUrl);
-              } else if (!result.available) {
+              if (!result.available) {
                 setUpToDate(true);
                 setTimeout(() => setUpToDate(false), 4000);
               }

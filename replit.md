@@ -20,15 +20,6 @@ Key architectural decisions include:
 - **Onboarding and Tutorial**: A guided onboarding process includes an introductory tutorial sprint for new users, ensuring a smooth start.
 - **Text-to-Speech (TTS)**: `expo-speech` is used for native Chinese pronunciation of words and example sentences.
 
-## OTA (Over-The-Air) Updates
-EAS Updateによるアプリ内自動更新が有効。
-- **EAS Project ID**: `871e0fc5-7b8c-4679-9141-2cdf27cbada4`
-- **Update URL**: `https://u.expo.dev/871e0fc5-7b8c-4679-9141-2cdf27cbada4`
-- **Runtime Version Policy**: `appVersion`（アプリバージョンごとにOTA更新を管理）
-- **Channel**: `production`（本番ビルド向け）
-- **配信コマンド**: `npx eas-cli update --branch production --message "説明文"`
-- アプリ起動時に自動チェック → 更新があれば即ダウンロード＆再起動（`__DEV__`モードでは無効）
-
 ## External Dependencies
 - **RevenueCat (react-native-purchases)**: For in-app purchase and subscription management.
 - **AsyncStorage**: Local data persistence.
