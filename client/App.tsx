@@ -19,6 +19,7 @@ import {
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/query-client";
+import { useOTAUpdate } from "@/hooks/useOTAUpdate";
 
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import OnboardingScreen from "@/screens/OnboardingScreen";
@@ -33,6 +34,8 @@ const TUTORIAL_DONE_KEY = "@chinese_master_tutorial_sprint_done";
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  useOTAUpdate();
+
   const [fontsLoaded, fontError] = useFonts({
     Nunito_400Regular,
     Nunito_600SemiBold,

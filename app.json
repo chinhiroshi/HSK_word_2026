@@ -8,6 +8,15 @@
     "scheme": "app.replit.hskhsk",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "updates": {
+      "url": "https://u.expo.dev/54aa5f09-8fc8-4c3f-90b7-c8ed0c07246e",
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "locales": {
       "ja": "./locales/ja.json",
       "en": "./locales/en.json"
