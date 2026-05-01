@@ -1,4 +1,4 @@
-import React from "react";
+import React, { createContext, useContext } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -11,9 +11,8 @@ import ProfileStackNavigator from "@/navigation/ProfileStackNavigator";
 import SprintStackNavigator from "@/navigation/SprintStackNavigator";
 import { useTheme } from "@/hooks/useTheme";
 import { Colors } from "@/constants/theme";
-import { useUpdateCheck } from "@/hooks/useUpdateCheck";
+import { useUpdateCheck, UpdateInfo } from "@/hooks/useUpdateCheck";
 import { useI18n } from "@/contexts/LanguageContext";
-import { AppUpdateContext } from "@/hooks/useAppUpdate";
 
 export type MainTabParamList = {
   StudyTab: undefined;
@@ -23,6 +22,15 @@ export type MainTabParamList = {
   ProfileTab: undefined;
 };
 
+const UpdateContext = createContext<{ updateInfo: UpdateInfo; recheckUpdate: () => Promise<UpdateInfo> }>({
+  updateInfo: { available: false, latestVersion: null, storeUrl: null },
+  recheckUpdate: async () => ({ available: false, latestVersion: null, storeUrl: null }),
+});
+
+export function useAppUpdate() {
+  return useContext(UpdateContext);
+}
+
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function MainTabNavigator() {
@@ -31,7 +39,7 @@ export default function MainTabNavigator() {
   const { t } = useI18n();
 
   return (
-    <AppUpdateContext.Provider value={{ updateInfo, recheckUpdate }}>
+    <UpdateContext.Provider value={{ updateInfo, recheckUpdate }}>
       <Tab.Navigator
         initialRouteName="SprintTab"
         screenOptions={{
@@ -121,6 +129,6 @@ export default function MainTabNavigator() {
           }}
         />
       </Tab.Navigator>
-    </AppUpdateContext.Provider>
+    </UpdateContext.Provider>
   );
 }

@@ -5,13 +5,13 @@ import {
   StyleSheet,
   Pressable,
   TextInput,
+  Image,
   ScrollView,
   Platform,
   Share,
   ActivityIndicator,
 } from "react-native";
-import { Image } from "expo-image";
-import { captureRef } from "react-native-view-shot";
+import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -56,7 +56,7 @@ export function ShareStampSheet({
   const { t, lang } = useI18n();
   const [comment, setComment] = useState("");
   const [sharing, setSharing] = useState(false);
-  const viewRef = useRef<View>(null);
+  const viewRef = useRef<ViewShot>(null);
 
   const progressLine =
     hskLevel != null
@@ -86,16 +86,12 @@ export function ShareStampSheet({
     setSharing(true);
     try {
       const ref = viewRef.current;
-      if (!ref) {
+      if (!ref || !ref.capture) {
         await Share.share({ message: buildFallbackMessage() });
         onClose();
         return;
       }
-
-      // 画像が完全に描画されるのを待ってからキャプチャ
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      const uri = await captureRef(ref, { format: "png", quality: 0.95 });
+      const uri = await ref.capture();
 
       if (Platform.OS === "web") {
         await Share.share({ message: buildFallbackMessage(), url: uri });
@@ -174,10 +170,10 @@ export function ShareStampSheet({
               </Pressable>
             </View>
 
-            <View
+            <ViewShot
               ref={viewRef}
+              options={{ format: "png", quality: 0.95 }}
               style={styles.shotWrap}
-              collapsable={false}
             >
               <LinearGradient
                 colors={
@@ -193,7 +189,7 @@ export function ShareStampSheet({
                   <Image
                     source={require("../../assets/images/icon.png")}
                     style={styles.brandIcon}
-                    contentFit="contain"
+                    resizeMode="contain"
                   />
                   <ThemedText style={styles.brandText}>
                     {lang === "en" ? "Chinese Master" : "中国語マスター"}
@@ -215,7 +211,7 @@ export function ShareStampSheet({
                       <Image
                         source={stampImage}
                         style={styles.stampImg}
-                        contentFit="cover"
+                        resizeMode="cover"
                       />
                     </View>
                   </LinearGradient>
@@ -269,7 +265,7 @@ export function ShareStampSheet({
 
                 <ThemedText style={styles.hashtagText}>{hashtagLine}</ThemedText>
               </LinearGradient>
-            </View>
+            </ViewShot>
 
             <View style={styles.inputWrap}>
               <ThemedText
