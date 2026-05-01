@@ -1,0 +1,17 @@
+# Build outputs (not needed for EAS)
+static-build/
+dist/
+server_dist/
+
+# Screenshots and reference images (not needed for EAS)
+attached_assets/
+
+# Documentation (not needed for EAS)
+docs/
+design_guidelines.md
+replit.md
+
+# Agent/Replit files (not needed for EAS)
+.agents/
+.local/
+.cache/
