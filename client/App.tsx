@@ -8,6 +8,7 @@ import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
+import * as Updates from "expo-updates";
 import "@/lib/notifications"; // register notification handler early
 import { refreshDailyNotificationsIfEnabled } from "@/lib/notifications";
 import {
@@ -98,6 +99,22 @@ export default function App() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError, showOnboarding]);
+
+  // OTAアップデートチェック（開発中は無効、本番のみ）
+  useEffect(() => {
+    if (__DEV__) return;
+    (async () => {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        }
+      } catch {
+        // 更新確認に失敗してもアプリは通常起動する
+      }
+    })();
+  }, []);
 
   // アプリ起動時に格言通知を更新（毎回ランダムな格言に差し替え）
   useEffect(() => {
