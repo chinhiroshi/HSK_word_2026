@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import ViewShot from "react-native-view-shot";
 import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 
@@ -84,28 +85,34 @@ export function ShareStampSheet({
   const handleShare = async () => {
     if (sharing) return;
     setSharing(true);
+    let stableUri: string | null = null;
     try {
       const ref = viewRef.current;
       if (!ref || !ref.capture) {
         await Share.share({ message: buildFallbackMessage() });
-        onClose();
         return;
       }
-      const uri = await ref.capture();
+      const tempUri = await ref.capture();
 
       if (Platform.OS === "web") {
-        await Share.share({ message: buildFallbackMessage(), url: uri });
+        await Share.share({ message: buildFallbackMessage(), url: tempUri });
+        return;
+      }
+
+      // iOS/Android: ViewShot の一時ファイルをキャッシュディレクトリにコピーして安定させる
+      const filename = `stamp-share-${Date.now()}.png`;
+      stableUri = `${FileSystem.cacheDirectory}${filename}`;
+      await FileSystem.copyAsync({ from: tempUri, to: stableUri });
+
+      const available = await Sharing.isAvailableAsync();
+      if (available) {
+        await Sharing.shareAsync(stableUri, {
+          mimeType: "image/png",
+          dialogTitle: t("share_dialog_title"),
+          UTI: "public.png",
+        });
       } else {
-        const available = await Sharing.isAvailableAsync();
-        if (available) {
-          await Sharing.shareAsync(uri, {
-            mimeType: "image/png",
-            dialogTitle: t("share_dialog_title"),
-            UTI: "public.png",
-          });
-        } else {
-          await Share.share({ message: buildFallbackMessage(), url: uri });
-        }
+        await Share.share({ message: buildFallbackMessage(), url: stableUri });
       }
     } catch (e) {
       console.warn("Share failed", e);
@@ -116,6 +123,9 @@ export function ShareStampSheet({
       }
     } finally {
       setSharing(false);
+      if (stableUri) {
+        FileSystem.deleteAsync(stableUri, { idempotent: true }).catch(() => {});
+      }
       onClose();
     }
   };
