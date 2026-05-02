@@ -7,6 +7,7 @@ import {
   Dimensions,
   Modal,
   Alert,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -43,6 +44,7 @@ import {
   MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
 import { AnimatedSprintIcon, SprintIconAnim } from "@/components/AnimatedSprintIcon";
+import { TUTORIAL_STAMP } from "@/data/pandaStamps";
 import { HskLevel } from "@/types";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -283,7 +285,8 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
   } else if (isCurrent) {
     bgColor = Colors.light.secondary;
     borderColor = Colors.light.secondary;
-    if (sessionType !== "test") featherIcon = "zap";
+    // Current non-test cell shows a panda doll image instead of a feather icon
+    // (rendered explicitly in renderIcon); test current cells keep the monster.
     iconColor = "#fff";
     textColor = "#fff";
   } else if (sessionType === "test") {
@@ -315,14 +318,23 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     : undefined;
 
   const renderIcon = () => {
+    // Current non-test cell: panda doll mark with a strong "I'm here!" pulse.
+    if (isCurrent && !isFlag && sessionType !== "test") {
+      return (
+        <AnimatedSprintIcon type="here" seed={index}>
+          <Image
+            source={TUTORIAL_STAMP}
+            style={{ width: CELL_SIZE * 0.62, height: CELL_SIZE * 0.62 }}
+            resizeMode="contain"
+          />
+        </AnimatedSprintIcon>
+      );
+    }
     if (featherIcon) {
       const icon = <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
-      // Special stamp star → twinkle, current zap → pulse, flag → static
+      // Special stamp star → twinkle, flag → static
       if (isSpecialStamp) {
         return <AnimatedSprintIcon type="twinkle" seed={index}>{icon}</AnimatedSprintIcon>;
-      }
-      if (isCurrent && featherIcon === "zap") {
-        return <AnimatedSprintIcon type="pulse" seed={index}>{icon}</AnimatedSprintIcon>;
       }
       return icon;
     }

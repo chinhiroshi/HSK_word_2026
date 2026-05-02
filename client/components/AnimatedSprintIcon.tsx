@@ -15,7 +15,8 @@ export type SprintIconAnim =
   | "drift"
   | "pulse"
   | "twinkle"
-  | "hop";
+  | "hop"
+  | "here";
 
 interface Props {
   type: SprintIconAnim;
@@ -60,11 +61,41 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
   if (type === "hop") {
     return <MonsterHop seed={seed}>{children}</MonsterHop>;
   }
+  if (type === "here") {
+    return <HereMarker>{children}</HereMarker>;
+  }
   return (
     <DecoCycle type={type} seed={seed}>
       {children}
     </DecoCycle>
   );
+}
+
+// Current-position marker: bold "I'm here!" pulse with a small hop. Always
+// animating since there is at most one current cell on the map.
+function HereMarker({ children }: { children: React.ReactNode }) {
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    progress.value = withRepeat(
+      withTiming(1, { duration: 650, easing: Easing.inOut(Easing.sin) }),
+      -1,
+      true,
+    );
+    return () => {
+      cancelAnimation(progress);
+      progress.value = 0;
+    };
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const p = progress.value;
+    const scale = 0.9 + p * 0.25; // 0.90 → 1.15 — strong pump
+    const ty = -p * 5; // 0 → -5 — small lift at peak
+    return { transform: [{ translateY: ty }, { scale }] };
+  });
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
 }
 
 // Test-cell monster: always-on vertical bounce at MED tempo, no phase cycling.
