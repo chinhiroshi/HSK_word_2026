@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -18,10 +18,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-// Four tiers: static (no motion) / slow (#10) / medium (#12) / fast (#13 sped
-// up another 30%). Each cell lands on one of these so the map breathes at
-// varied tempos and a quarter of the cells stay completely still — making
-// the moving ones feel more alive by contrast.
+// Tempo tiers indexed 0..3: stop / slow / medium / fast.
 const DURATION_TIERS: Record<TieredAnim, number>[] = [
   { wobble: 0, float: 0, pulse: 0, twinkle: 0 },
   { wobble: 1260, float: 2100, pulse: 980, twinkle: 1680 },
@@ -29,53 +26,49 @@ const DURATION_TIERS: Record<TieredAnim, number>[] = [
   { wobble: 360, float: 590, pulse: 320, twinkle: 520 },
 ];
 
-// "hop" is reserved for the test-cell monster: always hops, never static,
-// at a random fast tempo per seed so different test cells bounce on
-// different beats.
-const HOP_DURATIONS = [270, 320, 380, 430, 490];
+// Each deco icon breathes through this 35-second pattern. The bookend STOPs
+// concatenate across loops, giving a ~10s rest period between active windows.
+const PHASE_PATTERN = [0, 1, 2, 3, 2, 1, 0]; // STOP→SLOW→MED→FAST→MED→SLOW→STOP
+const PHASE_DURATION_MS = 5000;
+const FULL_CYCLE_MS = PHASE_PATTERN.length * PHASE_DURATION_MS;
 
-// Pick a duration deterministically from (seed, type). Salting by `type`
-// means the same cell can still get different tiers for different animation
-// kinds, but the same (seed,type) pair always picks the same value — no
-// flicker on re-render and no resync between neighbors.
-function pickDuration(seed: number, type: SprintIconAnim): number {
-  const base = Math.abs(Math.floor(seed));
-  const typeSalt = type.charCodeAt(0) * 131 + type.charCodeAt(1) * 17;
-  const scrambled = (base * 374761393 + typeSalt) ^ (base << 7) ^ (base >>> 4);
-  if (type === "hop") {
-    return HOP_DURATIONS[Math.abs(scrambled) % HOP_DURATIONS.length];
-  }
-  const tierIndex = Math.abs(scrambled) % DURATION_TIERS.length;
-  return DURATION_TIERS[tierIndex][type];
-}
+// Monster swing tempos: only fast or medium, never stopped or slow.
+const SWING_DURATIONS = [320, 380, 460, 540, 620, 700, 770];
 
-// Spread seed deterministically across the full cycle so adjacent cells
-// don't end up phase-locked. Multiplying + xor shift gives us a wide range
-// even when the caller passes a small seed (e.g. cell index 0..30).
-function computeDelay(seed: number, duration: number): number {
+function hashSeed(seed: number, salt: number): number {
   const base = Math.abs(Math.floor(seed));
-  const scrambled = (base * 2654435761) ^ (base << 5) ^ (base >>> 3);
-  return Math.abs(scrambled) % duration;
+  return Math.abs((base * 374761393 + salt) ^ (base << 7) ^ (base >>> 4));
 }
 
 export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
+  if (type === "hop") {
+    return <MonsterSwing seed={seed}>{children}</MonsterSwing>;
+  }
+  return (
+    <DecoCycle type={type} seed={seed}>
+      {children}
+    </DecoCycle>
+  );
+}
+
+// Test-cell monster: picks one fast/medium swing tempo per seed and stays.
+function MonsterSwing({
+  seed,
+  children,
+}: {
+  seed: number;
+  children: React.ReactNode;
+}) {
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    const duration = pickDuration(seed, type);
-    if (duration === 0) {
-      progress.value = 0;
-      return;
-    }
-    const delay = computeDelay(seed, duration);
+    const duration =
+      SWING_DURATIONS[hashSeed(seed, 7919) % SWING_DURATIONS.length];
+    const delay = hashSeed(seed, 1009) % duration;
     progress.value = withDelay(
       delay,
       withRepeat(
-        withTiming(1, {
-          duration,
-          easing:
-            type === "hop" ? Easing.out(Easing.quad) : Easing.inOut(Easing.sin),
-        }),
+        withTiming(1, { duration, easing: Easing.inOut(Easing.sin) }),
         -1,
         true,
       ),
@@ -84,7 +77,74 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
       cancelAnimation(progress);
       progress.value = 0;
     };
-  }, [type, seed]);
+  }, [seed]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const tx = (progress.value - 0.5) * 28;
+    const rot = (progress.value - 0.5) * 8;
+    return { transform: [{ translateX: tx }, { rotate: `${rot}deg` }] };
+  });
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+}
+
+// Deco icon: cycles through STOP/SLOW/MED/FAST/MED/SLOW/STOP every 35s,
+// starting at a deterministic random offset so the map is always a mix
+// of stopped and moving cells at varied tempos.
+function DecoCycle({
+  type,
+  seed,
+  children,
+}: {
+  type: TieredAnim;
+  seed: number;
+  children: React.ReactNode;
+}) {
+  const progress = useSharedValue(0);
+
+  const [phaseIdx, setPhaseIdx] = useState(() => {
+    const offsetMs = hashSeed(seed, 12345) % FULL_CYCLE_MS;
+    return Math.floor(offsetMs / PHASE_DURATION_MS);
+  });
+
+  // Drive phase progression. First tick aligns to the time remaining in
+  // the initial (random-offset) phase; subsequent ticks fire every 5s.
+  useEffect(() => {
+    const offsetMs = hashSeed(seed, 12345) % FULL_CYCLE_MS;
+    const timeIntoPhase = offsetMs % PHASE_DURATION_MS;
+    const firstTickMs = PHASE_DURATION_MS - timeIntoPhase;
+
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const advance = () => {
+      setPhaseIdx((prev) => (prev + 1) % PHASE_PATTERN.length);
+      timeoutId = setTimeout(advance, PHASE_DURATION_MS);
+    };
+    timeoutId = setTimeout(advance, firstTickMs);
+
+    return () => clearTimeout(timeoutId);
+  }, [seed]);
+
+  // React to phase change: swap the animation tempo or ease back to rest.
+  useEffect(() => {
+    const tierIdx = PHASE_PATTERN[phaseIdx];
+    const duration = DURATION_TIERS[tierIdx][type];
+    cancelAnimation(progress);
+    if (duration === 0) {
+      progress.value = withTiming(0, {
+        duration: 800,
+        easing: Easing.inOut(Easing.sin),
+      });
+    } else {
+      progress.value = withRepeat(
+        withTiming(1, { duration, easing: Easing.inOut(Easing.sin) }),
+        -1,
+        true,
+      );
+    }
+    return () => {
+      cancelAnimation(progress);
+    };
+  }, [phaseIdx, type]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const p = progress.value;
@@ -105,13 +165,6 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
         const scale = 0.9 + p * 0.2;
         const rot = (p - 0.5) * 20;
         return { transform: [{ scale }, { rotate: `${rot}deg` }] };
-      }
-      case "hop": {
-        // sin(πp) traces a parabolic arc: 0 → peak → 0 across one leg.
-        // With withRepeat(reverse=true) the next leg traces another arc,
-        // so the icon looks like it's bouncing once per leg.
-        const ty = -14 * Math.sin(p * Math.PI);
-        return { transform: [{ translateY: ty }] };
       }
       default:
         return {};
