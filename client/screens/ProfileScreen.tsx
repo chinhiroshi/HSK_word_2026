@@ -15,6 +15,11 @@ import {
   enableStudyNotification,
   disableStudyNotification,
   sendTestStudyNotification,
+  getSprintNotifEnabled,
+  getSprintNotifTime,
+  enableSprintNotification,
+  disableSprintNotification,
+  sendTestSprintNotification,
 } from "@/lib/notifications";
 import { NotificationReminderCard } from "@/components/NotificationReminderCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -596,6 +601,8 @@ export default function ProfileScreen() {
         </View>
       </View>
 
+      <ThemedText style={styles.sectionLabel}>{t("section_notifications")}</ThemedText>
+
       <NotificationReminderCard
         title={t("study_reminder_title")}
         description={t("study_reminder_desc")}
@@ -608,6 +615,20 @@ export default function ProfileScreen() {
         enable={enableStudyNotification}
         disable={disableStudyNotification}
         sendTest={sendTestStudyNotification}
+      />
+
+      <NotificationReminderCard
+        title={t("sprint_reminder_title")}
+        description={t("sprint_reminder_desc")}
+        infoText={t("sprint_reminder_info")}
+        iconName="zap"
+        accentColor={Colors.light.secondary}
+        testIdPrefix="sprint-notif"
+        getEnabled={getSprintNotifEnabled}
+        getTime={getSprintNotifTime}
+        enable={enableSprintNotification}
+        disable={disableSprintNotification}
+        sendTest={sendTestSprintNotification}
       />
 
       {/* マナーモードでも音を出す設定 */}
@@ -1189,6 +1210,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     color: "rgba(255,255,255,0.8)",
+  },
+  sectionLabel: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    textTransform: "uppercase",
+    marginBottom: Spacing.sm,
+    marginTop: Spacing.xs,
+    opacity: 0.5,
   },
   notifCard: {
     borderRadius: BorderRadius.lg,
