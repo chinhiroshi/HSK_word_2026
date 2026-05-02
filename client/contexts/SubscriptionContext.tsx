@@ -93,6 +93,12 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   };
 
   const initializeRevenueCat = async () => {
+    if (Platform.OS === "web") {
+      console.log("[RevenueCat] Skipping initialization on web (purchases handled in mobile app only)");
+      setLoading(false);
+      return;
+    }
+
     if (!REVENUECAT_API_KEY) {
       console.warn("[RevenueCat] API key not configured");
       setInitError("APIキーが設定されていません");
@@ -188,6 +194,9 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   );
 
   const purchaseSubscription = async (pkg?: PurchasesPackage): Promise<{ success: boolean; error?: string; cancelled?: boolean }> => {
+    if (Platform.OS === "web") {
+      return { success: false, error: "購入はモバイルアプリ（iOS/Android）でのみご利用いただけます。" };
+    }
     try {
       const packageToPurchase = pkg || availablePackages[0];
       if (!packageToPurchase) {
@@ -234,6 +243,9 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   };
 
   const restorePurchase = async (): Promise<{ success: boolean; error?: string }> => {
+    if (Platform.OS === "web") {
+      return { success: false, error: "復元はモバイルアプリ（iOS/Android）でのみご利用いただけます。" };
+    }
     try {
       console.log("[RevenueCat] Restoring purchases...");
       const customerInfo = await Purchases.restorePurchases();

@@ -22,7 +22,7 @@ Key architectural decisions include:
 - **Text-to-Speech (TTS)**: `expo-speech` is used for native Chinese pronunciation of words and example sentences.
 
 ## External Dependencies
-- **RevenueCat (react-native-purchases)**: For in-app purchase and subscription management.
+- **RevenueCat (react-native-purchases)**: For in-app purchase and subscription management. Initialization is gated to native platforms only (iOS/Android) in `client/contexts/SubscriptionContext.tsx`; on web the SDK is skipped entirely (purchases are App Store/Play Store only) to avoid the SDK's `console.error` "Invalid API key. Use your Web Billing API key." being mis-reported as a runtime crash. `purchaseSubscription` and `restorePurchase` also early-return on web with a friendly Japanese message.
 - **AsyncStorage**: Local data persistence.
 - **Expo**: Core framework for React Native development, including `expo-speech` for TTS.
 - **Feather Icons (@expo/vector-icons)**: For UI iconography.
