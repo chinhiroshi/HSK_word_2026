@@ -4,6 +4,7 @@ import Animated, {
   useAnimatedStyle,
   withRepeat,
   withTiming,
+  withDelay,
   cancelAnimation,
   Easing,
 } from "react-native-reanimated";
@@ -56,11 +57,50 @@ function hashSeed(seed: number, salt: number): number {
 }
 
 export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
+  if (type === "hop") {
+    return <MonsterHop seed={seed}>{children}</MonsterHop>;
+  }
   return (
     <DecoCycle type={type} seed={seed}>
       {children}
     </DecoCycle>
   );
+}
+
+// Test-cell monster: always-on vertical bounce at MED tempo, no phase cycling.
+// A deterministic per-seed delay desyncs monsters so they don't bounce in unison.
+function MonsterHop({
+  seed,
+  children,
+}: {
+  seed: number;
+  children: React.ReactNode;
+}) {
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    const duration = DURATION_TIERS[2].hop; // MED tier, fixed forever
+    const delay = hashSeed(seed, 1009) % duration;
+    progress.value = withDelay(
+      delay,
+      withRepeat(
+        withTiming(1, { duration, easing: Easing.inOut(Easing.sin) }),
+        -1,
+        true,
+      ),
+    );
+    return () => {
+      cancelAnimation(progress);
+      progress.value = 0;
+    };
+  }, [seed]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const ty = (progress.value - 0.5) * 20; // ±10px vertical bounce
+    return { transform: [{ translateY: ty }] };
+  });
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
 }
 
 // Cycles through STOP/SLOW/MED/FAST/MED/SLOW/STOP, starting at a deterministic
@@ -156,12 +196,6 @@ function DecoCycle({
         const scale = 0.9 + p * 0.2;
         const rot = (p - 0.5) * 20;
         return { transform: [{ scale }, { rotate: `${rot}deg` }] };
-      }
-      case "hop": {
-        // Test-cell monster: wide horizontal swing with subtle tilt.
-        const tx = (p - 0.5) * 28;
-        const rot = (p - 0.5) * 8;
-        return { transform: [{ translateX: tx }, { rotate: `${rot}deg` }] };
       }
       default:
         return {};
