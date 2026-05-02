@@ -32,11 +32,25 @@ const DURATION_TIERS: Record<TieredAnim, number>[] = [
   { wobble: 250, float: 410, drift: 950, pulse: 320, twinkle: 360 },
 ];
 
-// Each deco icon breathes through this 21-second pattern. The bookend STOPs
-// concatenate across loops, giving a ~6s rest period between active windows.
+// Each deco icon breathes through this pattern. The bookend STOPs concatenate
+// across loops, giving a ~6s rest period between active windows.
 const PHASE_PATTERN = [0, 1, 2, 3, 2, 1, 0]; // STOP→SLOW→MED→FAST→MED→SLOW→STOP
-const PHASE_DURATION_MS = 3000;
-const FULL_CYCLE_MS = PHASE_PATTERN.length * PHASE_DURATION_MS;
+// Per-position duration. FAST is held 3x longer than the other phases so the
+// peak energy moment lingers, while STOP/SLOW/MED stay snappy.
+const PHASE_DURATIONS_MS = [3000, 3000, 3000, 9000, 3000, 3000, 3000];
+const FULL_CYCLE_MS = PHASE_DURATIONS_MS.reduce((a, b) => a + b, 0);
+
+function phaseAtOffset(offsetMs: number): { idx: number; remainingMs: number } {
+  let acc = 0;
+  for (let i = 0; i < PHASE_DURATIONS_MS.length; i++) {
+    const next = acc + PHASE_DURATIONS_MS[i];
+    if (offsetMs < next) {
+      return { idx: i, remainingMs: next - offsetMs };
+    }
+    acc = next;
+  }
+  return { idx: 0, remainingMs: PHASE_DURATIONS_MS[0] };
+}
 
 // Monster swing tempos: only fast or medium, never stopped or slow.
 const SWING_DURATIONS = [320, 380, 460, 540, 620, 700, 770];
@@ -108,24 +122,32 @@ function DecoCycle({
 }) {
   const progress = useSharedValue(0);
 
-  const [phaseIdx, setPhaseIdx] = useState(() => {
-    const offsetMs = hashSeed(seed, 12345) % FULL_CYCLE_MS;
-    return Math.floor(offsetMs / PHASE_DURATION_MS);
-  });
+  const [phaseIdx, setPhaseIdx] = useState(
+    () => phaseAtOffset(hashSeed(seed, 12345) % FULL_CYCLE_MS).idx,
+  );
 
   // Drive phase progression. First tick aligns to the time remaining in
-  // the initial (random-offset) phase; subsequent ticks fire every 5s.
+  // the initial (random-offset) phase; subsequent ticks fire after the
+  // duration of whatever phase we just entered.
   useEffect(() => {
     const offsetMs = hashSeed(seed, 12345) % FULL_CYCLE_MS;
-    const timeIntoPhase = offsetMs % PHASE_DURATION_MS;
-    const firstTickMs = PHASE_DURATION_MS - timeIntoPhase;
+    const { remainingMs: firstTickMs } = phaseAtOffset(offsetMs);
 
     let timeoutId: ReturnType<typeof setTimeout>;
-    const advance = () => {
-      setPhaseIdx((prev) => (prev + 1) % PHASE_PATTERN.length);
-      timeoutId = setTimeout(advance, PHASE_DURATION_MS);
+    const scheduleNext = (currentIdx: number) => {
+      const nextIdx = (currentIdx + 1) % PHASE_PATTERN.length;
+      timeoutId = setTimeout(() => {
+        setPhaseIdx(nextIdx);
+        scheduleNext(nextIdx);
+      }, PHASE_DURATIONS_MS[nextIdx]);
     };
-    timeoutId = setTimeout(advance, firstTickMs);
+
+    const initialIdx = phaseAtOffset(offsetMs).idx;
+    timeoutId = setTimeout(() => {
+      const nextIdx = (initialIdx + 1) % PHASE_PATTERN.length;
+      setPhaseIdx(nextIdx);
+      scheduleNext(nextIdx);
+    }, firstTickMs);
 
     return () => clearTimeout(timeoutId);
   }, [seed]);
