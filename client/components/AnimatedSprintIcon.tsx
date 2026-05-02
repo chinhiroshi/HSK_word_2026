@@ -17,12 +17,26 @@ interface Props {
   children: React.ReactNode;
 }
 
-const DURATIONS: Record<SprintIconAnim, number> = {
-  wobble: 750,
-  float: 1200,
-  pulse: 650,
-  twinkle: 1050,
-};
+// Three speed tiers from #10 (slow), #12 (medium) and #13 (fast).
+// Each cell deterministically lands on one tier so the map breathes
+// at varied tempos instead of marching in lock-step.
+const DURATION_TIERS: Record<SprintIconAnim, number>[] = [
+  { wobble: 1800, float: 3000, pulse: 1400, twinkle: 2400 },
+  { wobble: 1100, float: 1800, pulse: 900, twinkle: 1500 },
+  { wobble: 750, float: 1200, pulse: 650, twinkle: 1050 },
+];
+
+// Pick a tier deterministically from (seed, type). Salting by `type` means
+// the same cell can still get different tiers for different animation kinds,
+// but the same (seed,type) pair always picks the same tier — no flicker on
+// re-render and no resync between neighbors.
+function pickDuration(seed: number, type: SprintIconAnim): number {
+  const base = Math.abs(Math.floor(seed));
+  const typeSalt = type.charCodeAt(0) * 131 + type.charCodeAt(1) * 17;
+  const scrambled = (base * 374761393 + typeSalt) ^ (base << 7) ^ (base >>> 4);
+  const tierIndex = Math.abs(scrambled) % DURATION_TIERS.length;
+  return DURATION_TIERS[tierIndex][type];
+}
 
 // Spread seed deterministically across the full cycle so adjacent cells
 // don't end up phase-locked. Multiplying + xor shift gives us a wide range
@@ -37,7 +51,7 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
   const progress = useSharedValue(0);
 
   useEffect(() => {
-    const duration = DURATIONS[type];
+    const duration = pickDuration(seed, type);
     const delay = computeDelay(seed, duration);
     progress.value = withDelay(
       delay,
