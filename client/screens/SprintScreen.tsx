@@ -97,7 +97,7 @@ function renderDecoIcon(variant: number, level: number, size: number, seed: numb
       if (variant === 1 || variant === 4) return wrapDeco("wobble", seed, <FlowerIcon size={size} color="#C8A45A" />);
       return wrapDeco("wobble", seed, <PlantIcon size={size} color={lv.decoColor} />);
     case 2: // 雪山: snowy mountain (多め) / cedar / snowflake
-      if (variant === 0 || variant === 2 || variant === 4) return wrapDeco("wobble", seed, <SnowyMountainIcon size={size} color={lv.decoColor} />);
+      if (variant === 0 || variant === 2 || variant === 4) return <SnowyMountainIcon size={size} color={lv.decoColor} />;
       if (variant === 1 || variant === 3) return wrapDeco("wobble", seed, <CedarTreeIcon size={size} color="#455A64" />);
       return wrapDeco("twinkle", seed, <SnowflakeIcon size={size} color="#90CAF9" />);
     case 3: // 森林: 濃い木 / キノコ / 明るい木 の3種類 × 2
@@ -114,11 +114,11 @@ function renderDecoIcon(variant: number, level: number, size: number, seed: numb
       return wrapDeco("float", seed, <FishIcon size={size} color="#42A5F5" />);
     case 6: // 都市: building / moon / star / rocket / small building の5種類
       if (variant === 0) return <BuildingIcon size={size} color="#546E7A" />;
-      if (variant === 1) return wrapDeco("wobble", seed, <MoonIcon size={size} color="#5C6BC0" />);
+      if (variant === 1) return wrapDeco("twinkle", seed, <MoonIcon size={size} color="#5C6BC0" />);
       if (variant === 2) return wrapDeco("twinkle", seed, <StarIcon size={size} color="#FFB300" />);
       if (variant === 3) return wrapDeco("float", seed, <RocketIcon size={size} color="#E53935" />);
       if (variant === 4) return <SmallBuildingIcon size={size} color="#607D8B" />;
-      return wrapDeco("wobble", seed, <MoonIcon size={size} color="#7986CB" />);
+      return wrapDeco("twinkle", seed, <MoonIcon size={size} color="#7986CB" />);
     default:
       return wrapDeco("wobble", seed, <TreeIcon size={size} color={lv.decoColor} />);
   }
