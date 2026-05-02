@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Text } from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -26,10 +27,10 @@ interface Props {
 
 // Tempo tiers indexed 0..3: stop / slow / medium / fast.
 const DURATION_TIERS: Record<SprintIconAnim, number>[] = [
-  { wobble: 0, float: 0, drift: 0, pulse: 0, twinkle: 0, hop: 0 },
-  { wobble: 1470, float: 1470, drift: 2800, pulse: 980, twinkle: 1180, hop: 700 },
-  { wobble: 880, float: 880, drift: 1700, pulse: 630, twinkle: 740, hop: 460 },
-  { wobble: 410, float: 410, drift: 950, pulse: 320, twinkle: 360, hop: 280 },
+  { wobble: 0, float: 0, drift: 0, pulse: 0, twinkle: 0, hop: 0, here: 0 },
+  { wobble: 1470, float: 1470, drift: 2800, pulse: 980, twinkle: 1180, hop: 700, here: 650 },
+  { wobble: 880, float: 880, drift: 1700, pulse: 630, twinkle: 740, hop: 460, here: 650 },
+  { wobble: 410, float: 410, drift: 950, pulse: 320, twinkle: 360, hop: 280, here: 650 },
 ];
 
 // Each icon breathes through this pattern. Single STOP per loop at the start;
@@ -96,6 +97,94 @@ function HereMarker({ children }: { children: React.ReactNode }) {
   });
 
   return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+}
+
+// Always-on MED-tempo wrapper for emoji decorations. Same motion vocabulary as
+// DecoCycle (wobble/float/drift/pulse/twinkle/hop) but with no phase cycling —
+// emojis breathe at a steady MED pace as the user requested.
+function ConstantMedAnim({
+  type,
+  seed,
+  children,
+}: {
+  type: SprintIconAnim;
+  seed: number;
+  children: React.ReactNode;
+}) {
+  const progress = useSharedValue(0);
+
+  useEffect(() => {
+    const duration = DURATION_TIERS[2][type] || 600;
+    const delay = hashSeed(seed, 2017) % duration;
+    progress.value = withDelay(
+      delay,
+      withRepeat(
+        withTiming(1, { duration, easing: Easing.inOut(Easing.sin) }),
+        -1,
+        true,
+      ),
+    );
+    return () => {
+      cancelAnimation(progress);
+      progress.value = 0;
+    };
+  }, [seed, type]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const p = progress.value;
+    switch (type) {
+      case "pulse": {
+        const scale = 1 + p * 0.13;
+        return { transform: [{ scale }] };
+      }
+      case "float": {
+        const tx = (p - 0.5) * 10;
+        return { transform: [{ translateX: tx }] };
+      }
+      case "drift": {
+        const tx = (p - 0.5) * 14;
+        return { transform: [{ translateX: tx }] };
+      }
+      case "wobble": {
+        const rot = (p - 0.5) * 26;
+        const scale = 0.96 + p * 0.08;
+        return { transform: [{ scale }, { rotate: `${rot}deg` }] };
+      }
+      case "twinkle": {
+        const scale = 0.9 + p * 0.2;
+        const rot = (p - 0.5) * 20;
+        return { transform: [{ scale }, { rotate: `${rot}deg` }] };
+      }
+      case "hop": {
+        const ty = (p - 0.5) * 14; // ±7px vertical bounce for emoji
+        return { transform: [{ translateY: ty }] };
+      }
+      default:
+        return {};
+    }
+  });
+
+  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+}
+
+// Emoji deco sprite — renders an emoji as Text and animates it at a constant
+// MED tempo using the supplied motion type.
+export function EmojiSprite({
+  emoji,
+  anim,
+  seed = 0,
+  size,
+}: {
+  emoji: string;
+  anim: SprintIconAnim;
+  seed?: number;
+  size: number;
+}) {
+  return (
+    <ConstantMedAnim type={anim} seed={seed}>
+      <Text style={{ fontSize: size, lineHeight: size * 1.15 }}>{emoji}</Text>
+    </ConstantMedAnim>
+  );
 }
 
 // Test-cell monster: always-on vertical bounce at MED tempo, no phase cycling.

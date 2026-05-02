@@ -7,7 +7,7 @@ import {
   Dimensions,
   Modal,
   Alert,
-  Image,
+  Text,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -43,8 +43,7 @@ import {
   BuildingIcon, SmallBuildingIcon, SunIcon, MushroomIcon, TropicalFlowerIcon,
   MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
-import { AnimatedSprintIcon, SprintIconAnim } from "@/components/AnimatedSprintIcon";
-import { TUTORIAL_STAMP } from "@/data/pandaStamps";
+import { AnimatedSprintIcon, EmojiSprite, SprintIconAnim } from "@/components/AnimatedSprintIcon";
 import { HskLevel } from "@/types";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -80,6 +79,75 @@ function getLevelTheme(level: number): LevelTheme {
   return LEVEL_THEMES[level] ?? LEVEL_THEMES[1];
 }
 
+// ─── Per-level themed emoji decorations ────────────────────────────────────
+// A small, curated set of emoji sprinkled into the deco grid. Each emoji
+// carries a motion type that fits its character (animals hop, plants wobble,
+// fish float, stars twinkle, mountains pulse, etc.). Sparse on purpose —
+// roughly 1 in 9 deco cells gets an emoji.
+interface EmojiSpec { emoji: string; anim: SprintIconAnim; }
+
+const LEVEL_EMOJIS: Record<number, EmojiSpec[]> = {
+  1: [
+    { emoji: "🦤", anim: "hop" }, { emoji: "🦩", anim: "hop" },
+    { emoji: "🐀", anim: "hop" }, { emoji: "🦏", anim: "hop" },
+    { emoji: "🦧", anim: "hop" }, { emoji: "🐘", anim: "hop" },
+    { emoji: "🦎", anim: "wobble" },
+  ],
+  2: [
+    { emoji: "🦣", anim: "hop" }, { emoji: "🐏", anim: "hop" },
+    { emoji: "⛄️", anim: "wobble" }, { emoji: "❄️", anim: "twinkle" },
+    { emoji: "🗻", anim: "pulse" }, { emoji: "🏔️", anim: "pulse" },
+    { emoji: "🐦‍🔥", anim: "float" }, { emoji: "🧌", anim: "hop" },
+  ],
+  3: [
+    { emoji: "🐺", anim: "hop" }, { emoji: "🦉", anim: "twinkle" },
+    { emoji: "🪺", anim: "wobble" }, { emoji: "🌲", anim: "wobble" },
+    { emoji: "🕷️", anim: "hop" }, { emoji: "🕸️", anim: "pulse" },
+    { emoji: "🐗", anim: "hop" }, { emoji: "🐒", anim: "hop" },
+    { emoji: "🧚‍♀️", anim: "twinkle" },
+  ],
+  4: [
+    { emoji: "🗿", anim: "pulse" }, { emoji: "🏝️", anim: "wobble" },
+    { emoji: "🏜️", anim: "pulse" }, { emoji: "🌵", anim: "wobble" },
+    { emoji: "🌴", anim: "wobble" }, { emoji: "🌛", anim: "twinkle" },
+    { emoji: "🏰", anim: "pulse" }, { emoji: "🧞‍♀️", anim: "float" },
+    { emoji: "🧝‍♀️", anim: "twinkle" },
+  ],
+  5: [
+    { emoji: "🐬", anim: "float" }, { emoji: "🐠", anim: "float" },
+    { emoji: "🐡", anim: "float" }, { emoji: "🐳", anim: "float" },
+    { emoji: "🦀", anim: "hop" }, { emoji: "🪼", anim: "wobble" },
+    { emoji: "🪸", anim: "wobble" }, { emoji: "🧜‍♀️", anim: "float" },
+    { emoji: "🧜‍♂️", anim: "float" },
+  ],
+  6: [
+    { emoji: "🌝", anim: "twinkle" }, { emoji: "⚡️", anim: "twinkle" },
+    { emoji: "🪬", anim: "twinkle" }, { emoji: "🦠", anim: "wobble" },
+    { emoji: "🏭", anim: "pulse" }, { emoji: "🌃", anim: "twinkle" },
+    { emoji: "🌉", anim: "pulse" }, { emoji: "🌆", anim: "pulse" },
+    { emoji: "🏙️", anim: "pulse" }, { emoji: "🗽", anim: "pulse" },
+    { emoji: "🚕", anim: "float" }, { emoji: "🚲", anim: "float" },
+    { emoji: "👯‍♀️", anim: "hop" }, { emoji: "💃", anim: "hop" },
+    { emoji: "🧟‍♀️", anim: "hop" }, { emoji: "🧟‍♂️", anim: "hop" },
+    { emoji: "👁️", anim: "twinkle" }, { emoji: "👀", anim: "twinkle" },
+    { emoji: "👄", anim: "pulse" },
+  ],
+};
+
+function pickLevelEmoji(level: number, seed: number): EmojiSpec | null {
+  const list = LEVEL_EMOJIS[level];
+  if (!list || list.length === 0) return null;
+  const idx = Math.abs(seed * 7 + 3) % list.length;
+  return list[idx];
+}
+
+// Direction-aware runner emoji for the current position cell.
+function getRunnerEmoji(direction: CellDir): string {
+  if (direction === "left") return "🏃‍♂️";
+  if (direction === "down") return "🚶‍♂️";
+  return "🏃‍♂️\u200d➡️"; // right / up / null → forward runner
+}
+
 // ─── Cell deco icon selection per level ────────────────────────────────────
 // 7 variants: 0-5 = level icons; 6 = cloud (≈14% cloud coverage)
 function getDecoVariant(row: number, col: number): number {
@@ -88,6 +156,13 @@ function getDecoVariant(row: number, col: number): number {
 
 function renderDecoIcon(variant: number, level: number, size: number, seed: number = 0) {
   const lv = getLevelTheme(level);
+  // ~11% of deco cells render a themed emoji instead of an icon.
+  if (Math.abs(seed) % 9 === 0) {
+    const spec = pickLevelEmoji(level, seed);
+    if (spec) {
+      return <EmojiSprite emoji={spec.emoji} anim={spec.anim} seed={seed} size={size * 0.95} />;
+    }
+  }
   // variant 6 → cloud (gentle horizontal drift)
   if (variant === 6) {
     return wrapDeco("drift", seed, <CloudIcon size={size} color={lv.decoColor} />);
@@ -318,15 +393,14 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     : undefined;
 
   const renderIcon = () => {
-    // Current non-test cell: panda doll mark with a strong "I'm here!" pulse.
+    // Current non-test cell: directional runner emoji with a strong "I'm here!" pulse.
     if (isCurrent && !isFlag && sessionType !== "test") {
+      const fontSize = CELL_SIZE * 0.5;
       return (
         <AnimatedSprintIcon type="here" seed={index}>
-          <Image
-            source={TUTORIAL_STAMP}
-            style={{ width: CELL_SIZE * 0.62, height: CELL_SIZE * 0.62 }}
-            resizeMode="contain"
-          />
+          <Text style={{ fontSize, lineHeight: fontSize * 1.15 }}>
+            {getRunnerEmoji(direction)}
+          </Text>
         </AnimatedSprintIcon>
       );
     }
