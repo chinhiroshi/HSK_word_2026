@@ -18,10 +18,10 @@ interface Props {
 }
 
 const DURATIONS: Record<SprintIconAnim, number> = {
-  wobble: 1100,
-  float: 1800,
-  pulse: 900,
-  twinkle: 1500,
+  wobble: 750,
+  float: 1200,
+  pulse: 650,
+  twinkle: 1050,
 };
 
 // Spread seed deterministically across the full cycle so adjacent cells
