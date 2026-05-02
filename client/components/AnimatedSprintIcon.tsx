@@ -27,9 +27,9 @@ interface Props {
 // Tempo tiers indexed 0..3: stop / slow / medium / fast.
 const DURATION_TIERS: Record<SprintIconAnim, number>[] = [
   { wobble: 0, float: 0, drift: 0, pulse: 0, twinkle: 0, hop: 0 },
-  { wobble: 880, float: 1470, drift: 2800, pulse: 980, twinkle: 1180, hop: 700 },
-  { wobble: 540, float: 880, drift: 1700, pulse: 630, twinkle: 740, hop: 460 },
-  { wobble: 250, float: 410, drift: 950, pulse: 320, twinkle: 360, hop: 280 },
+  { wobble: 1470, float: 1470, drift: 2800, pulse: 980, twinkle: 1180, hop: 700 },
+  { wobble: 880, float: 880, drift: 1700, pulse: 630, twinkle: 740, hop: 460 },
+  { wobble: 410, float: 410, drift: 950, pulse: 320, twinkle: 360, hop: 280 },
 ];
 
 // Each icon breathes through this pattern. Single STOP per loop at the start;
