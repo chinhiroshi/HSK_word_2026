@@ -429,26 +429,6 @@ export async function sendTestForgettingNotification(): Promise<boolean> {
   }
 }
 
-// ===== Forgetting reminder: auto-enable on first launch =====
-const FORGETTING_NOTIF_AUTO_INIT_KEY = "@chinese_master_forgetting_auto_init_done";
-
-/**
- * Called once on first app launch.
- * Silently enables the forgetting reminder if the user has not yet made a choice.
- * Does NOT show an alert on success — the first 36h notification itself is the signal.
- */
-export async function autoEnableForgettingNotificationOnce(): Promise<void> {
-  if (Platform.OS === "web") return;
-  try {
-    const done = await AsyncStorage.getItem(FORGETTING_NOTIF_AUTO_INIT_KEY);
-    if (done) return; // Already attempted once
-    await AsyncStorage.setItem(FORGETTING_NOTIF_AUTO_INIT_KEY, "true");
-    await enableForgettingNotification(); // requests permission + schedules if granted
-  } catch {
-    // Best-effort; ignore failures
-  }
-}
-
 // ===== Migration & app-launch refresh =====
 async function migrateLegacyIfNeeded(): Promise<void> {
   try {
