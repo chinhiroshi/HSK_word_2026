@@ -86,9 +86,9 @@ function getDecoVariant(row: number, col: number): number {
 
 function renderDecoIcon(variant: number, level: number, size: number, seed: number = 0) {
   const lv = getLevelTheme(level);
-  // variant 6 → cloud (horizontal float)
+  // variant 6 → cloud (gentle horizontal drift)
   if (variant === 6) {
-    return wrapDeco("float", seed, <CloudIcon size={size} color={lv.decoColor} />);
+    return wrapDeco("drift", seed, <CloudIcon size={size} color={lv.decoColor} />);
   }
 
   switch (level) {

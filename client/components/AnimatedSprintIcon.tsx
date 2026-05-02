@@ -9,7 +9,13 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 
-export type SprintIconAnim = "wobble" | "float" | "pulse" | "twinkle" | "hop";
+export type SprintIconAnim =
+  | "wobble"
+  | "float"
+  | "drift"
+  | "pulse"
+  | "twinkle"
+  | "hop";
 type TieredAnim = Exclude<SprintIconAnim, "hop">;
 
 interface Props {
@@ -20,10 +26,10 @@ interface Props {
 
 // Tempo tiers indexed 0..3: stop / slow / medium / fast.
 const DURATION_TIERS: Record<TieredAnim, number>[] = [
-  { wobble: 0, float: 0, pulse: 0, twinkle: 0 },
-  { wobble: 1260, float: 1470, pulse: 980, twinkle: 1180 },
-  { wobble: 770, float: 880, pulse: 630, twinkle: 740 },
-  { wobble: 360, float: 410, pulse: 320, twinkle: 360 },
+  { wobble: 0, float: 0, drift: 0, pulse: 0, twinkle: 0 },
+  { wobble: 880, float: 1470, drift: 2800, pulse: 980, twinkle: 1180 },
+  { wobble: 540, float: 880, drift: 1700, pulse: 630, twinkle: 740 },
+  { wobble: 250, float: 410, drift: 950, pulse: 320, twinkle: 360 },
 ];
 
 // Each deco icon breathes through this 21-second pattern. The bookend STOPs
@@ -155,6 +161,11 @@ function DecoCycle({
       }
       case "float": {
         const tx = (p - 0.5) * 10;
+        return { transform: [{ translateX: tx }] };
+      }
+      case "drift": {
+        // Clouds: gentle, wider horizontal drift than `float`.
+        const tx = (p - 0.5) * 14;
         return { transform: [{ translateX: tx }] };
       }
       case "wobble": {
