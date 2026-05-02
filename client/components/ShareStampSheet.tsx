@@ -6,7 +6,6 @@ import {
   Pressable,
   TextInput,
   Image,
-  ScrollView,
   Platform,
   Share,
   ActivityIndicator,
@@ -18,9 +17,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
+import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
+import { APP_STORE_URL } from "@/constants/links";
 
 interface QuoteData {
   chinese: string;
@@ -138,6 +139,9 @@ export function ShareStampSheet({
     if (stampsLine) parts.push(stampsLine);
     if (comment.trim()) parts.push(comment.trim());
     parts.push(hashtagLine);
+    parts.push("");
+    parts.push(t("share_app_link_label"));
+    parts.push(APP_STORE_URL);
     return parts.join("\n");
   };
 
@@ -162,10 +166,12 @@ export function ShareStampSheet({
           ]}
           onPress={(e) => e.stopPropagation()}
         >
-          <ScrollView
+          <KeyboardAwareScrollViewCompat
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
+            bottomOffset={20}
+            extraKeyboardSpace={20}
           >
             <View style={styles.header}>
               <ThemedText style={styles.headerTitle}>
@@ -274,6 +280,15 @@ export function ShareStampSheet({
                 ) : null}
 
                 <ThemedText style={styles.hashtagText}>{hashtagLine}</ThemedText>
+
+                <View style={styles.appLinkBox}>
+                  <ThemedText style={styles.appLinkLabel}>
+                    {t("share_app_link_label")}
+                  </ThemedText>
+                  <ThemedText style={styles.appLinkUrl}>
+                    {APP_STORE_URL}
+                  </ThemedText>
+                </View>
               </LinearGradient>
             </ViewShot>
 
@@ -332,7 +347,7 @@ export function ShareStampSheet({
                 </>
               )}
             </Pressable>
-          </ScrollView>
+          </KeyboardAwareScrollViewCompat>
         </Pressable>
       </Pressable>
     </Modal>
@@ -491,6 +506,25 @@ const styles = StyleSheet.create({
     color: "#6B7280",
     marginTop: Spacing.xs,
     textAlign: "center",
+  },
+  appLinkBox: {
+    marginTop: Spacing.sm,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(0,0,0,0.08)",
+    alignSelf: "stretch",
+    alignItems: "center",
+    gap: 2,
+  },
+  appLinkLabel: {
+    fontSize: 10,
+    fontFamily: "Nunito_600SemiBold",
+    color: "#6B7280",
+  },
+  appLinkUrl: {
+    fontSize: 11,
+    fontFamily: "Nunito_700Bold",
+    color: "#5B8C85",
   },
   inputWrap: {
     gap: 4,
