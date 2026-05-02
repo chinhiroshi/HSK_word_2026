@@ -29,7 +29,7 @@ const DURATION_TIERS: Record<TieredAnim, number>[] = [
   { wobble: 0, float: 0, drift: 0, pulse: 0, twinkle: 0 },
   { wobble: 880, float: 1470, drift: 2800, pulse: 980, twinkle: 1180 },
   { wobble: 540, float: 880, drift: 1700, pulse: 630, twinkle: 740 },
-  { wobble: 625, float: 1025, drift: 2375, pulse: 800, twinkle: 900 },
+  { wobble: 250, float: 410, drift: 950, pulse: 320, twinkle: 360 },
 ];
 
 // Each deco icon breathes through this 21-second pattern. The bookend STOPs
