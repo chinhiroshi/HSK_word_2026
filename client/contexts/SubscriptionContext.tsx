@@ -4,10 +4,16 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Purchases, { PurchasesPackage, CustomerInfo, LOG_LEVEL } from "react-native-purchases";
 import Constants from "expo-constants";
 
-const REVENUECAT_API_KEY =
+const IS_EXPO_GO = Constants.appOwnership === "expo";
+
+const REVENUECAT_TEST_KEY = "test_jiqDlGrYpKroywFSKaTabjOJOdR";
+
+const REVENUECAT_PROD_KEY =
   Constants.expoConfig?.extra?.revenueCatApiKey ||
   process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ||
   "appl_BVVXQEBFhgNtNBvWEACExXHMPJc";
+
+const REVENUECAT_API_KEY = IS_EXPO_GO ? REVENUECAT_TEST_KEY : REVENUECAT_PROD_KEY;
 const PREMIUM_ENTITLEMENT_ID = "premium";
 const FREE_WORDS_LIMIT = 50;
 const DEV_OVERRIDE_KEY = "@chinese_master_dev_premium_override";

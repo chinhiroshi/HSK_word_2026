@@ -11,7 +11,7 @@ The application is built with React Native and Expo, utilizing a minimal Express
 
 Key architectural decisions include:
 - **Dual Memorization Tracking**: Separate tracking for text-based and audio-based memorization allows for varied learning styles.
-- **Freemium Model Integration**: Subscription management is handled via RevenueCat, offering HSK1 for free and gating advanced features like detailed examples, full audio playback, and advanced tests for higher HSK levels.
+- **Freemium Model Integration**: Subscription management is handled via RevenueCat, offering HSK1 for free and gating advanced features like detailed examples, full audio playback, and advanced tests for higher HSK levels. The RevenueCat API key auto-switches based on environment: Expo Go uses the test key (`test_...`) so the SDK initializes in Test Store mode without errors, while EAS production builds use the real Apple key. Detection is via `Constants.appOwnership === "expo"` in `client/contexts/SubscriptionContext.tsx`.
 - **Dynamic Content Delivery**: Word data is categorized by HSK level (1-6), with varying word counts.
 - **Notification System**: Two distinct reminder types (study and sprint) are managed, with user-configurable timings and personalized messages.
 - **Sprint Learning Cycle**: A 7-day, 29-cell snake grid map guides users through a structured learning path involving study, review, and test sessions, culminating in special stamp rewards.
