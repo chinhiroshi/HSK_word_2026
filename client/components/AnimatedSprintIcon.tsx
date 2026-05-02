@@ -18,10 +18,10 @@ interface Props {
 }
 
 const DURATIONS: Record<SprintIconAnim, number> = {
-  wobble: 1800,
-  float: 3000,
-  pulse: 1400,
-  twinkle: 2400,
+  wobble: 1100,
+  float: 1800,
+  pulse: 900,
+  twinkle: 1500,
 };
 
 // Spread seed deterministically across the full cycle so adjacent cells
@@ -60,20 +60,20 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
     const p = progress.value;
     switch (type) {
       case "pulse": {
-        const scale = 1 + p * 0.1;
+        const scale = 1 + p * 0.13;
         return { transform: [{ scale }] };
       }
       case "float": {
-        const tx = (p - 0.5) * 6;
+        const tx = (p - 0.5) * 10;
         return { transform: [{ translateX: tx }] };
       }
       case "wobble": {
-        const rot = (p - 0.5) * 6;
+        const rot = (p - 0.5) * 10;
         return { transform: [{ rotate: `${rot}deg` }] };
       }
       case "twinkle": {
-        const scale = 0.94 + p * 0.12;
-        const rot = (p - 0.5) * 14;
+        const scale = 0.9 + p * 0.2;
+        const rot = (p - 0.5) * 20;
         return { transform: [{ scale }, { rotate: `${rot}deg` }] };
       }
       default:
