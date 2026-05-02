@@ -20,8 +20,13 @@ import {
   enableSprintNotification,
   disableSprintNotification,
   sendTestSprintNotification,
+  getForgettingNotifEnabled,
+  enableForgettingNotification,
+  disableForgettingNotification,
+  sendTestForgettingNotification,
 } from "@/lib/notifications";
 import { NotificationReminderCard } from "@/components/NotificationReminderCard";
+import { ForgettingReminderCard } from "@/components/ForgettingReminderCard";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -603,18 +608,12 @@ export default function ProfileScreen() {
 
       <ThemedText style={styles.sectionLabel}>{t("section_notifications")}</ThemedText>
 
-      <NotificationReminderCard
-        title={t("study_reminder_title")}
-        description={t("study_reminder_desc")}
-        infoText={t("study_reminder_info")}
-        iconName="book-open"
-        accentColor={theme.primary}
-        testIdPrefix="study-notif"
-        getEnabled={getStudyNotifEnabled}
-        getTime={getStudyNotifTime}
-        enable={enableStudyNotification}
-        disable={disableStudyNotification}
-        sendTest={sendTestStudyNotification}
+      <ForgettingReminderCard
+        testIdPrefix="forgetting-notif"
+        getEnabled={getForgettingNotifEnabled}
+        enable={enableForgettingNotification}
+        disable={disableForgettingNotification}
+        sendTest={sendTestForgettingNotification}
       />
 
       <NotificationReminderCard

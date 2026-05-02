@@ -296,6 +296,139 @@ export async function sendTestSprintNotification(): Promise<boolean> {
   }
 }
 
+// ===== FORGETTING REVIEW reminder API =====
+const FORGETTING_NOTIF_ID_36H = "chinese-master-forgetting-36h";
+const FORGETTING_NOTIF_ID_2W = "chinese-master-forgetting-2w";
+
+const FORGETTING_NOTIF_PREF_KEY = "@chinese_master_forgetting_notif_enabled";
+const FORGETTING_NOTIF_36H_SCHEDULED_KEY = "@chinese_master_forgetting_36h_scheduled_at";
+const FORGETTING_NOTIF_2W_NEXT_KEY = "@chinese_master_forgetting_2w_next_at";
+
+const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+const THIRTY_SIX_HOURS_S = 36 * 60 * 60;
+
+async function buildForgetting36hNotification(): Promise<{ title: string; body: string }> {
+  try {
+    const words = await getWords();
+    const level = await getSelectedHskLevel();
+    const total = words.length;
+    const notMemorized = words.filter((w) => !w.textMemorized).length;
+    return {
+      title: "忘れている単語があります",
+      body:
+        notMemorized > 0
+          ? `HSK${level}: ${notMemorized}語が復習待ちです。忘れる前に確認しましょう！`
+          : `HSK${level}: ${total}語の復習を始めましょう。継続が力です！`,
+    };
+  } catch {
+    return { title: "忘れている単語があります", body: "復習の時間です。アプリを開いて確認しましょう！" };
+  }
+}
+
+async function buildForgetting2WNotification(): Promise<{ title: string; body: string }> {
+  try {
+    const words = await getWords();
+    const level = await getSelectedHskLevel();
+    const total = words.length;
+    const memorized = words.filter((w) => w.textMemorized && (w.textUnmemorizedCount || 0) === 0).length;
+    const needsWork = words.filter((w) => (w.textUnmemorizedCount || 0) > 0).length;
+    const percentage = total > 0 ? Math.round((memorized / total) * 100) : 0;
+    return {
+      title: needsWork > 0 ? `${needsWork}語が忘却の危機です` : "2週間の学習レポート",
+      body: `HSK${level}: 暗記済み ${memorized}/${total}語 (${percentage}%)${
+        needsWork > 0 ? `・要復習 ${needsWork}語` : "・よく頑張りました！"
+      }`,
+    };
+  } catch {
+    return { title: "2週間の学習レポート", body: "アプリを開いて学習状況を確認しましょう！" };
+  }
+}
+
+export async function getForgettingNotifEnabled(): Promise<boolean> {
+  return readBool(FORGETTING_NOTIF_PREF_KEY);
+}
+
+export async function enableForgettingNotification(): Promise<boolean> {
+  if (Platform.OS === "web") return false;
+  const granted = await requestPermission();
+  if (!granted) return false;
+  try {
+    // 36h one-time notification (only if not already scheduled)
+    const alreadyScheduled = await AsyncStorage.getItem(FORGETTING_NOTIF_36H_SCHEDULED_KEY);
+    if (!alreadyScheduled) {
+      await cancelById(FORGETTING_NOTIF_ID_36H);
+      const content36h = await buildForgetting36hNotification();
+      await Notifications.scheduleNotificationAsync({
+        identifier: FORGETTING_NOTIF_ID_36H,
+        content: { ...content36h, data: { screen: "study" }, sound: true },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+          seconds: THIRTY_SIX_HOURS_S,
+          repeats: false,
+        },
+      });
+      await AsyncStorage.setItem(FORGETTING_NOTIF_36H_SCHEDULED_KEY, String(Date.now()));
+    }
+
+    // 2-week notification (schedule if not set or in the past)
+    await scheduleOrRefresh2WeekForgettingNotification(true);
+
+    await AsyncStorage.setItem(FORGETTING_NOTIF_PREF_KEY, "true");
+    return true;
+  } catch (e) {
+    console.warn("忘却復習リマインダーの設定に失敗しました:", e);
+    return false;
+  }
+}
+
+async function scheduleOrRefresh2WeekForgettingNotification(force = false): Promise<void> {
+  const nextStr = await AsyncStorage.getItem(FORGETTING_NOTIF_2W_NEXT_KEY);
+  const nextTime = nextStr ? parseInt(nextStr, 10) : 0;
+  const now = Date.now();
+
+  // If still in the future and not forced, just refresh content at same date
+  let targetTime = nextTime > now + 60_000 ? nextTime : now + TWO_WEEKS_MS;
+
+  await cancelById(FORGETTING_NOTIF_ID_2W);
+  const { title, body } = await buildForgetting2WNotification();
+  await Notifications.scheduleNotificationAsync({
+    identifier: FORGETTING_NOTIF_ID_2W,
+    content: { title, body, data: { screen: "study" }, sound: true },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: new Date(targetTime),
+    },
+  });
+  await AsyncStorage.setItem(FORGETTING_NOTIF_2W_NEXT_KEY, String(targetTime));
+}
+
+export async function disableForgettingNotification(): Promise<void> {
+  await cancelById(FORGETTING_NOTIF_ID_36H);
+  await cancelById(FORGETTING_NOTIF_ID_2W);
+  await AsyncStorage.setItem(FORGETTING_NOTIF_PREF_KEY, "false");
+  await AsyncStorage.removeItem(FORGETTING_NOTIF_36H_SCHEDULED_KEY);
+  await AsyncStorage.removeItem(FORGETTING_NOTIF_2W_NEXT_KEY);
+}
+
+export async function sendTestForgettingNotification(): Promise<boolean> {
+  if (Platform.OS === "web") return false;
+  try {
+    const { title, body } = await buildForgetting36hNotification();
+    await Notifications.scheduleNotificationAsync({
+      content: { title, body, data: { screen: "study" }, sound: true },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 5,
+        repeats: false,
+      },
+    });
+    return true;
+  } catch (e) {
+    console.warn("忘却復習リマインダーのテスト通知に失敗しました:", e);
+    return false;
+  }
+}
+
 // ===== Migration & app-launch refresh =====
 async function migrateLegacyIfNeeded(): Promise<void> {
   try {
@@ -337,6 +470,12 @@ export async function refreshDailyNotificationsIfEnabled(): Promise<void> {
     if (sprintEnabled) {
       const { hour, minute } = await getSprintNotifTime();
       await scheduleSprintNotification(hour, minute);
+    }
+    // Forgetting reminder: refresh 2-week notification content on app open
+    // (36h one-time notification is NOT refreshed here to preserve its schedule)
+    const forgettingEnabled = await getForgettingNotifEnabled();
+    if (forgettingEnabled) {
+      await scheduleOrRefresh2WeekForgettingNotification();
     }
   } catch {
     // Ignore — notifications are best-effort
