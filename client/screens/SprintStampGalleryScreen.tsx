@@ -59,6 +59,14 @@ export default function SprintStampGalleryScreen() {
     isSpecial: boolean;
   } | null>(null);
   const [showShare, setShowShare] = useState(false);
+  // Snapshot of stamp/quote data used when opening share sheet.
+  // We capture this before closing the parent modal so the data isn't lost.
+  const [shareStampData, setShareStampData] = useState<{
+    image: any;
+    label: string;
+    isSpecial: boolean;
+    quote: { chinese: string; japanese?: string; source?: string } | null;
+  } | null>(null);
   const [tutorialEarned, setTutorialEarned] = useState(false);
   const [showDevPreview, setShowDevPreview] = useState(false);
 
@@ -465,7 +473,28 @@ export default function SprintStampGalleryScreen() {
                 <View style={styles.modalActionRow}>
                   <Pressable
                     style={[styles.modalShareBtn, { borderColor: theme.primary }]}
-                    onPress={() => setShowShare(true)}
+                    onPress={() => {
+                      if (!selectedStamp) return;
+                      // Snapshot data before closing parent modal
+                      setShareStampData({
+                        image: selectedStamp.image,
+                        label: selectedStamp.label,
+                        isSpecial: selectedStamp.isSpecial,
+                        quote: selectedQuote
+                          ? {
+                              chinese: selectedQuote.chinese,
+                              japanese:
+                                lang === "en" && selectedQuote.english
+                                  ? selectedQuote.english
+                                  : selectedQuote.japanese,
+                              source: selectedQuote.source,
+                            }
+                          : null,
+                      });
+                      // Close parent modal first, open share sheet after animation
+                      setSelectedQuote(null);
+                      setTimeout(() => setShowShare(true), 350);
+                    }}
                     testID="button-gallery-share"
                   >
                     <Feather name="share-2" size={16} color={theme.primary} />
@@ -486,27 +515,19 @@ export default function SprintStampGalleryScreen() {
         </Pressable>
       </Modal>
 
-      {selectedStamp ? (
+      {shareStampData ? (
         <ShareStampSheet
           visible={showShare}
-          onClose={() => setShowShare(false)}
-          stampImage={selectedStamp.image}
-          stampLabel={selectedStamp.label}
+          onClose={() => {
+            setShowShare(false);
+            setShareStampData(null);
+          }}
+          stampImage={shareStampData.image}
+          stampLabel={shareStampData.label}
           hskLevel={currentLevel}
           stampCount={completedCount}
-          isSpecial={selectedStamp.isSpecial}
-          quote={
-            selectedQuote
-              ? {
-                  chinese: selectedQuote.chinese,
-                  japanese:
-                    lang === "en" && selectedQuote.english
-                      ? selectedQuote.english
-                      : selectedQuote.japanese,
-                  source: selectedQuote.source,
-                }
-              : null
-          }
+          isSpecial={shareStampData.isSpecial}
+          quote={shareStampData.quote}
         />
       ) : null}
 

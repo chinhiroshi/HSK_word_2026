@@ -760,7 +760,9 @@ export default function TutorialSprintScreen() {
               testID="button-tutorial-share"
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-                setShowShare(true);
+                // Close the parent modal first, then open share sheet after animation
+                setShowStamp(false);
+                setTimeout(() => setShowShare(true), 350);
               }}
               style={[
                 styles.shareInlineBtn,
