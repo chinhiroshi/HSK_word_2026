@@ -326,11 +326,14 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       }
       return icon;
     }
-    // Test cell locked: sequential lock (not yet reached) → monster in amber, no animation
+    // Test cell locked: sequential lock (not yet reached) → monster in amber,
+    // animate the monster the same way as unlocked test cells.
     if (isLocked) {
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <MonsterIcon size={iconSize * 0.85} color="#7C3AED" />
+          <AnimatedSprintIcon type="hop" seed={index}>
+            <MonsterIcon size={iconSize * 0.85} color="#7C3AED" />
+          </AnimatedSprintIcon>
           {testNumber != null ? (
             <View style={[styles.testNumBadge, { backgroundColor: "#7C3AED22" }]}>
               <ThemedText style={[styles.testNumText, { color: "#7C3AED" }]}>{testNumber}</ThemedText>
