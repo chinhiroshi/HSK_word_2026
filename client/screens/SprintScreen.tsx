@@ -86,7 +86,7 @@ function getDecoVariant(row: number, col: number): number {
 
 // Pick a subtle animation variant per deco icon to match its character
 function getDecoAnimVariant(variant: number, level: number): CellAnimVariant {
-  if (variant === 6) return "float"; // cloud — drifts horizontally
+  if (variant === 6) return "drift"; // cloud — windblown horizontal drift
   switch (level) {
     case 1: // 草原: tree / flower / plant
       if (variant === 1 || variant === 4) return "wobble"; // flowers sway

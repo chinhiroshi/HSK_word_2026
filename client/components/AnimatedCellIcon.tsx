@@ -10,7 +10,7 @@ import Animated, {
   cancelAnimation,
 } from "react-native-reanimated";
 
-export type CellAnimVariant = "wobble" | "float" | "pulse" | "twinkle" | "none";
+export type CellAnimVariant = "wobble" | "float" | "drift" | "pulse" | "twinkle" | "none";
 
 interface AnimatedCellIconProps {
   variant: CellAnimVariant;
@@ -22,12 +22,16 @@ interface AnimatedCellIconProps {
 function getDuration(variant: CellAnimVariant, override?: number): number {
   if (override) return override;
   switch (variant) {
+    // withRepeat(... reverse=true) makes a full cycle = 2 × duration,
+    // so half-cycle 700ms gives a ~1.4s pulse beat as requested.
     case "pulse":
-      return 1400;
+      return 700;
     case "wobble":
       return 1800;
     case "float":
       return 2400;
+    case "drift":
+      return 3000;
     case "twinkle":
       return 2000;
     default:
@@ -71,8 +75,13 @@ export function AnimatedCellIcon({
       const tx = interpolate(t, [0, 1], [-1, 1]);
       return { transform: [{ translateY: ty }, { translateX: tx }] };
     }
+    if (variant === "drift") {
+      // Slow horizontal drift — used for clouds so they look windblown
+      const tx = interpolate(t, [0, 1], [-3.5, 3.5]);
+      return { transform: [{ translateX: tx }] };
+    }
     if (variant === "pulse") {
-      const scale = interpolate(t, [0, 1], [1, 1.08]);
+      const scale = interpolate(t, [0, 1], [1, 1.1]);
       return { transform: [{ scale }] };
     }
     if (variant === "twinkle") {
