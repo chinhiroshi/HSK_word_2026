@@ -42,6 +42,7 @@ import {
   BuildingIcon, SmallBuildingIcon, SunIcon, MushroomIcon, TropicalFlowerIcon,
   MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
+import { AnimatedSprintIcon, SprintIconAnim } from "@/components/AnimatedSprintIcon";
 import { HskLevel } from "@/types";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -83,42 +84,52 @@ function getDecoVariant(row: number, col: number): number {
   return (row * 17 + col * 11 + row * col * 3 + row * 5) % 7;
 }
 
-function renderDecoIcon(variant: number, level: number, size: number) {
+function renderDecoIcon(variant: number, level: number, size: number, seed: number = 0) {
   const lv = getLevelTheme(level);
-  // variant 6 → cloud
-  if (variant === 6) return <CloudIcon size={size} color={lv.decoColor} />;
+  // variant 6 → cloud (horizontal float)
+  if (variant === 6) {
+    return wrapDeco("float", seed, <CloudIcon size={size} color={lv.decoColor} />);
+  }
 
   switch (level) {
     case 1: // 草原: tree / flower / plant の3種類 × 2
-      if (variant === 0 || variant === 3) return <TreeIcon size={size} color={lv.decoColor} />;
-      if (variant === 1 || variant === 4) return <FlowerIcon size={size} color="#C8A45A" />;
-      return <PlantIcon size={size} color={lv.decoColor} />;
+      if (variant === 0 || variant === 3) return wrapDeco("wobble", seed, <TreeIcon size={size} color={lv.decoColor} />);
+      if (variant === 1 || variant === 4) return wrapDeco("wobble", seed, <FlowerIcon size={size} color="#C8A45A" />);
+      return wrapDeco("wobble", seed, <PlantIcon size={size} color={lv.decoColor} />);
     case 2: // 雪山: snowy mountain (多め) / cedar / snowflake
-      if (variant === 0 || variant === 2 || variant === 4) return <SnowyMountainIcon size={size} color={lv.decoColor} />;
-      if (variant === 1 || variant === 3) return <CedarTreeIcon size={size} color="#455A64" />;
-      return <SnowflakeIcon size={size} color="#90CAF9" />;
+      if (variant === 0 || variant === 2 || variant === 4) return wrapDeco("wobble", seed, <SnowyMountainIcon size={size} color={lv.decoColor} />);
+      if (variant === 1 || variant === 3) return wrapDeco("wobble", seed, <CedarTreeIcon size={size} color="#455A64" />);
+      return wrapDeco("twinkle", seed, <SnowflakeIcon size={size} color="#90CAF9" />);
     case 3: // 森林: 濃い木 / キノコ / 明るい木 の3種類 × 2
-      if (variant === 0 || variant === 3) return <TreeIcon size={size} color="#2E7D32" />;
-      if (variant === 1 || variant === 4) return <MushroomIcon size={size} color="#C62828" />;
-      return <TreeIcon size={size} color="#66BB6A" />;
+      if (variant === 0 || variant === 3) return wrapDeco("wobble", seed, <TreeIcon size={size} color="#2E7D32" />);
+      if (variant === 1 || variant === 4) return wrapDeco("wobble", seed, <MushroomIcon size={size} color="#C62828" />);
+      return wrapDeco("wobble", seed, <TreeIcon size={size} color="#66BB6A" />);
     case 4: // 熱帯: palm / tropical flower / plant の3種類 × 2
-      if (variant === 0 || variant === 3) return <PalmIcon size={size} color={lv.decoColor} />;
-      if (variant === 1 || variant === 4) return <TropicalFlowerIcon size={size} color="#E91E63" />;
-      return <PlantIcon size={size} color="#66BB6A" />;
+      if (variant === 0 || variant === 3) return wrapDeco("wobble", seed, <PalmIcon size={size} color={lv.decoColor} />);
+      if (variant === 1 || variant === 4) return wrapDeco("wobble", seed, <TropicalFlowerIcon size={size} color="#E91E63" />);
+      return wrapDeco("wobble", seed, <PlantIcon size={size} color="#66BB6A" />);
     case 5: // 海: wave / sun / fish の3種類 × 2
-      if (variant === 0 || variant === 3) return <WaveIcon size={size} color={lv.decoColor} />;
-      if (variant === 1 || variant === 4) return <SunIcon size={size} color="#FFB300" />;
-      return <FishIcon size={size} color="#42A5F5" />;
+      if (variant === 0 || variant === 3) return wrapDeco("float", seed, <WaveIcon size={size} color={lv.decoColor} />);
+      if (variant === 1 || variant === 4) return wrapDeco("twinkle", seed, <SunIcon size={size} color="#FFB300" />);
+      return wrapDeco("float", seed, <FishIcon size={size} color="#42A5F5" />);
     case 6: // 都市: building / moon / star / rocket / small building の5種類
       if (variant === 0) return <BuildingIcon size={size} color="#546E7A" />;
-      if (variant === 1) return <MoonIcon size={size} color="#5C6BC0" />;
-      if (variant === 2) return <StarIcon size={size} color="#FFB300" />;
-      if (variant === 3) return <RocketIcon size={size} color="#E53935" />;
+      if (variant === 1) return wrapDeco("wobble", seed, <MoonIcon size={size} color="#5C6BC0" />);
+      if (variant === 2) return wrapDeco("twinkle", seed, <StarIcon size={size} color="#FFB300" />);
+      if (variant === 3) return wrapDeco("float", seed, <RocketIcon size={size} color="#E53935" />);
       if (variant === 4) return <SmallBuildingIcon size={size} color="#607D8B" />;
-      return <MoonIcon size={size} color="#7986CB" />;
+      return wrapDeco("wobble", seed, <MoonIcon size={size} color="#7986CB" />);
     default:
-      return <TreeIcon size={size} color={lv.decoColor} />;
+      return wrapDeco("wobble", seed, <TreeIcon size={size} color={lv.decoColor} />);
   }
+}
+
+function wrapDeco(type: SprintIconAnim, seed: number, child: React.ReactNode) {
+  return (
+    <AnimatedSprintIcon type={type} seed={seed}>
+      {child}
+    </AnimatedSprintIcon>
+  );
 }
 
 // ─── Study cell icon per level ──────────────────────────────────────────────
@@ -305,9 +316,17 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
 
   const renderIcon = () => {
     if (featherIcon) {
-      return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
+      const icon = <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
+      // Special stamp star → twinkle, current zap → pulse, flag → static
+      if (isSpecialStamp) {
+        return <AnimatedSprintIcon type="twinkle" seed={index}>{icon}</AnimatedSprintIcon>;
+      }
+      if (isCurrent && featherIcon === "zap") {
+        return <AnimatedSprintIcon type="pulse" seed={index}>{icon}</AnimatedSprintIcon>;
+      }
+      return icon;
     }
-    // Test cell locked: sequential lock (not yet reached) → monster in amber
+    // Test cell locked: sequential lock (not yet reached) → monster in amber, no animation
     if (isLocked) {
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -320,14 +339,19 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </View>
       );
     }
-    // Study cell premium locked: lock icon in grey
+    // Study cell premium locked: lock icon in grey, no animation
     if (isPremiumLocked) {
       return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
     }
     if (sessionType === "test") {
+      const monster = <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />;
+      // Animate monster on unreached test cells (not completed) → wobble
+      const animatedMonster = isCompleted ? monster : (
+        <AnimatedSprintIcon type="wobble" seed={index}>{monster}</AnimatedSprintIcon>
+      );
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />
+          {animatedMonster}
           {testNumber != null ? (
             <View style={[styles.testNumBadge, (isCompleted || isCurrent) ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#7C3AED22" }]}>
               <ThemedText style={[styles.testNumText, { color: (isCompleted || isCurrent) ? "#fff" : "#7C3AED" }]}>
@@ -338,7 +362,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </View>
       );
     }
-    // Completed non-test cells all show PlantIcon (HSK1 style)
+    // Completed non-test cells all show PlantIcon (HSK1 style) — no animation
     if (isCompleted) return <PlantIcon size={iconSize} color={stampColor ?? "#fff"} />;
     return renderStudyIcon(currentLevel, iconSize, stampColor ?? lvTheme.studyColor);
   };
@@ -407,9 +431,10 @@ function DecoCell({ row, col, theme, currentLevel }: { row: number; col: number;
   const variant = getDecoVariant(row, col);
   const iconSize = CELL_SIZE * 0.6;
   const lvTheme = getLevelTheme(currentLevel);
+  const seed = row * 137 + col * 53 + row * col * 7;
   return (
     <View style={[styles.decoCell, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: lvTheme.decoBg + "60" }]}>
-      {renderDecoIcon(variant, currentLevel, iconSize)}
+      {renderDecoIcon(variant, currentLevel, iconSize, seed)}
     </View>
   );
 }
