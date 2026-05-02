@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -18,30 +18,36 @@ interface Props {
   children: React.ReactNode;
 }
 
-// Four tiers: static (no motion) / slow (#10) / medium (#12) / fast (#13 sped
-// up another 30%). Each cell lands on one of these so the map breathes at
-// varied tempos and a quarter of the cells stay completely still — making
-// the moving ones feel more alive by contrast.
+// Tiers cycle randomly every 5s. Two "static" slots mean ~50% of cells
+// are paused at any given moment, contrasting with the moving ones for
+// a more lively, less uniform feel.
 const DURATION_TIERS: Record<TieredAnim, number>[] = [
   { wobble: 0, float: 0, pulse: 0, twinkle: 0 },
-  { wobble: 1800, float: 3000, pulse: 1400, twinkle: 2400 },
+  { wobble: 0, float: 0, pulse: 0, twinkle: 0 },
   { wobble: 1100, float: 1800, pulse: 900, twinkle: 1500 },
   { wobble: 520, float: 840, pulse: 460, twinkle: 740 },
 ];
 
-// "hop" is reserved for the test-cell monster: always hops, never static,
-// at a random fast tempo per seed so different test cells bounce on
-// different beats.
-const HOP_DURATIONS = [380, 460, 540, 620, 700];
+// Monster hop: never static, much faster + bigger than the previous pass
+// so it actually reads as bouncing on the test cells.
+const HOP_DURATIONS = [220, 280, 340, 400, 460];
+const HOP_AMPLITUDE = 26;
 
-// Pick a duration deterministically from (seed, type). Salting by `type`
-// means the same cell can still get different tiers for different animation
-// kinds, but the same (seed,type) pair always picks the same value — no
-// flicker on re-render and no resync between neighbors.
-function pickDuration(seed: number, type: SprintIconAnim): number {
+const TIER_CYCLE_MS = 5000;
+
+// Pick a duration deterministically from (seed, type, cycleTick). Re-rolling
+// the tick every 5s lets each cell switch between stop / medium / fast over
+// time without losing per-cell variety.
+function pickDuration(
+  seed: number,
+  type: SprintIconAnim,
+  tick: number,
+): number {
   const base = Math.abs(Math.floor(seed));
   const typeSalt = type.charCodeAt(0) * 131 + type.charCodeAt(1) * 17;
-  const scrambled = (base * 374761393 + typeSalt) ^ (base << 7) ^ (base >>> 4);
+  const tickSalt = tick * 2654435761;
+  const scrambled =
+    (base * 374761393 + typeSalt + tickSalt) ^ (base << 7) ^ (base >>> 4);
   if (type === "hop") {
     return HOP_DURATIONS[Math.abs(scrambled) % HOP_DURATIONS.length];
   }
@@ -49,9 +55,8 @@ function pickDuration(seed: number, type: SprintIconAnim): number {
   return DURATION_TIERS[tierIndex][type];
 }
 
-// Spread seed deterministically across the full cycle so adjacent cells
-// don't end up phase-locked. Multiplying + xor shift gives us a wide range
-// even when the caller passes a small seed (e.g. cell index 0..30).
+// Per-seed phase offset used only on first mount, so cells don't all
+// crest together right at app launch.
 function computeDelay(seed: number, duration: number): number {
   const base = Math.abs(Math.floor(seed));
   const scrambled = (base * 2654435761) ^ (base << 5) ^ (base >>> 3);
@@ -60,14 +65,44 @@ function computeDelay(seed: number, duration: number): number {
 
 export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
   const progress = useSharedValue(0);
+  const [tick, setTick] = useState(0);
+  const isFirstRunRef = useRef(true);
+
+  // Stagger first tier-swap per cell (0..5s) so cells don't all re-roll
+  // on the same wall-clock instant.
+  useEffect(() => {
+    const offset = Math.abs(Math.floor(seed) * 73) % TIER_CYCLE_MS;
+    let interval: ReturnType<typeof setInterval> | null = null;
+    const initial = setTimeout(() => {
+      setTick((t) => t + 1);
+      interval = setInterval(() => setTick((t) => t + 1), TIER_CYCLE_MS);
+    }, offset);
+    return () => {
+      clearTimeout(initial);
+      if (interval) clearInterval(interval);
+    };
+  }, [seed]);
 
   useEffect(() => {
-    const duration = pickDuration(seed, type);
+    const duration = pickDuration(seed, type, tick);
+    cancelAnimation(progress);
+
     if (duration === 0) {
-      progress.value = 0;
+      // Ease back to neutral so the icon doesn't snap mid-motion when it
+      // transitions from moving to stopped.
+      progress.value = withTiming(0, {
+        duration: 400,
+        easing: Easing.out(Easing.cubic),
+      });
       return;
     }
-    const delay = computeDelay(seed, duration);
+
+    // Delay only on the very first run so cells phase-offset at app launch.
+    // On tier swaps we restart immediately from the current progress value
+    // (smooth visual continuation, no freeze).
+    const delay = isFirstRunRef.current ? computeDelay(seed, duration) : 0;
+    isFirstRunRef.current = false;
+
     progress.value = withDelay(
       delay,
       withRepeat(
@@ -80,11 +115,11 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
         true,
       ),
     );
+
     return () => {
       cancelAnimation(progress);
-      progress.value = 0;
     };
-  }, [type, seed]);
+  }, [type, seed, tick]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const p = progress.value;
@@ -107,10 +142,10 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
         return { transform: [{ scale }, { rotate: `${rot}deg` }] };
       }
       case "hop": {
-        // sin(πp) traces a parabolic arc: 0 → peak → 0 across one leg.
-        // With withRepeat(reverse=true) the next leg traces another arc,
-        // so the icon looks like it's bouncing once per leg.
-        const ty = -14 * Math.sin(p * Math.PI);
+        // sin(πp) traces a parabolic arc 0 → peak → 0 across one leg, and
+        // withRepeat(reverse=true) plays another arc on the way back, so
+        // the icon bounces twice per cycle.
+        const ty = -HOP_AMPLITUDE * Math.sin(p * Math.PI);
         return { transform: [{ translateY: ty }] };
       }
       default:
