@@ -4,7 +4,6 @@ import Animated, {
   useAnimatedStyle,
   withRepeat,
   withTiming,
-  withDelay,
   cancelAnimation,
   Easing,
 } from "react-native-reanimated";
@@ -16,7 +15,6 @@ export type SprintIconAnim =
   | "pulse"
   | "twinkle"
   | "hop";
-type TieredAnim = Exclude<SprintIconAnim, "hop">;
 
 interface Props {
   type: SprintIconAnim;
@@ -25,14 +23,14 @@ interface Props {
 }
 
 // Tempo tiers indexed 0..3: stop / slow / medium / fast.
-const DURATION_TIERS: Record<TieredAnim, number>[] = [
-  { wobble: 0, float: 0, drift: 0, pulse: 0, twinkle: 0 },
-  { wobble: 880, float: 1470, drift: 2800, pulse: 980, twinkle: 1180 },
-  { wobble: 540, float: 880, drift: 1700, pulse: 630, twinkle: 740 },
-  { wobble: 250, float: 410, drift: 950, pulse: 320, twinkle: 360 },
+const DURATION_TIERS: Record<SprintIconAnim, number>[] = [
+  { wobble: 0, float: 0, drift: 0, pulse: 0, twinkle: 0, hop: 0 },
+  { wobble: 880, float: 1470, drift: 2800, pulse: 980, twinkle: 1180, hop: 700 },
+  { wobble: 540, float: 880, drift: 1700, pulse: 630, twinkle: 740, hop: 460 },
+  { wobble: 250, float: 410, drift: 950, pulse: 320, twinkle: 360, hop: 280 },
 ];
 
-// Each deco icon breathes through this pattern. The bookend STOPs concatenate
+// Each icon breathes through this pattern. The bookend STOPs concatenate
 // across loops, giving a ~6s rest period between active windows.
 const PHASE_PATTERN = [0, 1, 2, 3, 2, 1, 0]; // STOP→SLOW→MED→FAST→MED→SLOW→STOP
 // Per-position duration. FAST is held 5x longer than the other phases so the
@@ -52,18 +50,12 @@ function phaseAtOffset(offsetMs: number): { idx: number; remainingMs: number } {
   return { idx: 0, remainingMs: PHASE_DURATIONS_MS[0] };
 }
 
-// Monster swing tempos: only fast or medium, never stopped or slow.
-const SWING_DURATIONS = [320, 380, 460, 540, 620, 700, 770];
-
 function hashSeed(seed: number, salt: number): number {
   const base = Math.abs(Math.floor(seed));
   return Math.abs((base * 374761393 + salt) ^ (base << 7) ^ (base >>> 4));
 }
 
 export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
-  if (type === "hop") {
-    return <MonsterSwing seed={seed}>{children}</MonsterSwing>;
-  }
   return (
     <DecoCycle type={type} seed={seed}>
       {children}
@@ -71,52 +63,15 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
   );
 }
 
-// Test-cell monster: picks one fast/medium swing tempo per seed and stays.
-function MonsterSwing({
-  seed,
-  children,
-}: {
-  seed: number;
-  children: React.ReactNode;
-}) {
-  const progress = useSharedValue(0);
-
-  useEffect(() => {
-    const duration =
-      SWING_DURATIONS[hashSeed(seed, 7919) % SWING_DURATIONS.length];
-    const delay = hashSeed(seed, 1009) % duration;
-    progress.value = withDelay(
-      delay,
-      withRepeat(
-        withTiming(1, { duration, easing: Easing.inOut(Easing.sin) }),
-        -1,
-        true,
-      ),
-    );
-    return () => {
-      cancelAnimation(progress);
-      progress.value = 0;
-    };
-  }, [seed]);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    const tx = (progress.value - 0.5) * 28;
-    const rot = (progress.value - 0.5) * 8;
-    return { transform: [{ translateX: tx }, { rotate: `${rot}deg` }] };
-  });
-
-  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
-}
-
-// Deco icon: cycles through STOP/SLOW/MED/FAST/MED/SLOW/STOP every 35s,
-// starting at a deterministic random offset so the map is always a mix
-// of stopped and moving cells at varied tempos.
+// Cycles through STOP/SLOW/MED/FAST/MED/SLOW/STOP, starting at a deterministic
+// random offset so the map is always a mix of stopped and moving cells at
+// varied tempos.
 function DecoCycle({
   type,
   seed,
   children,
 }: {
-  type: TieredAnim;
+  type: SprintIconAnim;
   seed: number;
   children: React.ReactNode;
 }) {
@@ -201,6 +156,12 @@ function DecoCycle({
         const scale = 0.9 + p * 0.2;
         const rot = (p - 0.5) * 20;
         return { transform: [{ scale }, { rotate: `${rot}deg` }] };
+      }
+      case "hop": {
+        // Test-cell monster: wide horizontal swing with subtle tilt.
+        const tx = (p - 0.5) * 28;
+        const rot = (p - 0.5) * 8;
+        return { transform: [{ translateX: tx }, { rotate: `${rot}deg` }] };
       }
       default:
         return {};
