@@ -30,12 +30,12 @@ const DURATION_TIERS: Record<SprintIconAnim, number>[] = [
   { wobble: 250, float: 410, drift: 950, pulse: 320, twinkle: 360, hop: 280 },
 ];
 
-// Each icon breathes through this pattern. The bookend STOPs concatenate
-// across loops, giving a ~6s rest period between active windows.
-const PHASE_PATTERN = [0, 1, 2, 3, 2, 1, 0]; // STOP→SLOW→MED→FAST→MED→SLOW→STOP
+// Each icon breathes through this pattern. Single STOP per loop at the start;
+// the rest of the cycle keeps moving with FAST as the prolonged peak.
+const PHASE_PATTERN = [0, 1, 2, 3, 2, 1]; // STOP→SLOW→MED→FAST→MED→SLOW→loop
 // Per-position duration. FAST is held 5x longer than the other phases so the
 // peak energy moment lingers, while STOP/SLOW/MED stay snappy.
-const PHASE_DURATIONS_MS = [3000, 3000, 3000, 15000, 3000, 3000, 3000];
+const PHASE_DURATIONS_MS = [3000, 3000, 3000, 15000, 3000, 3000];
 const FULL_CYCLE_MS = PHASE_DURATIONS_MS.reduce((a, b) => a + b, 0);
 
 function phaseAtOffset(offsetMs: number): { idx: number; remainingMs: number } {
