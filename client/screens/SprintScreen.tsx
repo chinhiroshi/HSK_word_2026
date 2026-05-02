@@ -345,9 +345,9 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     }
     if (sessionType === "test") {
       const monster = <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />;
-      // Animate monster on unreached test cells (not completed) → wobble
+      // Animate monster on unreached test cells (not completed) → hop
       const animatedMonster = isCompleted ? monster : (
-        <AnimatedSprintIcon type="wobble" seed={index}>{monster}</AnimatedSprintIcon>
+        <AnimatedSprintIcon type="hop" seed={index}>{monster}</AnimatedSprintIcon>
       );
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
