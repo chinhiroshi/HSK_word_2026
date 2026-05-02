@@ -169,8 +169,11 @@ function DecoCycle({
         return { transform: [{ translateX: tx }] };
       }
       case "wobble": {
-        const rot = (p - 0.5) * 10;
-        return { transform: [{ rotate: `${rot}deg` }] };
+        // Wider sway plus a subtle scale pump — feels alive, like a plant
+        // catching a gust of wind rather than gently nodding.
+        const rot = (p - 0.5) * 26;
+        const scale = 0.96 + p * 0.08;
+        return { transform: [{ scale }, { rotate: `${rot}deg` }] };
       }
       case "twinkle": {
         const scale = 0.9 + p * 0.2;
