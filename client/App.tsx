@@ -9,7 +9,7 @@ import * as SplashScreen from "expo-splash-screen";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Notifications from "expo-notifications";
 import "@/lib/notifications"; // register notification handler early
-import { refreshDailyNotificationsIfEnabled } from "@/lib/notifications";
+import { refreshDailyNotificationsIfEnabled, autoEnableForgettingNotificationOnce } from "@/lib/notifications";
 import {
   useFonts,
   Nunito_400Regular,
@@ -103,8 +103,10 @@ export default function App() {
   }, [fontsLoaded, fontError, showOnboarding]);
 
   // アプリ起動時に格言通知を更新（毎回ランダムな格言に差し替え）
+  // 初回起動時のみ忘却リマインダーを自動有効化
   useEffect(() => {
     refreshDailyNotificationsIfEnabled();
+    autoEnableForgettingNotificationOnce();
   }, []);
 
   // 通知タップ時にスプリントタブへ遷移
