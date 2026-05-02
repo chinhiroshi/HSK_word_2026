@@ -804,7 +804,7 @@ export default function TutorialSprintScreen() {
         return (
           <ShareStampSheet
             visible={showShare}
-            onClose={() => setShowShare(false)}
+            onClose={() => { setShowShare(false); setShowStamp(true); }}
             stampImage={TUTORIAL_STAMP_IMAGE}
             stampLabel={t("tutorial_stamp_title")}
             hskLevel={currentLevel}
