@@ -42,6 +42,7 @@ import {
   BuildingIcon, SmallBuildingIcon, SunIcon, MushroomIcon, TropicalFlowerIcon,
   MoonIcon, StarIcon, RocketIcon,
 } from "@/components/SprintCellIcons";
+import { AnimatedCellIcon, type CellAnimVariant } from "@/components/AnimatedCellIcon";
 import { HskLevel } from "@/types";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
@@ -81,6 +82,35 @@ function getLevelTheme(level: number): LevelTheme {
 // 7 variants: 0-5 = level icons; 6 = cloud (≈14% cloud coverage)
 function getDecoVariant(row: number, col: number): number {
   return (row * 17 + col * 11 + row * col * 3 + row * 5) % 7;
+}
+
+// Pick a subtle animation variant per deco icon to match its character
+function getDecoAnimVariant(variant: number, level: number): CellAnimVariant {
+  if (variant === 6) return "float"; // cloud — drifts horizontally
+  switch (level) {
+    case 1: // 草原: tree / flower / plant
+      if (variant === 1 || variant === 4) return "wobble"; // flowers sway
+      return "wobble";
+    case 2: // 雪山: mountain / cedar / snowflake
+      if (variant === 1 || variant === 3) return "wobble"; // cedar sways
+      if (variant === 5) return "twinkle"; // snowflake sparkles
+      return "wobble";
+    case 3: // 森林: tree / mushroom / tree
+      return "wobble";
+    case 4: // 熱帯: palm / tropical flower / plant
+      return "wobble";
+    case 5: // 海: wave / sun / fish
+      if (variant === 0 || variant === 3) return "float"; // waves bob
+      if (variant === 1 || variant === 4) return "twinkle"; // sun shines
+      return "float"; // fish swims
+    case 6: // 都市: building / moon / star / rocket / small building / moon
+      if (variant === 1 || variant === 5) return "float"; // moon drifts
+      if (variant === 2) return "twinkle"; // star twinkles
+      if (variant === 3) return "float"; // rocket hovers
+      return "wobble"; // buildings — barely-there sway
+    default:
+      return "wobble";
+  }
 }
 
 function renderDecoIcon(variant: number, level: number, size: number) {
@@ -305,9 +335,19 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
 
   const renderIcon = () => {
     if (featherIcon) {
-      return <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />;
+      // Special stamp (star) → twinkle; current cell (zap) → pulse; flag → static
+      const featherAnim: CellAnimVariant = isSpecialStamp
+        ? "twinkle"
+        : isCurrent && featherIcon === "zap"
+          ? "pulse"
+          : "none";
+      return (
+        <AnimatedCellIcon variant={featherAnim} seed={index * 13}>
+          <Feather name={featherIcon} size={CELL_SIZE * 0.32} color={iconColor} />
+        </AnimatedCellIcon>
+      );
     }
-    // Test cell locked: sequential lock (not yet reached) → monster in amber
+    // Test cell locked: sequential lock (not yet reached) → monster in amber, no animation
     if (isLocked) {
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -320,14 +360,18 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </View>
       );
     }
-    // Study cell premium locked: lock icon in grey
+    // Study cell premium locked: lock icon in grey, no animation
     if (isPremiumLocked) {
       return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
     }
     if (sessionType === "test") {
+      // Active test monster wobbles; completed test stays calm
+      const monsterAnim: CellAnimVariant = isCompleted ? "none" : "wobble";
       return (
         <View style={{ alignItems: "center", justifyContent: "center" }}>
-          <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />
+          <AnimatedCellIcon variant={monsterAnim} seed={index * 19}>
+            <MonsterIcon size={iconSize * 0.85} color={stampColor ?? "#7C3AED"} />
+          </AnimatedCellIcon>
           {testNumber != null ? (
             <View style={[styles.testNumBadge, (isCompleted || isCurrent) ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#7C3AED22" }]}>
               <ThemedText style={[styles.testNumText, { color: (isCompleted || isCurrent) ? "#fff" : "#7C3AED" }]}>
@@ -338,7 +382,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </View>
       );
     }
-    // Completed non-test cells all show PlantIcon (HSK1 style)
+    // Completed non-test cells all show PlantIcon (HSK1 style) — calm, no animation
     if (isCompleted) return <PlantIcon size={iconSize} color={stampColor ?? "#fff"} />;
     return renderStudyIcon(currentLevel, iconSize, stampColor ?? lvTheme.studyColor);
   };
@@ -407,9 +451,13 @@ function DecoCell({ row, col, theme, currentLevel }: { row: number; col: number;
   const variant = getDecoVariant(row, col);
   const iconSize = CELL_SIZE * 0.6;
   const lvTheme = getLevelTheme(currentLevel);
+  const animVariant = getDecoAnimVariant(variant, currentLevel);
+  const seed = row * 31 + col * 17 + variant * 7;
   return (
     <View style={[styles.decoCell, { width: CELL_SIZE, height: CELL_SIZE, backgroundColor: lvTheme.decoBg + "60" }]}>
-      {renderDecoIcon(variant, currentLevel, iconSize)}
+      <AnimatedCellIcon variant={animVariant} seed={seed}>
+        {renderDecoIcon(variant, currentLevel, iconSize)}
+      </AnimatedCellIcon>
     </View>
   );
 }
