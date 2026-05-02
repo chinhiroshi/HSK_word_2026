@@ -21,15 +21,15 @@ interface Props {
 // Tempo tiers indexed 0..3: stop / slow / medium / fast.
 const DURATION_TIERS: Record<TieredAnim, number>[] = [
   { wobble: 0, float: 0, pulse: 0, twinkle: 0 },
-  { wobble: 1260, float: 2100, pulse: 980, twinkle: 1680 },
-  { wobble: 770, float: 1260, pulse: 630, twinkle: 1050 },
-  { wobble: 360, float: 590, pulse: 320, twinkle: 520 },
+  { wobble: 1260, float: 1470, pulse: 980, twinkle: 1180 },
+  { wobble: 770, float: 880, pulse: 630, twinkle: 740 },
+  { wobble: 360, float: 410, pulse: 320, twinkle: 360 },
 ];
 
-// Each deco icon breathes through this 35-second pattern. The bookend STOPs
-// concatenate across loops, giving a ~10s rest period between active windows.
+// Each deco icon breathes through this 21-second pattern. The bookend STOPs
+// concatenate across loops, giving a ~6s rest period between active windows.
 const PHASE_PATTERN = [0, 1, 2, 3, 2, 1, 0]; // STOP→SLOW→MED→FAST→MED→SLOW→STOP
-const PHASE_DURATION_MS = 5000;
+const PHASE_DURATION_MS = 3000;
 const FULL_CYCLE_MS = PHASE_PATTERN.length * PHASE_DURATION_MS;
 
 // Monster swing tempos: only fast or medium, never stopped or slow.
