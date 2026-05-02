@@ -24,15 +24,15 @@ interface Props {
 // the moving ones feel more alive by contrast.
 const DURATION_TIERS: Record<TieredAnim, number>[] = [
   { wobble: 0, float: 0, pulse: 0, twinkle: 0 },
-  { wobble: 1800, float: 3000, pulse: 1400, twinkle: 2400 },
-  { wobble: 1100, float: 1800, pulse: 900, twinkle: 1500 },
-  { wobble: 520, float: 840, pulse: 460, twinkle: 740 },
+  { wobble: 1260, float: 2100, pulse: 980, twinkle: 1680 },
+  { wobble: 770, float: 1260, pulse: 630, twinkle: 1050 },
+  { wobble: 360, float: 590, pulse: 320, twinkle: 520 },
 ];
 
 // "hop" is reserved for the test-cell monster: always hops, never static,
 // at a random fast tempo per seed so different test cells bounce on
 // different beats.
-const HOP_DURATIONS = [380, 460, 540, 620, 700];
+const HOP_DURATIONS = [270, 320, 380, 430, 490];
 
 // Pick a duration deterministically from (seed, type). Salting by `type`
 // means the same cell can still get different tiers for different animation
