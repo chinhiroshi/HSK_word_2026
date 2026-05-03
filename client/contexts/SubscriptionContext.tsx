@@ -8,10 +8,19 @@ const IS_EXPO_GO = Constants.appOwnership === "expo";
 
 const REVENUECAT_TEST_KEY = "test_jiqDlGrYpKroywFSKaTabjOJOdR";
 
-const REVENUECAT_PROD_KEY =
+const REVENUECAT_IOS_KEY =
   Constants.expoConfig?.extra?.revenueCatApiKey ||
   process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ||
   "appl_BVVXQEBFhgNtNBvWEACExXHMPJc";
+
+const REVENUECAT_ANDROID_KEY =
+  Constants.expoConfig?.extra?.revenueCatAndroidApiKey ||
+  process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY ||
+  "";
+
+const REVENUECAT_PROD_KEY = Platform.OS === "android"
+  ? REVENUECAT_ANDROID_KEY
+  : REVENUECAT_IOS_KEY;
 
 const REVENUECAT_API_KEY = IS_EXPO_GO ? REVENUECAT_TEST_KEY : REVENUECAT_PROD_KEY;
 const PREMIUM_ENTITLEMENT_ID = "premium";

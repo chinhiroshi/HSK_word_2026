@@ -1,11 +1,14 @@
 module.exports = ({ config }) => {
-  const apiKey = process.env.REVENUECAT_API_KEY || "";
-  const safeApiKey = apiKey.startsWith("test_") ? "" : apiKey;
+  const iosKey = process.env.REVENUECAT_API_KEY || "";
+  const androidKey = process.env.REVENUECAT_ANDROID_API_KEY || "";
+  const safeIosKey = iosKey.startsWith("test_") ? "" : iosKey;
+  const safeAndroidKey = androidKey.startsWith("test_") ? "" : androidKey;
   return {
     ...config,
     extra: {
       ...config.extra,
-      revenueCatApiKey: safeApiKey,
+      revenueCatApiKey: safeIosKey,
+      revenueCatAndroidApiKey: safeAndroidKey,
     },
   };
 };

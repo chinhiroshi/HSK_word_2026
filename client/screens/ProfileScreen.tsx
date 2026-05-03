@@ -51,6 +51,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useAppUpdate } from "@/navigation/MainTabNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
+import { APP_STORE_URL } from "@/constants/links";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
   1: require("../../assets/images/avatar-hsk1.png"),
@@ -673,14 +674,7 @@ export default function ProfileScreen() {
           try {
             const requested = await tryRequestReview("manual_button", { force: true });
             if (!requested) {
-              const storeUrl = Platform.select({
-                ios: "https://apps.apple.com/app/id{YOUR_APP_ID}",
-                android: "https://play.google.com/store/apps/details?id=com.hskhsk.app",
-                default: "",
-              });
-              if (storeUrl) {
-                Linking.openURL(storeUrl);
-              }
+              Linking.openURL(APP_STORE_URL);
             }
           } catch (e) {
             console.warn("Review request failed:", e);
