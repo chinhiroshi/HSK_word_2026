@@ -892,7 +892,7 @@ export default function SprintScreen() {
     return keys[level] ?? t("level_grassland");
   };
 
-  if (loading) {
+  if (loading && !sprintData) {
     return (
       <ThemedView style={styles.container}>
         <View style={[styles.centered, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
