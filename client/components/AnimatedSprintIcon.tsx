@@ -216,8 +216,12 @@ function MonsterHop({
   }, [seed]);
 
   const animatedStyle = useAnimatedStyle(() => {
-    const ty = (progress.value - 0.5) * 20; // ±10px vertical bounce
-    return { transform: [{ translateY: ty }] };
+    const p = progress.value;
+    const ty = (p - 0.5) * 20; // ±10px vertical bounce
+    // Rotational wobble synced to the hop — leans into the bounce like a
+    // little creature swinging from side to side as it lands.
+    const rot = Math.sin(p * Math.PI * 2) * 12; // ±12° tilt
+    return { transform: [{ translateY: ty }, { rotate: `${rot}deg` }] };
   });
 
   return <Animated.View style={animatedStyle}>{children}</Animated.View>;
