@@ -51,7 +51,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useAppUpdate } from "@/navigation/MainTabNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
-import { APP_STORE_URL } from "@/constants/links";
+import { getStoreUrl } from "@/constants/links";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
   1: require("../../assets/images/avatar-hsk1.png"),
@@ -674,7 +674,7 @@ export default function ProfileScreen() {
           try {
             const requested = await tryRequestReview("manual_button", { force: true });
             if (!requested) {
-              Linking.openURL(APP_STORE_URL);
+              Linking.openURL(getStoreUrl());
             }
           } catch (e) {
             console.warn("Review request failed:", e);

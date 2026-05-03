@@ -20,7 +20,7 @@ import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollV
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
-import { APP_STORE_URL } from "@/constants/links";
+import { getStoreUrl } from "@/constants/links";
 
 interface QuoteData {
   chinese: string;
@@ -140,7 +140,7 @@ export function ShareStampSheet({
     parts.push(hashtagLine);
     parts.push("");
     parts.push(t("share_app_link_label"));
-    parts.push(APP_STORE_URL);
+    parts.push(getStoreUrl());
     return parts.join("\n");
   };
 
