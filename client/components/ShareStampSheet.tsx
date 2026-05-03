@@ -11,7 +11,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import ViewShot from "react-native-view-shot";
-import * as Sharing from "expo-sharing";
 import * as FileSystem from "expo-file-system/legacy";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -94,9 +93,10 @@ export function ShareStampSheet({
         return;
       }
       const tempUri = await ref.capture();
+      const message = buildFallbackMessage();
 
       if (Platform.OS === "web") {
-        await Share.share({ message: buildFallbackMessage(), url: tempUri });
+        await Share.share({ message, url: tempUri });
         return;
       }
 
@@ -105,16 +105,14 @@ export function ShareStampSheet({
       stableUri = `${FileSystem.cacheDirectory}${filename}`;
       await FileSystem.copyAsync({ from: tempUri, to: stableUri });
 
-      const available = await Sharing.isAvailableAsync();
-      if (available) {
-        await Sharing.shareAsync(stableUri, {
-          mimeType: "image/png",
-          dialogTitle: t("share_dialog_title"),
-          UTI: "public.png",
-        });
-      } else {
-        await Share.share({ message: buildFallbackMessage(), url: stableUri });
-      }
+      // RN の Share API を使うことで、iOS では画像とタップ可能なリンクテキストの
+      // 両方を共有シートに渡せる。Android では message が本文として渡り、URL は
+      // 文字列として含まれるためタップ可能になる。
+      await Share.share({
+        message,
+        url: stableUri,
+        title: t("share_dialog_title"),
+      });
     } catch (e) {
       console.warn("Share failed", e);
       try {
