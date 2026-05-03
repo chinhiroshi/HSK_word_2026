@@ -141,6 +141,18 @@ function pickLevelEmoji(level: number, seed: number): EmojiSpec | null {
   return list[idx];
 }
 
+// Subset of level emojis that "move on their own" — animals, humans, runners,
+// fish, vehicles, fantasy creatures. Used for path cells where we want a
+// living/moving sprite to occasionally replace the static study icon.
+function pickMobileLevelEmoji(level: number, seed: number): EmojiSpec | null {
+  const list = LEVEL_EMOJIS[level];
+  if (!list) return null;
+  const mobile = list.filter((e) => e.anim === "hop" || e.anim === "float");
+  if (mobile.length === 0) return null;
+  const idx = Math.abs(seed * 11 + 5) % mobile.length;
+  return mobile[idx];
+}
+
 // Direction-aware runner emoji for the current position cell.
 function getRunnerEmoji(direction: CellDir): string {
   if (direction === "left") return "🏃‍♂️";
@@ -156,8 +168,8 @@ function getDecoVariant(row: number, col: number): number {
 
 function renderDecoIcon(variant: number, level: number, size: number, seed: number = 0) {
   const lv = getLevelTheme(level);
-  // ~11% of deco cells render a themed emoji instead of an icon.
-  if (Math.abs(seed) % 9 === 0) {
+  // ~22% (2/9) of deco cells render a themed emoji instead of an icon.
+  if (Math.abs(seed) % 9 < 2) {
     const spec = pickLevelEmoji(level, seed);
     if (spec) {
       return <EmojiSprite emoji={spec.emoji} anim={spec.anim} seed={seed} size={size * 0.95} />;
@@ -453,6 +465,14 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     }
     // Completed non-test cells all show PlantIcon (HSK1 style) — no animation
     if (isCompleted) return <PlantIcon size={iconSize} color={stampColor ?? "#fff"} />;
+    // ~10% (1/10) of unlocked study path cells host a "living" emoji
+    // (animal/human/runner/fish/vehicle/fantasy) instead of the level icon.
+    if (Math.abs(index * 13 + 7) % 10 === 0) {
+      const spec = pickMobileLevelEmoji(currentLevel, index);
+      if (spec) {
+        return <EmojiSprite emoji={spec.emoji} anim={spec.anim} seed={index} size={iconSize * 0.95} />;
+      }
+    }
     return renderStudyIcon(currentLevel, iconSize, stampColor ?? lvTheme.studyColor);
   };
 
