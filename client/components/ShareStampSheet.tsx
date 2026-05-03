@@ -276,17 +276,6 @@ export function ShareStampSheet({
                     </ThemedText>
                   </View>
                 ) : null}
-
-                <ThemedText style={styles.hashtagText}>{hashtagLine}</ThemedText>
-
-                <View style={styles.appLinkBox}>
-                  <ThemedText style={styles.appLinkLabel}>
-                    {t("share_app_link_label")}
-                  </ThemedText>
-                  <ThemedText style={styles.appLinkUrl}>
-                    {APP_STORE_URL}
-                  </ThemedText>
-                </View>
               </LinearGradient>
             </ViewShot>
 
