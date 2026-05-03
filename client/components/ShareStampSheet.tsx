@@ -125,6 +125,7 @@ export function ShareStampSheet({
       if (stableUri) {
         FileSystem.deleteAsync(stableUri, { idempotent: true }).catch(() => {});
       }
+      setComment("");
       onClose();
     }
   };
