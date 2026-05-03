@@ -156,8 +156,8 @@ function getDecoVariant(row: number, col: number): number {
 
 function renderDecoIcon(variant: number, level: number, size: number, seed: number = 0) {
   const lv = getLevelTheme(level);
-  // ~20% of deco cells render a themed emoji instead of an icon.
-  if (Math.abs(seed) % 5 === 0) {
+  // ~11% of deco cells render a themed emoji instead of an icon.
+  if (Math.abs(seed) % 9 === 0) {
     const spec = pickLevelEmoji(level, seed);
     if (spec) {
       return <EmojiSprite emoji={spec.emoji} anim={spec.anim} seed={seed} size={size * 0.95} />;
