@@ -15,6 +15,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { speakChinese } from "@/lib/speech";
 import { incrementSpeakCount } from "@/lib/storage";
+import { capture as captureAnalytics } from "@/lib/analytics";
 
 interface SpeakButtonProps {
   text: string;
@@ -57,6 +58,7 @@ export function SpeakButton({ text, size = "medium" }: SpeakButtonProps) {
     );
 
     incrementSpeakCount(text).catch(() => {});
+    captureAnalytics("speak_button_pressed", { size, text_length: text.length });
     await speakChinese(text);
     
     pulse.value = withSpring(1, springConfig);

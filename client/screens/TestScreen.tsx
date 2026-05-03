@@ -25,6 +25,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, TestQuestion, TestType } from "@/types";
 import { getWords, toggleMemorized, initializeData } from "@/lib/storage";
+import { capture as captureAnalytics } from "@/lib/analytics";
 import { generateTestQuestions, calculateScore } from "@/lib/testUtils";
 import { speakChinese } from "@/lib/speech";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -101,6 +102,15 @@ export default function TestScreen() {
       ...prev,
       { questionIndex: currentIndex, answer, isCorrect },
     ]);
+
+    captureAnalytics("quiz_answer", {
+      test_type: testType,
+      word_id: currentQuestion?.word?.id,
+      hsk_level: currentQuestion?.word?.hskLevel,
+      correct: isCorrect,
+      question_index: currentIndex,
+      total_questions: questions.length,
+    });
 
     setShowResult(true);
   };

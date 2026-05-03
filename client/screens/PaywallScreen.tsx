@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Pressable, ScrollView, ActivityIndicator, Modal, Platform } from "react-native";
 import Constants from "expo-constants";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +13,7 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { getApiUrl } from "@/lib/query-client";
 import { useI18n } from "@/contexts/LanguageContext";
+import { capture as captureAnalytics } from "@/lib/analytics";
 
 const STICKY_BAR_HEIGHT = 156;
 
@@ -40,6 +41,18 @@ export default function PaywallScreen() {
 
   const priceString = monthlyPackage?.product?.priceString || "¥380";
 
+  const [paywallShownLogged, setPaywallShownLogged] = useState(false);
+  useEffect(() => {
+    if (paywallShownLogged) return;
+    if (loading) return;
+    setPaywallShownLogged(true);
+    captureAnalytics("paywall_shown", {
+      price_string: priceString,
+      offering: monthlyPackage?.offeringIdentifier,
+      package_type: monthlyPackage?.packageType,
+    });
+  }, [loading, paywallShownLogged, priceString, monthlyPackage]);
+
   const handlePurchase = async () => {
     if (purchasing) return;
     setPurchasing(true);
@@ -47,6 +60,11 @@ export default function PaywallScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const result = await purchaseSubscription(monthlyPackage);
       if (result.success) {
+        captureAnalytics("subscription_started", {
+          price_string: priceString,
+          package_type: monthlyPackage?.packageType,
+          source: "paywall",
+        });
         navigation.goBack();
       } else if (result.cancelled) {
       } else if (result.error) {

@@ -25,7 +25,8 @@ import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/lib/storage";
+import { getWords, initializeData, markAsMemorized, markAsUnmemorized, getSelectedHskLevel } from "@/lib/storage";
+import { capture as captureAnalytics } from "@/lib/analytics";
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { tryRequestReview } from "@/lib/reviewPrompt";
 import { useSprint } from "@/contexts/SprintContext";
@@ -208,9 +209,33 @@ export default function SprintTestScreen() {
       ? markAsMemorized(currentWord.id, "audio")
       : markAsUnmemorized(currentWord.id, "audio"));
     setChoices((prev) => ({ ...prev, [currentWord.id]: choice }));
+    const hskLevel = await getSelectedHskLevel();
+    captureAnalytics("sprint_test_answer", {
+      word_id: currentWord.id,
+      hsk_level: hskLevel,
+      correct: choice === "memorized",
+      choice,
+      index: currentIndex,
+      total: cardWords.length,
+    });
     if (currentIndex < cardWords.length - 1) {
       setCurrentIndex((prev) => prev + 1);
     } else {
+      const memorized =
+        Object.values({ ...choices, [currentWord.id]: choice }).filter(
+          (c) => c === "memorized"
+        ).length;
+      const total = cardWords.length;
+      const accuracy = total > 0 ? memorized / total : 0;
+      const percentage = Math.round(accuracy * 100);
+      captureAnalytics("sprint_test_completed", {
+        hsk_level: hskLevel,
+        memorized,
+        total,
+        accuracy,
+        percentage,
+        passed: percentage >= PASS_PERCENTAGE,
+      });
       setIsCompleted(true);
     }
   };

@@ -383,6 +383,14 @@ const translations = {
     restart_onboarding_msg: "アプリの紹介と最初の学習チュートリアルをもう一度表示します。学習データやスタンプはそのまま残ります。",
     restart_onboarding_btn: "再開する",
     restart_onboarding_subtitle: "商品説明から最初の練習までもう一度",
+
+    // ── Analytics consent ──
+    analytics_consent_title: "利用状況の収集について",
+    analytics_consent_message: "アプリの改善のため、匿名の利用状況データの収集にご協力いただけますか？個人を特定する情報は一切収集しません。設定からいつでも変更できます。",
+    analytics_consent_accept: "協力する",
+    analytics_consent_decline: "協力しない",
+    analytics_toggle_title: "利用状況の共有",
+    analytics_toggle_desc: "匿名の利用状況データを共有してアプリの改善に協力します",
   },
 
   en: {
@@ -767,6 +775,14 @@ const translations = {
     restart_onboarding_msg: "The app introduction and first tutorial will be shown again. Your study data and stamps will be kept.",
     restart_onboarding_btn: "Restart",
     restart_onboarding_subtitle: "From app intro to first practice",
+
+    // ── Analytics consent ──
+    analytics_consent_title: "Help improve the app",
+    analytics_consent_message: "Will you share anonymous usage data to help us improve the app? No personally identifying information is collected. You can change this anytime in Settings.",
+    analytics_consent_accept: "Share",
+    analytics_consent_decline: "No thanks",
+    analytics_toggle_title: "Share usage data",
+    analytics_toggle_desc: "Share anonymous usage data to help us improve the app",
   },
 } as const;
 

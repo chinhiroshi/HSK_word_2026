@@ -19,6 +19,15 @@ Key architectural decisions include:
 - **Social Sharing**: Integration with `react-native-view-shot` and `expo-sharing` allows users to share their achievements (panda stamps, progress, quotes) as PNG images. The shared card includes the App Store link (placeholder defined in `client/constants/links.ts` as `APP_STORE_URL` — must be updated with the real Apple App ID before launch). Comment input uses `KeyboardAwareScrollViewCompat` so the share button stays visible above the keyboard.
 - **Onboarding and Tutorial**: A guided onboarding process includes an introductory tutorial sprint for new users, ensuring a smooth start.
 - **Text-to-Speech (TTS)**: `expo-speech` is used for native Chinese pronunciation of words and example sentences.
+- **Analytics (PostHog)**: `posthog-react-native` is initialized in `client/lib/analytics.ts` using `EXPO_PUBLIC_POSTHOG_API_KEY` and `EXPO_PUBLIC_POSTHOG_HOST` (defaults to `https://us.i.posthog.com`). An anonymous UUID `distinctId` is generated per device and stored in AsyncStorage (`@chinese_master_analytics_distinct_id_v1`); no user PII is collected. Consent state (`unknown` | `granted` | `denied`) is persisted under `@chinese_master_analytics_consent_v1` and defaults to opt-out — `capture()`/`captureScreen()` no-op until the user grants consent. A consent dialog (`AnalyticsConsentDialog` in `client/App.tsx`) is shown after onboarding completes (1.2 s delay) or on next launch for existing users with no decision yet. Events fired before the consent decision (e.g. `onboarding_completed`) are queued in memory and flushed on grant, or dropped on deny. A toggle in `ProfileScreen` lets users opt in or out at any time. Screen views are auto-tracked via `NavigationContainer.onReady` + `onStateChange` using the current route name. Custom learning events captured: `word_marked_memorized`, `word_marked_unmemorized`, `sprint_test_answer` (with `hsk_level` + `correct`), `sprint_test_completed` (with `hsk_level`, `accuracy`, `percentage`, `passed`), `quiz_answer`, `speak_button_pressed`, `audio_play` (from both `AudioPlaybackScreen` and `SprintAudioPlaybackScreen`), `onboarding_completed`, `paywall_shown`, `subscription_started`. Session replay is disabled (`enableSessionReplay: false`); IDFA is not collected since no native IDFA module is bundled, so no iOS App Tracking Transparency prompt is required.
+
+### Analytics setup
+Register the PostHog credentials as secrets / environment variables before deployment:
+
+- `EXPO_PUBLIC_POSTHOG_API_KEY` — your PostHog project API key (required to enable analytics; without it, the SDK is not initialized and the consent dialog is suppressed).
+- `EXPO_PUBLIC_POSTHOG_HOST` — optional; defaults to `https://us.i.posthog.com`. Set to `https://eu.i.posthog.com` for the EU cloud, or your self-hosted host.
+
+Both must be exposed at build time via the `EXPO_PUBLIC_` prefix so they're inlined into the JS bundle. They can also be supplied through `app.json`'s `expo.extra.posthogApiKey` / `expo.extra.posthogHost`.
 
 ## External Dependencies
 - **RevenueCat (react-native-purchases)**: For in-app purchase and subscription management.

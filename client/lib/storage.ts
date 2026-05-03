@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Word, HskLevel, SprintData } from "@/types";
 import { mockWords } from "@/data/mockData";
 import { recordUserActionForReview, ACTION_WEIGHTS } from "@/lib/reviewPrompt";
+import { capture as captureAnalytics } from "@/lib/analytics";
 
 const SPRINT_KEY_PREFIX = "@chinese_master_sprint_hsk";
 const SPRINT_KEY_LEGACY = "@chinese_master_sprint";
@@ -205,6 +206,11 @@ export async function markAsUnmemorized(wordId: string, type: MemorizationType =
     words[index].isMemorized = false;
     await saveWords(words);
     recordUserActionForReview(ACTION_WEIGHTS.mark_unmemorized).catch(() => {});
+    captureAnalytics("word_marked_unmemorized", {
+      word_id: wordId,
+      mode: type,
+      hsk_level: words[index].hskLevel,
+    });
     return words[index];
   }
   return undefined;
@@ -243,6 +249,11 @@ export async function markAsMemorized(wordId: string, type: MemorizationType = "
     words[index].isMemorized = true;
     await saveWords(words);
     recordUserActionForReview(ACTION_WEIGHTS.mark_memorized).catch(() => {});
+    captureAnalytics("word_marked_memorized", {
+      word_id: wordId,
+      mode: type,
+      hsk_level: words[index].hskLevel,
+    });
     return words[index];
   }
   return undefined;

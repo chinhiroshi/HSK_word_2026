@@ -18,6 +18,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { setSelectedHskLevel } from "@/lib/storage";
+import { capture as captureAnalytics } from "@/lib/analytics";
 import { HskLevel } from "@/types";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -185,6 +186,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const handleLevelConfirm = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await setSelectedHskLevel(selectedLevel);
+    captureAnalytics("onboarding_completed", { hsk_level: selectedLevel });
     onComplete();
   };
 

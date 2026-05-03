@@ -15,6 +15,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData, markAsUnmemorized } from "@/lib/storage";
+import { capture as captureAnalytics } from "@/lib/analytics";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
@@ -174,6 +175,15 @@ export default function AudioPlaybackScreen() {
       playableWords.length,
       parseInt(endPosition, 10) || playableWords.length
     );
+
+    captureAnalytics("audio_play", {
+      source: "audio_playback",
+      start_index: startIdx,
+      end_index: endIdx,
+      word_count: Math.max(0, endIdx - startIdx),
+      playback_rate: playbackRate,
+      filter_unmemorized: filterUnmemorized,
+    });
     
     for (let i = startIdx; i < endIdx; i++) {
       if (isCancelledRef.current) break;

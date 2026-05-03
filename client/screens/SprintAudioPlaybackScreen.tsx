@@ -13,7 +13,8 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWords, initializeData, markAsUnmemorized } from "@/lib/storage";
+import { getWords, initializeData, markAsUnmemorized, getSelectedHskLevel } from "@/lib/storage";
+import { capture as captureAnalytics } from "@/lib/analytics";
 import { speakWithLanguage, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
@@ -126,6 +127,15 @@ export default function SprintAudioPlaybackScreen() {
     setIsPlaying(true);
     setCurrentWordIndex(0);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    try {
+      const hskLevel = await getSelectedHskLevel();
+      captureAnalytics("audio_play", {
+        source: "sprint_audio_playback",
+        hsk_level: hskLevel,
+        word_count: words.length,
+        text_struggle_mode: isTextStruggleMode,
+      });
+    } catch {}
 
     for (let i = 0; i < words.length; i++) {
       if (isCancelledRef.current) break;

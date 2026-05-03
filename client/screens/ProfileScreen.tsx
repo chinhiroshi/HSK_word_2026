@@ -44,6 +44,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
 import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
+import { getAnalyticsConsent, setAnalyticsConsent, isAnalyticsAvailable } from "@/lib/analytics";
 import { speakChinese } from "@/lib/speech";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
@@ -105,6 +106,7 @@ export default function ProfileScreen() {
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [upToDate, setUpToDate] = useState(false);
   const [reviewDevModalVisible, setReviewDevModalVisible] = useState(false);
@@ -128,12 +130,20 @@ export default function ProfileScreen() {
     setLoading(false);
     const silentAudio = await getSilentModeAudio();
     setSilentModeAudioState(silentAudio);
+    const consent = await getAnalyticsConsent();
+    setAnalyticsEnabled(consent === "granted");
   }, []);
 
   const handleSilentModeAudioToggle = async (value: boolean) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSilentModeAudioState(value);
     await setSilentModeAudio(value);
+  };
+
+  const handleAnalyticsToggle = async (value: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setAnalyticsEnabled(value);
+    await setAnalyticsConsent(value ? "granted" : "denied");
   };
 
   useFocusEffect(
@@ -657,6 +667,29 @@ export default function ProfileScreen() {
             <ThemedText style={[styles.notifInfoText, { color: theme.textSecondary }]}>
               {t("silent_mode_sound")}
             </ThemedText>
+          </View>
+        </View>
+      ) : null}
+
+      {isAnalyticsAvailable() ? (
+        <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border, marginBottom: Spacing.lg }]}>
+          <View style={styles.notifContent}>
+            <View style={[styles.notifIcon, { backgroundColor: theme.primary + "15" }]}>
+              <Feather name="bar-chart-2" size={20} color={theme.primary} />
+            </View>
+            <View style={styles.notifTextContainer}>
+              <ThemedText style={styles.notifTitle}>{t("analytics_toggle_title")}</ThemedText>
+              <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
+                {t("analytics_toggle_desc")}
+              </ThemedText>
+            </View>
+            <Switch
+              testID="switch-analytics-consent"
+              value={analyticsEnabled}
+              onValueChange={handleAnalyticsToggle}
+              trackColor={{ false: theme.border, true: theme.primary + "80" }}
+              thumbColor={analyticsEnabled ? theme.primary : theme.textSecondary}
+            />
           </View>
         </View>
       ) : null}
