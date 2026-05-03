@@ -215,12 +215,16 @@ function MonsterHop({
     };
   }, [seed]);
 
+  // Only ~1/3 of monsters get the rotational wobble; the rest stay as plain
+  // vertical hoppers so the map doesn't feel uniformly busy.
+  const swayed = hashSeed(seed, 4421) % 3 === 0;
+
   const animatedStyle = useAnimatedStyle(() => {
     const p = progress.value;
     const ty = (p - 0.5) * 20; // ±10px vertical bounce
-    // Rotational wobble synced to the hop — leans into the bounce like a
-    // little creature swinging from side to side as it lands.
-    const rot = Math.sin(p * Math.PI * 2) * 12; // ±12° tilt
+    // Linear sway in-phase with the bounce — peaks ±15° at landing/takeoff so
+    // the swayed monsters visibly swing rather than vibrate mid-air.
+    const rot = swayed ? (p - 0.5) * 30 : 0;
     return { transform: [{ translateY: ty }, { rotate: `${rot}deg` }] };
   });
 
