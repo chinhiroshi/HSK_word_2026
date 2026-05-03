@@ -137,8 +137,11 @@ const LEVEL_EMOJIS: Record<number, EmojiSpec[]> = {
 function pickLevelEmoji(level: number, seed: number): EmojiSpec | null {
   const list = LEVEL_EMOJIS[level];
   if (!list || list.length === 0) return null;
-  const idx = Math.abs(seed * 7 + 3) % list.length;
-  return list[idx];
+  // Mix the seed with a large prime + xor-shift so neighbouring deco cells
+  // pick from different parts of the list — keeps the level's full emoji set
+  // in steady rotation rather than repeating just a few favourites.
+  const mixed = Math.abs((seed * 2654435761) ^ ((seed << 5) + 0x9e37));
+  return list[mixed % list.length];
 }
 
 // Direction-aware runner emoji for the current position cell.
@@ -156,8 +159,8 @@ function getDecoVariant(row: number, col: number): number {
 
 function renderDecoIcon(variant: number, level: number, size: number, seed: number = 0) {
   const lv = getLevelTheme(level);
-  // ~11% of deco cells render a themed emoji instead of an icon.
-  if (Math.abs(seed) % 9 === 0) {
+  // ~33% of deco cells render a themed emoji instead of an icon.
+  if (Math.abs(seed) % 3 === 0) {
     const spec = pickLevelEmoji(level, seed);
     if (spec) {
       return <EmojiSprite emoji={spec.emoji} anim={spec.anim} seed={seed} size={size * 0.95} />;
