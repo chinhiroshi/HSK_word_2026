@@ -79,8 +79,8 @@ export function ShareStampSheet({
       : "";
   const hashtagLine =
     lang === "en"
-      ? "#ChineseMaster #HSK #LearnChinese"
-      : "#中国語マスター #HSK #中国語学習";
+      ? "#HSKPanda #HSK #LearnChinese"
+      : "#HSK単語帳 #HSK #中国語学習";
 
   const handleShare = async () => {
     if (sharing) return;
@@ -206,7 +206,7 @@ export function ShareStampSheet({
                     resizeMode="contain"
                   />
                   <ThemedText style={styles.brandText}>
-                    {lang === "en" ? "Chinese Master" : "中国語マスター"}
+                    {lang === "en" ? "HSK Panda" : "HSK単語帳"}
                   </ThemedText>
                 </View>
 

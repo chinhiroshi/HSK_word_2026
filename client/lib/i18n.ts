@@ -47,7 +47,7 @@ const translations = {
     paywall_disclaimer: "サブスクリプションは自動更新されます。次回の請求日の24時間前までにキャンセルすれば、次回以降の請求は発生しません。",
 
     // ── Study Screen ──
-    study_header: "中国語マスター",
+    study_header: "HSK単語帳",
     text_memorized: "文字暗記済み",
     audio_memorized_label: "音声暗記済み",
     filter_all: "すべて",
@@ -431,7 +431,7 @@ const translations = {
     paywall_disclaimer: "Subscription auto-renews. Cancel at least 24 hours before renewal to avoid being charged for the next period.",
 
     // ── Study Screen ──
-    study_header: "Chinese Master",
+    study_header: "HSK Panda",
     text_memorized: "Text Memorized",
     audio_memorized_label: "Audio Memorized",
     filter_all: "All",
