@@ -107,6 +107,8 @@ const translations = {
     percent_achieved: "% 達成",
     legend_study: "学習",
     legend_special_panda: "特別パンダ",
+    legend_special_upcoming: "スペシャルスタンプ予定",
+    stamp_special_empty_label: "スペシャルスタンプ",
     tap_stamp_hint: "スタンプをタップするとアドバイスが出てきます",
 
     // ── Sprint Screen ──
@@ -500,6 +502,8 @@ const translations = {
     percent_achieved: "% Complete",
     legend_study: "Study",
     legend_special_panda: "Special Panda",
+    legend_special_upcoming: "Upcoming Special",
+    stamp_special_empty_label: "Special Stamp",
     tap_stamp_hint: "Tap a stamp for tips",
 
     // ── Sprint Screen ──

@@ -22,6 +22,9 @@ export const Colors = {
     backgroundDefault: "#FFFFFF",
     backgroundSecondary: "#F3F4F6",
     backgroundTertiary: "#E5E7EB",
+    specialEmptyBorder: "#DC2626",
+    specialEmptyBackground: "#FEE2E2",
+    specialEmptyText: "#B91C1C",
   },
   dark: {
     text: "#F9FAFB",
@@ -39,6 +42,9 @@ export const Colors = {
     backgroundDefault: "#1F2937",
     backgroundSecondary: "#374151",
     backgroundTertiary: "#4B5563",
+    specialEmptyBorder: "#F87171",
+    specialEmptyBackground: "#3B1717",
+    specialEmptyText: "#FCA5A5",
   },
 };
 

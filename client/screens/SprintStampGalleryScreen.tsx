@@ -221,6 +221,21 @@ export default function SprintStampGalleryScreen() {
               {t("legend_special_panda")}
             </ThemedText>
           </View>
+          <View style={styles.legendItem}>
+            <View
+              style={[
+                styles.legendDot,
+                {
+                  backgroundColor: theme.specialEmptyBackground,
+                  borderWidth: 1.5,
+                  borderColor: theme.specialEmptyBorder,
+                },
+              ]}
+            />
+            <ThemedText style={[styles.legendLabel, { color: theme.textSecondary }]}>
+              {t("legend_special_upcoming")}
+            </ThemedText>
+          </View>
         </View>
 
         {/* Tap hint */}
@@ -259,6 +274,7 @@ export default function SprintStampGalleryScreen() {
                   const isTest = cell.sessionType === "test";
                   const isSpecial = cell.isSpecial;
                   const isTutorial = !!cell.isTutorial;
+                  const isExpectedSpecialEmpty = !isCompleted && !isTutorial && isTest;
 
                   const borderColor = isTutorial
                     ? Colors.light.secondary
@@ -377,10 +393,20 @@ export default function SprintStampGalleryScreen() {
                               width: STAMP_SIZE,
                               height: STAMP_SIZE,
                               borderRadius: STAMP_SIZE / 2,
-                              borderColor: isCompleted ? borderColor : theme.border,
-                              borderWidth: isCompleted ? 2.5 : 1.5,
+                              borderColor: isCompleted
+                                ? borderColor
+                                : isExpectedSpecialEmpty
+                                ? theme.specialEmptyBorder
+                                : theme.border,
+                              borderWidth: isCompleted
+                                ? 2.5
+                                : isExpectedSpecialEmpty
+                                ? 2
+                                : 1.5,
                               backgroundColor: isCompleted
                                 ? theme.backgroundDefault
+                                : isExpectedSpecialEmpty
+                                ? theme.specialEmptyBackground
                                 : theme.backgroundSubtle ?? "#F3F4F6",
                             },
                           ]}
@@ -394,6 +420,32 @@ export default function SprintStampGalleryScreen() {
                               ]}
                               resizeMode="cover"
                             />
+                          ) : isExpectedSpecialEmpty ? (
+                            <View style={styles.specialEmptyInner}>
+                              <ThemedText
+                                style={[
+                                  styles.specialEmptyLabel,
+                                  {
+                                    color: theme.specialEmptyText,
+                                    fontSize: STAMP_SIZE * 0.16,
+                                  },
+                                ]}
+                                numberOfLines={2}
+                              >
+                                {t("stamp_special_empty_label")}
+                              </ThemedText>
+                              <ThemedText
+                                style={[
+                                  styles.specialEmptyNumber,
+                                  {
+                                    color: theme.specialEmptyText,
+                                    fontSize: STAMP_SIZE * 0.16,
+                                  },
+                                ]}
+                              >
+                                No.{cell.index}
+                              </ThemedText>
+                            </View>
                           ) : (
                             <ThemedText
                               style={[styles.stampNumber, { color: theme.border, fontSize: STAMP_SIZE * 0.26 }]}
@@ -711,6 +763,22 @@ const styles = StyleSheet.create({
   stampNumber: {
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
+  },
+  specialEmptyInner: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 4,
+  },
+  specialEmptyLabel: {
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+    lineHeight: 14,
+  },
+  specialEmptyNumber: {
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+    marginTop: 1,
+    opacity: 0.85,
   },
   stampMeta: {
     flexDirection: "row",
