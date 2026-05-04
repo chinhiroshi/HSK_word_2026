@@ -718,6 +718,14 @@ export default function SprintStudySessionScreen() {
                             : theme.textSecondary
                         }
                       />
+                      {isWordRevealed && !isTranslationRevealed ? (
+                        <View
+                          style={[
+                            styles.eyeMoreDot,
+                            { backgroundColor: Colors.light.secondary, borderColor: theme.backgroundDefault },
+                          ]}
+                        />
+                      ) : null}
                     </Pressable>
                     <Pressable
                       onPress={() => handleChoiceList(item.id, "unmemorized")}
@@ -1188,6 +1196,15 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   actionIconBtn: { padding: 6, borderRadius: 20 },
+  eyeMoreDot: {
+    position: "absolute",
+    top: 4,
+    right: 4,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    borderWidth: 1.5,
+  },
   checkBtnActive: {
     backgroundColor: Colors.light.success,
     borderRadius: 20,
