@@ -45,6 +45,7 @@ import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
 import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
 import { getAnalyticsConsent, setAnalyticsConsent, isAnalyticsAvailable } from "@/lib/analytics";
+import { AnalyticsConsentDialog } from "@/components/AnalyticsConsentDialog";
 import { speakChinese } from "@/lib/speech";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useNavigation } from "@react-navigation/native";
@@ -107,6 +108,7 @@ export default function ProfileScreen() {
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
+  const [analyticsDialogVisible, setAnalyticsDialogVisible] = useState(false);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [upToDate, setUpToDate] = useState(false);
   const [reviewDevModalVisible, setReviewDevModalVisible] = useState(false);
@@ -692,8 +694,31 @@ export default function ProfileScreen() {
               thumbColor={analyticsEnabled ? theme.primary : theme.textSecondary}
             />
           </View>
+          <Pressable
+            testID="button-review-analytics-consent"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setAnalyticsDialogVisible(true);
+            }}
+            style={[styles.reviewConsentBtn, { borderColor: theme.border }]}
+          >
+            <Feather name="refresh-cw" size={14} color={theme.primary} />
+            <ThemedText style={[styles.reviewConsentBtnText, { color: theme.primary }]}>
+              {t("analytics_review_consent")}
+            </ThemedText>
+          </Pressable>
         </View>
       ) : null}
+
+      <AnalyticsConsentDialog
+        visible={analyticsDialogVisible}
+        onDecide={(granted) => {
+          setAnalyticsDialogVisible(false);
+          setAnalyticsEnabled(granted);
+          setAnalyticsConsent(granted ? "granted" : "denied").catch(() => {});
+        }}
+        onDismiss={() => setAnalyticsDialogVisible(false)}
+      />
 
       <Pressable
         testID="button-review-app"
@@ -1295,6 +1320,21 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: "Nunito_400Regular",
     lineHeight: 16,
+  },
+  reviewConsentBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.xs,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  reviewConsentBtnText: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
   },
   notifDivider: {
     height: 1,

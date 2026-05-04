@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { StyleSheet, View, Modal, Pressable } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { AnalyticsConsentDialog } from "@/components/AnalyticsConsentDialog";
 import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -26,10 +27,7 @@ import OnboardingScreen from "@/screens/OnboardingScreen";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { SprintProvider } from "@/contexts/SprintContext";
-import { LanguageProvider, useI18n } from "@/contexts/LanguageContext";
-import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 import { PostHogProvider } from "posthog-react-native";
 import {
   initAnalytics,
@@ -235,91 +233,8 @@ function AnalyticsProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-function AnalyticsConsentDialog({
-  visible,
-  onDecide,
-}: {
-  visible: boolean;
-  onDecide: (granted: boolean) => void;
-}) {
-  const { theme } = useTheme();
-  const { t } = useI18n();
-  return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={() => onDecide(false)}>
-      <View style={styles.consentOverlay}>
-        <View style={[styles.consentCard, { backgroundColor: theme.backgroundDefault }]}>
-          <ThemedText style={styles.consentTitle}>{t("analytics_consent_title")}</ThemedText>
-          <ThemedText style={[styles.consentBody, { color: theme.textSecondary }]}>
-            {t("analytics_consent_message")}
-          </ThemedText>
-          <View style={styles.consentRow}>
-            <Pressable
-              testID="button-analytics-decline"
-              onPress={() => onDecide(false)}
-              style={[styles.consentBtn, { borderColor: theme.border }]}
-            >
-              <ThemedText style={[styles.consentBtnText, { color: theme.textSecondary }]}>
-                {t("analytics_consent_decline")}
-              </ThemedText>
-            </Pressable>
-            <Pressable
-              testID="button-analytics-accept"
-              onPress={() => onDecide(true)}
-              style={[styles.consentBtn, { backgroundColor: theme.primary, borderColor: theme.primary }]}
-            >
-              <ThemedText style={[styles.consentBtnText, { color: "#FFFFFF" }]}>
-                {t("analytics_consent_accept")}
-              </ThemedText>
-            </Pressable>
-          </View>
-        </View>
-      </View>
-    </Modal>
-  );
-}
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-  },
-  consentOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: Spacing.xl,
-  },
-  consentCard: {
-    width: "100%",
-    maxWidth: 360,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.xl,
-    gap: Spacing.md,
-  },
-  consentTitle: {
-    fontSize: 18,
-    fontFamily: "Nunito_700Bold",
-  },
-  consentBody: {
-    fontSize: 14,
-    lineHeight: 20,
-    fontFamily: "Nunito_400Regular",
-  },
-  consentRow: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-    marginTop: Spacing.sm,
-  },
-  consentBtn: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  consentBtnText: {
-    fontSize: 15,
-    fontFamily: "Nunito_700Bold",
   },
 });
