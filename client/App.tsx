@@ -54,8 +54,10 @@ export default function App() {
 
   const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);
   const [pendingTutorial, setPendingTutorial] = useState(false);
+  // showConsent is retained but always false: the consent dialog is dormant
+  // under the current opt-out model. Kept for a future region-specific (e.g.
+  // EU/UK GDPR) flow that will flip it to true conditionally.
   const [showConsent, setShowConsent] = useState(false);
-  const analyticsConfigured = Boolean(getPostHogClient());
   const navigationRef = useRef<NavigationContainerRef<any>>(null);
   const previousRouteNameRef = useRef<string | undefined>(undefined);
 
