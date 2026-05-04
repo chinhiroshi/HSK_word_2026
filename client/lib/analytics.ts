@@ -1,7 +1,32 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
+import * as Localization from "expo-localization";
 import PostHog from "posthog-react-native";
 import type { PostHogEventProperties } from "@posthog/core";
+
+// EU/EEA + UK ISO-3166 alpha-2 region codes that require explicit, prior
+// opt-in consent before any non-essential analytics may be collected
+// (GDPR / UK GDPR / PECR). Outside this list we keep the opt-out model.
+const EXPLICIT_CONSENT_REGIONS: ReadonlySet<string> = new Set([
+  "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR",
+  "HU", "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK",
+  "SI", "ES", "SE",
+  "IS", "LI", "NO",
+  "GB",
+]);
+
+export function isExplicitConsentRegion(): boolean {
+  try {
+    const locales = Localization.getLocales();
+    for (const l of locales) {
+      const r = (l?.regionCode || "").toUpperCase();
+      if (r && EXPLICIT_CONSENT_REGIONS.has(r)) return true;
+    }
+  } catch (err) {
+    console.warn("[analytics] region detection failed:", err);
+  }
+  return false;
+}
 
 const DISTINCT_ID_KEY = "@chinese_master_analytics_distinct_id_v1";
 const CONSENT_KEY = "@chinese_master_analytics_consent_v1";
@@ -105,6 +130,8 @@ function clearQueue(): void {
   pendingQueue.length = 0;
 }
 
+let identified = false;
+
 export async function setAnalyticsConsent(value: "granted" | "denied"): Promise<void> {
   consent = value;
   consentLoaded = true;
@@ -118,6 +145,19 @@ export async function setAnalyticsConsent(value: "granted" | "denied"): Promise<
   try {
     if (value === "granted") {
       await c.optIn();
+      // First grant only: associate the buffered/about-to-be-flushed events
+      // with the persistent anonymous distinct id. Done AFTER optIn so the
+      // identify event is only ever emitted once the user has consented —
+      // critical for the EU/EEA/UK explicit-consent path.
+      if (!identified) {
+        try {
+          const distinctId = await getOrCreateDistinctId();
+          c.identify(distinctId);
+          identified = true;
+        } catch (err) {
+          console.warn("[analytics] identify on grant failed:", err);
+        }
+      }
       flushQueue(c);
     } else {
       clearQueue();
@@ -141,12 +181,21 @@ export async function initAnalytics(): Promise<void> {
   try {
     await c.ready();
     const distinctId = await getOrCreateDistinctId();
-    try {
-      c.identify(distinctId);
-    } catch (err) {
-      console.warn("[analytics] identify failed:", err);
-    }
+    // NOTE: do NOT call c.identify() here. identify() emits an $identify
+    // event to PostHog and would leak data before the user has had a chance
+    // to consent (critical for GDPR/PECR EU/EEA/UK regions where consent
+    // must be explicit and prior). identify() is invoked only inside the
+    // branches below where the user is — or has already been — opted in.
     const initialConsent = await getAnalyticsConsent();
+    const identifyOnce = () => {
+      if (identified) return;
+      try {
+        c.identify(distinctId);
+        identified = true;
+      } catch (err) {
+        console.warn("[analytics] identify failed:", err);
+      }
+    };
     if (initialConsent === "denied") {
       // Respect explicit prior opt-out — never re-enable automatically.
       consent = "denied";
@@ -157,6 +206,17 @@ export async function initAnalytics(): Promise<void> {
       } catch (err) {
         console.warn("[analytics] optOut failed:", err);
       }
+      // Note: identify() intentionally NOT called for opted-out users.
+    } else if (initialConsent === "unknown" && isExplicitConsentRegion()) {
+      // GDPR/UK PECR regions: require explicit, prior opt-in. Stay
+      // "unknown" — events keep buffering until the user decides via the
+      // consent dialog (App.tsx). Do NOT call optIn(); PostHog stays
+      // opted out by virtue of defaultOptIn:false. Mark consentLoaded so
+      // capture() routes through the buffer, not the loading state — the
+      // buffer caps at PENDING_QUEUE_LIMIT, and on a "denied" decision
+      // the queue is cleared without ever being sent.
+      consent = "unknown";
+      consentLoaded = true;
     } else {
       // Opt-out model: treat both "granted" and "unknown" (never decided) as
       // granted. First-time users start opted-in; they can disable analytics
@@ -204,6 +264,11 @@ export async function initAnalytics(): Promise<void> {
         }
         return;
       }
+      // Safe to identify only now: user is opted in (auto-grant or prior
+      // explicit grant). identify() emits an $identify event, so it must
+      // never run before this point — particularly important for EU/EEA/UK
+      // users whose `unknown` branch above returns without calling it.
+      identifyOnce();
       flushQueue(c);
     }
   } catch (err) {

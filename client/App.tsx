@@ -36,6 +36,8 @@ import {
   setAnalyticsConsent,
   captureScreen,
   getPostHogClient,
+  getAnalyticsConsent,
+  isExplicitConsentRegion,
 } from "@/lib/analytics";
 
 const ONBOARDING_KEY = "@chinese_master_onboarding_complete";
@@ -54,16 +56,31 @@ export default function App() {
 
   const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);
   const [pendingTutorial, setPendingTutorial] = useState(false);
-  // showConsent is retained but always false: the consent dialog is dormant
-  // under the current opt-out model. Kept for a future region-specific (e.g.
-  // EU/UK GDPR) flow that will flip it to true conditionally.
+  // EU/EEA/UK users (GDPR + UK PECR) must explicitly opt in before any
+  // non-essential analytics are sent. `pendingConsent` defers showing the
+  // dialog until onboarding has finished so the modal does not overlap the
+  // onboarding flow. Outside those regions analytics stays opt-out and the
+  // dialog never appears.
   const [showConsent, setShowConsent] = useState(false);
+  const [pendingConsent, setPendingConsent] = useState(false);
   const navigationRef = useRef<NavigationContainerRef<any>>(null);
   const previousRouteNameRef = useRef<string | undefined>(undefined);
 
   useEffect(() => {
-    initAnalytics();
+    (async () => {
+      await initAnalytics();
+      if (!isExplicitConsentRegion()) return;
+      const c = await getAnalyticsConsent();
+      if (c === "unknown") setPendingConsent(true);
+    })();
   }, []);
+
+  useEffect(() => {
+    if (pendingConsent && showOnboarding === false) {
+      setShowConsent(true);
+      setPendingConsent(false);
+    }
+  }, [pendingConsent, showOnboarding]);
 
   useEffect(() => {
     checkOnboardingStatus();
@@ -93,10 +110,10 @@ export default function App() {
     } catch {}
     setPendingTutorial(true);
     setShowOnboarding(false);
-    // Analytics consent is now opt-out (default granted on first launch via
-    // initAnalytics). The consent dialog is intentionally not shown here;
-    // users can opt out from ProfileScreen at any time. The dialog component
-    // is retained for potential future region-specific (e.g. EU) usage.
+    // Analytics consent: outside EU/EEA/UK we use the opt-out model (default
+    // granted via initAnalytics; users can opt out from ProfileScreen). For
+    // GDPR/PECR regions the dialog is shown via the pendingConsent effect
+    // above once onboarding closes.
   }, []);
 
   const handleNavStateChange = useCallback(() => {
