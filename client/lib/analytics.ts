@@ -147,27 +147,65 @@ export async function initAnalytics(): Promise<void> {
       console.warn("[analytics] identify failed:", err);
     }
     const initialConsent = await getAnalyticsConsent();
-    consent = initialConsent;
-    consentLoaded = true;
-    if (initialConsent === "granted") {
-      try {
-        await c.optIn();
-      } catch (err) {
-        console.warn("[analytics] optIn failed:", err);
-      }
-      flushQueue(c);
-    } else if (initialConsent === "denied") {
-      // Important: discard anything captured before init resolved so a later
-      // opt-in cannot transmit events recorded while the user was opted out.
+    if (initialConsent === "denied") {
+      // Respect explicit prior opt-out — never re-enable automatically.
+      consent = "denied";
+      consentLoaded = true;
       clearQueue();
       try {
         await c.optOut();
       } catch (err) {
         console.warn("[analytics] optOut failed:", err);
       }
+    } else {
+      // Opt-out model: treat both "granted" and "unknown" (never decided) as
+      // granted. First-time users start opted-in; they can disable analytics
+      // anytime from ProfileScreen. Persist the auto-grant so subsequent
+      // launches read a stable value. Guard against a concurrent
+      // setAnalyticsConsent("denied") fired by the user toggling off during
+      // init: re-check the in-memory `consent` after each await, and
+      // compare-and-set the storage write so we never clobber a deny.
+      if ((consent as ConsentState) !== "denied") {
+        consent = "granted";
+      }
+      consentLoaded = true;
+      if (initialConsent === "unknown") {
+        try {
+          const current = await AsyncStorage.getItem(CONSENT_KEY);
+          if (current !== "denied") {
+            await AsyncStorage.setItem(CONSENT_KEY, "granted");
+          }
+        } catch (err) {
+          console.warn("[analytics] auto-grant persist failed:", err);
+        }
+      }
+      // If the user toggled off while we were awaiting storage, honor that.
+      if ((consent as ConsentState) === "denied") {
+        clearQueue();
+        try {
+          await c.optOut();
+        } catch (err) {
+          console.warn("[analytics] post-race optOut failed:", err);
+        }
+        return;
+      }
+      try {
+        await c.optIn();
+      } catch (err) {
+        console.warn("[analytics] optIn failed:", err);
+      }
+      // Final guard: if a deny landed during optIn, drop everything.
+      if ((consent as ConsentState) === "denied") {
+        clearQueue();
+        try {
+          await c.optOut();
+        } catch (err) {
+          console.warn("[analytics] post-race optOut failed:", err);
+        }
+        return;
+      }
+      flushQueue(c);
     }
-    // For "unknown" we leave the buffered events in place; the consent dialog
-    // will resolve them via setAnalyticsConsent().
   } catch (err) {
     console.warn("[analytics] PostHog init failed:", err);
     consentLoaded = true;

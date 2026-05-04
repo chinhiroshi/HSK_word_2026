@@ -106,7 +106,7 @@ export default function ProfileScreen() {
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
-  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [upToDate, setUpToDate] = useState(false);
   const [reviewDevModalVisible, setReviewDevModalVisible] = useState(false);
@@ -131,7 +131,8 @@ export default function ProfileScreen() {
     const silentAudio = await getSilentModeAudio();
     setSilentModeAudioState(silentAudio);
     const consent = await getAnalyticsConsent();
-    setAnalyticsEnabled(consent === "granted");
+    // Opt-out model: anything other than explicit "denied" is treated as ON.
+    setAnalyticsEnabled(consent !== "denied");
   }, []);
 
   const handleSilentModeAudioToggle = async (value: boolean) => {

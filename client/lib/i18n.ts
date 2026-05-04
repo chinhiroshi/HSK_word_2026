@@ -390,7 +390,7 @@ const translations = {
     analytics_consent_accept: "協力する",
     analytics_consent_decline: "協力しない",
     analytics_toggle_title: "利用状況の共有",
-    analytics_toggle_desc: "匿名の利用状況データを共有してアプリの改善に協力します",
+    analytics_toggle_desc: "アプリ改善のため、匿名の利用状況データを送信します（個人を特定する情報は含みません）。オフにするといつでも停止できます。",
   },
 
   en: {
@@ -782,7 +782,7 @@ const translations = {
     analytics_consent_accept: "Share",
     analytics_consent_decline: "No thanks",
     analytics_toggle_title: "Share usage data",
-    analytics_toggle_desc: "Share anonymous usage data to help us improve the app",
+    analytics_toggle_desc: "Send anonymous usage data to help improve the app (no personally identifying information). Turn off anytime to stop sharing.",
   },
 } as const;
 

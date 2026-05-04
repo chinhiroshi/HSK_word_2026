@@ -33,7 +33,6 @@ import { Spacing, BorderRadius } from "@/constants/theme";
 import { PostHogProvider } from "posthog-react-native";
 import {
   initAnalytics,
-  getAnalyticsConsent,
   setAnalyticsConsent,
   captureScreen,
   getPostHogClient,
@@ -92,31 +91,11 @@ export default function App() {
     } catch {}
     setPendingTutorial(true);
     setShowOnboarding(false);
-    // After onboarding completes, prompt for analytics consent if undecided.
-    if (!analyticsConfigured) return;
-    try {
-      const consent = await getAnalyticsConsent();
-      if (consent === "unknown") {
-        setTimeout(() => setShowConsent(true), 1200);
-      }
-    } catch {}
+    // Analytics consent is now opt-out (default granted on first launch via
+    // initAnalytics). The consent dialog is intentionally not shown here;
+    // users can opt out from ProfileScreen at any time. The dialog component
+    // is retained for potential future region-specific (e.g. EU) usage.
   }, []);
-
-  // Existing users who never saw the consent dialog: prompt on next app launch.
-  useEffect(() => {
-    if (showOnboarding !== false) return;
-    if (!analyticsConfigured) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const consent = await getAnalyticsConsent();
-        if (!cancelled && consent === "unknown" && !pendingTutorial) {
-          setShowConsent(true);
-        }
-      } catch {}
-    })();
-    return () => { cancelled = true; };
-  }, [showOnboarding, pendingTutorial, analyticsConfigured]);
 
   const handleNavStateChange = useCallback(() => {
     const ref = navigationRef.current;
