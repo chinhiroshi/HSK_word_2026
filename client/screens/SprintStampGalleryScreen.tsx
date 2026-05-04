@@ -229,6 +229,7 @@ export default function SprintStampGalleryScreen() {
                   backgroundColor: theme.specialEmptyBackground,
                   borderWidth: 1.5,
                   borderColor: theme.specialEmptyBorder,
+                  borderStyle: "dashed",
                 },
               ]}
             />
@@ -403,6 +404,7 @@ export default function SprintStampGalleryScreen() {
                                 : isExpectedSpecialEmpty
                                 ? 2
                                 : 1.5,
+                              borderStyle: isExpectedSpecialEmpty ? "dashed" : "solid",
                               backgroundColor: isCompleted
                                 ? theme.backgroundDefault
                                 : isExpectedSpecialEmpty
@@ -427,7 +429,7 @@ export default function SprintStampGalleryScreen() {
                                   styles.specialEmptyLabel,
                                   {
                                     color: theme.specialEmptyText,
-                                    fontSize: STAMP_SIZE * 0.16,
+                                    fontSize: STAMP_SIZE * 0.11,
                                   },
                                 ]}
                                 numberOfLines={2}
@@ -772,7 +774,7 @@ const styles = StyleSheet.create({
   specialEmptyLabel: {
     fontFamily: "Nunito_700Bold",
     textAlign: "center",
-    lineHeight: 14,
+    lineHeight: 11,
   },
   specialEmptyNumber: {
     fontFamily: "Nunito_400Regular",
