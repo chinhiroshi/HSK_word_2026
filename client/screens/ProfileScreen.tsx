@@ -113,6 +113,7 @@ export default function ProfileScreen() {
   const [upToDate, setUpToDate] = useState(false);
   const [reviewDevModalVisible, setReviewDevModalVisible] = useState(false);
   const [reviewHistory, setReviewHistory] = useState<ReviewPromptEntry[]>([]);
+  const [devConsentPreviewVisible, setDevConsentPreviewVisible] = useState(false);
   const longPressConsumedRef = React.useRef(false);
 
   const openReviewDevModal = useCallback(async () => {
@@ -954,8 +955,45 @@ export default function ProfileScreen() {
             </ThemedText>
           </Pressable>
         </View>
+
+        <View style={styles.devPreviewSection}>
+          <ThemedText style={[styles.devPreviewLabel, { color: theme.textSecondary }]}>
+            同意ダイアログのプレビュー
+          </ThemedText>
+          <ThemedText style={[styles.devPreviewHint, { color: theme.textSecondary }]}>
+            EU/UK 初回起動時とプロフィール再確認時で同じUIを使っています。下のボタンで実際の見た目を確認できます（同意状態は変更されません）。
+          </ThemedText>
+          <Pressable
+            testID="button-dev-preview-consent"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setDevConsentPreviewVisible(true);
+            }}
+            style={[
+              styles.devPremiumBtn,
+              {
+                backgroundColor: theme.backgroundSecondary,
+                borderColor: theme.border,
+                flex: undefined,
+                alignSelf: "flex-start",
+                paddingHorizontal: Spacing.lg,
+              },
+            ]}
+          >
+            <Feather name="eye" size={14} color={theme.textSecondary} />
+            <ThemedText style={[styles.devPremiumBtnText, { color: theme.textSecondary }]}>
+              同意ダイアログを表示
+            </ThemedText>
+          </Pressable>
+        </View>
       </View>
       ) : null}
+
+      <AnalyticsConsentDialog
+        visible={devConsentPreviewVisible}
+        onDecide={() => setDevConsentPreviewVisible(false)}
+        onDismiss={() => setDevConsentPreviewVisible(false)}
+      />
 
       {hasWordsForLevel ? (
         <Button onPress={handleResetProgress} style={styles.resetButton}>
@@ -1734,5 +1772,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     fontFamily: "Nunito_600SemiBold",
+  },
+  devPreviewSection: {
+    marginTop: Spacing.lg,
+    paddingTop: Spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "rgba(127,127,127,0.25)",
+    gap: Spacing.xs,
+  },
+  devPreviewLabel: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+  },
+  devPreviewHint: {
+    fontSize: 11,
+    lineHeight: 15,
+    fontFamily: "Nunito_400Regular",
+    marginBottom: Spacing.sm,
   },
 });
