@@ -9,6 +9,7 @@ import {
   ReviewPromptEntry,
 } from "@/lib/reviewPrompt";
 import Constants from "expo-constants";
+import * as Updates from "expo-updates";
 import {
   getStudyNotifEnabled,
   getStudyNotifTime,
@@ -96,6 +97,25 @@ export default function ProfileScreen() {
   const { isPremium, devPremiumOverride, setDevPremiumOverride } = useSubscription();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { updateInfo, recheckUpdate } = useAppUpdate();
+
+  const otaInfoLine = React.useMemo(() => {
+    if (__DEV__) return t("ota_dev");
+    if (!Updates.isEnabled) return null;
+    if (Updates.isEmbeddedLaunch) return t("ota_embedded");
+    const created = Updates.createdAt;
+    const id = Updates.updateId ? Updates.updateId.slice(0, 8) : null;
+    let label = t("ota_updated");
+    if (created) {
+      const y = created.getFullYear();
+      const mo = String(created.getMonth() + 1).padStart(2, "0");
+      const da = String(created.getDate()).padStart(2, "0");
+      const hh = String(created.getHours()).padStart(2, "0");
+      const mm = String(created.getMinutes()).padStart(2, "0");
+      label += `: ${y}/${mo}/${da} ${hh}:${mm}`;
+    }
+    if (id) label += ` (${id})`;
+    return label;
+  }, [t]);
 
   const HSK_TITLES: Record<HskLevel, string> = {
     1: t("hsk_title_1"), 2: t("hsk_title_2"), 3: t("hsk_title_3"),
@@ -788,6 +808,11 @@ export default function ProfileScreen() {
               {Constants.nativeAppVersion ?? Constants.expoConfig?.version ?? "—"}
               {updateInfo.available ? `  →  v${updateInfo.latestVersion}` : ""}
             </ThemedText>
+            {otaInfoLine ? (
+              <ThemedText style={[styles.otaInfo, { color: theme.textSecondary }]}>
+                {otaInfoLine}
+              </ThemedText>
+            ) : null}
           </View>
           <Pressable
             testID="button-check-update"
@@ -1435,6 +1460,11 @@ const styles = StyleSheet.create({
   versionNumber: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
+  },
+  otaInfo: {
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+    marginTop: 2,
   },
   updateButton: {
     borderWidth: 1,
