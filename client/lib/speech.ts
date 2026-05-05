@@ -1,6 +1,6 @@
 import * as Speech from "expo-speech";
 import { Platform } from "react-native";
-import { setAudioModeAsync, setIsAudioActiveAsync } from "expo-audio";
+import { setAudioModeAsync } from "expo-audio";
 import { getSilentModeAudio } from "./storage";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -10,12 +10,6 @@ async function applyAudioMode(): Promise<void> {
   try {
     const playsInSilent = await getSilentModeAudio();
     await setAudioModeAsync({ playsInSilentMode: playsInSilent });
-    // Activate the audio session so AVSpeechSynthesizer respects the new
-    // category (.playback). Without this, expo-speech may be silenced by the
-    // hardware silent switch even after we set playsInSilentMode: true.
-    if (playsInSilent) {
-      await setIsAudioActiveAsync(true);
-    }
   } catch (e) {
     console.warn("setAudioMode failed:", e);
   }
