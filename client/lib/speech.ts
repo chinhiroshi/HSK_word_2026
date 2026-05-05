@@ -1,39 +1,24 @@
 import * as Speech from "expo-speech";
 import { Platform } from "react-native";
-import { setAudioModeAsync } from "expo-audio";
+import { setAudioModeAsync, setIsAudioActiveAsync } from "expo-audio";
 import { getSilentModeAudio } from "./storage";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Cached silent-mode preference so every speak() call doesn't hit AsyncStorage.
-let cachedSilentMode: boolean | null = null;
-
-async function refreshSilentMode(): Promise<boolean> {
+async function applyAudioMode(): Promise<void> {
+  if (Platform.OS !== "ios") return;
   try {
-    cachedSilentMode = await getSilentModeAudio();
-  } catch (e) {
-    console.warn("getSilentModeAudio failed:", e);
-    cachedSilentMode = false;
-  }
-  return cachedSilentMode;
-}
-
-export function invalidateSilentModeCache(): void {
-  cachedSilentMode = null;
-}
-
-async function applyAudioMode(): Promise<boolean> {
-  // Always refresh from storage so the toggle takes effect immediately.
-  const playsInSilent = await refreshSilentMode();
-  if (Platform.OS !== "ios") return playsInSilent;
-  try {
-    // Configure the shared audio session category. This affects expo-audio
-    // players and any speech that uses the application's audio session.
+    const playsInSilent = await getSilentModeAudio();
     await setAudioModeAsync({ playsInSilentMode: playsInSilent });
+    // Activate the audio session so AVSpeechSynthesizer respects the new
+    // category (.playback). Without this, expo-speech may be silenced by the
+    // hardware silent switch even after we set playsInSilentMode: true.
+    if (playsInSilent) {
+      await setIsAudioActiveAsync(true);
+    }
   } catch (e) {
     console.warn("setAudioMode failed:", e);
   }
-  return playsInSilent;
 }
 
 let availableVoices: Speech.Voice[] = [];
@@ -57,7 +42,7 @@ function findChineseVoice(): string | undefined {
 }
 
 export async function speakChinese(text: string): Promise<void> {
-  const playsInSilent = await applyAudioMode();
+  await applyAudioMode();
   try {
     const isSpeaking = await Speech.isSpeakingAsync();
     if (isSpeaking) {
@@ -92,13 +77,6 @@ export async function speakChinese(text: string): Promise<void> {
         options.voice = voiceId;
       }
 
-      // iOS only: when the user enabled "play in silent mode", make
-      // AVSpeechSynthesizer use its OWN audio session (.playback by default)
-      // so the hardware silent switch does not mute the speech.
-      if (Platform.OS === "ios" && playsInSilent) {
-        options.useApplicationAudioSession = false;
-      }
-
       Speech.speak(text, options);
     } catch (e) {
       console.warn("Speech.speak threw:", e);
@@ -108,7 +86,7 @@ export async function speakChinese(text: string): Promise<void> {
 }
 
 export async function speakWithLanguage(text: string, language: string, rate: number = 0.8): Promise<void> {
-  const playsInSilent = await applyAudioMode();
+  await applyAudioMode();
   try {
     const isSpeaking = await Speech.isSpeakingAsync();
     if (isSpeaking) {
@@ -121,7 +99,7 @@ export async function speakWithLanguage(text: string, language: string, rate: nu
 
   return new Promise((resolve) => {
     try {
-      const options: Speech.SpeechOptions = {
+      Speech.speak(text, {
         language,
         rate,
         pitch: 1.0,
@@ -131,11 +109,7 @@ export async function speakWithLanguage(text: string, language: string, rate: nu
           resolve();
         },
         onStopped: () => resolve(),
-      };
-      if (Platform.OS === "ios" && playsInSilent) {
-        options.useApplicationAudioSession = false;
-      }
-      Speech.speak(text, options);
+      });
     } catch (e) {
       console.warn("Speech.speak threw:", e);
       resolve();
