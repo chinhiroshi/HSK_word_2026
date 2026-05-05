@@ -9,6 +9,8 @@ import {
   ReviewPromptEntry,
 } from "@/lib/reviewPrompt";
 import Constants from "expo-constants";
+import * as Updates from "expo-updates";
+import { forceCheckOTA, getOtaStatus, type OtaStatus } from "@/hooks/useOTAUpdate";
 import {
   getStudyNotifEnabled,
   getStudyNotifTime,
@@ -77,6 +79,40 @@ interface QuoteData {
 
 const HSK_LEVELS: HskLevel[] = [1, 2, 3, 4, 5, 6];
 
+function pad2(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function formatOtaDate(d: Date): string {
+  return `${d.getFullYear()}/${pad2(d.getMonth() + 1)}/${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+function formatOtaTimestamp(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return formatOtaDate(d);
+}
+
+function translateOtaResult(
+  t: (k: any) => string,
+  s: OtaStatus,
+): string {
+  switch (s.result) {
+    case "no_update":
+      return t("ota_result_no_update");
+    case "fetched_reloading":
+      return t("ota_result_fetched");
+    case "error":
+      return `${t("ota_result_error")}${s.errorMessage ? `: ${s.errorMessage}` : ""}`;
+    case "skipped_dev":
+      return t("ota_result_skipped_dev");
+    case "skipped_disabled":
+      return t("ota_result_skipped_disabled");
+    default:
+      return s.result;
+  }
+}
+
 const HSK_WORD_COUNTS: Record<HskLevel, number> = {
   1: 150,
   2: 150,
@@ -113,7 +149,33 @@ export default function ProfileScreen() {
   const [reviewDevModalVisible, setReviewDevModalVisible] = useState(false);
   const [reviewHistory, setReviewHistory] = useState<ReviewPromptEntry[]>([]);
   const [devConsentPreviewVisible, setDevConsentPreviewVisible] = useState(false);
+  const [otaStatus, setOtaStatus] = useState<OtaStatus | null>(null);
+  const [otaForceChecking, setOtaForceChecking] = useState(false);
   const longPressConsumedRef = React.useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const s = await getOtaStatus();
+      if (!cancelled) setOtaStatus(s);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      (async () => {
+        const s = await getOtaStatus();
+        if (!cancelled) setOtaStatus(s);
+      })();
+      return () => {
+        cancelled = true;
+      };
+    }, []),
+  );
 
   const openReviewDevModal = useCallback(async () => {
     longPressConsumedRef.current = true;
@@ -819,6 +881,95 @@ export default function ProfileScreen() {
             </ThemedText>
           </Pressable>
         </View>
+
+        {/* OTA 情報 */}
+        <View
+          testID="ota-info-block"
+          style={[styles.otaBlock, { borderTopColor: theme.border }]}
+        >
+          <ThemedText style={[styles.otaSectionTitle, { color: theme.textSecondary }]}>
+            {t("ota_section_title")}
+          </ThemedText>
+
+          {__DEV__ ? (
+            <ThemedText
+              testID="text-ota-state"
+              style={[styles.otaLine, { color: theme.textSecondary }]}
+            >
+              {t("ota_dev")}
+            </ThemedText>
+          ) : !Updates.isEnabled ? (
+            <ThemedText
+              testID="text-ota-state"
+              style={[styles.otaLine, { color: theme.textSecondary }]}
+            >
+              {t("ota_disabled")}
+            </ThemedText>
+          ) : (
+            <>
+              <ThemedText
+                testID="text-ota-state"
+                style={[styles.otaLine, { color: theme.textSecondary }]}
+              >
+                {Updates.isEmbeddedLaunch
+                  ? t("ota_embedded")
+                  : `${t("ota_update_id")}: ${Updates.updateId?.slice(0, 8) ?? "—"}`}
+              </ThemedText>
+              {!Updates.isEmbeddedLaunch && Updates.createdAt ? (
+                <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                  {t("ota_created_at")}: {formatOtaDate(Updates.createdAt)}
+                </ThemedText>
+              ) : null}
+              <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                {t("ota_runtime")}: {Updates.runtimeVersion ?? "—"}
+                {"  ·  "}
+                {t("ota_channel")}: {Updates.channel || "—"}
+              </ThemedText>
+              {otaStatus ? (
+                <ThemedText
+                  testID="text-ota-last-check"
+                  style={[styles.otaLine, { color: theme.textSecondary }]}
+                >
+                  {t("ota_last_check")}: {formatOtaTimestamp(otaStatus.lastCheckedAt)}
+                  {" · "}
+                  {translateOtaResult(t, otaStatus)}
+                </ThemedText>
+              ) : null}
+              <Pressable
+                testID="button-force-ota-check"
+                disabled={otaForceChecking}
+                onPress={async () => {
+                  if (otaForceChecking) return;
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setOtaForceChecking(true);
+                  try {
+                    const s = await forceCheckOTA();
+                    setOtaStatus(s);
+                  } finally {
+                    setOtaForceChecking(false);
+                  }
+                }}
+                style={[
+                  styles.otaForceButton,
+                  {
+                    backgroundColor: theme.backgroundSecondary,
+                    borderColor: theme.border,
+                    opacity: otaForceChecking ? 0.6 : 1,
+                  },
+                ]}
+              >
+                <Feather
+                  name={otaForceChecking ? "loader" : "download-cloud"}
+                  size={14}
+                  color={theme.primary}
+                />
+                <ThemedText style={[styles.otaForceButtonText, { color: theme.primary }]}>
+                  {otaForceChecking ? t("ota_force_checking") : t("ota_force_check")}
+                </ThemedText>
+              </Pressable>
+            </>
+          )}
+        </View>
       </View>
       {/* 開発者モード: プレミアム切り替え (開発ビルドのみ表示) */}
       {__DEV__ ? (
@@ -1435,6 +1586,39 @@ const styles = StyleSheet.create({
   versionNumber: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
+  },
+  otaBlock: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    paddingTop: Spacing.md,
+    marginTop: Spacing.xs,
+    gap: 4,
+  },
+  otaSectionTitle: {
+    fontSize: 11,
+    fontFamily: "Nunito_600SemiBold",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  otaLine: {
+    fontSize: 11,
+    fontFamily: "Nunito_400Regular",
+    lineHeight: 15,
+  },
+  otaForceButton: {
+    marginTop: Spacing.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.xs,
+    paddingHorizontal: Spacing.md,
+  },
+  otaForceButtonText: {
+    fontSize: 12,
+    fontFamily: "Nunito_600SemiBold",
   },
   updateButton: {
     borderWidth: 1,
