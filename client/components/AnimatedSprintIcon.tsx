@@ -9,6 +9,7 @@ import Animated, {
   cancelAnimation,
   Easing,
 } from "react-native-reanimated";
+import { useIsAppActive } from "@/hooks/useIsAppActive";
 
 export type SprintIconAnim =
   | "wobble"
@@ -76,8 +77,13 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
 // animating since there is at most one current cell on the map.
 function HereMarker({ children }: { children: React.ReactNode }) {
   const progress = useSharedValue(0);
+  const isActive = useIsAppActive();
 
   useEffect(() => {
+    if (!isActive) {
+      cancelAnimation(progress);
+      return;
+    }
     progress.value = withRepeat(
       withTiming(1, { duration: 650, easing: Easing.inOut(Easing.sin) }),
       -1,
@@ -87,7 +93,7 @@ function HereMarker({ children }: { children: React.ReactNode }) {
       cancelAnimation(progress);
       progress.value = 0;
     };
-  }, []);
+  }, [isActive]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const p = progress.value;
@@ -112,8 +118,13 @@ function ConstantMedAnim({
   children: React.ReactNode;
 }) {
   const progress = useSharedValue(0);
+  const isActive = useIsAppActive();
 
   useEffect(() => {
+    if (!isActive) {
+      cancelAnimation(progress);
+      return;
+    }
     const duration = DURATION_TIERS[2][type] || 600;
     const delay = hashSeed(seed, 2017) % duration;
     progress.value = withDelay(
@@ -128,7 +139,7 @@ function ConstantMedAnim({
       cancelAnimation(progress);
       progress.value = 0;
     };
-  }, [seed, type]);
+  }, [seed, type, isActive]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const p = progress.value;
@@ -197,8 +208,13 @@ function MonsterHop({
   children: React.ReactNode;
 }) {
   const progress = useSharedValue(0);
+  const isActive = useIsAppActive();
 
   useEffect(() => {
+    if (!isActive) {
+      cancelAnimation(progress);
+      return;
+    }
     const duration = DURATION_TIERS[2].hop; // MED tier, fixed forever
     const delay = hashSeed(seed, 1009) % duration;
     progress.value = withDelay(
@@ -213,7 +229,7 @@ function MonsterHop({
       cancelAnimation(progress);
       progress.value = 0;
     };
-  }, [seed]);
+  }, [seed, isActive]);
 
   // Only ~1/3 of monsters get the rotational wobble; the rest stay as plain
   // vertical hoppers so the map doesn't feel uniformly busy.
@@ -244,6 +260,7 @@ function DecoCycle({
   children: React.ReactNode;
 }) {
   const progress = useSharedValue(0);
+  const isActive = useIsAppActive();
 
   const [phaseIdx, setPhaseIdx] = useState(
     () => phaseAtOffset(hashSeed(seed, 12345) % FULL_CYCLE_MS).idx,
@@ -251,8 +268,11 @@ function DecoCycle({
 
   // Drive phase progression. First tick aligns to the time remaining in
   // the initial (random-offset) phase; subsequent ticks fire after the
-  // duration of whatever phase we just entered.
+  // duration of whatever phase we just entered. Skipped while the app is
+  // backgrounded so we don't fire timers that schedule re-renders no one
+  // can see.
   useEffect(() => {
+    if (!isActive) return;
     const offsetMs = hashSeed(seed, 12345) % FULL_CYCLE_MS;
     const { remainingMs: firstTickMs } = phaseAtOffset(offsetMs);
 
@@ -273,10 +293,16 @@ function DecoCycle({
     }, firstTickMs);
 
     return () => clearTimeout(timeoutId);
-  }, [seed]);
+  }, [seed, isActive]);
 
   // React to phase change: swap the animation tempo or ease back to rest.
+  // Pausing here is what stops the actual GPU work — without `isActive` in
+  // the dependency list the worklet keeps repeating in the background.
   useEffect(() => {
+    if (!isActive) {
+      cancelAnimation(progress);
+      return;
+    }
     const tierIdx = PHASE_PATTERN[phaseIdx];
     const duration = DURATION_TIERS[tierIdx][type];
     cancelAnimation(progress);
@@ -295,7 +321,7 @@ function DecoCycle({
     return () => {
       cancelAnimation(progress);
     };
-  }, [phaseIdx, type]);
+  }, [phaseIdx, type, isActive]);
 
   const animatedStyle = useAnimatedStyle(() => {
     const p = progress.value;
