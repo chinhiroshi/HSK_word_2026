@@ -9,7 +9,7 @@ import Animated, {
   cancelAnimation,
   Easing,
 } from "react-native-reanimated";
-import { useIsAppActive } from "@/hooks/useIsAppActive";
+import { useIsAnimationActive } from "@/hooks/useIsAnimationActive";
 
 export type SprintIconAnim =
   | "wobble"
@@ -77,7 +77,7 @@ export function AnimatedSprintIcon({ type, seed = 0, children }: Props) {
 // animating since there is at most one current cell on the map.
 function HereMarker({ children }: { children: React.ReactNode }) {
   const progress = useSharedValue(0);
-  const isActive = useIsAppActive();
+  const isActive = useIsAnimationActive();
 
   useEffect(() => {
     if (!isActive) {
@@ -118,7 +118,7 @@ function ConstantMedAnim({
   children: React.ReactNode;
 }) {
   const progress = useSharedValue(0);
-  const isActive = useIsAppActive();
+  const isActive = useIsAnimationActive();
 
   useEffect(() => {
     if (!isActive) {
@@ -208,7 +208,7 @@ function MonsterHop({
   children: React.ReactNode;
 }) {
   const progress = useSharedValue(0);
-  const isActive = useIsAppActive();
+  const isActive = useIsAnimationActive();
 
   useEffect(() => {
     if (!isActive) {
@@ -260,7 +260,7 @@ function DecoCycle({
   children: React.ReactNode;
 }) {
   const progress = useSharedValue(0);
-  const isActive = useIsAppActive();
+  const isActive = useIsAnimationActive();
 
   const [phaseIdx, setPhaseIdx] = useState(
     () => phaseAtOffset(hashSeed(seed, 12345) % FULL_CYCLE_MS).idx,
