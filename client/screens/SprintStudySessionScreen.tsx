@@ -80,6 +80,8 @@ export default function SprintStudySessionScreen() {
   const textChoicesRef = useRef<Record<string, "memorized" | "unmemorized">>({});
   const audioChoicesRef = useRef<Record<string, "memorized" | "unmemorized">>({});
   const [revealedIds, setRevealedIds] = useState<Set<string>>(new Set());
+  // Audio-list 2nd reveal level (per-row): show translation/example translation
+  const [audioMeaningRevealedIds, setAudioMeaningRevealedIds] = useState<Set<string>>(new Set());
   const [allRevealed, setAllRevealed] = useState(false); // true = hide Chinese characters in text-list
   const [translationRevealedIds, setTranslationRevealedIds] = useState<Set<string>>(new Set());
   const [listFilter, setListFilter] = useState<ListFilter>("all");
@@ -201,6 +203,7 @@ export default function SprintStudySessionScreen() {
   // so that meanings/words shown via the eye icon don't carry over across tabs.
   useEffect(() => {
     setRevealedIds(new Set());
+    setAudioMeaningRevealedIds(new Set());
     setTranslationRevealedIds(new Set());
   }, [listFilter]);
 
@@ -629,8 +632,13 @@ export default function SprintStudySessionScreen() {
               : item.word;
 
             // --- Audio-list row (word hidden by default, revealed by per-row eye toggle or global eye) ---
+            // 3-state cycle: 0 hidden → 1 word/example shown → 2 also translation shown → 0 hidden
             if (isAudioListPhase) {
-              const isWordRevealed = allRevealed || revealedIds.has(item.id);
+              const isMeaningRevealed = audioMeaningRevealedIds.has(item.id);
+              const isWordRevealed = allRevealed || revealedIds.has(item.id) || isMeaningRevealed;
+              const revealLevel: 0 | 1 | 2 = isMeaningRevealed ? 2 : isWordRevealed ? 1 : 0;
+              const meaningText = lang === "en" && item.translationEn ? item.translationEn : item.translation;
+              const exampleMeaning = lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation;
               return (
                 <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isUnmemorized ? Colors.light.alert + "14" : theme.backgroundDefault }]}>
                   <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
@@ -653,6 +661,18 @@ export default function SprintStudySessionScreen() {
                           {item.exampleSentence}
                         </ThemedText>
                       ) : null}
+                      {isMeaningRevealed ? (
+                        <View style={[styles.audioMeaningBlock, { borderTopColor: theme.border + "60" }]}>
+                          <ThemedText style={[styles.audioMeaningText, { color: theme.text }]}>
+                            {meaningText}
+                          </ThemedText>
+                          {exampleMeaning ? (
+                            <ThemedText style={[styles.audioMeaningExample, { color: theme.textSecondary }]} numberOfLines={2}>
+                              {exampleMeaning}
+                            </ThemedText>
+                          ) : null}
+                        </View>
+                      ) : null}
                     </View>
                   ) : (
                     <View style={styles.wordInfoCol} />
@@ -660,15 +680,40 @@ export default function SprintStudySessionScreen() {
                   <View style={styles.rowActions}>
                     <Pressable
                       onPress={() => {
-                        setRevealedIds((prev) => {
-                          const next = new Set(prev);
-                          if (next.has(item.id)) next.delete(item.id); else next.add(item.id);
-                          return next;
-                        });
+                        // 0 → 1: add to revealedIds
+                        // 1 → 2: add to audioMeaningRevealedIds
+                        // 2 → 0: remove from both
+                        if (revealLevel === 0) {
+                          setRevealedIds((prev) => {
+                            const next = new Set(prev);
+                            next.add(item.id);
+                            return next;
+                          });
+                        } else if (revealLevel === 1) {
+                          setAudioMeaningRevealedIds((prev) => {
+                            const next = new Set(prev);
+                            next.add(item.id);
+                            return next;
+                          });
+                        } else {
+                          setRevealedIds((prev) => {
+                            const next = new Set(prev);
+                            next.delete(item.id);
+                            return next;
+                          });
+                          setAudioMeaningRevealedIds((prev) => {
+                            const next = new Set(prev);
+                            next.delete(item.id);
+                            return next;
+                          });
+                        }
                       }}
                       style={styles.actionIconBtn}
                     >
                       <Feather name={isWordRevealed ? "eye" : "eye-off"} size={18} color={isWordRevealed ? theme.primary : theme.textSecondary} />
+                      {revealLevel === 1 ? (
+                        <View style={[styles.eyeMoreDot, { backgroundColor: Colors.light.secondary, borderColor: theme.backgroundDefault }]} />
+                      ) : null}
                     </Pressable>
                     <Pressable
                       onPress={() => handleChoiceList(item.id, "unmemorized")}
@@ -1138,7 +1183,31 @@ const styles = StyleSheet.create({
     gap: 2,
     flexShrink: 0,
   },
-  actionIconBtn: { padding: 6, borderRadius: 20 },
+  actionIconBtn: { padding: 6, borderRadius: 20, position: "relative" },
+  eyeMoreDot: {
+    position: "absolute",
+    top: 3,
+    right: 3,
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    borderWidth: 1.5,
+  },
+  audioMeaningBlock: {
+    marginTop: 6,
+    paddingTop: 6,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    gap: 2,
+  },
+  audioMeaningText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+  },
+  audioMeaningExample: {
+    fontSize: 12,
+    fontFamily: "Nunito_400Regular",
+    lineHeight: 17,
+  },
   checkBtnActive: {
     backgroundColor: Colors.light.success,
     borderRadius: 20,
