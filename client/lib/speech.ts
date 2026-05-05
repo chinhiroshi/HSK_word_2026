@@ -9,7 +9,10 @@ async function applyAudioMode(): Promise<void> {
   if (Platform.OS !== "ios") return;
   try {
     const playsInSilent = await getSilentModeAudio();
-    await setAudioModeAsync({ playsInSilentModeIOS: playsInSilent });
+    await setAudioModeAsync({
+      playsInSilentMode: playsInSilent,
+      interruptionMode: "mixWithOthers",
+    });
   } catch (e) {
     console.warn("setAudioMode failed:", e);
   }
