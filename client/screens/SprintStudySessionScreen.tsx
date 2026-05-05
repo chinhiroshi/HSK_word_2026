@@ -628,14 +628,9 @@ export default function SprintStudySessionScreen() {
               ? `${item.word}。${item.exampleSentence}`
               : item.word;
 
-            // --- Audio-list row (3-level eye toggle: hidden → Chinese → +Japanese translation) ---
+            // --- Audio-list row (word hidden by default, revealed by per-row eye toggle or global eye) ---
             if (isAudioListPhase) {
               const isWordRevealed = allRevealed || revealedIds.has(item.id);
-              const isTranslationRevealed = translationRevealedIds.has(item.id);
-              const exampleTranslation =
-                lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation;
-              const wordTranslation =
-                lang === "en" && item.translationEn ? item.translationEn : item.translation;
               return (
                 <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isUnmemorized ? Colors.light.alert + "14" : theme.backgroundDefault }]}>
                   <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
@@ -658,18 +653,6 @@ export default function SprintStudySessionScreen() {
                           {item.exampleSentence}
                         </ThemedText>
                       ) : null}
-                      {isTranslationRevealed ? (
-                        <View style={styles.audioTranslationBlock}>
-                          <ThemedText style={[styles.audioTranslationWord, { color: theme.text }]}>
-                            {wordTranslation}
-                          </ThemedText>
-                          {exampleTranslation ? (
-                            <ThemedText style={[styles.audioTranslationExample, { color: theme.textSecondary }]}>
-                              {exampleTranslation}
-                            </ThemedText>
-                          ) : null}
-                        </View>
-                      ) : null}
                     </View>
                   ) : (
                     <View style={styles.wordInfoCol} />
@@ -677,55 +660,15 @@ export default function SprintStudySessionScreen() {
                   <View style={styles.rowActions}>
                     <Pressable
                       onPress={() => {
-                        // 3-level cycle: hidden(0) → Chinese(1) → +Japanese(2) → hidden
-                        const wordOn = revealedIds.has(item.id);
-                        const transOn = translationRevealedIds.has(item.id);
-                        if (!wordOn) {
-                          setRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.add(item.id);
-                            return next;
-                          });
-                        } else if (!transOn) {
-                          setTranslationRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.add(item.id);
-                            return next;
-                          });
-                        } else {
-                          setRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.delete(item.id);
-                            return next;
-                          });
-                          setTranslationRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.delete(item.id);
-                            return next;
-                          });
-                        }
+                        setRevealedIds((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(item.id)) next.delete(item.id); else next.add(item.id);
+                          return next;
+                        });
                       }}
                       style={styles.actionIconBtn}
                     >
-                      <Feather
-                        name={isWordRevealed ? "eye" : "eye-off"}
-                        size={18}
-                        color={
-                          isTranslationRevealed
-                            ? Colors.light.secondary
-                            : isWordRevealed
-                            ? theme.primary
-                            : theme.textSecondary
-                        }
-                      />
-                      {isWordRevealed && !isTranslationRevealed ? (
-                        <View
-                          style={[
-                            styles.eyeMoreDot,
-                            { backgroundColor: Colors.light.secondary, borderColor: theme.backgroundDefault },
-                          ]}
-                        />
-                      ) : null}
+                      <Feather name={isWordRevealed ? "eye" : "eye-off"} size={18} color={isWordRevealed ? theme.primary : theme.textSecondary} />
                     </Pressable>
                     <Pressable
                       onPress={() => handleChoiceList(item.id, "unmemorized")}
@@ -1196,15 +1139,6 @@ const styles = StyleSheet.create({
     flexShrink: 0,
   },
   actionIconBtn: { padding: 6, borderRadius: 20 },
-  eyeMoreDot: {
-    position: "absolute",
-    top: 4,
-    right: 4,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    borderWidth: 1.5,
-  },
   checkBtnActive: {
     backgroundColor: Colors.light.success,
     borderRadius: 20,
@@ -1231,18 +1165,6 @@ const styles = StyleSheet.create({
   },
   listTranslationText: { fontSize: 14, fontFamily: "Nunito_700Bold" },
   listTranslationExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
-  audioTranslationBlock: {
-    marginTop: 4,
-    gap: 2,
-  },
-  audioTranslationWord: {
-    fontSize: 14,
-    fontFamily: "Nunito_700Bold",
-  },
-  audioTranslationExample: {
-    fontSize: 12,
-    fontFamily: "Nunito_400Regular",
-  },
 
   // Review banner
   reviewBanner: {
