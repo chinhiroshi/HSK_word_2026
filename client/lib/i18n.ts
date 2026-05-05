@@ -257,9 +257,6 @@ const translations = {
     checking_update: "確認中...",
     check_update: "アップデートを確認",
     up_to_date: "最新バージョンです",
-    ota_embedded: "組み込み版",
-    ota_updated: "更新",
-    ota_dev: "開発モード",
     subscription_active: "プレミアム会員",
     subscription_inactive: "無料プラン",
 
@@ -655,9 +652,6 @@ const translations = {
     checking_update: "Checking...",
     check_update: "Check for Updates",
     up_to_date: "You're up to date",
-    ota_embedded: "Embedded build",
-    ota_updated: "Updated",
-    ota_dev: "Dev mode",
     subscription_active: "Premium Member",
     subscription_inactive: "Free Plan",
 
