@@ -92,8 +92,8 @@ export default function AudioPlaybackScreen() {
     }
   }, [playableWords.length]);
 
-  const speak = (text: string, language: string): Promise<void> => {
-    return speakWithLanguage(text, language, playbackRate);
+  const speak = (text: string, language: string, wordId?: string): Promise<void> => {
+    return speakWithLanguage(text, language, playbackRate, { wordId });
   };
 
   const delay = (ms: number): Promise<void> => {
@@ -105,7 +105,7 @@ export default function AudioPlaybackScreen() {
 
     setCurrentPhase(t("phase_chinese"));
     setCurrentSpokenText(word.word);
-    await speak(word.word, "zh-CN");
+    await speak(word.word, "zh-CN", word.id);
     if (isCancelledRef.current) return;
 
     await delay(500);
@@ -123,7 +123,7 @@ export default function AudioPlaybackScreen() {
       if (isCancelledRef.current) return;
       setCurrentPhase(`${t("phase_chinese_word")} (${i + 1}/2)`);
       setCurrentSpokenText(word.exampleSentence);
-      await speak(word.exampleSentence, "zh-CN");
+      await speak(word.exampleSentence, "zh-CN", word.id);
       if (isCancelledRef.current) return;
       await delay(300);
     }
@@ -142,7 +142,7 @@ export default function AudioPlaybackScreen() {
       if (isCancelledRef.current) return;
       setCurrentPhase(`${t("phase_chinese_word")} (${i + 3}/4)`);
       setCurrentSpokenText(word.exampleSentence);
-      await speak(word.exampleSentence, "zh-CN");
+      await speak(word.exampleSentence, "zh-CN", word.id);
       if (isCancelledRef.current) return;
       await delay(300);
     }

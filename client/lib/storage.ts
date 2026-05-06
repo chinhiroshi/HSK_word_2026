@@ -259,6 +259,24 @@ export async function markAsMemorized(wordId: string, type: MemorizationType = "
   return undefined;
 }
 
+export type ChineseRegion = "CN" | "TW" | "ALTERNATE";
+
+const CHINESE_REGION_KEY = "@chinese_master_chinese_region_v1";
+
+export async function getChineseRegionPreference(): Promise<ChineseRegion> {
+  try {
+    const v = await AsyncStorage.getItem(CHINESE_REGION_KEY);
+    if (v === "CN" || v === "TW" || v === "ALTERNATE") return v;
+  } catch {}
+  return "CN";
+}
+
+export async function setChineseRegionPreference(region: ChineseRegion): Promise<void> {
+  try {
+    await AsyncStorage.setItem(CHINESE_REGION_KEY, region);
+  } catch {}
+}
+
 const SILENT_AUDIO_KEY = "@chinese_master_silent_audio";
 
 export async function getSilentModeAudio(): Promise<boolean> {

@@ -161,7 +161,7 @@ export default function WordDetailScreen() {
         >
           <View style={styles.wordHeader}>
             <ThemedText style={styles.word}>{word.word}</ThemedText>
-            <SpeakButton text={word.word} size="large" />
+            <SpeakButton text={word.word} size="large" wordId={word.id} />
           </View>
           <ThemedText style={[styles.pinyin, { color: theme.primary }]}>
             {word.pinyin || getPinyin(word.word)}
@@ -218,7 +218,7 @@ export default function WordDetailScreen() {
                 <Feather name="lock" size={16} color={theme.textSecondary} />
               </Pressable>
             ) : (
-              <SpeakButton text={word.exampleSentence} size="medium" />
+              <SpeakButton text={word.exampleSentence} size="medium" wordId={word.id} />
             )}
           </View>
           <>
@@ -253,7 +253,7 @@ export default function WordDetailScreen() {
                   <Feather name="lock" size={16} color={theme.textSecondary} />
                 </Pressable>
               ) : (
-                <SpeakButton text={word.longExample} size="medium" />
+                <SpeakButton text={word.longExample} size="medium" wordId={word.id} />
               )}
             </View>
             {isLocked ? (

@@ -69,7 +69,7 @@ export default function TestScreen() {
 
     if (testType === "sentence" && generatedQuestions.length > 0) {
       setTimeout(() => {
-        speakChinese(generatedQuestions[0].word.exampleSentence);
+        speakChinese(generatedQuestions[0].word.exampleSentence, { wordId: generatedQuestions[0].word.id });
       }, 500);
     }
   }, [testType]);
@@ -123,7 +123,8 @@ export default function TestScreen() {
 
       if (testType === "sentence") {
         setTimeout(() => {
-          speakChinese(questions[currentIndex + 1].word.exampleSentence);
+          const nextWord = questions[currentIndex + 1].word;
+          speakChinese(nextWord.exampleSentence, { wordId: nextWord.id });
         }, 300);
       }
     } else {
@@ -281,7 +282,7 @@ export default function TestScreen() {
                 <ThemedText style={styles.questionWord}>
                   {currentQuestion.word.word}
                 </ThemedText>
-                <SpeakButton text={currentQuestion.word.word} size="medium" />
+                <SpeakButton text={currentQuestion.word.word} size="medium" wordId={currentQuestion.word.id} />
               </View>
               <ThemedText style={[styles.questionPinyin, { color: theme.primary }]}>
                 {currentQuestion.word.pinyin}
@@ -296,6 +297,7 @@ export default function TestScreen() {
                 <SpeakButton
                   text={currentQuestion.word.exampleSentence}
                   size="large"
+                  wordId={currentQuestion.word.id}
                 />
               </View>
               <ThemedText style={styles.questionSentence}>

@@ -332,6 +332,7 @@ export default function TutorialSprintScreen() {
                             : w.word
                         }
                         size="medium"
+                        wordId={w.id}
                       />
                       <Pressable
                         testID={`button-tutorial-meaning-${i}`}
@@ -474,6 +475,7 @@ export default function TutorialSprintScreen() {
                               : w.word
                           }
                           size="large"
+                          wordId={w.id}
                         />
                       </View>
                       <ThemedText
@@ -542,6 +544,7 @@ export default function TutorialSprintScreen() {
                               : w.word
                           }
                           size="medium"
+                          wordId={w.id}
                         />
                       </View>
                     </View>

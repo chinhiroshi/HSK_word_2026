@@ -191,7 +191,7 @@ export default function SprintStudySessionScreen() {
       const text = currentCardWord.exampleSentence
         ? `${currentCardWord.word}。${currentCardWord.exampleSentence}`
         : currentCardWord.word;
-      await speakChinese(text);
+      await speakChinese(text, { wordId: currentCardWord.id });
     };
     speak();
     return () => {
@@ -647,7 +647,7 @@ export default function SprintStudySessionScreen() {
                     </ThemedText>
                   </View>
                   <Pressable
-                    onPress={() => speakChinese(speakText)}
+                    onPress={() => speakChinese(speakText, { wordId: item.id })}
                     style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
                   >
                     <Feather name="volume-2" size={20} color="#fff" />
@@ -751,7 +751,7 @@ export default function SprintStudySessionScreen() {
                         <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
                       )}
                       <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
-                      <SpeakButton text={speakText} size="small" />
+                      <SpeakButton text={speakText} size="small" wordId={item.id} />
                     </View>
                     {item.exampleSentence ? (
                       <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={2}>
@@ -1046,6 +1046,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
             <SpeakButton
               text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
               size="large"
+              wordId={word.id}
             />
           </View>
           <ThemedText style={[styles.audioPrompt, { color: theme.textSecondary }]}>
@@ -1069,6 +1070,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
             <SpeakButton
               text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
               size="medium"
+              wordId={word.id}
             />
           </View>
           <ThemedText style={[styles.pinyinText, { color: theme.primary }]}>
@@ -1099,7 +1101,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
                 <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
                   {word.exampleSentence}
                 </ThemedText>
-                <SpeakButton text={word.exampleSentence} size="small" />
+                <SpeakButton text={word.exampleSentence} size="small" wordId={word.id} />
               </View>
               <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
                 {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}

@@ -20,6 +20,7 @@ import { capture as captureAnalytics } from "@/lib/analytics";
 interface SpeakButtonProps {
   text: string;
   size?: "small" | "medium" | "large";
+  wordId?: string;
 }
 
 const springConfig: WithSpringConfig = {
@@ -31,7 +32,7 @@ const springConfig: WithSpringConfig = {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export function SpeakButton({ text, size = "medium" }: SpeakButtonProps) {
+export function SpeakButton({ text, size = "medium", wordId }: SpeakButtonProps) {
   const { theme } = useTheme();
   const [isSpeaking, setIsSpeaking] = useState(false);
   const scale = useSharedValue(1);
@@ -59,7 +60,7 @@ export function SpeakButton({ text, size = "medium" }: SpeakButtonProps) {
 
     incrementSpeakCount(text).catch(() => {});
     captureAnalytics("speak_button_pressed", { size, text_length: text.length });
-    await speakChinese(text);
+    await speakChinese(text, { wordId });
     
     pulse.value = withSpring(1, springConfig);
     setIsSpeaking(false);

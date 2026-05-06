@@ -72,8 +72,8 @@ export default function SprintAudioPlaybackScreen() {
     };
   }, []);
 
-  const speak = (text: string, language: string): Promise<void> =>
-    speakWithLanguage(text, language, playbackRate);
+  const speak = (text: string, language: string, wordId?: string): Promise<void> =>
+    speakWithLanguage(text, language, playbackRate, { wordId });
 
   const delay = (ms: number): Promise<void> =>
     new Promise((resolve) => setTimeout(resolve, ms));
@@ -81,7 +81,7 @@ export default function SprintAudioPlaybackScreen() {
   const playWordSequence = async (word: Word) => {
     if (isCancelledRef.current) return;
     setCurrentPhase(t("phase_chinese_word"));
-    await speak(word.word, "zh-CN");
+    await speak(word.word, "zh-CN", word.id);
     if (isCancelledRef.current) return;
     await delay(400);
 
@@ -94,7 +94,7 @@ export default function SprintAudioPlaybackScreen() {
     for (let i = 0; i < 2; i++) {
       if (isCancelledRef.current) return;
       setCurrentPhase(`中国語例文 (${i + 1}/2)`);
-      await speak(word.exampleSentence, "zh-CN");
+      await speak(word.exampleSentence, "zh-CN", word.id);
       if (isCancelledRef.current) return;
       await delay(250);
     }
@@ -108,7 +108,7 @@ export default function SprintAudioPlaybackScreen() {
     for (let i = 0; i < 2; i++) {
       if (isCancelledRef.current) return;
       setCurrentPhase(`中国語例文 (${i + 3}/4)`);
-      await speak(word.exampleSentence, "zh-CN");
+      await speak(word.exampleSentence, "zh-CN", word.id);
       if (isCancelledRef.current) return;
       await delay(250);
     }

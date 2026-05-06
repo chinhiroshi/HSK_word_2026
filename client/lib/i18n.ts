@@ -410,6 +410,14 @@ const translations = {
     analytics_toggle_title: "利用状況の共有",
     analytics_toggle_desc: "アプリ改善のため、匿名の利用状況データを送信します（個人を特定する情報は含みません）。オフにするといつでも停止できます。",
     analytics_review_consent: "同意内容を確認する",
+
+    // ── Pronunciation region ──
+    pronunciation_region: "発音の地域",
+    pronunciation_region_desc: "音声読み上げで使う中国語の地域を選びます",
+    region_mainland: "大陸（普通話）",
+    region_taiwan: "台湾（國語）",
+    region_alternate: "交互（単語ごとに切替）",
+    region_alternate_desc: "同じ単語は常に同じ地域で読み上げます",
   },
 
   en: {
@@ -821,6 +829,14 @@ const translations = {
     analytics_toggle_title: "Share usage data",
     analytics_toggle_desc: "Send anonymous usage data to help improve the app (no personally identifying information). Turn off anytime to stop sharing.",
     analytics_review_consent: "Review consent",
+
+    // ── Pronunciation region ──
+    pronunciation_region: "Pronunciation Region",
+    pronunciation_region_desc: "Choose which Chinese accent is used for audio",
+    region_mainland: "Mainland (Mandarin)",
+    region_taiwan: "Taiwan (Guoyu)",
+    region_alternate: "Alternate (per word)",
+    region_alternate_desc: "Each word always uses the same region",
   },
 } as const;
 

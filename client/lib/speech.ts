@@ -1,7 +1,11 @@
 import * as Speech from "expo-speech";
 import { Platform } from "react-native";
 import { setAudioModeAsync } from "expo-audio";
-import { getSilentModeAudio } from "./storage";
+import {
+  getSilentModeAudio,
+  getChineseRegionPreference,
+  type ChineseRegion,
+} from "./storage";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -30,16 +34,69 @@ async function loadVoices(): Promise<void> {
 
 loadVoices();
 
-function findChineseVoice(): string | undefined {
-  if (availableVoices.length === 0) return undefined;
-  const zhVoice = availableVoices.find(
-    (v) => v.language === "zh-CN" || v.language === "zh_CN" || v.language.startsWith("zh")
-  );
-  return zhVoice?.identifier;
+let cachedRegion: ChineseRegion = "CN";
+let regionLoaded = false;
+
+async function loadRegion(): Promise<void> {
+  try {
+    cachedRegion = await getChineseRegionPreference();
+  } catch {
+    cachedRegion = "CN";
+  }
+  regionLoaded = true;
 }
 
-export async function speakChinese(text: string): Promise<void> {
-  await applyAudioMode();
+loadRegion();
+
+export function setChineseRegionCache(region: ChineseRegion): void {
+  cachedRegion = region;
+  regionLoaded = true;
+}
+
+export function getCurrentChineseRegion(): ChineseRegion {
+  return cachedRegion;
+}
+
+function hashString(s: string): number {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+export type SpeakOptions = {
+  wordId?: string;
+  rate?: number;
+};
+
+export function resolveChineseLanguage(opts?: { wordId?: string; text?: string }): "zh-CN" | "zh-TW" {
+  if (cachedRegion === "TW") return "zh-TW";
+  if (cachedRegion === "CN") return "zh-CN";
+  // ALTERNATE: deterministic stable per-word mapping via djb2 hash parity.
+  // Same wordId (and example sentence sharing that wordId) always resolves
+  // to the same region across the entire app and across restarts.
+  const key = opts?.wordId || opts?.text || "";
+  return hashString(key) % 2 === 0 ? "zh-CN" : "zh-TW";
+}
+
+function findVoiceForLanguage(language: string): string | undefined {
+  if (availableVoices.length === 0) return undefined;
+  const exact = availableVoices.find(
+    (v) => v.language === language || v.language === language.replace("-", "_")
+  );
+  if (exact) return exact.identifier;
+  const prefix = language.split("-")[0];
+  const partial = availableVoices.find((v) => v.language.startsWith(prefix));
+  return partial?.identifier;
+}
+
+async function ensureReady(): Promise<void> {
+  if (availableVoices.length === 0) await loadVoices();
+  if (!regionLoaded) await loadRegion();
+}
+
+async function stopIfSpeaking(): Promise<void> {
   try {
     const isSpeaking = await Speech.isSpeakingAsync();
     if (isSpeaking) {
@@ -49,18 +106,21 @@ export async function speakChinese(text: string): Promise<void> {
   } catch (e) {
     console.warn("Speech stop check failed:", e);
   }
+}
 
-  if (availableVoices.length === 0) {
-    await loadVoices();
-  }
+export async function speakChinese(text: string, options?: SpeakOptions): Promise<void> {
+  await applyAudioMode();
+  await stopIfSpeaking();
+  await ensureReady();
 
-  const voiceId = findChineseVoice();
+  const language = resolveChineseLanguage({ wordId: options?.wordId, text });
+  const voiceId = findVoiceForLanguage(language);
 
   return new Promise((resolve) => {
     try {
-      const options: Speech.SpeechOptions = {
-        language: "zh-CN",
-        rate: 0.8,
+      const speechOptions: Speech.SpeechOptions = {
+        language,
+        rate: options?.rate ?? 0.8,
         pitch: 1.0,
         onDone: () => resolve(),
         onError: (error) => {
@@ -71,10 +131,10 @@ export async function speakChinese(text: string): Promise<void> {
       };
 
       if (voiceId && Platform.OS !== "web") {
-        options.voice = voiceId;
+        speechOptions.voice = voiceId;
       }
 
-      Speech.speak(text, options);
+      Speech.speak(text, speechOptions);
     } catch (e) {
       console.warn("Speech.speak threw:", e);
       resolve();
@@ -82,22 +142,27 @@ export async function speakChinese(text: string): Promise<void> {
   });
 }
 
-export async function speakWithLanguage(text: string, language: string, rate: number = 0.8): Promise<void> {
+export async function speakWithLanguage(
+  text: string,
+  language: string,
+  rate: number = 0.8,
+  options?: SpeakOptions,
+): Promise<void> {
   await applyAudioMode();
-  try {
-    const isSpeaking = await Speech.isSpeakingAsync();
-    if (isSpeaking) {
-      await Speech.stop();
-      await delay(200);
-    }
-  } catch (e) {
-    console.warn("Speech stop check failed:", e);
+  await stopIfSpeaking();
+  await ensureReady();
+
+  let resolvedLanguage = language;
+  if (language === "zh-CN" || language === "zh-TW" || language === "zh") {
+    resolvedLanguage = resolveChineseLanguage({ wordId: options?.wordId, text });
   }
+
+  const voiceId = findVoiceForLanguage(resolvedLanguage);
 
   return new Promise((resolve) => {
     try {
-      Speech.speak(text, {
-        language,
+      const speechOptions: Speech.SpeechOptions = {
+        language: resolvedLanguage,
         rate,
         pitch: 1.0,
         onDone: () => resolve(),
@@ -106,7 +171,13 @@ export async function speakWithLanguage(text: string, language: string, rate: nu
           resolve();
         },
         onStopped: () => resolve(),
-      });
+      };
+
+      if (voiceId && Platform.OS !== "web") {
+        speechOptions.voice = voiceId;
+      }
+
+      Speech.speak(text, speechOptions);
     } catch (e) {
       console.warn("Speech.speak threw:", e);
       resolve();

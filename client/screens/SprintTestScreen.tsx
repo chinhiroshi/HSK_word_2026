@@ -190,7 +190,7 @@ export default function SprintTestScreen() {
     const text = currentWord.exampleSentence
       ? `${currentWord.word}。${currentWord.exampleSentence}`
       : currentWord.word;
-    speakChinese(text);
+    speakChinese(text, { wordId: currentWord.id });
   }, [currentIndex, loading, currentWord, isCompleted]);
 
   // Reset reveal when card changes
@@ -383,7 +383,7 @@ export default function SprintTestScreen() {
               const text = currentWord.exampleSentence
                 ? `${currentWord.word}。${currentWord.exampleSentence}`
                 : currentWord.word;
-              speakChinese(text);
+              speakChinese(text, { wordId: currentWord.id });
             }}
             style={[styles.replayButton, { backgroundColor: theme.primary + "18", borderColor: theme.primary + "40" }]}
           >

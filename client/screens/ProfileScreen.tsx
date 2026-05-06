@@ -45,7 +45,8 @@ import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
-import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio } from "@/lib/storage";
+import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio, getChineseRegionPreference, setChineseRegionPreference, type ChineseRegion } from "@/lib/storage";
+import { setChineseRegionCache } from "@/lib/speech";
 import { getAnalyticsConsent, setAnalyticsConsent, isAnalyticsAvailable } from "@/lib/analytics";
 import { AnalyticsConsentDialog } from "@/components/AnalyticsConsentDialog";
 import { speakChinese } from "@/lib/speech";
@@ -143,6 +144,7 @@ export default function ProfileScreen() {
   const [selectedLevel, setSelectedLevel] = useState<HskLevel>(4);
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
+  const [chineseRegion, setChineseRegionState] = useState<ChineseRegion>("CN");
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [upToDate, setUpToDate] = useState(false);
@@ -194,6 +196,9 @@ export default function ProfileScreen() {
     setLoading(false);
     const silentAudio = await getSilentModeAudio();
     setSilentModeAudioState(silentAudio);
+    const region = await getChineseRegionPreference();
+    setChineseRegionState(region);
+    setChineseRegionCache(region);
     const consent = await getAnalyticsConsent();
     // Opt-out model: anything other than explicit "denied" is treated as ON.
     setAnalyticsEnabled(consent !== "denied");
@@ -203,6 +208,15 @@ export default function ProfileScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSilentModeAudioState(value);
     await setSilentModeAudio(value);
+  };
+
+  const handleChineseRegionChange = async (region: ChineseRegion) => {
+    if (region === chineseRegion) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setChineseRegionState(region);
+    setChineseRegionCache(region);
+    await setChineseRegionPreference(region);
+    speakChinese("你好").catch(() => {});
   };
 
   const handleAnalyticsToggle = async (value: boolean) => {
@@ -735,6 +749,61 @@ export default function ProfileScreen() {
           </View>
         </View>
       ) : null}
+
+      {/* 発音地域設定 */}
+      <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border, marginBottom: Spacing.lg }]}>
+        <View style={styles.notifContent}>
+          <View style={[styles.notifIcon, { backgroundColor: theme.primary + "15" }]}>
+            <Feather name="globe" size={20} color={theme.primary} />
+          </View>
+          <View style={styles.notifTextContainer}>
+            <ThemedText style={styles.notifTitle}>{t("pronunciation_region")}</ThemedText>
+            <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
+              {t("pronunciation_region_desc")}
+            </ThemedText>
+          </View>
+        </View>
+        <View style={pronStyles.row}>
+          {([
+            { value: "CN" as ChineseRegion, label: t("region_mainland"), testID: "segment-pronunciation-region-cn" },
+            { value: "TW" as ChineseRegion, label: t("region_taiwan"), testID: "segment-pronunciation-region-tw" },
+            { value: "ALTERNATE" as ChineseRegion, label: t("region_alternate"), testID: "segment-pronunciation-region-alternate" },
+          ]).map((opt) => {
+            const active = chineseRegion === opt.value;
+            return (
+              <Pressable
+                key={opt.value}
+                testID={opt.testID}
+                onPress={() => handleChineseRegionChange(opt.value)}
+                style={[
+                  pronStyles.pill,
+                  {
+                    borderColor: active ? theme.primary : theme.border,
+                    backgroundColor: active ? theme.primary + "15" : "transparent",
+                  },
+                ]}
+              >
+                <ThemedText
+                  style={[
+                    pronStyles.pillText,
+                    { color: active ? theme.primary : theme.textSecondary },
+                  ]}
+                >
+                  {opt.label}
+                </ThemedText>
+              </Pressable>
+            );
+          })}
+        </View>
+        {chineseRegion === "ALTERNATE" ? (
+          <View style={[styles.notifInfoBox, { backgroundColor: theme.backgroundSubtle ?? theme.border + "30", borderColor: theme.border }]}>
+            <Feather name="info" size={13} color={theme.textSecondary} />
+            <ThemedText style={[styles.notifInfoText, { color: theme.textSecondary }]}>
+              {t("region_alternate_desc")}
+            </ThemedText>
+          </View>
+        ) : null}
+      </View>
 
       {isAnalyticsAvailable() ? (
         <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border, marginBottom: Spacing.lg }]}>
@@ -1934,5 +2003,26 @@ const styles = StyleSheet.create({
     lineHeight: 15,
     fontFamily: "Nunito_400Regular",
     marginBottom: Spacing.sm,
+  },
+});
+
+const pronStyles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
+  },
+  pill: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+  },
+  pillText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    fontWeight: "600",
   },
 });

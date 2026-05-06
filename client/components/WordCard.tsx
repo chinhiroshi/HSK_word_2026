@@ -170,7 +170,7 @@ export function WordCard({
                 </View>
               ) : null}
             </View>
-            <SpeakButton text={speakText} size="small" />
+            <SpeakButton text={speakText} size="small" wordId={word.id} />
           </View>
 
           <View style={styles.markActions}>
@@ -285,7 +285,7 @@ export function WordCard({
                   onPress={(e) => {
                     e.stopPropagation();
                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    speakChinese(word.longExample || "");
+                    speakChinese(word.longExample || "", { wordId: word.id });
                   }}
                   style={[styles.longExampleSpeakButton, { backgroundColor: `${theme.primary}15` }]}
                   hitSlop={8}

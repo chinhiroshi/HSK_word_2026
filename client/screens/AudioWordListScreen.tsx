@@ -109,7 +109,7 @@ function AudioWordCard({
           </View>
 
           <View style={styles.speakContainer}>
-            <SpeakButton text={speakText} size="medium" />
+            <SpeakButton text={speakText} size="medium" wordId={word.id} />
           </View>
 
           <Pressable
