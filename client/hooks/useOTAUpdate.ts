@@ -32,7 +32,84 @@ export type OtaHistoryEntry = {
   isEmbedded: boolean;
   /** Runtime version this update was built for. */
   runtimeVersion?: string;
+  /** EAS branch name (e.g. "production"). */
+  branchName?: string;
+  /** EAS update group UUID — links to the dashboard page for this publish. */
+  updateGroup?: string;
+  /** Channel that delivered this update. */
+  channel?: string;
+  /** Total asset count (launchAsset + assets[]). */
+  assetsCount?: number;
 };
+
+export type OtaDetail = {
+  updateId: string;
+  createdAt?: string;
+  branchName?: string;
+  updateGroup?: string;
+  channel?: string;
+  runtimeVersion?: string;
+  assetsCount?: number;
+  isEmbedded: boolean;
+};
+
+/** Build a normalized OtaDetail from an `Updates.useUpdates()` manifest entry. */
+export function extractOtaDetail(
+  m: unknown,
+  fallbackRuntime?: string,
+): OtaDetail | null {
+  if (!m || typeof m !== "object") return null;
+  const anyM = m as Record<string, any>;
+  const updateId =
+    typeof anyM.updateId === "string"
+      ? anyM.updateId
+      : typeof anyM.id === "string"
+      ? anyM.id
+      : "";
+  if (!updateId) return null;
+  const createdAt =
+    anyM.createdAt instanceof Date
+      ? anyM.createdAt.toISOString()
+      : typeof anyM.createdAt === "string"
+      ? anyM.createdAt
+      : undefined;
+  const meta = readManifestMeta(anyM.manifest ?? anyM);
+  return {
+    updateId,
+    createdAt,
+    branchName: meta.branchName,
+    updateGroup: meta.updateGroup,
+    channel: meta.channel,
+    runtimeVersion:
+      typeof anyM.runtimeVersion === "string" ? anyM.runtimeVersion : fallbackRuntime,
+    assetsCount: meta.assetsCount,
+    isEmbedded: false,
+  };
+}
+
+function readManifestMeta(m: unknown): {
+  branchName?: string;
+  updateGroup?: string;
+  channel?: string;
+  assetsCount?: number;
+} {
+  if (!m || typeof m !== "object") return {};
+  const anyM = m as Record<string, any>;
+  const metadata = (anyM.metadata ?? {}) as Record<string, any>;
+  const assets = Array.isArray(anyM.assets) ? anyM.assets.length : 0;
+  const launchAsset = anyM.launchAsset ? 1 : 0;
+  return {
+    branchName:
+      typeof metadata.branchName === "string" ? metadata.branchName : undefined,
+    updateGroup:
+      typeof metadata.updateGroup === "string" ? metadata.updateGroup : undefined,
+    channel:
+      typeof Updates.channel === "string" && Updates.channel
+        ? Updates.channel
+        : undefined,
+    assetsCount: assets + launchAsset || undefined,
+  };
+}
 
 async function persist(s: OtaStatus) {
   try {
@@ -83,12 +160,17 @@ export async function recordCurrentRunningUpdate(): Promise<OtaHistoryEntry[]> {
     return history; // already at top — no change
   }
 
+  const meta = readManifestMeta(Updates.manifest);
   const entry: OtaHistoryEntry = {
     updateId,
     createdAt,
     appliedAt: new Date().toISOString(),
     isEmbedded,
     runtimeVersion,
+    branchName: meta.branchName,
+    updateGroup: meta.updateGroup,
+    channel: meta.channel,
+    assetsCount: meta.assetsCount,
   };
   const next = [entry, ...history].slice(0, OTA_HISTORY_MAX);
   try {

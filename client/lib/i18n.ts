@@ -283,6 +283,10 @@ const translations = {
     ota_no_previous: "履歴なし",
     ota_no_pending: "未適用のアップデートはありません",
     ota_applied_at: "適用日時",
+    ota_branch: "ブランチ",
+    ota_update_group: "Update Group",
+    ota_assets_count: "アセット数",
+    ota_open_dashboard: "EASダッシュボードで開く",
     subscription_active: "プレミアム会員",
     subscription_inactive: "無料プラン",
 
@@ -712,6 +716,10 @@ const translations = {
     ota_no_previous: "No previous version on record",
     ota_no_pending: "No pending update",
     ota_applied_at: "Applied at",
+    ota_branch: "Branch",
+    ota_update_group: "Update Group",
+    ota_assets_count: "Assets",
+    ota_open_dashboard: "Open in EAS dashboard",
     subscription_active: "Premium Member",
     subscription_inactive: "Free Plan",
 

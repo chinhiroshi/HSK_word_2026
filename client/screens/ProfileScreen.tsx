@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { View, StyleSheet, Pressable, Alert, Platform, Modal, Linking, Switch } from "react-native";
 import { reloadAppAsync } from "expo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -15,8 +15,10 @@ import {
   getOtaStatus,
   getOtaHistory,
   recordCurrentRunningUpdate,
+  extractOtaDetail,
   type OtaStatus,
   type OtaHistoryEntry,
+  type OtaDetail,
 } from "@/hooks/useOTAUpdate";
 import {
   getStudyNotifEnabled,
@@ -63,6 +65,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useAppUpdate } from "@/navigation/MainTabNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
+import type { TranslationKey } from "@/lib/i18n";
 import { getStoreUrl } from "@/constants/links";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
@@ -130,6 +133,102 @@ const HSK_WORD_COUNTS: Record<HskLevel, number> = {
   6: 2500,
 } as const;
 
+function OtaDetailRows({
+  detail,
+  idTestID,
+  t,
+  theme,
+}: {
+  detail: OtaDetail;
+  idTestID?: string;
+  t: (k: TranslationKey) => string;
+  theme: { text: string; textSecondary: string; primary: string; border: string; backgroundSecondary: string };
+}) {
+  const projectId = (Constants.expoConfig?.extra as { eas?: { projectId?: string } } | undefined)
+    ?.eas?.projectId;
+  const dashboardUrl =
+    !detail.isEmbedded && projectId && detail.updateGroup
+      ? `https://expo.dev/accounts/_/projects/${projectId}/updates/${detail.updateGroup}`
+      : null;
+
+  if (detail.isEmbedded) {
+    return (
+      <>
+        <ThemedText
+          testID={idTestID}
+          style={[styles.otaLine, { color: theme.textSecondary }]}
+        >
+          {t("ota_embedded")}
+        </ThemedText>
+        {detail.runtimeVersion ? (
+          <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+            {t("ota_runtime")}: {detail.runtimeVersion}
+            {detail.channel ? `  ·  ${t("ota_channel")}: ${detail.channel}` : ""}
+          </ThemedText>
+        ) : null}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ThemedText
+        testID={idTestID}
+        selectable
+        style={[styles.otaLine, styles.otaMono, { color: theme.textSecondary }]}
+      >
+        {t("ota_update_id")}: {detail.updateId}
+      </ThemedText>
+      {detail.createdAt ? (
+        <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+          {t("ota_created_at")}: {formatOtaTimestamp(detail.createdAt)}
+        </ThemedText>
+      ) : null}
+      {detail.branchName || detail.channel ? (
+        <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+          {detail.branchName ? `${t("ota_branch")}: ${detail.branchName}` : ""}
+          {detail.branchName && detail.channel ? "  ·  " : ""}
+          {detail.channel ? `${t("ota_channel")}: ${detail.channel}` : ""}
+        </ThemedText>
+      ) : null}
+      {detail.runtimeVersion || typeof detail.assetsCount === "number" ? (
+        <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+          {detail.runtimeVersion ? `${t("ota_runtime")}: ${detail.runtimeVersion}` : ""}
+          {detail.runtimeVersion && typeof detail.assetsCount === "number" ? "  ·  " : ""}
+          {typeof detail.assetsCount === "number"
+            ? `${t("ota_assets_count")}: ${detail.assetsCount}`
+            : ""}
+        </ThemedText>
+      ) : null}
+      {detail.updateGroup ? (
+        <ThemedText
+          selectable
+          style={[styles.otaLine, styles.otaMono, { color: theme.textSecondary }]}
+        >
+          {t("ota_update_group")}: {detail.updateGroup}
+        </ThemedText>
+      ) : null}
+      {dashboardUrl ? (
+        <Pressable
+          onPress={() => {
+            void Linking.openURL(dashboardUrl);
+          }}
+          style={[
+            styles.otaDashboardLink,
+            { borderColor: theme.border, backgroundColor: theme.backgroundSecondary },
+          ]}
+          testID="button-open-eas-dashboard"
+        >
+          <Feather name="external-link" size={12} color={theme.primary} />
+          <ThemedText style={[styles.otaDashboardLinkText, { color: theme.primary }]}>
+            {t("ota_open_dashboard")}
+          </ThemedText>
+        </Pressable>
+      ) : null}
+    </>
+  );
+}
+
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -163,6 +262,13 @@ export default function ProfileScreen() {
   const [otaHistory, setOtaHistory] = useState<OtaHistoryEntry[]>([]);
   const [otaApplying, setOtaApplying] = useState(false);
   const updates = Updates.useUpdates();
+  const currentManifestDetail = useMemo(
+    () => extractOtaDetail(Updates.manifest),
+    // Updates.manifest is module-level and stable per app session; depend on
+    // the updateId so we recompute if the bundle is swapped out (rare).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [Updates.updateId],
+  );
   const longPressConsumedRef = React.useRef(false);
 
   useEffect(() => {
@@ -998,24 +1104,32 @@ export default function ProfileScreen() {
               <ThemedText style={[styles.otaSubheader, { color: theme.text }]}>
                 {t("ota_current_section")}
               </ThemedText>
-              <ThemedText
-                testID="text-ota-current-id"
-                style={[styles.otaLine, { color: theme.textSecondary }]}
-              >
-                {Updates.isEmbeddedLaunch
-                  ? t("ota_embedded")
-                  : `${t("ota_update_id")}: ${Updates.updateId?.slice(0, 8) ?? "—"}`}
-              </ThemedText>
-              {!Updates.isEmbeddedLaunch && Updates.createdAt ? (
-                <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
-                  {t("ota_created_at")}: {formatOtaDate(Updates.createdAt)}
-                </ThemedText>
-              ) : null}
-              <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
-                {t("ota_runtime")}: {Updates.runtimeVersion ?? "—"}
-                {"  ·  "}
-                {t("ota_channel")}: {Updates.channel || "—"}
-              </ThemedText>
+              <OtaDetailRows
+                detail={
+                  Updates.isEmbeddedLaunch
+                    ? {
+                        updateId: "embedded",
+                        runtimeVersion: Updates.runtimeVersion ?? undefined,
+                        channel: Updates.channel || undefined,
+                        isEmbedded: true,
+                      }
+                    : {
+                        updateId: Updates.updateId ?? "embedded",
+                        createdAt: Updates.createdAt
+                          ? new Date(Updates.createdAt).toISOString()
+                          : undefined,
+                        branchName: currentManifestDetail?.branchName,
+                        updateGroup: currentManifestDetail?.updateGroup,
+                        channel: Updates.channel || undefined,
+                        runtimeVersion: Updates.runtimeVersion ?? undefined,
+                        assetsCount: currentManifestDetail?.assetsCount,
+                        isEmbedded: false,
+                      }
+                }
+                idTestID="text-ota-current-id"
+                t={t}
+                theme={theme}
+              />
 
               {/* ── 直前のバージョン ── */}
               <ThemedText
@@ -1029,20 +1143,21 @@ export default function ProfileScreen() {
               </ThemedText>
               {otaHistory.length >= 2 ? (
                 <>
-                  <ThemedText
-                    testID="text-ota-previous-id"
-                    style={[styles.otaLine, { color: theme.textSecondary }]}
-                  >
-                    {otaHistory[1].isEmbedded
-                      ? t("ota_embedded")
-                      : `${t("ota_update_id")}: ${otaHistory[1].updateId.slice(0, 8)}`}
-                  </ThemedText>
-                  {otaHistory[1].createdAt ? (
-                    <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
-                      {t("ota_created_at")}:{" "}
-                      {formatOtaTimestamp(otaHistory[1].createdAt)}
-                    </ThemedText>
-                  ) : null}
+                  <OtaDetailRows
+                    detail={{
+                      updateId: otaHistory[1].updateId,
+                      createdAt: otaHistory[1].createdAt,
+                      branchName: otaHistory[1].branchName,
+                      updateGroup: otaHistory[1].updateGroup,
+                      channel: otaHistory[1].channel,
+                      runtimeVersion: otaHistory[1].runtimeVersion,
+                      assetsCount: otaHistory[1].assetsCount,
+                      isEmbedded: otaHistory[1].isEmbedded,
+                    }}
+                    idTestID="text-ota-previous-id"
+                    t={t}
+                    theme={theme}
+                  />
                   <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
                     {t("ota_applied_at")}:{" "}
                     {formatOtaTimestamp(otaHistory[1].appliedAt)}
@@ -1075,16 +1190,19 @@ export default function ProfileScreen() {
                   >
                     {t("ota_pending_downloaded")}
                   </ThemedText>
-                  <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
-                    {t("ota_update_id")}:{" "}
-                    {updates.downloadedUpdate.updateId?.slice(0, 8) ?? "—"}
-                  </ThemedText>
-                  {updates.downloadedUpdate.createdAt ? (
-                    <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
-                      {t("ota_created_at")}:{" "}
-                      {formatOtaDate(updates.downloadedUpdate.createdAt)}
-                    </ThemedText>
-                  ) : null}
+                  <OtaDetailRows
+                    detail={
+                      extractOtaDetail(
+                        updates.downloadedUpdate,
+                        Updates.runtimeVersion ?? undefined,
+                      ) ?? {
+                        updateId: updates.downloadedUpdate.updateId ?? "—",
+                        isEmbedded: false,
+                      }
+                    }
+                    t={t}
+                    theme={theme}
+                  />
                   <Pressable
                     testID="button-apply-pending-ota"
                     disabled={otaApplying}
@@ -1127,16 +1245,19 @@ export default function ProfileScreen() {
                   >
                     {t("ota_pending_available")}
                   </ThemedText>
-                  <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
-                    {t("ota_update_id")}:{" "}
-                    {updates.availableUpdate.updateId?.slice(0, 8) ?? "—"}
-                  </ThemedText>
-                  {updates.availableUpdate.createdAt ? (
-                    <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
-                      {t("ota_created_at")}:{" "}
-                      {formatOtaDate(updates.availableUpdate.createdAt)}
-                    </ThemedText>
-                  ) : null}
+                  <OtaDetailRows
+                    detail={
+                      extractOtaDetail(
+                        updates.availableUpdate,
+                        Updates.runtimeVersion ?? undefined,
+                      ) ?? {
+                        updateId: updates.availableUpdate.updateId ?? "—",
+                        isEmbedded: false,
+                      }
+                    }
+                    t={t}
+                    theme={theme}
+                  />
                 </>
               ) : (
                 <ThemedText
@@ -1834,6 +1955,29 @@ const styles = StyleSheet.create({
   },
   otaSubheaderSpaced: {
     marginTop: Spacing.sm,
+  },
+  otaMono: {
+    fontFamily: Platform.select({
+      ios: "Menlo",
+      android: "monospace",
+      default: "monospace",
+    }),
+    fontSize: 10,
+  },
+  otaDashboardLink: {
+    marginTop: Spacing.xs,
+    alignSelf: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    borderWidth: 1,
+    borderRadius: BorderRadius.sm,
+    paddingVertical: 4,
+    paddingHorizontal: Spacing.sm,
+  },
+  otaDashboardLinkText: {
+    fontSize: 11,
+    fontFamily: "Nunito_600SemiBold",
   },
   otaLine: {
     fontSize: 11,
