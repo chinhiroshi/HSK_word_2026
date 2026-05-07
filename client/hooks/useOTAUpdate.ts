@@ -4,6 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { capture } from "@/lib/analytics";
 
 const OTA_STATUS_KEY = "@hskhsk_ota_status_v1";
+const OTA_HISTORY_KEY = "@hskhsk_ota_history_v1";
+const OTA_HISTORY_MAX = 5;
 
 export type OtaStatusResult =
   | "no_update"
@@ -17,6 +19,19 @@ export type OtaStatus = {
   result: OtaStatusResult;
   errorMessage?: string;
   manifestUpdateId?: string;
+};
+
+export type OtaHistoryEntry = {
+  /** Update ID — "embedded" for the bundled JS, otherwise the EAS update UUID. */
+  updateId: string;
+  /** When EAS built this update bundle (ISO). Undefined for the embedded bundle. */
+  createdAt?: string;
+  /** When this device first observed itself running this update (ISO). */
+  appliedAt: string;
+  /** True when this entry represents the embedded build (no OTA applied). */
+  isEmbedded: boolean;
+  /** Runtime version this update was built for. */
+  runtimeVersion?: string;
 };
 
 async function persist(s: OtaStatus) {
@@ -34,6 +49,54 @@ export async function getOtaStatus(): Promise<OtaStatus | null> {
   } catch {
     return null;
   }
+}
+
+export async function getOtaHistory(): Promise<OtaHistoryEntry[]> {
+  try {
+    const raw = await AsyncStorage.getItem(OTA_HISTORY_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as OtaHistoryEntry[]) : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Records the currently running update into local history if it differs from
+ * the most recent entry. Newest entries first; capped at OTA_HISTORY_MAX.
+ * Returns the resulting history.
+ */
+export async function recordCurrentRunningUpdate(): Promise<OtaHistoryEntry[]> {
+  const isEmbedded = !!Updates.isEmbeddedLaunch;
+  const updateId = isEmbedded
+    ? "embedded"
+    : Updates.updateId || "embedded";
+  const createdAt = Updates.createdAt
+    ? new Date(Updates.createdAt).toISOString()
+    : undefined;
+  const runtimeVersion = Updates.runtimeVersion || undefined;
+
+  const history = await getOtaHistory();
+  const head = history[0];
+  if (head && head.updateId === updateId) {
+    return history; // already at top — no change
+  }
+
+  const entry: OtaHistoryEntry = {
+    updateId,
+    createdAt,
+    appliedAt: new Date().toISOString(),
+    isEmbedded,
+    runtimeVersion,
+  };
+  const next = [entry, ...history].slice(0, OTA_HISTORY_MAX);
+  try {
+    await AsyncStorage.setItem(OTA_HISTORY_KEY, JSON.stringify(next));
+  } catch {
+    // best-effort persistence
+  }
+  return next;
 }
 
 /**
@@ -99,6 +162,9 @@ export async function forceCheckOTA(): Promise<OtaStatus> {
 export function useOTAUpdate() {
   useEffect(() => {
     const startedAt = new Date().toISOString();
+
+    // Record what's running now into history before anything else.
+    void recordCurrentRunningUpdate();
 
     if (__DEV__) {
       void persist({ lastCheckedAt: startedAt, result: "skipped_dev" });

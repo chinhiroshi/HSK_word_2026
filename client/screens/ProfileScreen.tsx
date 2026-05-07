@@ -10,7 +10,14 @@ import {
 } from "@/lib/reviewPrompt";
 import Constants from "expo-constants";
 import * as Updates from "expo-updates";
-import { forceCheckOTA, getOtaStatus, type OtaStatus } from "@/hooks/useOTAUpdate";
+import {
+  forceCheckOTA,
+  getOtaStatus,
+  getOtaHistory,
+  recordCurrentRunningUpdate,
+  type OtaStatus,
+  type OtaHistoryEntry,
+} from "@/hooks/useOTAUpdate";
 import {
   getStudyNotifEnabled,
   getStudyNotifTime,
@@ -153,13 +160,19 @@ export default function ProfileScreen() {
   const [devConsentPreviewVisible, setDevConsentPreviewVisible] = useState(false);
   const [otaStatus, setOtaStatus] = useState<OtaStatus | null>(null);
   const [otaForceChecking, setOtaForceChecking] = useState(false);
+  const [otaHistory, setOtaHistory] = useState<OtaHistoryEntry[]>([]);
+  const [otaApplying, setOtaApplying] = useState(false);
+  const updates = Updates.useUpdates();
   const longPressConsumedRef = React.useRef(false);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const s = await getOtaStatus();
-      if (!cancelled) setOtaStatus(s);
+      const [s, h] = await Promise.all([getOtaStatus(), getOtaHistory()]);
+      if (!cancelled) {
+        setOtaStatus(s);
+        setOtaHistory(h);
+      }
     })();
     return () => {
       cancelled = true;
@@ -170,8 +183,13 @@ export default function ProfileScreen() {
     useCallback(() => {
       let cancelled = false;
       (async () => {
-        const s = await getOtaStatus();
-        if (!cancelled) setOtaStatus(s);
+        // Make sure the currently running update is in history before reading it.
+        await recordCurrentRunningUpdate();
+        const [s, h] = await Promise.all([getOtaStatus(), getOtaHistory()]);
+        if (!cancelled) {
+          setOtaStatus(s);
+          setOtaHistory(h);
+        }
       })();
       return () => {
         cancelled = true;
@@ -976,8 +994,12 @@ export default function ProfileScreen() {
             </ThemedText>
           ) : (
             <>
+              {/* ── 現在適用中 ── */}
+              <ThemedText style={[styles.otaSubheader, { color: theme.text }]}>
+                {t("ota_current_section")}
+              </ThemedText>
               <ThemedText
-                testID="text-ota-state"
+                testID="text-ota-current-id"
                 style={[styles.otaLine, { color: theme.textSecondary }]}
               >
                 {Updates.isEmbeddedLaunch
@@ -994,10 +1016,146 @@ export default function ProfileScreen() {
                 {"  ·  "}
                 {t("ota_channel")}: {Updates.channel || "—"}
               </ThemedText>
+
+              {/* ── 直前のバージョン ── */}
+              <ThemedText
+                style={[
+                  styles.otaSubheader,
+                  styles.otaSubheaderSpaced,
+                  { color: theme.text },
+                ]}
+              >
+                {t("ota_previous_section")}
+              </ThemedText>
+              {otaHistory.length >= 2 ? (
+                <>
+                  <ThemedText
+                    testID="text-ota-previous-id"
+                    style={[styles.otaLine, { color: theme.textSecondary }]}
+                  >
+                    {otaHistory[1].isEmbedded
+                      ? t("ota_embedded")
+                      : `${t("ota_update_id")}: ${otaHistory[1].updateId.slice(0, 8)}`}
+                  </ThemedText>
+                  {otaHistory[1].createdAt ? (
+                    <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                      {t("ota_created_at")}:{" "}
+                      {formatOtaTimestamp(otaHistory[1].createdAt)}
+                    </ThemedText>
+                  ) : null}
+                  <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                    {t("ota_applied_at")}:{" "}
+                    {formatOtaTimestamp(otaHistory[1].appliedAt)}
+                  </ThemedText>
+                </>
+              ) : (
+                <ThemedText
+                  testID="text-ota-previous-empty"
+                  style={[styles.otaLine, { color: theme.textSecondary }]}
+                >
+                  {t("ota_no_previous")}
+                </ThemedText>
+              )}
+
+              {/* ── 未適用のアップデート ── */}
+              <ThemedText
+                style={[
+                  styles.otaSubheader,
+                  styles.otaSubheaderSpaced,
+                  { color: theme.text },
+                ]}
+              >
+                {t("ota_pending_section")}
+              </ThemedText>
+              {updates.isUpdatePending && updates.downloadedUpdate ? (
+                <>
+                  <ThemedText
+                    testID="text-ota-pending-state"
+                    style={[styles.otaLine, { color: theme.success }]}
+                  >
+                    {t("ota_pending_downloaded")}
+                  </ThemedText>
+                  <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                    {t("ota_update_id")}:{" "}
+                    {updates.downloadedUpdate.updateId?.slice(0, 8) ?? "—"}
+                  </ThemedText>
+                  {updates.downloadedUpdate.createdAt ? (
+                    <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                      {t("ota_created_at")}:{" "}
+                      {formatOtaDate(updates.downloadedUpdate.createdAt)}
+                    </ThemedText>
+                  ) : null}
+                  <Pressable
+                    testID="button-apply-pending-ota"
+                    disabled={otaApplying}
+                    onPress={async () => {
+                      if (otaApplying) return;
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                      setOtaApplying(true);
+                      try {
+                        await Updates.reloadAsync();
+                      } catch {
+                        setOtaApplying(false);
+                      }
+                    }}
+                    style={[
+                      styles.otaForceButton,
+                      {
+                        backgroundColor: `${theme.success}15`,
+                        borderColor: theme.success,
+                        opacity: otaApplying ? 0.6 : 1,
+                      },
+                    ]}
+                  >
+                    <Feather
+                      name={otaApplying ? "loader" : "refresh-cw"}
+                      size={14}
+                      color={theme.success}
+                    />
+                    <ThemedText style={[styles.otaForceButtonText, { color: theme.success }]}>
+                      {otaApplying
+                        ? t("ota_pending_applying")
+                        : t("ota_pending_apply_now")}
+                    </ThemedText>
+                  </Pressable>
+                </>
+              ) : updates.isUpdateAvailable && updates.availableUpdate ? (
+                <>
+                  <ThemedText
+                    testID="text-ota-pending-state"
+                    style={[styles.otaLine, { color: theme.primary }]}
+                  >
+                    {t("ota_pending_available")}
+                  </ThemedText>
+                  <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                    {t("ota_update_id")}:{" "}
+                    {updates.availableUpdate.updateId?.slice(0, 8) ?? "—"}
+                  </ThemedText>
+                  {updates.availableUpdate.createdAt ? (
+                    <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
+                      {t("ota_created_at")}:{" "}
+                      {formatOtaDate(updates.availableUpdate.createdAt)}
+                    </ThemedText>
+                  ) : null}
+                </>
+              ) : (
+                <ThemedText
+                  testID="text-ota-pending-state"
+                  style={[styles.otaLine, { color: theme.textSecondary }]}
+                >
+                  {t("ota_no_pending")}
+                </ThemedText>
+              )}
+
+              {/* ── 最終チェック ＋ 手動チェックボタン ── */}
               {otaStatus ? (
                 <ThemedText
                   testID="text-ota-last-check"
-                  style={[styles.otaLine, { color: theme.textSecondary }]}
+                  style={[
+                    styles.otaLine,
+                    styles.otaSubheaderSpaced,
+                    { color: theme.textSecondary },
+                  ]}
                 >
                   {t("ota_last_check")}: {formatOtaTimestamp(otaStatus.lastCheckedAt)}
                   {" · "}
@@ -1668,6 +1826,14 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
     marginBottom: 4,
+  },
+  otaSubheader: {
+    fontSize: 12,
+    fontFamily: "Nunito_700Bold",
+    marginBottom: 2,
+  },
+  otaSubheaderSpaced: {
+    marginTop: Spacing.sm,
   },
   otaLine: {
     fontSize: 11,
