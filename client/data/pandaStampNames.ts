@@ -11,42 +11,43 @@
 import { PANDA_SPECIALS, PANDA_STAMP_ORDER } from "./pandaStamps";
 
 // Indexed 0..34, matches PANDA_SPECIALS order in pandaStamps.ts.
+// Names verified against the actual sticker artwork in assets/images.
 export const PANDA_SPECIAL_NAMES: string[] = [
-  "王様パンダ",
-  "車掌さんパンダ",
-  "騎士パンダ",
-  "お姫様パンダ",
-  "魔法使いパンダ",
-  "バレリーナパンダ",
-  "オペラ歌手パンダ",
-  "サーカス団長パンダ",
-  "京劇パンダ",
-  "アラビア商人パンダ",
-  "ファラオパンダ",
-  "マトリョーシカパンダ",
-  "お医者さんパンダ",
-  "仮面舞踏会パンダ",
-  "画家パンダ",
-  "時計職人パンダ",
-  "ローマ兵士パンダ",
-  "ヴァイキングパンダ",
-  "宮廷シェフパンダ",
-  "フランス貴族パンダ",
-  "郵便屋さんパンダ",
-  "灯台守パンダ",
-  "探検家パンダ",
-  "吟遊詩人パンダ",
-  "人形遣いパンダ",
-  "万博案内人パンダ",
-  "トルコ職人パンダ",
-  "スイス時計師パンダ",
-  "モンゴル騎手パンダ",
-  "南国ダンサーパンダ",
-  "雪国郵便屋パンダ",
-  "西洋貴族パンダ",
-  "執事パンダ",
-  "茶道家パンダ",
-  "占い師パンダ",
+  "王様パンダ",         // 0: panda-stamp-special.png — gold crown, face only
+  "車掌さんパンダ",     // 1: special-2 — train conductor with lantern
+  "騎士パンダ",         // 2: special-3 — knight with sword and shield
+  "戴冠王パンダ",       // 3: special-4 — full king with robe, scepter, orb
+  "お姫様パンダ",       // 4: special-5 — pink dress, tiara, bouquet
+  "魔法使いパンダ",     // 5: special-6 — starry wizard hat, wand, spellbook
+  "バイオリン奏者パンダ", // 6: special-7 — Mozart wig with violin
+  "バレリーナパンダ",   // 7: special-8 — pink tutu, ballet shoes
+  "オペラ歌手パンダ",   // 8: special-9 — Valkyrie horned-winged helmet, opera pose
+  "サーカス団長パンダ", // 9: special-10 — red top hat, megaphone, baton
+  "京劇パンダ",         // 10: special-11 — Peking opera headdress
+  "アラビア商人パンダ", // 11: special-12 — turban, Aladdin lamp, money pouch
+  "ファラオパンダ",     // 12: special-13 — Egyptian nemes headdress
+  "マトリョーシカパンダ", // 13: special-14 — Russian doll dress
+  "お医者さんパンダ",   // 14: special-15 — white coat, stethoscope, clipboard
+  "仮面舞踏会パンダ",   // 15: special-16 — Venetian mask, fan, gown
+  "画家パンダ",         // 16: special-17 — beret, palette, easel
+  "時計職人パンダ",     // 17: special-18 — magnifying glass, pocket watch, gears
+  "ローマ兵士パンダ",   // 18: special-19 — red plume helmet, eagle shield
+  "ヴァイキングパンダ", // 19: special-20 — horned helmet, axe, runic shield
+  "シェフパンダ",       // 20: special-21 — chef toque, wooden spoon, pot
+  "フランス貴族パンダ", // 21: special-22 — white wig, ornate gold coat, fan
+  "郵便屋さんパンダ",   // 22: special-23 — blue postal uniform, mail bag
+  "灯台守パンダ",       // 23: special-24 — captain hat, lantern, lighthouse
+  "探検家パンダ",       // 24: special-25 — aviator cap, map, compass
+  "吟遊詩人パンダ",     // 25: special-26 — green hat with feather, lute
+  "人形遣いパンダ",     // 26: special-27 — top hat, tuxedo, marionette
+  "万博案内人パンダ",   // 27: special-28 — red guide uniform, flag, tickets
+  "トルコ職人パンダ",   // 28: special-29 — fez, ornate vest, lantern, plate
+  "スイス時計師パンダ", // 29: special-30 — Tirol hat, edelweiss, pocket watch, lederhosen
+  "モンゴル騎手パンダ", // 30: special-31 — fur hat, bow and arrows, toy horse
+  "フラダンサーパンダ", // 31: special-32 — flower lei, grass skirt
+  "雪国郵便屋パンダ",   // 32: special-33 — red knit hat, winter coat, mailbag
+  "西洋貴族パンダ",     // 33: special-34 — tricorn hat, ornate green coat, cane
+  "執事パンダ",         // 34: special-35 — bowler hat, tuxedo, tea tray
 ];
 
 // Keyed by stamp number 1..210 (matches PANDA_STAMPS keys in pandaStamps.ts).
