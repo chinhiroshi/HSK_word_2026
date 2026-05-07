@@ -270,6 +270,7 @@ export default function ProfileScreen() {
   const [otaForceChecking, setOtaForceChecking] = useState(false);
   const [otaHistory, setOtaHistory] = useState<OtaHistoryEntry[]>([]);
   const [otaApplying, setOtaApplying] = useState(false);
+  const [otaUnlocked, setOtaUnlocked] = useState(false);
   const updates = Updates.useUpdates();
   const currentManifestDetail = useMemo(
     () => extractOtaDetail(Updates.manifest),
@@ -1046,13 +1047,25 @@ export default function ProfileScreen() {
           <View style={[styles.versionIconWrap, { backgroundColor: `${theme.primary}15` }]}>
             <Feather name="smartphone" size={20} color={theme.primary} />
           </View>
-          <View style={styles.versionTextWrap}>
+          <Pressable
+            testID="button-toggle-ota-unlock"
+            style={styles.versionTextWrap}
+            delayLongPress={5000}
+            onLongPress={() => {
+              Haptics.notificationAsync(
+                otaUnlocked
+                  ? Haptics.NotificationFeedbackType.Warning
+                  : Haptics.NotificationFeedbackType.Success,
+              );
+              setOtaUnlocked((v) => !v);
+            }}
+          >
             <ThemedText style={styles.versionLabel}>{t("app_version")}</ThemedText>
             <ThemedText style={[styles.versionNumber, { color: theme.textSecondary }]}>
               {Constants.nativeAppVersion ?? Constants.expoConfig?.version ?? "—"}
               {updateInfo.available ? `  →  v${updateInfo.latestVersion}` : ""}
             </ThemedText>
-          </View>
+          </Pressable>
           <Pressable
             testID="button-check-update"
             onPress={async () => {
@@ -1084,7 +1097,8 @@ export default function ProfileScreen() {
           </Pressable>
         </View>
 
-        {/* OTA 情報 */}
+        {/* OTA 情報 (バージョン長押し5秒で表示) */}
+        {otaUnlocked ? (
         <View
           testID="ota-info-block"
           style={[styles.otaBlock, { borderTopColor: theme.border }]}
@@ -1329,6 +1343,7 @@ export default function ProfileScreen() {
             </>
           )}
         </View>
+        ) : null}
       </View>
       {/* 開発者モード: プレミアム切り替え (開発ビルドのみ表示) */}
       {__DEV__ ? (
