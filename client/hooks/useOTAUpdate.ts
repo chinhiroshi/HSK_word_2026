@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { capture } from "@/lib/analytics";
+import { OTA_MESSAGE } from "@/lib/otaBuildInfo";
 
 const OTA_STATUS_KEY = "@hskhsk_ota_status_v1";
 const OTA_HISTORY_KEY = "@hskhsk_ota_history_v1";
@@ -40,6 +41,8 @@ export type OtaHistoryEntry = {
   channel?: string;
   /** Total asset count (launchAsset + assets[]). */
   assetsCount?: number;
+  /** Publish message (--message) baked into the bundle at export time. */
+  message?: string;
 };
 
 export type OtaDetail = {
@@ -51,6 +54,7 @@ export type OtaDetail = {
   runtimeVersion?: string;
   assetsCount?: number;
   isEmbedded: boolean;
+  message?: string;
 };
 
 /** Build a normalized OtaDetail from an `Updates.useUpdates()` manifest entry. */
@@ -171,6 +175,7 @@ export async function recordCurrentRunningUpdate(): Promise<OtaHistoryEntry[]> {
     updateGroup: meta.updateGroup,
     channel: meta.channel,
     assetsCount: meta.assetsCount,
+    message: OTA_MESSAGE,
   };
   const next = [entry, ...history].slice(0, OTA_HISTORY_MAX);
   try {

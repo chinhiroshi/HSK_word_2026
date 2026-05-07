@@ -287,6 +287,7 @@ const translations = {
     ota_update_group: "Update Group",
     ota_assets_count: "アセット数",
     ota_open_dashboard: "EASダッシュボードで開く",
+    ota_message: "メッセージ",
     subscription_active: "プレミアム会員",
     subscription_inactive: "無料プラン",
 
@@ -720,6 +721,7 @@ const translations = {
     ota_update_group: "Update Group",
     ota_assets_count: "Assets",
     ota_open_dashboard: "Open in EAS dashboard",
+    ota_message: "Message",
     subscription_active: "Premium Member",
     subscription_inactive: "Free Plan",
 

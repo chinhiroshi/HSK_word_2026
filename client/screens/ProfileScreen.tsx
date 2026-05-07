@@ -66,6 +66,7 @@ import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useAppUpdate } from "@/navigation/MainTabNavigator";
 import { useI18n } from "@/contexts/LanguageContext";
 import type { TranslationKey } from "@/lib/i18n";
+import { OTA_MESSAGE } from "@/lib/otaBuildInfo";
 import { getStoreUrl } from "@/constants/links";
 
 const HSK_AVATARS: Record<HskLevel, any> = {
@@ -182,6 +183,14 @@ function OtaDetailRows({
       {detail.createdAt ? (
         <ThemedText style={[styles.otaLine, { color: theme.textSecondary }]}>
           {t("ota_created_at")}: {formatOtaTimestamp(detail.createdAt)}
+        </ThemedText>
+      ) : null}
+      {detail.message ? (
+        <ThemedText
+          style={[styles.otaLine, { color: theme.text }]}
+          testID="text-ota-message"
+        >
+          {t("ota_message")}: {detail.message}
         </ThemedText>
       ) : null}
       {detail.branchName || detail.channel ? (
@@ -1124,6 +1133,7 @@ export default function ProfileScreen() {
                         runtimeVersion: Updates.runtimeVersion ?? undefined,
                         assetsCount: currentManifestDetail?.assetsCount,
                         isEmbedded: false,
+                        message: OTA_MESSAGE,
                       }
                 }
                 idTestID="text-ota-current-id"
@@ -1153,6 +1163,7 @@ export default function ProfileScreen() {
                       runtimeVersion: otaHistory[1].runtimeVersion,
                       assetsCount: otaHistory[1].assetsCount,
                       isEmbedded: otaHistory[1].isEmbedded,
+                      message: otaHistory[1].message,
                     }}
                     idTestID="text-ota-previous-id"
                     t={t}
