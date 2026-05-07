@@ -28,6 +28,7 @@ import { getTutorialStampEarned } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { TUTORIAL_STAMP, PANDA_STAMPS, PANDA_SPECIALS, getPandaImage } from "@/data/pandaStamps";
+import { getPandaName, getPandaStampName, getSpecialPandaNameByIndex } from "@/data/pandaStampNames";
 
 const NUM_COLS = 4;
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -470,7 +471,7 @@ export default function SprintStampGalleryScreen() {
                             },
                           ]}
                         >
-                          {isTutorial ? t("tutorial_stamp_label") : `No.${cell.index}`}
+                          {isTutorial ? t("tutorial_stamp_label") : getPandaName(cell.index, isSpecial)}
                         </ThemedText>
                         {!isTutorial && isCompleted && cell.completedDate ? (
                           <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
@@ -665,7 +666,7 @@ export default function SprintStampGalleryScreen() {
                           resizeMode="cover"
                         />
                       </View>
-                      <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]}>S.{idx + 1}</ThemedText>
+                      <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]} numberOfLines={2}>{getSpecialPandaNameByIndex(idx)}</ThemedText>
                     </View>
                   ))}
                 </View>
@@ -684,7 +685,7 @@ export default function SprintStampGalleryScreen() {
                           resizeMode="cover"
                         />
                       </View>
-                      <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]}>No.{num}</ThemedText>
+                      <ThemedText style={[styles.devStampLabel, { color: theme.textSecondary }]} numberOfLines={2}>{getPandaStampName(Number(num))}</ThemedText>
                     </View>
                   ))}
                 </View>
