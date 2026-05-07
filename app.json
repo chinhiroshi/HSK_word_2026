@@ -76,7 +76,7 @@
       "reactCompiler": true
     },
     "extra": {
-      "revenueCatApiKey": "test_jiqDlGrYpKroywFSKaTabjOJOdR",
+      "revenueCatTestApiKey": "test_jiqDlGrYpKroywFSKaTabjOJOdR",
       "eas": {
         "projectId": "54aa5f09-8fc8-4c3f-90b7-c8ed0c07246e"
       }

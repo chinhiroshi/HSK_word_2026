@@ -6,17 +6,30 @@ import Constants from "expo-constants";
 
 const IS_EXPO_GO = Constants.appOwnership === "expo";
 
-const REVENUECAT_TEST_KEY = "test_jiqDlGrYpKroywFSKaTabjOJOdR";
+const REVENUECAT_TEST_KEY =
+  (Constants.expoConfig?.extra?.revenueCatTestApiKey as string | undefined) ||
+  "test_jiqDlGrYpKroywFSKaTabjOJOdR";
 
-const REVENUECAT_IOS_KEY =
-  Constants.expoConfig?.extra?.revenueCatApiKey ||
-  process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ||
-  "appl_BVVXQEBFhgNtNBvWEACExXHMPJc";
+const isProdKey = (k: unknown): k is string =>
+  typeof k === "string" && k.length > 0 && !k.startsWith("test_");
 
-const REVENUECAT_ANDROID_KEY =
-  Constants.expoConfig?.extra?.revenueCatAndroidApiKey ||
-  process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY ||
-  "";
+const pickProdKey = (...candidates: Array<unknown>): string => {
+  for (const c of candidates) {
+    if (isProdKey(c)) return c;
+  }
+  return "";
+};
+
+const REVENUECAT_IOS_KEY = pickProdKey(
+  Constants.expoConfig?.extra?.revenueCatApiKey,
+  process.env.EXPO_PUBLIC_REVENUECAT_API_KEY,
+  "appl_BVVXQEBFhgNtNBvWEACExXHMPJc",
+);
+
+const REVENUECAT_ANDROID_KEY = pickProdKey(
+  Constants.expoConfig?.extra?.revenueCatAndroidApiKey,
+  process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY,
+);
 
 const REVENUECAT_PROD_KEY = Platform.OS === "android"
   ? REVENUECAT_ANDROID_KEY
