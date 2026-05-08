@@ -980,7 +980,9 @@ export default function SprintStudySessionScreen() {
 function getAudioCardsSpeakText(w: { word: string; exampleSentence?: string | null }): string {
   const ex = w.exampleSentence?.trim();
   const base = ex && ex.length > 0 ? ex : w.word;
-  return `${base} ${base}`;
+  // 末尾が終端記号でなければ句点を補い、TTS の自然な小休止を保証する
+  const sep = /[。．！？!?.…]$/.test(base) ? " " : "。";
+  return `${base}${sep}${base}`;
 }
 
 function getOriginalWordNum(wordId: string): number {
