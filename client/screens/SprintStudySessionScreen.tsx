@@ -34,7 +34,15 @@ import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWords, initializeData, markAsMemorized, markAsUnmemorized } from "@/lib/storage";
+import {
+  getAudioRepeatPreference,
+  getWords,
+  initializeData,
+  markAsMemorized,
+  markAsUnmemorized,
+  setAudioRepeatPreference,
+  type AudioRepeatCount,
+} from "@/lib/storage";
 import { speakChinese, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
 import { getQuoteForStamp } from "@/data/quotes";
@@ -93,6 +101,9 @@ export default function SprintStudySessionScreen() {
   const [showPostStamp, setShowPostStamp] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
   const autoSavedPhase = useRef<string | null>(null);
+  const [audioRepeat, setAudioRepeatState] = useState<AudioRepeatCount>(2);
+  const [requeueNotice, setRequeueNotice] = useState(false);
+  const requeuedRef = useRef(false);
 
   const stampScale = useSharedValue(0);
   const stampOpacity = useSharedValue(0);
@@ -155,10 +166,17 @@ export default function SprintStudySessionScreen() {
     textChoicesRef.current = initText;
     audioChoicesRef.current = initAudio;
 
+    // Load audio repeat preference (1 or 2)
+    try {
+      const repeat = await getAudioRepeatPreference();
+      setAudioRepeatState(repeat);
+    } catch {}
+
     if (sessionMode === "audio-cards-only") {
       // Start directly at audio-cards with words not yet audio-memorized
       const unmemorized = study.filter((w) => !w.audioMemorized);
       setCardWords(unmemorized);
+      requeuedRef.current = false;
       setCurrentIndex(0);
       setRevealLevel(0);
     }
@@ -182,13 +200,19 @@ export default function SprintStudySessionScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  // Auto-play audio in audio-cards and reset reveal level on card change
+  // カード切替時のみ reveal レベルをリセット (×1/×2 トグルでは維持)
   useEffect(() => {
     if (phase !== "audio-cards") return;
     setRevealLevel(0);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, phase, currentCardWord?.id]);
+
+  // Auto-play audio in audio-cards (repeat 切替でも再生し直す)
+  useEffect(() => {
+    if (phase !== "audio-cards") return;
     if (!currentCardWord) return;
     const speak = async () => {
-      const text = getAudioCardsSpeakText(currentCardWord);
+      const text = getAudioCardsSpeakText(currentCardWord, audioRepeat);
       await speakChinese(text, { wordId: currentCardWord.id });
     };
     speak();
@@ -196,7 +220,7 @@ export default function SprintStudySessionScreen() {
       stopSpeaking().catch(() => {});
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, phase, currentCardWord?.id]);
+  }, [currentIndex, phase, currentCardWord?.id, audioRepeat]);
 
   // Reset per-row reveal state when switching filter tabs (全部 / まだ / 覚えた / 苦手歴)
   // so that meanings/words shown via the eye icon don't carry over across tabs.
@@ -284,9 +308,37 @@ export default function SprintStudySessionScreen() {
   const advanceOrFinish = (newIndex: number) => {
     if (newIndex < cardWords.length) {
       setCurrentIndex(newIndex);
-    } else {
-      setPhase("complete");
+      return;
     }
+    // 終端: 70%以上「覚えた」未満なら未覚え単語を末尾に1度だけ再キュー
+    const choices = audioChoicesRef.current;
+    // 重複考慮: ユニーク id 集合で割合判定する
+    const uniqueIds = Array.from(new Set(cardWords.map((w) => w.id)));
+    const memorized = uniqueIds.filter((id) => choices[id] === "memorized").length;
+    const ratio = uniqueIds.length > 0 ? memorized / uniqueIds.length : 1;
+    if (
+      !requeuedRef.current &&
+      ratio < AUDIO_CARDS_PASS_THRESHOLD
+    ) {
+      // 未覚えの単語のみ (id 重複は除外) を1度だけ末尾に追加
+      const seen = new Set<string>();
+      const requeue: Word[] = [];
+      for (const w of cardWords) {
+        if (choices[w.id] === "memorized") continue;
+        if (seen.has(w.id)) continue;
+        seen.add(w.id);
+        requeue.push(w);
+      }
+      if (requeue.length > 0) {
+        requeuedRef.current = true;
+        setCardWords((prev) => [...prev, ...requeue]);
+        setCurrentIndex(newIndex);
+        setRequeueNotice(true);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+        return;
+      }
+    }
+    setPhase("complete");
   };
 
   const handleCardChoice = async (choice: "memorized" | "unmemorized") => {
@@ -296,12 +348,21 @@ export default function SprintStudySessionScreen() {
         ? Haptics.ImpactFeedbackStyle.Light
         : Haptics.ImpactFeedbackStyle.Medium
     );
+    // ref を同期更新して advanceOrFinish の判定がレース無く読めるように
+    audioChoicesRef.current = { ...audioChoicesRef.current, [currentCardWord.id]: choice };
     // audio-cards always uses audio type
     await (choice === "memorized"
       ? markAsMemorized(currentCardWord.id, "audio")
       : markAsUnmemorized(currentCardWord.id, "audio"));
     setAudioChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
     advanceOrFinish(currentIndex + 1);
+  };
+
+  const handleToggleAudioRepeat = (next: AudioRepeatCount) => {
+    if (next === audioRepeat) return;
+    Haptics.selectionAsync().catch(() => {});
+    setAudioRepeatState(next);
+    setAudioRepeatPreference(next).catch(() => {});
   };
 
   const handleComplete = async () => {
@@ -877,6 +938,21 @@ export default function SprintStudySessionScreen() {
           <ProgressBar progress={cardProgress} height={6} />
         </View>
 
+        {requeueNotice ? (
+          <View
+            testID="banner-audio-requeue"
+            style={[
+              styles.requeueBanner,
+              { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "55" },
+            ]}
+          >
+            <Feather name="rotate-ccw" size={14} color={Colors.light.alert} />
+            <ThemedText style={[styles.requeueBannerText, { color: Colors.light.alert }]}>
+              覚えたが70%未満です。もう一度挑戦しましょう
+            </ThemedText>
+          </View>
+        ) : null}
+
         {/* Audio card with progressive reveal */}
         <Animated.View
           key={`audio-${currentIndex}-${revealLevel}`}
@@ -892,6 +968,8 @@ export default function SprintStudySessionScreen() {
             theme={theme}
             wordIndex={currentIndex + 1}
             totalWords={cardWords.length}
+            audioRepeat={audioRepeat}
+            onToggleAudioRepeat={handleToggleAudioRepeat}
           />
         </Animated.View>
 
@@ -976,14 +1054,21 @@ export default function SprintStudySessionScreen() {
   );
 }
 
-// 音声カードで読み上げるテキスト: 例文があれば例文を2回、なければ単語を2回
-function getAudioCardsSpeakText(w: { word: string; exampleSentence?: string | null }): string {
+// 音声カードで読み上げるテキスト: 例文があれば例文を、なければ単語を repeat 回読む
+function getAudioCardsSpeakText(
+  w: { word: string; exampleSentence?: string | null },
+  repeat: 1 | 2 = 2,
+): string {
   const ex = w.exampleSentence?.trim();
   const base = ex && ex.length > 0 ? ex : w.word;
+  if (repeat <= 1) return base;
   // 末尾が終端記号でなければ句点を補い、TTS の自然な小休止を保証する
   const sep = /[。．！？!?.…]$/.test(base) ? " " : "。";
   return `${base}${sep}${base}`;
 }
+
+// 音声カードフェーズの「覚えた」必要割合 (70%)
+const AUDIO_CARDS_PASS_THRESHOLD = 0.7;
 
 function getOriginalWordNum(wordId: string): number {
   const parts = wordId.split("_");
@@ -1024,9 +1109,11 @@ interface AudioCardProps {
   theme: ReturnType<typeof useTheme>["theme"];
   wordIndex: number;
   totalWords: number;
+  audioRepeat: AudioRepeatCount;
+  onToggleAudioRepeat: (next: AudioRepeatCount) => void;
 }
 
-function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCardProps) {
+function AudioCard({ word, revealLevel, theme, wordIndex, totalWords, audioRepeat, onToggleAudioRepeat }: AudioCardProps) {
   const origNum = getOriginalWordNum(word.id);
   const { lang } = useI18n();
   return (
@@ -1047,12 +1134,41 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
         </View>
       </View>
 
+      {/* 読み上げ回数トグル (×1 / ×2) */}
+      <View style={styles.repeatToggleRow}>
+        <View style={[styles.repeatToggleGroup, { backgroundColor: theme.backgroundSecondary, borderColor: theme.border }]}>
+          {([1, 2] as AudioRepeatCount[]).map((n) => {
+            const active = audioRepeat === n;
+            return (
+              <Pressable
+                key={n}
+                testID={`button-audio-repeat-${n}`}
+                onPress={() => onToggleAudioRepeat(n)}
+                style={[
+                  styles.repeatTogglePill,
+                  active && { backgroundColor: Colors.light.secondary },
+                ]}
+              >
+                <ThemedText
+                  style={[
+                    styles.repeatTogglePillText,
+                    { color: active ? "#fff" : theme.textSecondary },
+                  ]}
+                >
+                  ×{n}
+                </ThemedText>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
+
       {/* Level 0: Audio only */}
       {revealLevel === 0 ? (
         <View style={styles.audioHiddenContent}>
           <View style={[styles.audioIconContainer, { backgroundColor: Colors.light.secondary + "18" }]}>
             <SpeakButton
-              text={getAudioCardsSpeakText(word)}
+              text={getAudioCardsSpeakText(word, audioRepeat)}
               size="large"
               wordId={word.id}
             />
@@ -1076,7 +1192,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
               {word.word}
             </ThemedText>
             <SpeakButton
-              text={getAudioCardsSpeakText(word)}
+              text={getAudioCardsSpeakText(word, audioRepeat)}
               size="medium"
               wordId={word.id}
             />
@@ -1317,6 +1433,12 @@ const styles = StyleSheet.create({
   audioHiddenContent: { alignItems: "center", justifyContent: "center", gap: Spacing.lg, paddingVertical: Spacing.xl },
   audioIconContainer: { width: 90, height: 90, borderRadius: 45, justifyContent: "center", alignItems: "center" },
   audioPrompt: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
+  repeatToggleRow: { flexDirection: "row", justifyContent: "center", marginBottom: Spacing.md, marginTop: -Spacing.xs },
+  repeatToggleGroup: { flexDirection: "row", borderRadius: BorderRadius.full, borderWidth: 1, padding: 3, gap: 2 },
+  repeatTogglePill: { paddingHorizontal: Spacing.md, paddingVertical: 4, borderRadius: BorderRadius.full, minWidth: 44, alignItems: "center" },
+  repeatTogglePillText: { fontSize: 12, fontFamily: "Nunito_700Bold" },
+  requeueBanner: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, borderWidth: 1, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, marginBottom: Spacing.md },
+  requeueBannerText: { fontSize: 12, fontFamily: "Nunito_700Bold", flex: 1 },
   choiceButtonsWrapper: { gap: Spacing.sm },
   choiceButtons: { flexDirection: "row", gap: Spacing.md },
   choiceButton: { flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: Spacing.sm, padding: Spacing.lg, borderRadius: BorderRadius.lg, borderWidth: 2, minHeight: 80 },

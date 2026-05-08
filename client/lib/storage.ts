@@ -292,6 +292,24 @@ export async function setSilentModeAudio(enabled: boolean): Promise<void> {
   await AsyncStorage.setItem(SILENT_AUDIO_KEY, enabled ? "true" : "false");
 }
 
+const AUDIO_REPEAT_KEY = "@chinese_master_audio_repeat_v1";
+export type AudioRepeatCount = 1 | 2;
+
+export async function getAudioRepeatPreference(): Promise<AudioRepeatCount> {
+  try {
+    const val = await AsyncStorage.getItem(AUDIO_REPEAT_KEY);
+    return val === "1" ? 1 : 2;
+  } catch {
+    return 2;
+  }
+}
+
+export async function setAudioRepeatPreference(count: AudioRepeatCount): Promise<void> {
+  try {
+    await AsyncStorage.setItem(AUDIO_REPEAT_KEY, String(count));
+  } catch {}
+}
+
 export async function resetWordsOnly(): Promise<void> {
   const words = await getWords();
   const resetWords = words.map((w) => ({
