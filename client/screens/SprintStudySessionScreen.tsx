@@ -381,23 +381,31 @@ export default function SprintStudySessionScreen() {
     if (pendingChoice !== null) return;
     if (cardChoiceInFlightRef.current) return;
     cardChoiceInFlightRef.current = true;
-    Haptics.impactAsync(
-      choice === "memorized"
-        ? Haptics.ImpactFeedbackStyle.Light
-        : Haptics.ImpactFeedbackStyle.Medium
-    );
-    // ref を同期更新して advanceOrFinish の判定がレース無く読めるように
-    audioChoicesRef.current = { ...audioChoicesRef.current, [currentCardWord.id]: choice };
-    roundChoicesRef.current = { ...roundChoicesRef.current, [currentCardWord.id]: choice };
-    // audio-cards always uses audio type
-    await (choice === "memorized"
-      ? markAsMemorized(currentCardWord.id, "audio")
-      : markAsUnmemorized(currentCardWord.id, "audio"));
-    setAudioChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
-    // 例文(意味)を表示してから「次へ」で進む2段階フロー
-    setPendingChoice(choice);
-    setRevealLevel(2);
-    cardChoiceInFlightRef.current = false;
+    try {
+      Haptics.impactAsync(
+        choice === "memorized"
+          ? Haptics.ImpactFeedbackStyle.Light
+          : Haptics.ImpactFeedbackStyle.Medium
+      );
+      // ref を同期更新して advanceOrFinish の判定がレース無く読めるように
+      audioChoicesRef.current = { ...audioChoicesRef.current, [currentCardWord.id]: choice };
+      roundChoicesRef.current = { ...roundChoicesRef.current, [currentCardWord.id]: choice };
+      // audio-cards always uses audio type
+      try {
+        await (choice === "memorized"
+          ? markAsMemorized(currentCardWord.id, "audio")
+          : markAsUnmemorized(currentCardWord.id, "audio"));
+      } catch (e) {
+        // ストレージ書き込みが失敗しても UI フローは進める (ref 上の選択は保持)
+        console.warn("[SprintStudySession] failed to persist audio choice", e);
+      }
+      setAudioChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
+      // 例文(意味)を表示してから「次へ」で進む2段階フロー
+      setPendingChoice(choice);
+      setRevealLevel(2);
+    } finally {
+      cardChoiceInFlightRef.current = false;
+    }
   };
 
   const handleCardAdvance = () => {
