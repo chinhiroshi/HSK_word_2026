@@ -188,16 +188,15 @@ export default function SprintStudySessionScreen() {
     setRevealLevel(0);
     if (!currentCardWord) return;
     const speak = async () => {
-      const text = currentCardWord.exampleSentence
-        ? `${currentCardWord.word}。${currentCardWord.exampleSentence}`
-        : currentCardWord.word;
+      const text = getAudioCardsSpeakText(currentCardWord);
       await speakChinese(text, { wordId: currentCardWord.id });
     };
     speak();
     return () => {
       stopSpeaking().catch(() => {});
     };
-  }, [currentIndex, phase]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, phase, currentCardWord?.id]);
 
   // Reset per-row reveal state when switching filter tabs (全部 / まだ / 覚えた / 苦手歴)
   // so that meanings/words shown via the eye icon don't carry over across tabs.
@@ -977,6 +976,13 @@ export default function SprintStudySessionScreen() {
   );
 }
 
+// 音声カードで読み上げるテキスト: 例文があれば例文を2回、なければ単語を2回
+function getAudioCardsSpeakText(w: { word: string; exampleSentence?: string | null }): string {
+  const ex = w.exampleSentence?.trim();
+  const base = ex && ex.length > 0 ? ex : w.word;
+  return `${base} ${base}`;
+}
+
 function getOriginalWordNum(wordId: string): number {
   const parts = wordId.split("_");
   return parseInt(parts[parts.length - 1], 10) || 0;
@@ -1044,7 +1050,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
         <View style={styles.audioHiddenContent}>
           <View style={[styles.audioIconContainer, { backgroundColor: Colors.light.secondary + "18" }]}>
             <SpeakButton
-              text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
+              text={getAudioCardsSpeakText(word)}
               size="large"
               wordId={word.id}
             />
@@ -1068,7 +1074,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
               {word.word}
             </ThemedText>
             <SpeakButton
-              text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
+              text={getAudioCardsSpeakText(word)}
               size="medium"
               wordId={word.id}
             />
