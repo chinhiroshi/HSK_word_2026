@@ -474,7 +474,7 @@ export default function SprintStampGalleryScreen() {
                           {isTutorial
                             ? t("tutorial_stamp_label")
                             : (isSpecial || isExpectedSpecialEmpty) && !isCompleted
-                            ? "????!"
+                            ? "?????"
                             : isSpecial
                             ? getPandaName(cell.index, isSpecial)
                             : getPandaName(cell.index, isSpecial).replace(/パンダ$/, "")}
