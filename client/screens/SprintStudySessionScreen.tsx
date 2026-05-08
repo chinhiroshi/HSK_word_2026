@@ -44,6 +44,7 @@ import {
   type AudioRepeatCount,
 } from "@/lib/storage";
 import { speakChinese, stopSpeaking } from "@/lib/speech";
+import { playPassSfx, playFailSfx } from "@/lib/sfx";
 import { useSprint } from "@/contexts/SprintContext";
 import { getQuoteForStamp } from "@/data/quotes";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
@@ -112,10 +113,36 @@ export default function SprintStudySessionScreen() {
 
   const stampScale = useSharedValue(0);
   const stampOpacity = useSharedValue(0);
+  const bannerOpacity = useSharedValue(0);
+  const bannerScale = useSharedValue(0.92);
   const stampStyle = useAnimatedStyle(() => ({
     transform: [{ scale: stampScale.value }],
     opacity: stampOpacity.value,
   }));
+  const bannerStyle = useAnimatedStyle(() => ({
+    opacity: bannerOpacity.value,
+    transform: [{ scale: bannerScale.value }],
+  }));
+
+  useEffect(() => {
+    if (!requeueNotice) {
+      bannerOpacity.value = 0;
+      bannerScale.value = 0.92;
+      return;
+    }
+    bannerOpacity.value = 0;
+    bannerScale.value = 0.92;
+    bannerOpacity.value = withTiming(1, { duration: 220 });
+    bannerScale.value = withSequence(
+      withTiming(1.06, { duration: 220 }),
+      withTiming(1, { duration: 180 })
+    );
+    if (requeueNotice.kind === "fail") {
+      playFailSfx();
+    } else {
+      playPassSfx();
+    }
+  }, [requeueNotice, bannerOpacity, bannerScale]);
 
   const triggerStamp = (onDone: () => void) => {
     setStampVisible(true);
@@ -1002,18 +1029,19 @@ export default function SprintStudySessionScreen() {
               ? `不合格 — 全部やり直し (${requeueNotice.round}/3周目)`
               : "合格 — まだの単語を仕上げ";
             return (
-              <View
+              <Animated.View
                 testID="banner-audio-requeue"
                 style={[
                   styles.requeueBanner,
                   { backgroundColor: tint + "15", borderColor: tint + "55" },
+                  bannerStyle,
                 ]}
               >
                 <Feather name={isFail ? "rotate-ccw" : "check-circle"} size={14} color={tint} />
                 <ThemedText style={[styles.requeueBannerText, { color: tint }]}>
                   {text}
                 </ThemedText>
-              </View>
+              </Animated.View>
             );
           })()
         ) : null}
