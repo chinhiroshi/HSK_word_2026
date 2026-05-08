@@ -102,8 +102,13 @@ export default function SprintStudySessionScreen() {
   const [confettiVisible, setConfettiVisible] = useState(false);
   const autoSavedPhase = useRef<string | null>(null);
   const [audioRepeat, setAudioRepeatState] = useState<AudioRepeatCount>(2);
-  const [requeueNotice, setRequeueNotice] = useState(false);
-  const requeuedRef = useRef(false);
+  const [requeueNotice, setRequeueNotice] = useState<{ kind: "fail" | "pass"; round: number } | null>(null);
+  const [pendingChoice, setPendingChoice] = useState<null | "memorized" | "unmemorized">(null);
+  const roundRef = useRef(1);
+  const finalCleanupRef = useRef(false);
+  const roundOriginalRef = useRef<Word[]>([]);
+  const roundChoicesRef = useRef<Record<string, "memorized" | "unmemorized">>({});
+  const cardChoiceInFlightRef = useRef(false);
 
   const stampScale = useSharedValue(0);
   const stampOpacity = useSharedValue(0);
@@ -173,12 +178,17 @@ export default function SprintStudySessionScreen() {
     } catch {}
 
     if (sessionMode === "audio-cards-only") {
-      // Start directly at audio-cards with words not yet audio-memorized
-      const unmemorized = study.filter((w) => !w.audioMemorized);
-      setCardWords(unmemorized);
-      requeuedRef.current = false;
+      // Start directly at audio-cards with ALL sprint words (no audioMemorized filter), shuffled
+      roundOriginalRef.current = study;
+      roundChoicesRef.current = {};
+      roundRef.current = 1;
+      finalCleanupRef.current = false;
+      const shuffled = shuffleArray(study);
+      setCardWords(shuffled);
       setCurrentIndex(0);
       setRevealLevel(0);
+      setPendingChoice(null);
+      setRequeueNotice(null);
     }
     setLoading(false);
   }, [sessionMode, cellIndex, getStudyWords]);
@@ -204,6 +214,7 @@ export default function SprintStudySessionScreen() {
   useEffect(() => {
     if (phase !== "audio-cards") return;
     setRevealLevel(0);
+    setPendingChoice(null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, phase, currentCardWord?.id]);
 
@@ -310,39 +321,66 @@ export default function SprintStudySessionScreen() {
       setCurrentIndex(newIndex);
       return;
     }
-    // 終端: 70%以上「覚えた」未満なら未覚え単語を末尾に1度だけ再キュー
-    const choices = audioChoicesRef.current;
-    // 重複考慮: ユニーク id 集合で割合判定する
+    // 周回終端: 合格(≥70%)/不合格(<70%) を判定し、最大3周まで再挑戦
+    // 仕上げ周(合格後の未覚えのみ)は判定スキップで即 complete
+    if (finalCleanupRef.current) {
+      setPhase("complete");
+      return;
+    }
+    // 当周限定の choices で割合計算 (ユニーク id 集合)
+    const choices = roundChoicesRef.current;
     const uniqueIds = Array.from(new Set(cardWords.map((w) => w.id)));
     const memorized = uniqueIds.filter((id) => choices[id] === "memorized").length;
     const ratio = uniqueIds.length > 0 ? memorized / uniqueIds.length : 1;
-    if (
-      !requeuedRef.current &&
-      ratio < AUDIO_CARDS_PASS_THRESHOLD
-    ) {
-      // 未覚えの単語のみ (id 重複は除外) を1度だけ末尾に追加
+
+    // 3周目を終えたら割合に関わらず complete
+    if (roundRef.current >= 3) {
+      setPhase("complete");
+      return;
+    }
+
+    if (ratio >= AUDIO_CARDS_PASS_THRESHOLD) {
+      // 合格: 未覚え0なら complete、残っていれば未覚えのみで「仕上げ1周」
       const seen = new Set<string>();
-      const requeue: Word[] = [];
+      const remaining: Word[] = [];
       for (const w of cardWords) {
         if (choices[w.id] === "memorized") continue;
         if (seen.has(w.id)) continue;
         seen.add(w.id);
-        requeue.push(w);
+        remaining.push(w);
       }
-      if (requeue.length > 0) {
-        requeuedRef.current = true;
-        setCardWords((prev) => [...prev, ...requeue]);
-        setCurrentIndex(newIndex);
-        setRequeueNotice(true);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+      if (remaining.length === 0) {
+        setPhase("complete");
         return;
       }
+      finalCleanupRef.current = true;
+      roundRef.current += 1;
+      roundChoicesRef.current = {};
+      setCardWords(shuffleArray(remaining));
+      setCurrentIndex(0);
+      setRevealLevel(0);
+      setPendingChoice(null);
+      setRequeueNotice({ kind: "pass", round: roundRef.current });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      return;
     }
-    setPhase("complete");
+
+    // 不合格: 全単語を再シャッフルして再挑戦 (3周まで)
+    roundRef.current += 1;
+    roundChoicesRef.current = {};
+    setCardWords(shuffleArray(roundOriginalRef.current));
+    setCurrentIndex(0);
+    setRevealLevel(0);
+    setPendingChoice(null);
+    setRequeueNotice({ kind: "fail", round: roundRef.current });
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
   };
 
   const handleCardChoice = async (choice: "memorized" | "unmemorized") => {
     if (!currentCardWord) return;
+    if (pendingChoice !== null) return;
+    if (cardChoiceInFlightRef.current) return;
+    cardChoiceInFlightRef.current = true;
     Haptics.impactAsync(
       choice === "memorized"
         ? Haptics.ImpactFeedbackStyle.Light
@@ -350,11 +388,21 @@ export default function SprintStudySessionScreen() {
     );
     // ref を同期更新して advanceOrFinish の判定がレース無く読めるように
     audioChoicesRef.current = { ...audioChoicesRef.current, [currentCardWord.id]: choice };
+    roundChoicesRef.current = { ...roundChoicesRef.current, [currentCardWord.id]: choice };
     // audio-cards always uses audio type
     await (choice === "memorized"
       ? markAsMemorized(currentCardWord.id, "audio")
       : markAsUnmemorized(currentCardWord.id, "audio"));
     setAudioChoices((prev) => ({ ...prev, [currentCardWord.id]: choice }));
+    // 例文(意味)を表示してから「次へ」で進む2段階フロー
+    setPendingChoice(choice);
+    setRevealLevel(2);
+    cardChoiceInFlightRef.current = false;
+  };
+
+  const handleCardAdvance = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
+    cardChoiceInFlightRef.current = false;
     advanceOrFinish(currentIndex + 1);
   };
 
@@ -939,18 +987,27 @@ export default function SprintStudySessionScreen() {
         </View>
 
         {requeueNotice ? (
-          <View
-            testID="banner-audio-requeue"
-            style={[
-              styles.requeueBanner,
-              { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert + "55" },
-            ]}
-          >
-            <Feather name="rotate-ccw" size={14} color={Colors.light.alert} />
-            <ThemedText style={[styles.requeueBannerText, { color: Colors.light.alert }]}>
-              覚えたが70%未満です。もう一度挑戦しましょう
-            </ThemedText>
-          </View>
+          (() => {
+            const isFail = requeueNotice.kind === "fail";
+            const tint = isFail ? Colors.light.alert : Colors.light.success;
+            const text = isFail
+              ? `不合格 — 全部やり直し (${requeueNotice.round}/3周目)`
+              : "合格 — まだの単語を仕上げ";
+            return (
+              <View
+                testID="banner-audio-requeue"
+                style={[
+                  styles.requeueBanner,
+                  { backgroundColor: tint + "15", borderColor: tint + "55" },
+                ]}
+              >
+                <Feather name={isFail ? "rotate-ccw" : "check-circle"} size={14} color={tint} />
+                <ThemedText style={[styles.requeueBannerText, { color: tint }]}>
+                  {text}
+                </ThemedText>
+              </View>
+            );
+          })()
         ) : null}
 
         {/* Audio card with progressive reveal */}
@@ -974,7 +1031,13 @@ export default function SprintStudySessionScreen() {
         </Animated.View>
 
         {/* Progressive choice buttons */}
-        {revealLevel < 2 ? (
+        {pendingChoice !== null ? (
+          <View style={styles.choiceButtonsWrapper}>
+            <Button testID="button-card-next" onPress={handleCardAdvance} style={{ alignSelf: "stretch" }}>
+              次へ
+            </Button>
+          </View>
+        ) : revealLevel < 2 ? (
           <View style={styles.choiceButtonsWrapper}>
             <View style={styles.choiceButtons}>
               <Pressable
@@ -1069,6 +1132,16 @@ function getAudioCardsSpeakText(
 
 // 音声カードフェーズの「覚えた」必要割合 (70%)
 const AUDIO_CARDS_PASS_THRESHOLD = 0.7;
+
+// Fisher-Yates シャッフル (元配列を変更しない)
+function shuffleArray<T>(arr: T[]): T[] {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 function getOriginalWordNum(wordId: string): number {
   const parts = wordId.split("_");
