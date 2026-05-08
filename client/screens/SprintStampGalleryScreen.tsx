@@ -471,7 +471,11 @@ export default function SprintStampGalleryScreen() {
                             },
                           ]}
                         >
-                          {isTutorial ? t("tutorial_stamp_label") : getPandaName(cell.index, isSpecial)}
+                          {isTutorial
+                            ? t("tutorial_stamp_label")
+                            : (isSpecial || isExpectedSpecialEmpty) && !isCompleted
+                            ? "???"
+                            : getPandaName(cell.index, isSpecial)}
                         </ThemedText>
                         {!isTutorial && isCompleted && cell.completedDate ? (
                           <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
@@ -789,7 +793,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   stampDate: {
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: "Nunito_400Regular",
     textAlign: "center",
   },
