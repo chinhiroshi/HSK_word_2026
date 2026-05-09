@@ -37,6 +37,7 @@ import {
   getAnalyticsConsent,
   isExplicitConsentRegion,
 } from "@/lib/analytics";
+import { loadStampSnapshot, migrateStampSnapshotsIfNeeded } from "@/data/pandaStamps";
 
 const ONBOARDING_KEY = "@chinese_master_onboarding_complete";
 const TUTORIAL_DONE_KEY = "@chinese_master_tutorial_sprint_done";
@@ -82,6 +83,17 @@ export default function App() {
 
   useEffect(() => {
     checkOnboardingStatus();
+  }, []);
+
+  // パンダスタンプの絵柄スナップショットをロード＆既存ユーザー向け移行を実行。
+  // 既に獲得済みのスタンプは旧マッピングで固定され、以後HSK級ごとに違う絵柄が表示される。
+  useEffect(() => {
+    (async () => {
+      try {
+        await loadStampSnapshot();
+        await migrateStampSnapshotsIfNeeded();
+      } catch {}
+    })();
   }, []);
 
   const checkOnboardingStatus = async () => {

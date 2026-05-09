@@ -8,7 +8,7 @@
 // Lookup helpers below convert a sprint cell index to the correct name using
 // the same mapping logic as getPandaImage / getSpecialPandaImage.
 
-import { PANDA_SPECIALS, PANDA_STAMP_ORDER } from "./pandaStamps";
+import { PANDA_SPECIALS, PANDA_STAMP_ORDER, resolveStampValue } from "./pandaStamps";
 
 // Indexed 0..34, matches PANDA_SPECIALS order in pandaStamps.ts.
 // Names verified against the actual sticker artwork in assets/images.
@@ -282,16 +282,15 @@ export function getSpecialPandaNameByIndex(index: number): string {
 }
 
 // Returns the panda name for a given sprint cell index, mirroring the
-// mapping in getPandaImage / getSpecialPandaImage.
-export function getPandaName(cellIndex: number, isSpecial: boolean): string {
-  if (isSpecial) {
-    const len = PANDA_SPECIALS.length;
-    if (!Number.isFinite(cellIndex) || cellIndex < 1) return PANDA_SPECIAL_NAMES[0];
-    const i = (((cellIndex - 1) % len) + len) % len;
-    return PANDA_SPECIAL_NAMES[i] ?? "スペシャルパンダ";
+// mapping in getPandaImage / getSpecialPandaImage. When `hskLevel` is provided
+// each HSK level uses its own offset so names line up with the displayed image.
+export function getPandaName(cellIndex: number, isSpecial: boolean, hskLevel?: number): string {
+  if (!Number.isFinite(cellIndex) || cellIndex < 1) {
+    return isSpecial ? PANDA_SPECIAL_NAMES[0] : getPandaStampName(PANDA_STAMP_ORDER[0]);
   }
-  const orderLen = PANDA_STAMP_ORDER.length;
-  if (!Number.isFinite(cellIndex) || cellIndex < 1) return getPandaStampName(PANDA_STAMP_ORDER[0]);
-  const i = (((cellIndex - 1) % orderLen) + orderLen) % orderLen;
-  return getPandaStampName(PANDA_STAMP_ORDER[i]);
+  const value = resolveStampValue(cellIndex, isSpecial, hskLevel);
+  if (isSpecial) {
+    return PANDA_SPECIAL_NAMES[value] ?? "スペシャルパンダ";
+  }
+  return getPandaStampName(value);
 }

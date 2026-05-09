@@ -263,16 +263,151 @@ export const PANDA_STAMPS: Record<number, any> = {
   210: require("../../assets/images/panda-stamp-210.png"),
 };
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// HSK級ごとに違うスタンプを表示するためのオフセット。HSK1=0 を維持することで
+// 既存のマッピング（cellIndexのみ）と一致するため、HSK1の既存ユーザーには
+// 表示が変わらない。HSK2-6 は順次オフセットを足して別のスタンプ群に割り当てる。
+const NORMAL_OFFSETS: Record<number, number> = { 1: 0, 2: 35, 3: 70, 4: 105, 5: 140, 6: 175 };
+const SPECIAL_OFFSETS: Record<number, number> = { 1: 0, 2: 6, 3: 12, 4: 18, 5: 24, 6: 30 };
+
+const SNAPSHOT_KEY = "@chinese_master_earned_stamp_snapshot_v1";
+const MIGRATION_KEY = "@chinese_master_stamp_snapshot_migrated_v1";
+
+// In-memory snapshot. Key = `${level}-${cellIndex}-${isSpecial?"s":"n"}`.
+// Value = stampNumber (1..210) for normal, or specialIndex (0..34) for special.
+const snapshotCache = new Map<string, number>();
+let snapshotLoaded = false;
+let snapshotLoadingPromise: Promise<void> | null = null;
+let persistTimer: ReturnType<typeof setTimeout> | null = null;
+
+function snapshotKey(level: number, cellIndex: number, isSpecial: boolean): string {
+  return `${level}-${cellIndex}-${isSpecial ? "s" : "n"}`;
+}
+
+function safeLevel(hskLevel?: number): number {
+  if (!hskLevel || !Number.isFinite(hskLevel)) return 1;
+  const lv = Math.floor(hskLevel);
+  return lv >= 1 && lv <= 6 ? lv : 1;
+}
+
+function computeNormalStampNumber(cellIndex: number, hskLevel?: number): number {
+  const orderLen = PANDA_STAMP_ORDER.length;
+  const offset = NORMAL_OFFSETS[safeLevel(hskLevel)] ?? 0;
+  const i = (((cellIndex - 1 + offset) % orderLen) + orderLen) % orderLen;
+  return PANDA_STAMP_ORDER[i];
+}
+
+function computeSpecialIndex(cellIndex: number, hskLevel?: number): number {
+  const len = PANDA_SPECIALS.length;
+  const offset = SPECIAL_OFFSETS[safeLevel(hskLevel)] ?? 0;
+  return (((cellIndex - 1 + offset) % len) + len) % len;
+}
+
+function schedulePersist(): void {
+  if (persistTimer) return;
+  persistTimer = setTimeout(async () => {
+    persistTimer = null;
+    try {
+      const obj: Record<string, number> = {};
+      for (const [k, v] of snapshotCache.entries()) obj[k] = v;
+      await AsyncStorage.setItem(SNAPSHOT_KEY, JSON.stringify(obj));
+    } catch {}
+  }, 250);
+}
+
+export async function loadStampSnapshot(): Promise<void> {
+  if (snapshotLoaded) return;
+  if (snapshotLoadingPromise) return snapshotLoadingPromise;
+  snapshotLoadingPromise = (async () => {
+    try {
+      const raw = await AsyncStorage.getItem(SNAPSHOT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Record<string, number>;
+        if (parsed && typeof parsed === "object") {
+          for (const [k, v] of Object.entries(parsed)) {
+            if (typeof v === "number" && Number.isFinite(v)) {
+              snapshotCache.set(k, v);
+            }
+          }
+        }
+      }
+    } catch {}
+    snapshotLoaded = true;
+  })();
+  return snapshotLoadingPromise;
+}
+
+// 既存ユーザー向けワンタイム移行: 既に獲得済みのスタンプ（completedDates）を
+// 旧マッピング（cellIndexのみ、HSK1相当）でスナップショットへ書き込む。
+// これにより、これまで見えていたスタンプ画像はアップデート後も同じ絵柄のまま維持される。
+export async function migrateStampSnapshotsIfNeeded(): Promise<void> {
+  try {
+    const done = await AsyncStorage.getItem(MIGRATION_KEY);
+    if (done === "true") return;
+    await loadStampSnapshot();
+
+    for (let level = 1; level <= 6; level++) {
+      try {
+        const sprintRaw = await AsyncStorage.getItem(`@chinese_master_sprint_hsk${level}`);
+        if (!sprintRaw) continue;
+        const sprint = JSON.parse(sprintRaw);
+        const completedDates: Record<string, string> = sprint?.completedDates ?? {};
+        const specialStamps: number[] = Array.isArray(sprint?.specialStamps) ? sprint.specialStamps : [];
+        const specialSet = new Set<number>(specialStamps);
+
+        for (const cellKey of Object.keys(completedDates)) {
+          const cellIndex = parseInt(cellKey, 10);
+          if (!Number.isFinite(cellIndex) || cellIndex < 1) continue;
+          const isSpecial = specialSet.has(cellIndex);
+          const key = snapshotKey(level, cellIndex, isSpecial);
+          if (snapshotCache.has(key)) continue;
+          // Old formula: no HSK offset (= HSK1 mapping).
+          const value = isSpecial
+            ? computeSpecialIndex(cellIndex, 1)
+            : computeNormalStampNumber(cellIndex, 1);
+          snapshotCache.set(key, value);
+        }
+      } catch {}
+    }
+
+    try {
+      const obj: Record<string, number> = {};
+      for (const [k, v] of snapshotCache.entries()) obj[k] = v;
+      await AsyncStorage.setItem(SNAPSHOT_KEY, JSON.stringify(obj));
+      await AsyncStorage.setItem(MIGRATION_KEY, "true");
+    } catch {}
+  } catch {}
+}
+
+// 同期的にスタンプ番号/特別インデックスを解決する。スナップショットにあれば
+// それを返し、無ければ新規にHSKオフセット付きで計算してキャッシュ＆永続化を予約。
+// 戻り値: 通常スタンプはstamp number(1..210)、特別スタンプはspecial index(0..34)。
+export function resolveStampValue(cellIndex: number, isSpecial: boolean, hskLevel?: number): number {
+  if (!Number.isFinite(cellIndex) || cellIndex < 1) {
+    return isSpecial ? 0 : PANDA_STAMP_ORDER[0];
+  }
+  const lv = safeLevel(hskLevel);
+  const key = snapshotKey(lv, cellIndex, isSpecial);
+  const cached = snapshotCache.get(key);
+  if (typeof cached === "number") return cached;
+  const value = isSpecial
+    ? computeSpecialIndex(cellIndex, lv)
+    : computeNormalStampNumber(cellIndex, lv);
+  snapshotCache.set(key, value);
+  schedulePersist();
+  return value;
+}
+
 // Returns the special panda stamp variation for a given cell index.
 // Cycles deterministically through PANDA_SPECIALS so each special slot
-// in the snake grid gets a different themed panda.
+// in the snake grid gets a different themed panda. When `hskLevel` is provided,
+// each HSK level gets its own offset so users see fresh stamps per level.
 // cellIndex is expected to be >= 1; non-positive values fall back to the
 // first (original king panda) variant for safety.
-export function getSpecialPandaImage(cellIndex: number): any {
-  const len = PANDA_SPECIALS.length;
-  if (!Number.isFinite(cellIndex) || cellIndex < 1) return PANDA_SPECIALS[0];
-  const i = ((cellIndex - 1) % len + len) % len;
-  return PANDA_SPECIALS[i];
+export function getSpecialPandaImage(cellIndex: number, hskLevel?: number): any {
+  const idx = resolveStampValue(cellIndex, true, hskLevel);
+  return PANDA_SPECIALS[idx] ?? PANDA_SPECIALS[0];
 }
 
 // Deterministic play order for the 210 regular stamps.
@@ -299,8 +434,8 @@ export const PANDA_STAMP_ORDER: number[] = [
   31, 17, 169, 61, 143, 165,
 ];
 
-export function getPandaImage(cellIndex: number, isSpecial: boolean): any {
-  if (isSpecial) return getSpecialPandaImage(cellIndex);
-  const i = ((cellIndex - 1) % PANDA_STAMP_ORDER.length + PANDA_STAMP_ORDER.length) % PANDA_STAMP_ORDER.length;
-  return PANDA_STAMPS[PANDA_STAMP_ORDER[i]];
+export function getPandaImage(cellIndex: number, isSpecial: boolean, hskLevel?: number): any {
+  if (isSpecial) return getSpecialPandaImage(cellIndex, hskLevel);
+  const num = resolveStampValue(cellIndex, false, hskLevel);
+  return PANDA_STAMPS[num] ?? PANDA_STAMPS[1];
 }

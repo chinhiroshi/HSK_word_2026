@@ -295,7 +295,7 @@ export default function SprintTestScreen() {
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
             <View style={[styles.stampCircle, { backgroundColor: Colors.light.alert, borderWidth: 4, borderColor: "#fff" }]}>
-              <Image source={getSpecialPandaImage(testCellIndexRef.current)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
+              <Image source={getSpecialPandaImage(testCellIndexRef.current, currentLevel)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
             </View>
             <ThemedText style={styles.stampLabel}>{t("special_stamp_acquired")}</ThemedText>
           </Animated.View>
