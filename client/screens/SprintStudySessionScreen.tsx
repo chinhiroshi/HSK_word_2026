@@ -125,6 +125,7 @@ export default function SprintStudySessionScreen() {
   const cardChoiceInFlightRef = useRef(false);
   const [failOverlayVisible, setFailOverlayVisible] = useState(false);
   const failOverlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [pendingCleanupWords, setPendingCleanupWords] = useState<Word[] | null>(null);
   useEffect(() => {
     return () => {
       if (failOverlayTimerRef.current) {
@@ -241,6 +242,7 @@ export default function SprintStudySessionScreen() {
       setRevealLevel(0);
       setPendingChoice(null);
       setRequeueNotice(null);
+      setPendingCleanupWords(null);
     }
     setLoading(false);
   }, [sessionMode, cellIndex, getStudyWords]);
@@ -447,11 +449,7 @@ export default function SprintStudySessionScreen() {
       finalCleanupRef.current = true;
       roundRef.current += 1;
       roundChoicesRef.current = {};
-      setCardWords(shuffleArray(remaining));
-      setCurrentIndex(0);
-      setRevealLevel(0);
-      setPendingChoice(null);
-      setRequeueNotice({ kind: "pass", round: roundRef.current });
+      setPendingCleanupWords(remaining);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
       return;
     }
@@ -510,6 +508,16 @@ export default function SprintStudySessionScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
     cardChoiceInFlightRef.current = false;
     advanceOrFinish(currentIndex + 1);
+  };
+
+  const handleStartCleanup = () => {
+    if (!pendingCleanupWords || pendingCleanupWords.length === 0) return;
+    setCardWords(shuffleArray(pendingCleanupWords));
+    setCurrentIndex(0);
+    setRevealLevel(0);
+    setPendingChoice(null);
+    setRequeueNotice({ kind: "pass", round: roundRef.current });
+    setPendingCleanupWords(null);
   };
 
   const handleToggleAudioRepeat = (next: AudioRepeatCount) => {
@@ -1202,6 +1210,57 @@ export default function SprintStudySessionScreen() {
             </Button>
           )}
         </View>
+      </ThemedView>
+    );
+  }
+
+  // ----- AUDIO CARDS: PRE-CLEANUP RESULT CARD -----
+  if (phase === "audio-cards" && pendingCleanupWords) {
+    const lastRound = roundResultsRef.current[roundResultsRef.current.length - 1];
+    const memo = lastRound?.memorized ?? 0;
+    const total = lastRound?.total ?? 0;
+    const remainCount = pendingCleanupWords.length;
+    return (
+      <ThemedView style={styles.container}>
+        <ScrollView
+          contentContainerStyle={[styles.completeScrollContent, { paddingTop: safeHeaderPadding + Spacing.xl, paddingBottom: tabBarHeight + Spacing["3xl"] }]}
+          showsVerticalScrollIndicator={false}
+        >
+          <Animated.View entering={FadeIn} style={styles.completeInner}>
+            <View style={[styles.completeIcon, { backgroundColor: Colors.light.success + "20" }]}>
+              <Feather name="award" size={48} color={Colors.light.success} />
+            </View>
+            <ThemedText style={styles.completeTitle}>音声カード 合格！</ThemedText>
+            <ThemedText style={[styles.completeSub, { color: theme.textSecondary }]}>
+              {`${total}語中 ${memo}語覚えました`}
+            </ThemedText>
+            <View style={styles.resultStats}>
+              <View style={styles.resultStat}>
+                <ThemedText style={[styles.resultValue, { color: Colors.light.success }]}>{memo}</ThemedText>
+                <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>覚えた</ThemedText>
+              </View>
+              <View style={[styles.resultDivider, { backgroundColor: theme.border }]} />
+              <View style={styles.resultStat}>
+                <ThemedText style={[styles.resultValue, { color: Colors.light.alert }]}>{total - memo}</ThemedText>
+                <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>覚えていない</ThemedText>
+              </View>
+            </View>
+            <View style={[styles.partialNotice, { backgroundColor: Colors.light.secondary + "15", borderColor: Colors.light.secondary + "40" }]}>
+              <Feather name="repeat" size={15} color={Colors.light.secondary} />
+              <ThemedText style={[styles.partialNoticeText, { color: Colors.light.secondary }]}>
+                {`残り${remainCount}語の仕上げ周に進みます`}
+              </ThemedText>
+            </View>
+            <Pressable
+              testID="button-start-cleanup"
+              onPress={handleStartCleanup}
+              style={[styles.completeButton, styles.audioStudyButton, { backgroundColor: Colors.light.secondary, borderColor: Colors.light.secondary }]}
+            >
+              <Feather name="arrow-right" size={18} color="#fff" />
+              <ThemedText style={[styles.audioStudyText, { color: "#fff" }]}>仕上げに進む</ThemedText>
+            </Pressable>
+          </Animated.View>
+        </ScrollView>
       </ThemedView>
     );
   }
