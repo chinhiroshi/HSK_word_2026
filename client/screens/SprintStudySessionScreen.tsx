@@ -728,21 +728,28 @@ export default function SprintStudySessionScreen() {
               </ThemedText>
             </View>
           ) : null}
-          <View style={styles.resultStats}>
-            <View style={styles.resultStat}>
-              <ThemedText style={[styles.resultValue, { color: Colors.light.success }]}>
-                {memorizedCount}
-              </ThemedText>
-              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>{t("memorized_label")}</ThemedText>
-            </View>
-            <View style={[styles.resultDivider, { backgroundColor: theme.border }]} />
-            <View style={styles.resultStat}>
-              <ThemedText style={[styles.resultValue, { color: Colors.light.alert }]}>
-                {totalCount - memorizedCount}
-              </ThemedText>
-              <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>{t("not_memorized_label")}</ThemedText>
-            </View>
-          </View>
+          {(() => {
+            const firstRound = audioCardsSummary?.rounds?.[0];
+            const displayMemorized = firstRound ? firstRound.memorized : memorizedCount;
+            const displayTotal = firstRound ? firstRound.total : totalCount;
+            return (
+              <View style={styles.resultStats}>
+                <View style={styles.resultStat}>
+                  <ThemedText style={[styles.resultValue, { color: Colors.light.success }]}>
+                    {displayMemorized}
+                  </ThemedText>
+                  <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>{t("memorized_label")}</ThemedText>
+                </View>
+                <View style={[styles.resultDivider, { backgroundColor: theme.border }]} />
+                <View style={styles.resultStat}>
+                  <ThemedText style={[styles.resultValue, { color: Colors.light.alert }]}>
+                    {displayTotal - displayMemorized}
+                  </ThemedText>
+                  <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>{t("not_memorized_label")}</ThemedText>
+                </View>
+              </View>
+            );
+          })()}
           {sessionMode === "audio-cards-only" && audioCardsSummary ? (
             <View
               testID="audio-cards-summary-card"
