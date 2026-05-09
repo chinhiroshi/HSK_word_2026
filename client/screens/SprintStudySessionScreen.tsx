@@ -52,6 +52,7 @@ import { getQuoteForStamp } from "@/data/quotes";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { getPandaImage } from "@/data/pandaStamps";
+import { getPandaName } from "@/data/pandaStampNames";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList & RootStackParamList>;
@@ -613,6 +614,7 @@ export default function SprintStudySessionScreen() {
     if (showPostStamp) {
       const isSpecial = sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false;
       const stampImage = getPandaImage(studiedCellIndex, isSpecial);
+      const stampName = getPandaName(studiedCellIndex, isSpecial);
       return (
         <ThemedView style={styles.container}>
           <ScrollView
@@ -623,7 +625,17 @@ export default function SprintStudySessionScreen() {
               <View style={[styles.stampCircle, { backgroundColor: "transparent", marginBottom: Spacing.lg }]}>
                 <Image source={stampImage} style={{ width: 150, height: 150, borderRadius: 75 }} resizeMode="cover" />
               </View>
-              <ThemedText style={styles.stampLabel}>{t("stamp_earned")}</ThemedText>
+              <ThemedText style={[styles.stampLabel, { color: theme.text, textShadowColor: "transparent" }]}>
+                {t("stamp_earned")}
+              </ThemedText>
+              {stampName ? (
+                <ThemedText
+                  testID="text-stamp-name-post"
+                  style={[styles.stampName, { color: theme.text, textShadowColor: "transparent" }]}
+                >
+                  {stampName}
+                </ThemedText>
+              ) : null}
               <ThemedText style={[styles.completeSub, { color: theme.textSecondary, marginTop: Spacing.sm }]}>
                 {t("words_studied_count").replace("{n}", String(words.length))}
               </ThemedText>
@@ -681,6 +693,17 @@ export default function SprintStudySessionScreen() {
               />
             </View>
             <ThemedText style={styles.stampLabel}>{t("stamp_earned")}</ThemedText>
+            {(() => {
+              const overlayName = getPandaName(
+                studiedCellIndex,
+                sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false,
+              );
+              return overlayName ? (
+                <ThemedText testID="text-stamp-name-overlay" style={styles.stampName}>
+                  {overlayName}
+                </ThemedText>
+              ) : null;
+            })()}
           </Animated.View>
         ) : null}
         <ScrollView
@@ -1844,6 +1867,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 16,
     elevation: 12,
+  },
+  stampName: {
+    fontSize: 18,
+    fontFamily: "Nunito_700Bold",
+    color: "#fff",
+    marginTop: 6,
+    textAlign: "center",
+    textShadowColor: "rgba(0,0,0,0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
   stampLabel: {
     fontSize: 22,
