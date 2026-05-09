@@ -1298,9 +1298,22 @@ export default function SprintStudySessionScreen() {
         {/* Progressive choice buttons */}
         {pendingChoice !== null ? (
           <View style={styles.choiceButtonsWrapper}>
-            <Button testID="button-card-next" onPress={handleCardAdvance} style={{ alignSelf: "stretch" }}>
-              次へ
-            </Button>
+            <View style={styles.choiceButtons}>
+              <View style={[styles.choiceButton, styles.choiceButtonPlaceholder]} pointerEvents="none" />
+              <Pressable
+                testID="button-card-next"
+                onPress={handleCardAdvance}
+                style={[
+                  styles.choiceButton,
+                  { backgroundColor: theme.primary + "15", borderColor: theme.primary },
+                ]}
+              >
+                <Feather name="arrow-right" size={20} color={theme.primary} />
+                <ThemedText style={[styles.choiceLabel, { color: theme.primary }]}>
+                  次へ
+                </ThemedText>
+              </Pressable>
+            </View>
           </View>
         ) : revealLevel < 2 ? (
           <View style={styles.choiceButtonsWrapper}>
@@ -1836,6 +1849,7 @@ const styles = StyleSheet.create({
   choiceButtonsWrapper: { gap: Spacing.sm },
   choiceButtons: { flexDirection: "row", gap: Spacing.md },
   choiceButton: { flex: 1, flexDirection: "column", alignItems: "center", justifyContent: "center", gap: Spacing.sm, padding: Spacing.lg, borderRadius: BorderRadius.lg, borderWidth: 2, minHeight: 80 },
+  choiceButtonPlaceholder: { backgroundColor: "transparent", borderColor: "transparent" },
   choiceLabel: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold" },
   earlyUnmemorizedButton: {
     flexDirection: "row",
