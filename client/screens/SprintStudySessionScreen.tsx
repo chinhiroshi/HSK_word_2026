@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   View,
   StyleSheet,
@@ -201,6 +201,18 @@ export default function SprintStudySessionScreen() {
   const memorizedCount = Object.values(totalChoices).filter((c) => c === "memorized").length;
   const totalCount = Object.keys(totalChoices).length;
 
+  // 単語IDベースで「長文を使う対象」を決定。音声カードと音声リストで同じ単語が長文になるよう
+  // sprint の words 配列の並び順を基準に shouldUseLongExample を適用する。
+  const longExampleWordIds = useMemo(() => {
+    const set = new Set<string>();
+    for (let i = 0; i < words.length; i++) {
+      if (shouldUseLongExample(i, words.length) && words[i].longExample && words[i].longExample!.trim().length > 0) {
+        set.add(words[i].id);
+      }
+    }
+    return set;
+  }, [words]);
+
   const loadWords = useCallback(async () => {
     setLoading(true);
     await initializeData();
@@ -276,7 +288,7 @@ export default function SprintStudySessionScreen() {
   useEffect(() => {
     if (phase !== "audio-cards") return;
     if (!currentCardWord) return;
-    const useLong = shouldUseLongExample(currentIndex, cardWords.length);
+    const useLong = longExampleWordIds.has(currentCardWord.id);
     const speak = async () => {
       const text = getAudioCardsSpeakText(currentCardWord, audioRepeat, useLong);
       await speakChinese(text, { wordId: currentCardWord.id });
@@ -1013,8 +1025,10 @@ export default function SprintStudySessionScreen() {
             const choice = isAudioListPhase ? audioChoices[item.id] : textChoices[item.id];
             const isMemorized = choice === "memorized";
             const isUnmemorized = choice === "unmemorized";
-            const speakText = item.exampleSentence
-              ? `${item.word}。${item.exampleSentence}`
+            const useLongForRow = isAudioListPhase && longExampleWordIds.has(item.id) && !!item.longExample && item.longExample.trim().length > 0;
+            const exampleForRow = useLongForRow ? item.longExample! : item.exampleSentence;
+            const speakText = exampleForRow
+              ? `${item.word}。${exampleForRow}`
               : item.word;
 
             // --- Audio-list row (word hidden by default, revealed by per-row eye toggle or global eye) ---
@@ -1024,7 +1038,9 @@ export default function SprintStudySessionScreen() {
               const isWordRevealed = allRevealed || revealedIds.has(item.id) || isMeaningRevealed;
               const revealLevel: 0 | 1 | 2 = isMeaningRevealed ? 2 : isWordRevealed ? 1 : 0;
               const meaningText = lang === "en" && item.translationEn ? item.translationEn : item.translation;
-              const exampleMeaning = lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation;
+              const exampleMeaning = useLongForRow
+                ? (lang === "en" && item.longExampleEnglish ? item.longExampleEnglish : item.longExampleTranslation)
+                : (lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation);
               return (
                 <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isUnmemorized ? Colors.light.alert + "14" : theme.backgroundDefault }]}>
                   <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
@@ -1042,9 +1058,9 @@ export default function SprintStudySessionScreen() {
                     <View style={styles.wordInfoCol}>
                       <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
                       <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
-                      {item.exampleSentence ? (
-                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={2}>
-                          {item.exampleSentence}
+                      {exampleForRow ? (
+                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={useLongForRow ? 3 : 2}>
+                          {exampleForRow}
                         </ThemedText>
                       ) : null}
                       {isMeaningRevealed ? (
@@ -1357,7 +1373,7 @@ export default function SprintStudySessionScreen() {
             totalWords={cardWords.length}
             audioRepeat={audioRepeat}
             onToggleAudioRepeat={handleToggleAudioRepeat}
-            useLongExample={shouldUseLongExample(currentIndex, cardWords.length)}
+            useLongExample={currentCardWord ? longExampleWordIds.has(currentCardWord.id) : false}
           />
         </Animated.View>
 
