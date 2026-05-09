@@ -279,6 +279,11 @@ const MIGRATION_KEY = "@chinese_master_stamp_snapshot_migrated_v1";
 const snapshotCache = new Map<string, number>();
 let snapshotLoaded = false;
 let snapshotLoadingPromise: Promise<void> | null = null;
+// `snapshotReady` becomes true only AFTER both load and migration complete.
+// While false, resolveStampValue computes deterministically but does NOT cache or
+// persist, preventing a startup race that could freeze a post-change value for an
+// already-earned cell before migration restores its legacy mapping.
+let snapshotReady = false;
 let persistTimer: ReturnType<typeof setTimeout> | null = null;
 
 function snapshotKey(level: number, cellIndex: number, isSpecial: boolean): string {
@@ -378,6 +383,7 @@ export async function migrateStampSnapshotsIfNeeded(): Promise<void> {
       await AsyncStorage.setItem(MIGRATION_KEY, "true");
     } catch {}
   } catch {}
+  snapshotReady = true;
 }
 
 // 同期的にスタンプ番号/特別インデックスを解決する。スナップショットにあれば
@@ -394,8 +400,13 @@ export function resolveStampValue(cellIndex: number, isSpecial: boolean, hskLeve
   const value = isSpecial
     ? computeSpecialIndex(cellIndex, lv)
     : computeNormalStampNumber(cellIndex, lv);
-  snapshotCache.set(key, value);
-  schedulePersist();
+  // Only cache/persist after load+migration are complete. Otherwise an early
+  // render could freeze a "new" mapping for an existing user's earned cell
+  // before migration restores the legacy mapping.
+  if (snapshotReady) {
+    snapshotCache.set(key, value);
+    schedulePersist();
+  }
   return value;
 }
 
