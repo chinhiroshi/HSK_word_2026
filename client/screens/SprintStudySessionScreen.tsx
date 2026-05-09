@@ -482,6 +482,36 @@ export default function SprintStudySessionScreen() {
     advanceOrFinish(currentIndex + 1);
   };
 
+  const handleRetryUnmemorized = () => {
+    if (!audioCardsSummary || audioCardsSummary.unmemorized.length === 0) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    const retryWords = audioCardsSummary.unmemorized;
+    // Clear stored audio choices for these words so the retry round starts fresh
+    // (so unmemorized.length recompute is based on the new round's choices).
+    const resetChoices = { ...audioChoicesRef.current };
+    retryWords.forEach((w) => {
+      delete resetChoices[w.id];
+    });
+    audioChoicesRef.current = resetChoices;
+    setAudioChoices(resetChoices);
+    // Reset round-tracking state for the retry. Note: we intentionally do NOT
+    // call completePhase here — autoSavedPhase.current is already set from the
+    // first completion, so retry results don't double-save sprint progress.
+    roundOriginalRef.current = retryWords;
+    roundChoicesRef.current = {};
+    roundRef.current = 1;
+    finalCleanupRef.current = false;
+    roundResultsRef.current = [];
+    setAudioCardsSummary(null);
+    setCardWords(shuffleArray(retryWords));
+    setCurrentIndex(0);
+    setRevealLevel(0);
+    setPendingChoice(null);
+    setRequeueNotice(null);
+    cardChoiceInFlightRef.current = false;
+    setPhase("audio-cards");
+  };
+
   const handleToggleAudioRepeat = (next: AudioRepeatCount) => {
     if (next === audioRepeat) return;
     Haptics.selectionAsync().catch(() => {});
@@ -813,6 +843,25 @@ export default function SprintStudySessionScreen() {
                       </Pressable>
                     ))}
                   </View>
+                  <Pressable
+                    testID="button-retry-unmemorized"
+                    onPress={handleRetryUnmemorized}
+                    style={({ pressed }) => [
+                      styles.summaryRetryButton,
+                      {
+                        backgroundColor: Colors.light.alert + (pressed ? "30" : "18"),
+                        borderColor: Colors.light.alert + "60",
+                      },
+                    ]}
+                  >
+                    <Feather name="refresh-cw" size={16} color={Colors.light.alert} />
+                    <ThemedText style={[styles.summaryRetryText, { color: Colors.light.alert }]}>
+                      {t("audio_cards_retry_unmemorized").replace(
+                        "{n}",
+                        String(audioCardsSummary.unmemorized.length)
+                      )}
+                    </ThemedText>
+                  </Pressable>
                 </View>
               ) : (
                 <ThemedText style={[styles.summaryAllDone, { color: Colors.light.success }]}>
@@ -1883,5 +1932,20 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_700Bold",
     textAlign: "center",
     marginTop: Spacing.sm,
+  },
+  summaryRetryButton: {
+    marginTop: Spacing.md,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
+  summaryRetryText: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
   },
 });

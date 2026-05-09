@@ -185,6 +185,7 @@ const translations = {
     audio_cards_failed_badge: "未達",
     audio_cards_unmemorized_title: "まだ覚えていない単語（{n}）",
     audio_cards_no_unmemorized: "全て覚えました！",
+    audio_cards_retry_unmemorized: "未覚え{n}語を再挑戦",
 
     // ── Sprint Test Screen ──
     sprint_test_header: "週次テスト",
@@ -628,6 +629,7 @@ const translations = {
     audio_cards_failed_badge: "Not Yet",
     audio_cards_unmemorized_title: "Still Not Memorized ({n})",
     audio_cards_no_unmemorized: "All words memorized!",
+    audio_cards_retry_unmemorized: "Retry {n} unmemorized",
 
     // ── Sprint Test Screen ──
     sprint_test_header: "Weekly Test",
