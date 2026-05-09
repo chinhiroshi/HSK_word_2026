@@ -17,6 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, {
   FadeIn,
+  FadeOut,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -121,6 +122,16 @@ export default function SprintStudySessionScreen() {
   const roundResultsRef = useRef<AudioCardsRoundResult[]>([]);
   const [audioCardsSummary, setAudioCardsSummary] = useState<AudioCardsSummary | null>(null);
   const cardChoiceInFlightRef = useRef(false);
+  const [failOverlayVisible, setFailOverlayVisible] = useState(false);
+  const failOverlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    return () => {
+      if (failOverlayTimerRef.current) {
+        clearTimeout(failOverlayTimerRef.current);
+        failOverlayTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const stampScale = useSharedValue(0);
   const stampOpacity = useSharedValue(0);
@@ -262,8 +273,9 @@ export default function SprintStudySessionScreen() {
   useEffect(() => {
     if (phase !== "audio-cards") return;
     if (!currentCardWord) return;
+    const useLong = shouldUseLongExample(currentIndex, cardWords.length);
     const speak = async () => {
-      const text = getAudioCardsSpeakText(currentCardWord, audioRepeat);
+      const text = getAudioCardsSpeakText(currentCardWord, audioRepeat, useLong);
       await speakChinese(text, { wordId: currentCardWord.id });
     };
     speak();
@@ -271,7 +283,7 @@ export default function SprintStudySessionScreen() {
       stopSpeaking().catch(() => {});
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, phase, currentCardWord?.id, audioRepeat]);
+  }, [currentIndex, phase, currentCardWord?.id, audioRepeat, cardWords.length]);
 
   // Reset per-row reveal state when switching filter tabs (全部 / まだ / 覚えた / 苦手歴)
   // so that meanings/words shown via the eye icon don't carry over across tabs.
@@ -452,6 +464,13 @@ export default function SprintStudySessionScreen() {
     setPendingChoice(null);
     setRequeueNotice({ kind: "fail", round: roundRef.current });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => {});
+    // 中央オーバーレイを 1.5 秒だけ表示
+    if (failOverlayTimerRef.current) clearTimeout(failOverlayTimerRef.current);
+    setFailOverlayVisible(true);
+    failOverlayTimerRef.current = setTimeout(() => {
+      setFailOverlayVisible(false);
+      failOverlayTimerRef.current = null;
+    }, 1500);
   };
 
   const handleCardChoice = async (choice: "memorized" | "unmemorized") => {
@@ -1249,6 +1268,7 @@ export default function SprintStudySessionScreen() {
             totalWords={cardWords.length}
             audioRepeat={audioRepeat}
             onToggleAudioRepeat={handleToggleAudioRepeat}
+            useLongExample={shouldUseLongExample(currentIndex, cardWords.length)}
           />
         </Animated.View>
 
@@ -1335,21 +1355,50 @@ export default function SprintStudySessionScreen() {
         )}
       </ScrollView>
       <ConfettiAnimation visible={confettiVisible} />
+      {failOverlayVisible ? (
+        <Animated.View
+          entering={FadeIn.duration(120)}
+          exiting={FadeOut.duration(220)}
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+          testID="overlay-audio-fail"
+        >
+          <View style={styles.failOverlayBackdrop}>
+            <ThemedText style={[styles.failOverlayText, { color: Colors.light.alert }]}>
+              70%以下{"\n"}不合格{"\n"}やり直し
+            </ThemedText>
+          </View>
+        </Animated.View>
+      ) : null}
     </ThemedView>
   );
 }
 
-// 音声カードで読み上げるテキスト: 例文があれば例文を、なければ単語を repeat 回読む
+// 音声カードで読み上げるテキスト: 長文モードなら longExample、通常は exampleSentence、無ければ word を repeat 回読む
 function getAudioCardsSpeakText(
-  w: { word: string; exampleSentence?: string | null },
+  w: { word: string; exampleSentence?: string | null; longExample?: string | null },
   repeat: 1 | 2 = 2,
+  useLong: boolean = false,
 ): string {
+  const long = w.longExample?.trim();
   const ex = w.exampleSentence?.trim();
-  const base = ex && ex.length > 0 ? ex : w.word;
+  const base =
+    useLong && long && long.length > 0
+      ? long
+      : ex && ex.length > 0
+      ? ex
+      : w.word;
   if (repeat <= 1) return base;
   // 末尾が終端記号でなければ句点を補い、TTS の自然な小休止を保証する
   const sep = /[。．！？!?.…]$/.test(base) ? " " : "。";
   return `${base}${sep}${base}`;
+}
+
+// 5枚に1枚ずつ等間隔で長文を割り当てる。総数<5の場合は先頭1枚だけ長文。
+function shouldUseLongExample(index: number, total: number): boolean {
+  if (total <= 0) return false;
+  if (total < 5) return index === 0;
+  return (index + 1) % 5 === 0;
 }
 
 // 音声カードフェーズの「覚えた」必要割合 (70%)
@@ -1406,11 +1455,20 @@ interface AudioCardProps {
   totalWords: number;
   audioRepeat: AudioRepeatCount;
   onToggleAudioRepeat: (next: AudioRepeatCount) => void;
+  useLongExample: boolean;
 }
 
-function AudioCard({ word, revealLevel, theme, wordIndex, totalWords, audioRepeat, onToggleAudioRepeat }: AudioCardProps) {
+function AudioCard({ word, revealLevel, theme, wordIndex, totalWords, audioRepeat, onToggleAudioRepeat, useLongExample }: AudioCardProps) {
   const origNum = getOriginalWordNum(word.id);
   const { lang } = useI18n();
+  const longText = word.longExample?.trim();
+  const isLongActive = useLongExample && !!longText && longText.length > 0;
+  const exampleDisplay = isLongActive ? longText! : word.exampleSentence;
+  const exampleTranslationDisplay = isLongActive
+    ? (lang === "en" && word.longExampleEnglish ? word.longExampleEnglish : word.longExampleTranslation) ?? ""
+    : lang === "en" && word.exampleEnglish
+    ? word.exampleEnglish
+    : word.exampleTranslation;
   return (
     <>
       <View style={styles.memoBadgeRow}>
@@ -1426,6 +1484,18 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords, audioRepea
           <ThemedText style={[styles.wordNumBadge, { color: theme.textSecondary }]}>
             {wordIndex} / {totalWords}
           </ThemedText>
+          {isLongActive ? (
+            <View
+              testID="badge-long-example"
+              style={[
+                styles.longBadge,
+                { backgroundColor: Colors.light.primary + "22", borderColor: Colors.light.primary + "55" },
+              ]}
+            >
+              <Feather name="align-left" size={11} color={Colors.light.primary} />
+              <ThemedText style={[styles.longBadgeText, { color: Colors.light.primary }]}>長文</ThemedText>
+            </View>
+          ) : null}
         </View>
       </View>
 
@@ -1463,13 +1533,13 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords, audioRepea
         <View style={styles.audioHiddenContent}>
           <View style={[styles.audioIconContainer, { backgroundColor: Colors.light.secondary + "18" }]}>
             <SpeakButton
-              text={getAudioCardsSpeakText(word, audioRepeat)}
+              text={getAudioCardsSpeakText(word, audioRepeat, isLongActive)}
               size="large"
               wordId={word.id}
             />
           </View>
           <ThemedText style={[styles.audioPrompt, { color: theme.textSecondary }]}>
-            音声を聴いて答えましょう
+            {isLongActive ? "長文を聴いて答えましょう" : "音声を聴いて答えましょう"}
           </ThemedText>
         </View>
       ) : null}
@@ -1487,7 +1557,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords, audioRepea
               {word.word}
             </ThemedText>
             <SpeakButton
-              text={getAudioCardsSpeakText(word, audioRepeat)}
+              text={getAudioCardsSpeakText(word, audioRepeat, isLongActive)}
               size="medium"
               wordId={word.id}
             />
@@ -1514,17 +1584,19 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords, audioRepea
               </View>
             </View>
           ) : null}
-          {word.exampleSentence ? (
+          {exampleDisplay ? (
             <View style={styles.exampleSection}>
               <View style={styles.exampleRow}>
                 <ThemedText style={[styles.exampleChinese, { color: theme.text }]}>
-                  {word.exampleSentence}
+                  {exampleDisplay}
                 </ThemedText>
-                <SpeakButton text={word.exampleSentence} size="small" wordId={word.id} />
+                <SpeakButton text={exampleDisplay} size="small" wordId={word.id} />
               </View>
-              <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
-                {lang === "en" && word.exampleEnglish ? word.exampleEnglish : word.exampleTranslation}
-              </ThemedText>
+              {exampleTranslationDisplay ? (
+                <ThemedText style={[styles.exampleJp, { color: theme.textSecondary }]}>
+                  {exampleTranslationDisplay}
+                </ThemedText>
+              ) : null}
             </View>
           ) : null}
         </Animated.View>
@@ -1733,6 +1805,10 @@ const styles = StyleSheet.create({
   repeatTogglePill: { paddingHorizontal: Spacing.md, paddingVertical: 4, borderRadius: BorderRadius.full, minWidth: 44, alignItems: "center" },
   repeatTogglePillText: { fontSize: 12, fontFamily: "Nunito_700Bold" },
   requeueBanner: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, borderWidth: 1, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, marginBottom: Spacing.md },
+  longBadge: { flexDirection: "row", alignItems: "center", gap: 4, borderWidth: 1, borderRadius: 99, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
+  longBadgeText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
+  failOverlayBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing.xl },
+  failOverlayText: { color: "#fff", fontSize: 38, fontFamily: "Nunito_700Bold", textAlign: "center", lineHeight: 46 },
   requeueBannerText: { fontSize: 12, fontFamily: "Nunito_700Bold", flex: 1 },
   choiceButtonsWrapper: { gap: Spacing.sm },
   choiceButtons: { flexDirection: "row", gap: Spacing.md },
