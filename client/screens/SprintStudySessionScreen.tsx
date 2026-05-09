@@ -633,8 +633,8 @@ export default function SprintStudySessionScreen() {
     // ----- POST STAMP SCREEN -----
     if (showPostStamp) {
       const isSpecial = sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false;
-      const stampImage = getPandaImage(studiedCellIndex, isSpecial, currentLevel);
-      const stampName = getPandaName(studiedCellIndex, isSpecial, currentLevel);
+      const stampImage = getPandaImage(studiedCellIndex, isSpecial);
+      const stampName = getPandaName(studiedCellIndex, isSpecial);
       return (
         <ThemedView style={styles.container}>
           <ScrollView
@@ -707,7 +707,7 @@ export default function SprintStudySessionScreen() {
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
             <View style={[styles.stampCircle, { backgroundColor: "transparent" }]}>
               <Image
-                source={getPandaImage(studiedCellIndex, sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false, currentLevel)}
+                source={getPandaImage(studiedCellIndex, sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false)}
                 style={{ width: 150, height: 150, borderRadius: 75 }}
                 resizeMode="cover"
               />
@@ -717,7 +717,6 @@ export default function SprintStudySessionScreen() {
               const overlayName = getPandaName(
                 studiedCellIndex,
                 sprintData?.specialStampPositions?.includes(studiedCellIndex) ?? false,
-                currentLevel,
               );
               return overlayName ? (
                 <ThemedText testID="text-stamp-name-overlay" style={styles.stampName}>

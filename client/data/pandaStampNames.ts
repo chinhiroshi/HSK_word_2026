@@ -283,22 +283,15 @@ export function getSpecialPandaNameByIndex(index: number): string {
 
 // Returns the panda name for a given sprint cell index, mirroring the
 // mapping in getPandaImage / getSpecialPandaImage.
-// Mirror the same HSK-level offset logic used in getPandaImage.
-const STAMPS_PER_LEVEL = 35;
-
-export function getPandaName(cellIndex: number, isSpecial: boolean, hskLevel?: number): string {
+export function getPandaName(cellIndex: number, isSpecial: boolean): string {
   if (isSpecial) {
     const len = PANDA_SPECIALS.length;
     if (!Number.isFinite(cellIndex) || cellIndex < 1) return PANDA_SPECIAL_NAMES[0];
     const i = (((cellIndex - 1) % len) + len) % len;
     return PANDA_SPECIAL_NAMES[i] ?? "スペシャルパンダ";
   }
-  const orderLen = PANDA_STAMP_ORDER.length; // 210
+  const orderLen = PANDA_STAMP_ORDER.length;
   if (!Number.isFinite(cellIndex) || cellIndex < 1) return getPandaStampName(PANDA_STAMP_ORDER[0]);
-  const levelOffset =
-    hskLevel != null && Number.isFinite(hskLevel) && hskLevel >= 1 && hskLevel <= 6
-      ? (hskLevel - 1) * STAMPS_PER_LEVEL
-      : 0;
-  const i = ((levelOffset + (cellIndex - 1)) % orderLen + orderLen) % orderLen;
+  const i = (((cellIndex - 1) % orderLen) + orderLen) % orderLen;
   return getPandaStampName(PANDA_STAMP_ORDER[i]);
 }

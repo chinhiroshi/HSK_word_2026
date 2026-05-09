@@ -299,20 +299,8 @@ export const PANDA_STAMP_ORDER: number[] = [
   31, 17, 169, 61, 143, 165,
 ];
 
-// 210 stamps split evenly across 6 HSK levels (35 each).
-// hskLevel 1→offset 0, 2→35, 3→70, 4→105, 5→140, 6→175.
-// Within each level the stamps cycle through that level's 35-stamp block
-// so different levels show different pandas. Pass hskLevel=undefined to
-// get the legacy behaviour (no offset).
-const STAMPS_PER_LEVEL = 35;
-
-export function getPandaImage(cellIndex: number, isSpecial: boolean, hskLevel?: number): any {
+export function getPandaImage(cellIndex: number, isSpecial: boolean): any {
   if (isSpecial) return getSpecialPandaImage(cellIndex);
-  const len = PANDA_STAMP_ORDER.length; // 210
-  const levelOffset =
-    hskLevel != null && Number.isFinite(hskLevel) && hskLevel >= 1 && hskLevel <= 6
-      ? (hskLevel - 1) * STAMPS_PER_LEVEL
-      : 0;
-  const i = ((levelOffset + (cellIndex - 1)) % len + len) % len;
+  const i = ((cellIndex - 1) % PANDA_STAMP_ORDER.length + PANDA_STAMP_ORDER.length) % PANDA_STAMP_ORDER.length;
   return PANDA_STAMPS[PANDA_STAMP_ORDER[i]];
 }

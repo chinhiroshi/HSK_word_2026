@@ -312,7 +312,7 @@ export default function SprintStampGalleryScreen() {
                     if (quote) {
                       setSelectedQuote(quote);
                       setSelectedStamp({
-                        image: getPandaImage(cell.index, isSpecial, currentLevel),
+                        image: getPandaImage(cell.index, isSpecial),
                         label: `No.${cell.index}`,
                         isSpecial,
                       });
@@ -416,7 +416,7 @@ export default function SprintStampGalleryScreen() {
                         >
                           {isCompleted ? (
                             <Image
-                              source={getPandaImage(cell.index, isSpecial, currentLevel)}
+                              source={getPandaImage(cell.index, isSpecial)}
                               style={[
                                 styles.pandaImage,
                                 { width: STAMP_SIZE - 6, height: STAMP_SIZE - 6, borderRadius: (STAMP_SIZE - 6) / 2 },
@@ -476,8 +476,8 @@ export default function SprintStampGalleryScreen() {
                             : (isSpecial || isExpectedSpecialEmpty) && !isCompleted
                             ? "?????"
                             : isSpecial
-                            ? getPandaName(cell.index, isSpecial, currentLevel)
-                            : getPandaName(cell.index, isSpecial, currentLevel).replace(/パンダ$/, "")}
+                            ? getPandaName(cell.index, isSpecial)
+                            : getPandaName(cell.index, isSpecial).replace(/パンダ$/, "")}
                         </ThemedText>
                         {!isTutorial && isCompleted && cell.completedDate ? (
                           <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
