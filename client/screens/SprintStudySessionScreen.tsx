@@ -48,10 +48,18 @@ import { playPassSfx, playFailSfx } from "@/lib/sfx";
 import { useSprint } from "@/contexts/SprintContext";
 import { getQuoteForStamp } from "@/data/quotes";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { getPandaImage } from "@/data/pandaStamps";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintStudySession">;
-type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
+type NavigationProp = NativeStackNavigationProp<SprintStackParamList & RootStackParamList>;
+
+type AudioCardsRoundResult = { round: number; memorized: number; total: number; isFinalCleanup: boolean };
+type AudioCardsSummary = {
+  rounds: AudioCardsRoundResult[];
+  unmemorized: Word[];
+  passed: boolean;
+};
 
 type Phase = "text-list" | "text-review" | "audio-list" | "audio-review" | "audio-cards" | "complete";
 // 0 = audio only, 1 = kanji revealed, 2 = meaning revealed
@@ -109,6 +117,8 @@ export default function SprintStudySessionScreen() {
   const finalCleanupRef = useRef(false);
   const roundOriginalRef = useRef<Word[]>([]);
   const roundChoicesRef = useRef<Record<string, "memorized" | "unmemorized">>({});
+  const roundResultsRef = useRef<AudioCardsRoundResult[]>([]);
+  const [audioCardsSummary, setAudioCardsSummary] = useState<AudioCardsSummary | null>(null);
   const cardChoiceInFlightRef = useRef(false);
 
   const stampScale = useSharedValue(0);
@@ -210,6 +220,8 @@ export default function SprintStudySessionScreen() {
       roundChoicesRef.current = {};
       roundRef.current = 1;
       finalCleanupRef.current = false;
+      roundResultsRef.current = [];
+      setAudioCardsSummary(null);
       const shuffled = shuffleArray(study);
       setCardWords(shuffled);
       setCurrentIndex(0);
@@ -343,25 +355,53 @@ export default function SprintStudySessionScreen() {
     }
   };
 
+  const buildAudioCardsSummary = (passed: boolean): AudioCardsSummary => {
+    const allChoices = audioChoicesRef.current;
+    const seen = new Set<string>();
+    const unmemorized: Word[] = [];
+    for (const w of roundOriginalRef.current) {
+      if (seen.has(w.id)) continue;
+      seen.add(w.id);
+      if (allChoices[w.id] !== "memorized") unmemorized.push(w);
+    }
+    return {
+      rounds: [...roundResultsRef.current],
+      unmemorized,
+      passed,
+    };
+  };
+
   const advanceOrFinish = (newIndex: number) => {
     if (newIndex < cardWords.length) {
       setCurrentIndex(newIndex);
       return;
     }
-    // 周回終端: 合格(≥70%)/不合格(<70%) を判定し、最大3周まで再挑戦
-    // 仕上げ周(合格後の未覚えのみ)は判定スキップで即 complete
-    if (finalCleanupRef.current) {
-      setPhase("complete");
-      return;
-    }
-    // 当周限定の choices で割合計算 (ユニーク id 集合)
+    // 周回終端: 当周の結果を記録してから合格(≥70%)/不合格(<70%) を判定
     const choices = roundChoicesRef.current;
     const uniqueIds = Array.from(new Set(cardWords.map((w) => w.id)));
     const memorized = uniqueIds.filter((id) => choices[id] === "memorized").length;
     const ratio = uniqueIds.length > 0 ? memorized / uniqueIds.length : 1;
 
+    roundResultsRef.current = [
+      ...roundResultsRef.current,
+      {
+        round: roundRef.current,
+        memorized,
+        total: uniqueIds.length,
+        isFinalCleanup: finalCleanupRef.current,
+      },
+    ];
+
+    // 仕上げ周(合格後の未覚えのみ)は判定スキップで即 complete
+    if (finalCleanupRef.current) {
+      setAudioCardsSummary(buildAudioCardsSummary(true));
+      setPhase("complete");
+      return;
+    }
+
     // 3周目を終えたら割合に関わらず complete
     if (roundRef.current >= 3) {
+      setAudioCardsSummary(buildAudioCardsSummary(ratio >= AUDIO_CARDS_PASS_THRESHOLD));
       setPhase("complete");
       return;
     }
@@ -377,6 +417,7 @@ export default function SprintStudySessionScreen() {
         remaining.push(w);
       }
       if (remaining.length === 0) {
+        setAudioCardsSummary(buildAudioCardsSummary(true));
         setPhase("complete");
         return;
       }
@@ -613,7 +654,11 @@ export default function SprintStudySessionScreen() {
             <ThemedText style={styles.stampLabel}>{t("stamp_earned")}</ThemedText>
           </Animated.View>
         ) : null}
-        <Animated.View entering={FadeIn} style={[styles.completeContainer, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
+        <ScrollView
+          contentContainerStyle={[styles.completeScrollContent, { paddingTop: safeHeaderPadding + Spacing.xl }]}
+          showsVerticalScrollIndicator={false}
+        >
+        <Animated.View entering={FadeIn} style={styles.completeInner}>
           <View style={[styles.completeIcon, { backgroundColor: (willGetStamp ? Colors.light.success : theme.primary) + "20" }]}>
             <Feather name={willGetStamp ? "award" : "check-circle"} size={48} color={willGetStamp ? Colors.light.success : theme.primary} />
           </View>
@@ -646,6 +691,136 @@ export default function SprintStudySessionScreen() {
               <ThemedText style={[styles.resultLabel, { color: theme.textSecondary }]}>{t("not_memorized_label")}</ThemedText>
             </View>
           </View>
+          {sessionMode === "audio-cards-only" && audioCardsSummary ? (
+            <View
+              testID="audio-cards-summary-card"
+              style={[
+                styles.summaryCard,
+                { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
+              ]}
+            >
+              <View style={styles.summaryHeaderRow}>
+                <ThemedText style={styles.summaryTitle}>{t("audio_cards_summary_title")}</ThemedText>
+                <View
+                  style={[
+                    styles.summaryBadge,
+                    {
+                      backgroundColor:
+                        (audioCardsSummary.passed ? Colors.light.success : Colors.light.alert) + "22",
+                      borderColor:
+                        (audioCardsSummary.passed ? Colors.light.success : Colors.light.alert) + "60",
+                    },
+                  ]}
+                >
+                  <Feather
+                    name={audioCardsSummary.passed ? "check" : "alert-circle"}
+                    size={12}
+                    color={audioCardsSummary.passed ? Colors.light.success : Colors.light.alert}
+                  />
+                  <ThemedText
+                    style={[
+                      styles.summaryBadgeText,
+                      { color: audioCardsSummary.passed ? Colors.light.success : Colors.light.alert },
+                    ]}
+                  >
+                    {audioCardsSummary.passed
+                      ? t("audio_cards_passed_badge")
+                      : t("audio_cards_failed_badge")}
+                  </ThemedText>
+                </View>
+              </View>
+              <ThemedText style={[styles.summarySub, { color: theme.textSecondary }]}>
+                {t("audio_cards_total_rounds").replace("{n}", String(audioCardsSummary.rounds.length))}
+              </ThemedText>
+              <View style={styles.summaryRoundsList}>
+                {audioCardsSummary.rounds.map((r, idx) => {
+                  const ratio = r.total > 0 ? r.memorized / r.total : 0;
+                  const passedRound = ratio >= AUDIO_CARDS_PASS_THRESHOLD;
+                  const label = r.isFinalCleanup
+                    ? t("audio_cards_final_round_label")
+                    : t("audio_cards_round_label").replace("{n}", String(r.round));
+                  return (
+                    <View
+                      key={`round-${idx}-${r.round}`}
+                      testID={`summary-round-${idx}`}
+                      style={[styles.summaryRoundRow, { borderColor: theme.border }]}
+                    >
+                      <View style={styles.summaryRoundLeft}>
+                        <ThemedText style={styles.summaryRoundLabel}>{label}</ThemedText>
+                        <ThemedText style={[styles.summaryRoundScore, { color: theme.textSecondary }]}>
+                          {t("audio_cards_round_score")
+                            .replace("{m}", String(r.memorized))
+                            .replace("{t}", String(r.total))}
+                        </ThemedText>
+                      </View>
+                      <ThemedText
+                        style={[
+                          styles.summaryRoundPercent,
+                          {
+                            color: r.isFinalCleanup
+                              ? theme.textSecondary
+                              : passedRound
+                              ? Colors.light.success
+                              : Colors.light.alert,
+                          },
+                        ]}
+                      >
+                        {Math.round(ratio * 100)}%
+                      </ThemedText>
+                    </View>
+                  );
+                })}
+              </View>
+              {audioCardsSummary.unmemorized.length > 0 ? (
+                <View style={styles.summaryUnmemorizedSection}>
+                  <ThemedText style={[styles.summaryUnmemorizedTitle, { color: Colors.light.alert }]}>
+                    {t("audio_cards_unmemorized_title").replace(
+                      "{n}",
+                      String(audioCardsSummary.unmemorized.length)
+                    )}
+                  </ThemedText>
+                  <View style={styles.summaryUnmemorizedList}>
+                    {audioCardsSummary.unmemorized.map((w) => (
+                      <Pressable
+                        key={`unmem-${w.id}`}
+                        testID={`summary-unmemorized-${w.id}`}
+                        onPress={() => {
+                          Haptics.selectionAsync().catch(() => {});
+                          navigation.navigate("WordDetail", { wordId: w.id });
+                        }}
+                        style={({ pressed }) => [
+                          styles.summaryUnmemorizedItem,
+                          {
+                            backgroundColor: Colors.light.alert + (pressed ? "22" : "12"),
+                            borderColor: Colors.light.alert + "40",
+                          },
+                        ]}
+                      >
+                        <View style={styles.summaryUnmemorizedTextWrap}>
+                          <View style={styles.summaryUnmemorizedHeaderRow}>
+                            <ThemedText style={[styles.summaryUnmemorizedId, { color: theme.textSecondary }]}>
+                              #{w.id}
+                            </ThemedText>
+                            <ThemedText style={styles.summaryUnmemorizedChinese}>{w.word}</ThemedText>
+                          </View>
+                          {w.pinyin ? (
+                            <ThemedText style={[styles.summaryUnmemorizedPinyin, { color: theme.textSecondary }]}>
+                              {w.pinyin}
+                            </ThemedText>
+                          ) : null}
+                        </View>
+                        <Feather name="chevron-right" size={16} color={theme.textSecondary} />
+                      </Pressable>
+                    ))}
+                  </View>
+                </View>
+              ) : (
+                <ThemedText style={[styles.summaryAllDone, { color: Colors.light.success }]}>
+                  {t("audio_cards_no_unmemorized")}
+                </ThemedText>
+              )}
+            </View>
+          ) : null}
           {willGetStamp ? (
             <Button
               testID="button-session-complete"
@@ -678,6 +853,7 @@ export default function SprintStudySessionScreen() {
             </Pressable>
           ) : null}
         </Animated.View>
+        </ScrollView>
       </ThemedView>
     );
   }
@@ -1644,4 +1820,68 @@ const styles = StyleSheet.create({
   quotePinyin: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center" },
   quoteJa: { fontSize: 13, fontFamily: "Nunito_400Regular", textAlign: "center", lineHeight: 20 },
   quoteSource: { fontSize: 12, fontFamily: "Nunito_400Regular", textAlign: "right", alignSelf: "flex-end", marginTop: Spacing.xs },
+  summaryCard: {
+    width: "100%",
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  summaryHeaderRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: Spacing.sm,
+  },
+  summaryTitle: { fontSize: 15, fontFamily: "Nunito_700Bold", flex: 1 },
+  summaryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  summaryBadgeText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
+  summarySub: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  summaryRoundsList: { gap: Spacing.xs, marginTop: Spacing.xs },
+  summaryRoundRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+  },
+  summaryRoundLeft: { flex: 1 },
+  summaryRoundLabel: { fontSize: 13, fontFamily: "Nunito_700Bold" },
+  summaryRoundScore: { fontSize: 11, fontFamily: "Nunito_400Regular", marginTop: 2 },
+  summaryRoundPercent: { fontSize: 16, fontFamily: "Nunito_700Bold" },
+  summaryUnmemorizedSection: { marginTop: Spacing.md, gap: Spacing.xs },
+  summaryUnmemorizedTitle: { fontSize: 13, fontFamily: "Nunito_700Bold" },
+  summaryUnmemorizedList: { gap: Spacing.xs },
+  summaryUnmemorizedItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    gap: Spacing.sm,
+  },
+  summaryUnmemorizedTextWrap: { flex: 1 },
+  summaryUnmemorizedHeaderRow: { flexDirection: "row", alignItems: "baseline", gap: Spacing.sm },
+  summaryUnmemorizedId: { fontSize: 11, fontFamily: "Nunito_700Bold" },
+  summaryUnmemorizedChinese: { fontSize: 16, fontFamily: "Nunito_700Bold" },
+  summaryUnmemorizedPinyin: { fontSize: 12, fontFamily: "Nunito_400Regular", marginTop: 2 },
+  summaryAllDone: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+    marginTop: Spacing.sm,
+  },
 });

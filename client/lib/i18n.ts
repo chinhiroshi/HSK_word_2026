@@ -176,6 +176,15 @@ const translations = {
     see_character: "文字を見る",
     see_meaning: "意味を見る",
     review_remaining: "まだの単語を再確認してください。準備ができたら完了を押してください。",
+    audio_cards_summary_title: "音声カード周回結果",
+    audio_cards_total_rounds: "{n}/3周",
+    audio_cards_round_label: "{n}周目",
+    audio_cards_final_round_label: "仕上げ周",
+    audio_cards_round_score: "{m}/{t}語覚えた",
+    audio_cards_passed_badge: "合格",
+    audio_cards_failed_badge: "未達",
+    audio_cards_unmemorized_title: "まだ覚えていない単語（{n}）",
+    audio_cards_no_unmemorized: "全て覚えました！",
 
     // ── Sprint Test Screen ──
     sprint_test_header: "週次テスト",
@@ -610,6 +619,15 @@ const translations = {
     see_character: "Show Character",
     see_meaning: "Show Meaning",
     review_remaining: "Review remaining words. Press Done when ready.",
+    audio_cards_summary_title: "Audio Cards Round Summary",
+    audio_cards_total_rounds: "{n}/3 rounds",
+    audio_cards_round_label: "Round {n}",
+    audio_cards_final_round_label: "Final Cleanup",
+    audio_cards_round_score: "Memorized {m}/{t}",
+    audio_cards_passed_badge: "Passed",
+    audio_cards_failed_badge: "Not Yet",
+    audio_cards_unmemorized_title: "Still Not Memorized ({n})",
+    audio_cards_no_unmemorized: "All words memorized!",
 
     // ── Sprint Test Screen ──
     sprint_test_header: "Weekly Test",
