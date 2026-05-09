@@ -310,6 +310,61 @@ export async function setAudioRepeatPreference(count: AudioRepeatCount): Promise
   } catch {}
 }
 
+const AUDIO_CARDS_HISTORY_KEY = "@chinese_master_audio_cards_history_v1";
+
+export type AudioCardsHistoryRound = {
+  round: number;
+  memorized: number;
+  total: number;
+  isFinalCleanup: boolean;
+};
+
+export type AudioCardsHistoryRecord = {
+  rounds: AudioCardsHistoryRound[];
+  unmemorizedWordIds: string[];
+  passed: boolean;
+  completedAt: string;
+};
+
+type AudioCardsHistoryStore = Partial<Record<HskLevel, Record<string, AudioCardsHistoryRecord>>>;
+
+async function readAudioCardsHistoryStore(): Promise<AudioCardsHistoryStore> {
+  try {
+    const raw = await AsyncStorage.getItem(AUDIO_CARDS_HISTORY_KEY);
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object") return parsed as AudioCardsHistoryStore;
+  } catch {}
+  return {};
+}
+
+export async function saveAudioCardsHistory(
+  level: HskLevel,
+  cellIndex: number,
+  record: AudioCardsHistoryRecord
+): Promise<void> {
+  try {
+    const store = await readAudioCardsHistoryStore();
+    const levelMap = { ...(store[level] ?? {}) };
+    levelMap[String(cellIndex)] = record;
+    const next: AudioCardsHistoryStore = { ...store, [level]: levelMap };
+    await AsyncStorage.setItem(AUDIO_CARDS_HISTORY_KEY, JSON.stringify(next));
+  } catch {}
+}
+
+export async function getAudioCardsHistory(
+  level: HskLevel,
+  cellIndex: number
+): Promise<AudioCardsHistoryRecord | null> {
+  try {
+    const store = await readAudioCardsHistoryStore();
+    const rec = store[level]?.[String(cellIndex)];
+    return rec ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function resetWordsOnly(): Promise<void> {
   const words = await getWords();
   const resetWords = words.map((w) => ({

@@ -40,6 +40,7 @@ import {
   initializeData,
   markAsMemorized,
   markAsUnmemorized,
+  saveAudioCardsHistory,
   setAudioRepeatPreference,
   type AudioRepeatCount,
 } from "@/lib/storage";
@@ -364,11 +365,20 @@ export default function SprintStudySessionScreen() {
       seen.add(w.id);
       if (allChoices[w.id] !== "memorized") unmemorized.push(w);
     }
-    return {
+    const summary: AudioCardsSummary = {
       rounds: [...roundResultsRef.current],
       unmemorized,
       passed,
     };
+    if (sessionMode === "audio-cards-only" && typeof cellIndex === "number") {
+      saveAudioCardsHistory(currentLevel as any, cellIndex, {
+        rounds: summary.rounds,
+        unmemorizedWordIds: unmemorized.map((w) => w.id),
+        passed,
+        completedAt: new Date().toISOString(),
+      }).catch(() => {});
+    }
+    return summary;
   };
 
   const advanceOrFinish = (newIndex: number) => {

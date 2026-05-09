@@ -185,6 +185,11 @@ const translations = {
     audio_cards_failed_badge: "未達",
     audio_cards_unmemorized_title: "まだ覚えていない単語（{n}）",
     audio_cards_no_unmemorized: "全て覚えました！",
+    audio_cards_retry_unmemorized: "未覚え{n}語を再挑戦",
+    audio_cards_history_title: "前回の音声カード結果",
+    audio_cards_history_completed_at: "{d} に完了",
+    audio_cards_history_show: "前回の音声カード結果を見る",
+    audio_cards_history_hide: "結果を閉じる",
 
     // ── Sprint Test Screen ──
     sprint_test_header: "週次テスト",
@@ -628,6 +633,11 @@ const translations = {
     audio_cards_failed_badge: "Not Yet",
     audio_cards_unmemorized_title: "Still Not Memorized ({n})",
     audio_cards_no_unmemorized: "All words memorized!",
+    audio_cards_retry_unmemorized: "Retry {n} unmemorized",
+    audio_cards_history_title: "Last Audio Cards Result",
+    audio_cards_history_completed_at: "Completed {d}",
+    audio_cards_history_show: "Show last audio cards result",
+    audio_cards_history_hide: "Hide result",
 
     // ── Sprint Test Screen ──
     sprint_test_header: "Weekly Test",

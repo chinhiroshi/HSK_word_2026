@@ -23,7 +23,13 @@ import { ThemedView } from "@/components/ThemedView";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
-import { getWords, initializeData, getTutorialStampEarned } from "@/lib/storage";
+import {
+  getWords,
+  initializeData,
+  getTutorialStampEarned,
+  getAudioCardsHistory,
+  type AudioCardsHistoryRecord,
+} from "@/lib/storage";
 import { useSprint, getSessionType as getSessionTypeFn } from "@/contexts/SprintContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { SprintSessionType } from "@/types";
@@ -46,7 +52,9 @@ import {
 import { AnimatedSprintIcon, EmojiSprite, SprintIconAnim } from "@/components/AnimatedSprintIcon";
 import { HskLevel } from "@/types";
 
-type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
+
+type NavigationProp = NativeStackNavigationProp<SprintStackParamList & RootStackParamList>;
 type SessionMode = "study" | "text-only" | "audio-only" | "audio-cards-only" | "audio-playback";
 type CellDir = "right" | "left" | "down" | "up" | null;
 
@@ -587,14 +595,45 @@ interface SessionModalProps {
   visible: boolean;
   cellIndex: number;
   phaseProgress: { text: boolean; audio: boolean; audioCards: boolean };
+  audioCardsHistory: AudioCardsHistoryRecord | null;
+  words: Word[];
   onClose: () => void;
   onSelect: (mode: SessionMode) => void;
+  onUnmemorizedWordPress: (wordId: string) => void;
   theme: ReturnType<typeof useTheme>["theme"];
 }
 
-function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, theme }: SessionModalProps) {
+const AUDIO_CARDS_PASS_THRESHOLD_DISPLAY = 0.7;
+
+function formatHistoryDate(iso: string, lang: string): string {
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    const y = d.getFullYear();
+    const m = d.getMonth() + 1;
+    const day = d.getDate();
+    const hh = String(d.getHours()).padStart(2, "0");
+    const mm = String(d.getMinutes()).padStart(2, "0");
+    if (lang === "ja") return `${y}/${m}/${day} ${hh}:${mm}`;
+    return `${y}-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")} ${hh}:${mm}`;
+  } catch {
+    return "";
+  }
+}
+
+function SessionModal({ visible, cellIndex, phaseProgress, audioCardsHistory, words, onClose, onSelect, onUnmemorizedWordPress, theme }: SessionModalProps) {
+  const { t, lang } = useI18n();
+  const [historyExpanded, setHistoryExpanded] = useState(false);
+  useEffect(() => {
+    if (!visible) setHistoryExpanded(false);
+  }, [visible]);
   const bothDone = phaseProgress.text && phaseProgress.audio && phaseProgress.audioCards;
   const doneCount = [phaseProgress.text, phaseProgress.audio, phaseProgress.audioCards].filter(Boolean).length;
+  const wordById = useMemo(() => {
+    const map = new Map<string, Word>();
+    for (const w of words) map.set(w.id, w);
+    return map;
+  }, [words]);
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable style={styles.modalOverlay} onPress={onClose}>
@@ -733,6 +772,173 @@ function SessionModal({ visible, cellIndex, phaseProgress, onClose, onSelect, th
             <Feather name="chevron-right" size={18} color="#7C3AED" />
           </Pressable>
 
+          {audioCardsHistory ? (
+            <View style={styles.historySection}>
+              <Pressable
+                testID="button-toggle-audio-cards-history"
+                onPress={() => setHistoryExpanded((v) => !v)}
+                style={({ pressed }) => [
+                  styles.historyToggleRow,
+                  {
+                    backgroundColor: theme.backgroundSecondary,
+                    borderColor: theme.border,
+                    opacity: pressed ? 0.85 : 1,
+                  },
+                ]}
+              >
+                <Feather name="clock" size={14} color={theme.textSecondary} />
+                <ThemedText style={[styles.historyToggleText, { color: theme.text }]}>
+                  {historyExpanded ? t("audio_cards_history_hide") : t("audio_cards_history_show")}
+                </ThemedText>
+                <View
+                  style={[
+                    styles.historyBadge,
+                    {
+                      backgroundColor:
+                        (audioCardsHistory.passed ? Colors.light.success : Colors.light.alert) + "22",
+                      borderColor:
+                        (audioCardsHistory.passed ? Colors.light.success : Colors.light.alert) + "60",
+                    },
+                  ]}
+                >
+                  <ThemedText
+                    style={[
+                      styles.historyBadgeText,
+                      { color: audioCardsHistory.passed ? Colors.light.success : Colors.light.alert },
+                    ]}
+                  >
+                    {audioCardsHistory.passed ? t("audio_cards_passed_badge") : t("audio_cards_failed_badge")}
+                  </ThemedText>
+                </View>
+                <Feather
+                  name={historyExpanded ? "chevron-up" : "chevron-down"}
+                  size={16}
+                  color={theme.textSecondary}
+                />
+              </Pressable>
+              {historyExpanded ? (
+                <ScrollView
+                  style={styles.historyScroll}
+                  contentContainerStyle={styles.historyScrollContent}
+                  showsVerticalScrollIndicator
+                >
+                  <View
+                    testID="audio-cards-history-card"
+                    style={[
+                      styles.historyCard,
+                      { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
+                    ]}
+                  >
+                    <ThemedText style={[styles.historyTitle, { color: theme.text }]}>
+                      {t("audio_cards_history_title")}
+                    </ThemedText>
+                    <ThemedText style={[styles.historyMeta, { color: theme.textSecondary }]}>
+                      {t("audio_cards_history_completed_at").replace(
+                        "{d}",
+                        formatHistoryDate(audioCardsHistory.completedAt, lang)
+                      )}
+                    </ThemedText>
+                    <ThemedText style={[styles.historyMeta, { color: theme.textSecondary }]}>
+                      {t("audio_cards_total_rounds").replace(
+                        "{n}",
+                        String(audioCardsHistory.rounds.length)
+                      )}
+                    </ThemedText>
+                    <View style={styles.historyRoundsList}>
+                      {audioCardsHistory.rounds.map((r, idx) => {
+                        const ratio = r.total > 0 ? r.memorized / r.total : 0;
+                        const passedRound = ratio >= AUDIO_CARDS_PASS_THRESHOLD_DISPLAY;
+                        const label = r.isFinalCleanup
+                          ? t("audio_cards_final_round_label")
+                          : t("audio_cards_round_label").replace("{n}", String(r.round));
+                        return (
+                          <View
+                            key={`hist-round-${idx}-${r.round}`}
+                            testID={`history-round-${idx}`}
+                            style={[styles.historyRoundRow, { borderColor: theme.border }]}
+                          >
+                            <View style={styles.historyRoundLeft}>
+                              <ThemedText style={[styles.historyRoundLabel, { color: theme.text }]}>
+                                {label}
+                              </ThemedText>
+                              <ThemedText style={[styles.historyRoundScore, { color: theme.textSecondary }]}>
+                                {t("audio_cards_round_score")
+                                  .replace("{m}", String(r.memorized))
+                                  .replace("{t}", String(r.total))}
+                              </ThemedText>
+                            </View>
+                            <ThemedText
+                              style={[
+                                styles.historyRoundPercent,
+                                {
+                                  color: r.isFinalCleanup
+                                    ? theme.textSecondary
+                                    : passedRound
+                                    ? Colors.light.success
+                                    : Colors.light.alert,
+                                },
+                              ]}
+                            >
+                              {Math.round(ratio * 100)}%
+                            </ThemedText>
+                          </View>
+                        );
+                      })}
+                    </View>
+                    {audioCardsHistory.unmemorizedWordIds.length > 0 ? (
+                      <View style={styles.historyUnmemorizedSection}>
+                        <ThemedText style={[styles.historyUnmemorizedTitle, { color: Colors.light.alert }]}>
+                          {t("audio_cards_unmemorized_title").replace(
+                            "{n}",
+                            String(audioCardsHistory.unmemorizedWordIds.length)
+                          )}
+                        </ThemedText>
+                        {audioCardsHistory.unmemorizedWordIds.map((wid) => {
+                          const w = wordById.get(wid);
+                          return (
+                            <Pressable
+                              key={`hist-unmem-${wid}`}
+                              testID={`history-unmemorized-${wid}`}
+                              onPress={() => onUnmemorizedWordPress(wid)}
+                              style={({ pressed }) => [
+                                styles.historyUnmemorizedItem,
+                                {
+                                  backgroundColor: Colors.light.alert + (pressed ? "22" : "12"),
+                                  borderColor: Colors.light.alert + "40",
+                                },
+                              ]}
+                            >
+                              <View style={styles.historyUnmemorizedTextWrap}>
+                                <View style={styles.historyUnmemorizedHeaderRow}>
+                                  <ThemedText style={[styles.historyUnmemorizedId, { color: theme.textSecondary }]}>
+                                    #{wid}
+                                  </ThemedText>
+                                  <ThemedText style={[styles.historyUnmemorizedChinese, { color: theme.text }]}>
+                                    {w?.word ?? wid}
+                                  </ThemedText>
+                                </View>
+                                {w?.pinyin ? (
+                                  <ThemedText style={[styles.historyUnmemorizedPinyin, { color: theme.textSecondary }]}>
+                                    {w.pinyin}
+                                  </ThemedText>
+                                ) : null}
+                              </View>
+                              <Feather name="chevron-right" size={16} color={theme.textSecondary} />
+                            </Pressable>
+                          );
+                        })}
+                      </View>
+                    ) : (
+                      <ThemedText style={[styles.historyAllDone, { color: Colors.light.success }]}>
+                        {t("audio_cards_no_unmemorized")}
+                      </ThemedText>
+                    )}
+                  </View>
+                </ScrollView>
+              ) : null}
+            </View>
+          ) : null}
+
         </Pressable>
       </Pressable>
     </Modal>
@@ -756,6 +962,7 @@ export default function SprintScreen() {
   const [selectedCell, setSelectedCell] = useState(0);
   const [reminderModalVisible, setReminderModalVisible] = useState(false);
   const [tutorialEarned, setTutorialEarned] = useState(true);
+  const [audioCardsHistory, setAudioCardsHistory] = useState<AudioCardsHistoryRecord | null>(null);
 
   useFocusEffect(
     useCallback(() => {
@@ -829,6 +1036,10 @@ export default function SprintScreen() {
         return;
       }
       setSelectedCell(index);
+      setAudioCardsHistory(null);
+      getAudioCardsHistory(currentLevel as HskLevel, index)
+        .then((rec) => setAudioCardsHistory(rec))
+        .catch(() => {});
       setModalVisible(true);
     }
   };
@@ -1119,8 +1330,15 @@ export default function SprintScreen() {
         visible={modalVisible}
         cellIndex={selectedCell}
         phaseProgress={getCellPhaseProgress(selectedCell)}
+        audioCardsHistory={audioCardsHistory}
+        words={words}
         onClose={() => setModalVisible(false)}
         onSelect={handleModeSelect}
+        onUnmemorizedWordPress={(wid) => {
+          Haptics.selectionAsync().catch(() => {});
+          setModalVisible(false);
+          (navigation as any).navigate("WordDetail", { wordId: wid });
+        }}
         theme={theme}
       />
     </ThemedView>
@@ -1241,4 +1459,69 @@ const styles = StyleSheet.create({
   modalOptionText: { flex: 1 },
   modalOptionTitle: { fontSize: 15, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: 2 },
   modalOptionDesc: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  historySection: { marginTop: Spacing.sm, gap: Spacing.sm },
+  historyToggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+  },
+  historyToggleText: { fontSize: 13, fontFamily: "Nunito_700Bold", flex: 1 },
+  historyBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  historyBadgeText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
+  historyScroll: { maxHeight: 360 },
+  historyScrollContent: { gap: Spacing.sm },
+  historyCard: {
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    padding: Spacing.md,
+    gap: Spacing.xs,
+  },
+  historyTitle: { fontSize: 14, fontFamily: "Nunito_700Bold" },
+  historyMeta: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  historyRoundsList: { gap: Spacing.xs, marginTop: Spacing.xs },
+  historyRoundRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+  },
+  historyRoundLeft: { flex: 1 },
+  historyRoundLabel: { fontSize: 13, fontFamily: "Nunito_700Bold" },
+  historyRoundScore: { fontSize: 11, fontFamily: "Nunito_400Regular", marginTop: 2 },
+  historyRoundPercent: { fontSize: 15, fontFamily: "Nunito_700Bold" },
+  historyUnmemorizedSection: { marginTop: Spacing.sm, gap: Spacing.xs },
+  historyUnmemorizedTitle: { fontSize: 12, fontFamily: "Nunito_700Bold" },
+  historyUnmemorizedItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+    gap: Spacing.sm,
+  },
+  historyUnmemorizedTextWrap: { flex: 1 },
+  historyUnmemorizedHeaderRow: { flexDirection: "row", alignItems: "baseline", gap: Spacing.sm },
+  historyUnmemorizedId: { fontSize: 11, fontFamily: "Nunito_700Bold" },
+  historyUnmemorizedChinese: { fontSize: 16, fontFamily: "Nunito_700Bold" },
+  historyUnmemorizedPinyin: { fontSize: 12, fontFamily: "Nunito_400Regular", marginTop: 2 },
+  historyAllDone: {
+    fontSize: 13,
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+    marginTop: Spacing.sm,
+  },
 });
