@@ -37,18 +37,20 @@ export default function SprintAudioPlaybackScreen() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentPhase, setCurrentPhase] = useState("");
   const [playbackRate] = useState(1.0);
-  const [isTextStruggleMode, setIsTextStruggleMode] = useState(false);
+  const [isStruggleMode, setIsStruggleMode] = useState(false);
 
   const isCancelledRef = useRef(false);
 
-  // 文字学習で苦手フラグが立った単語を優先。なければ音声未暗記単語全体。
+  // 文字リストまたは音声リストで苦手歴がある単語を優先。なければ音声未暗記単語全体。
   const applyPlaybackFilter = (todayWords: Word[]) => {
-    const textStruggled = todayWords.filter((w) => (w.textUnmemorizedCount ?? 0) > 0);
-    if (textStruggled.length > 0) {
-      setIsTextStruggleMode(true);
-      setWords(textStruggled);
+    const struggled = todayWords.filter(
+      (w) => (w.textUnmemorizedCount ?? 0) > 0 || (w.audioUnmemorizedCount ?? 0) > 0
+    );
+    if (struggled.length > 0) {
+      setIsStruggleMode(true);
+      setWords(struggled);
     } else {
-      setIsTextStruggleMode(false);
+      setIsStruggleMode(false);
       setWords(todayWords.filter((w) => !w.audioMemorized));
     }
   };
@@ -133,7 +135,7 @@ export default function SprintAudioPlaybackScreen() {
         source: "sprint_audio_playback",
         hsk_level: hskLevel,
         word_count: words.length,
-        text_struggle_mode: isTextStruggleMode,
+        struggle_mode: isStruggleMode,
       });
     } catch {}
 
@@ -212,14 +214,14 @@ export default function SprintAudioPlaybackScreen() {
               {words.length}語
             </ThemedText>
           </View>
-          <View style={[styles.filterBadge, { backgroundColor: isTextStruggleMode ? Colors.light.alert + "18" : theme.backgroundSecondary }]}>
+          <View style={[styles.filterBadge, { backgroundColor: isStruggleMode ? Colors.light.alert + "18" : theme.backgroundSecondary }]}>
             <Feather
-              name={isTextStruggleMode ? "flag" : "book"}
+              name={isStruggleMode ? "flag" : "book"}
               size={12}
-              color={isTextStruggleMode ? Colors.light.alert : theme.textSecondary}
+              color={isStruggleMode ? Colors.light.alert : theme.textSecondary}
             />
-            <ThemedText style={[styles.filterBadgeText, { color: isTextStruggleMode ? Colors.light.alert : theme.textSecondary }]}>
-              {isTextStruggleMode ? t("struggle_words") : t("audio_unmemorized")}
+            <ThemedText style={[styles.filterBadgeText, { color: isStruggleMode ? Colors.light.alert : theme.textSecondary }]}>
+              {isStruggleMode ? t("struggle_words") : t("audio_unmemorized")}
             </ThemedText>
           </View>
 
