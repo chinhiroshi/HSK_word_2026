@@ -95,8 +95,8 @@ export default function SprintSetupScreen() {
   };
 
   const wordsPerDay = showCustom
-    ? Math.max(5, parseInt(customInput, 10) || 0)
-    : selectedWords || 0;
+    ? Math.min(50, Math.max(5, parseInt(customInput, 10) || 0))
+    : Math.min(50, selectedWords || 0);
 
   const N = Math.max(1, Math.ceil(50 / Math.max(1, wordsPerDay)));
   const studySessionsNeeded = Math.ceil(totalWords / Math.max(1, wordsPerDay));
@@ -196,7 +196,7 @@ export default function SprintSetupScreen() {
             </View>
             <ThemedText style={styles.title}>{t("sprint_setup_title")}</ThemedText>
             <ThemedText style={[styles.subtitle, { color: theme.textSecondary }]}>
-              1日で覚える語数を選択してください。{"\n"}
+              1日で覚える語数を選択してください（最大50語）。{"\n"}
               学習マスが自動で作られます。
             </ThemedText>
           </View>
