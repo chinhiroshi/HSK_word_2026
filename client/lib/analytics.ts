@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Constants from "expo-constants";
 import * as Localization from "expo-localization";
+import { AppState, AppStateStatus } from "react-native";
 import PostHog from "posthog-react-native";
 import type { PostHogEventProperties } from "@posthog/core";
 
@@ -48,12 +49,20 @@ type QueuedEvent =
   | { kind: "event"; name: string; properties: PostHogEventProperties }
   | { kind: "screen"; name: string; properties: PostHogEventProperties };
 
+function devLog(...args: unknown[]): void {
+  if (__DEV__) {
+    console.log("[analytics]", ...args);
+  }
+}
+
 // `consent` reflects the live decision. While `consentLoaded` is false, we
 // don't yet know whether persisted consent is granted/denied/unknown, so we
 // briefly buffer events. Once loaded:
 //   - granted: flush queue and capture going forward
 //   - denied: drop queue and never capture
-//   - unknown: keep queue (waiting for the consent dialog decision)
+//   - unknown: in EU/EEA/UK regions we drop immediately (consent dialog is
+//     not currently shown, so buffering would only ever silently overflow);
+//     elsewhere unknown is auto-promoted to granted in initAnalytics().
 // When no API key is configured, treat analytics as terminally disabled so
 // `capture()` short-circuits instead of buffering events forever.
 let consent: ConsentState = POSTHOG_API_KEY ? "unknown" : "denied";
@@ -66,8 +75,24 @@ const posthogClient: PostHog | null = POSTHOG_API_KEY
       enableSessionReplay: false,
       captureAppLifecycleEvents: true,
       defaultOptIn: false,
+      // Tighter batching so that one-shot, high-value events (sprint test
+      // completion, subscription start, onboarding completion) are not lost
+      // when the user immediately backgrounds or kills the app. Combined
+      // with the per-event `important` flush below and the AppState flush
+      // hook, this drains the queue within seconds in the worst case.
+      flushAt: 5,
+      flushInterval: 10000,
     })
   : null;
+
+if (__DEV__ && posthogClient) {
+  try {
+    posthogClient.debug(true);
+    devLog("PostHog SDK initialized in debug mode", { host: POSTHOG_HOST });
+  } catch (err) {
+    console.warn("[analytics] enabling debug mode failed:", err);
+  }
+}
 
 export function getPostHogClient(): PostHog | null {
   return posthogClient;
@@ -159,6 +184,7 @@ export async function setAnalyticsConsent(value: "granted" | "denied"): Promise<
         }
       }
       flushQueue(c);
+      void flushAnalytics("consent-grant");
     } else {
       clearQueue();
       await c.optOut();
@@ -169,6 +195,20 @@ export async function setAnalyticsConsent(value: "granted" | "denied"): Promise<
 }
 
 let initialized = false;
+let appStateSub: { remove: () => void } | null = null;
+
+function ensureAppStateFlushHook(): void {
+  if (appStateSub) return;
+  appStateSub = AppState.addEventListener("change", (next: AppStateStatus) => {
+    // Drain the queue the moment the app leaves the foreground. iOS may
+    // suspend the JS runtime within seconds of backgrounding, so deferring
+    // the flush to the next interval tick is exactly when events get lost.
+    if (next === "background" || next === "inactive") {
+      void flushAnalytics(`appstate:${next}`);
+    }
+  });
+}
+
 export async function initAnalytics(): Promise<void> {
   if (initialized) return;
   initialized = true;
@@ -178,6 +218,7 @@ export async function initAnalytics(): Promise<void> {
     clearQueue();
     return;
   }
+  ensureAppStateFlushHook();
   try {
     await c.ready();
     const distinctId = await getOrCreateDistinctId();
@@ -208,15 +249,25 @@ export async function initAnalytics(): Promise<void> {
       }
       // Note: identify() intentionally NOT called for opted-out users.
     } else if (initialConsent === "unknown" && isExplicitConsentRegion()) {
-      // GDPR/UK PECR regions: require explicit, prior opt-in. Stay
-      // "unknown" — events keep buffering until the user decides via the
-      // consent dialog (App.tsx). Do NOT call optIn(); PostHog stays
-      // opted out by virtue of defaultOptIn:false. Mark consentLoaded so
-      // capture() routes through the buffer, not the loading state — the
-      // buffer caps at PENDING_QUEUE_LIMIT, and on a "denied" decision
-      // the queue is cleared without ever being sent.
-      consent = "unknown";
+      // GDPR/UK PECR regions: require explicit, prior opt-in. App.tsx does
+      // surface AnalyticsConsentDialog after onboarding for these users,
+      // but a user can complete onboarding and start a sprint before
+      // tapping "agree" — that easily blows past PENDING_QUEUE_LIMIT (50)
+      // so the very events we care about (sprint_test_completed) silently
+      // fall off the front of the queue. We deliberately choose **drop
+      // over buffer** here: events emitted before the user grants consent
+      // are lost, which is honest about our measurement scope. We do NOT
+      // persist "denied" — the dialog can still flip the in-memory state
+      // to "granted" via setAnalyticsConsent(), at which point future
+      // events flow normally.
+      consent = "denied";
       consentLoaded = true;
+      clearQueue();
+      try {
+        await c.optOut();
+      } catch (err) {
+        console.warn("[analytics] EU optOut failed:", err);
+      }
     } else {
       // Opt-out model: treat both "granted" and "unknown" (never decided) as
       // granted. First-time users start opted-in; they can disable analytics
@@ -270,6 +321,7 @@ export async function initAnalytics(): Promise<void> {
       // users whose `unknown` branch above returns without calling it.
       identifyOnce();
       flushQueue(c);
+      void flushAnalytics("init");
     }
   } catch (err) {
     console.warn("[analytics] PostHog init failed:", err);
@@ -278,21 +330,41 @@ export async function initAnalytics(): Promise<void> {
   }
 }
 
-export function capture(event: string, properties?: PostHogEventProperties): void {
+export type CaptureOptions = {
+  /** Force an immediate network flush after enqueuing this event. Use for
+   * one-shot, high-value events the user only triggers a few times per
+   * lifetime (sprint completion, subscription start, onboarding finish). */
+  important?: boolean;
+};
+
+export function capture(
+  event: string,
+  properties?: PostHogEventProperties,
+  options?: CaptureOptions,
+): void {
   const props = properties ?? {};
   // Until persisted consent has been read, buffer events. Once loaded:
   //   - granted → send
   //   - denied  → drop (caller is opted out)
-  //   - unknown → buffer (consent dialog still pending)
+  //   - unknown → buffer (only happens before consentLoaded; the unknown
+  //     state is resolved one way or the other by initAnalytics())
   if (!consentLoaded || consent === "unknown") {
+    devLog("queue (consent pending):", event);
     enqueue({ kind: "event", name: event, properties: props });
     return;
   }
-  if (consent !== "granted") return;
+  if (consent !== "granted") {
+    devLog("drop (consent denied):", event);
+    return;
+  }
   const c = posthogClient;
   if (!c) return;
   try {
+    devLog("capture:", event, options?.important ? "(important)" : "");
     c.capture(event, props);
+    if (options?.important) {
+      void flushAnalytics(`important:${event}`);
+    }
   } catch (err) {
     console.warn("[analytics] capture failed:", err);
   }
@@ -311,6 +383,21 @@ export function captureScreen(screenName: string, properties?: PostHogEventPrope
     c.screen(screenName, props);
   } catch (err) {
     console.warn("[analytics] captureScreen failed:", err);
+  }
+}
+
+export async function flushAnalytics(reason?: string): Promise<void> {
+  const c = posthogClient;
+  if (!c) return;
+  if (consent !== "granted") return;
+  try {
+    devLog("flush start:", reason ?? "(manual)");
+    await c.flush();
+    devLog("flush ok:", reason ?? "(manual)");
+  } catch (err) {
+    if (__DEV__) {
+      console.warn("[analytics] flush failed:", reason, err);
+    }
   }
 }
 

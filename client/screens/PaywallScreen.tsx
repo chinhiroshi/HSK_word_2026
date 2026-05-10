@@ -46,11 +46,15 @@ export default function PaywallScreen() {
     if (paywallShownLogged) return;
     if (loading) return;
     setPaywallShownLogged(true);
-    captureAnalytics("paywall_shown", {
-      price_string: priceString,
-      offering: monthlyPackage?.offeringIdentifier,
-      package_type: monthlyPackage?.packageType,
-    });
+    captureAnalytics(
+      "paywall_shown",
+      {
+        price_string: priceString,
+        offering: monthlyPackage?.offeringIdentifier,
+        package_type: monthlyPackage?.packageType,
+      },
+      { important: true },
+    );
   }, [loading, paywallShownLogged, priceString, monthlyPackage]);
 
   const handlePurchase = async () => {
@@ -60,11 +64,15 @@ export default function PaywallScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const result = await purchaseSubscription(monthlyPackage);
       if (result.success) {
-        captureAnalytics("subscription_started", {
-          price_string: priceString,
-          package_type: monthlyPackage?.packageType,
-          source: "paywall",
-        });
+        captureAnalytics(
+          "subscription_started",
+          {
+            price_string: priceString,
+            package_type: monthlyPackage?.packageType,
+            source: "paywall",
+          },
+          { important: true },
+        );
         navigation.goBack();
       } else if (result.cancelled) {
       } else if (result.error) {

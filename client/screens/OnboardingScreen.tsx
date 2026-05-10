@@ -186,7 +186,11 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const handleLevelConfirm = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await setSelectedHskLevel(selectedLevel);
-    captureAnalytics("onboarding_completed", { hsk_level: selectedLevel });
+    captureAnalytics(
+      "onboarding_completed",
+      { hsk_level: selectedLevel },
+      { important: true },
+    );
     onComplete();
   };
 

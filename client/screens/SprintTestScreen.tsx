@@ -228,14 +228,18 @@ export default function SprintTestScreen() {
       const total = cardWords.length;
       const accuracy = total > 0 ? memorized / total : 0;
       const percentage = Math.round(accuracy * 100);
-      captureAnalytics("sprint_test_completed", {
-        hsk_level: hskLevel,
-        memorized,
-        total,
-        accuracy,
-        percentage,
-        passed: percentage >= PASS_PERCENTAGE,
-      });
+      captureAnalytics(
+        "sprint_test_completed",
+        {
+          hsk_level: hskLevel,
+          memorized,
+          total,
+          accuracy,
+          percentage,
+          passed: percentage >= PASS_PERCENTAGE,
+        },
+        { important: true },
+      );
       setIsCompleted(true);
     }
   };
