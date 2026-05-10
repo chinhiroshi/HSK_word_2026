@@ -78,9 +78,11 @@ export default function SprintSetupScreen() {
   const [pendingResetMode, setPendingResetMode] = useState<null | "keep" | "reset">(null);
 
   const hasExistingProgress = !!(
-    sprintData?.hasSetup &&
-    (Object.keys(sprintData.completedDates ?? {}).length > 0 ||
-      (sprintData.specialStamps ?? []).length > 0)
+    sprintData?.hasSetup ||
+    (sprintData &&
+      (Object.keys(sprintData.completedDates ?? {}).length > 0 ||
+        (sprintData.specialStamps ?? []).length > 0 ||
+        Object.keys(sprintData.cellPhaseProgress ?? {}).length > 0))
   );
 
   useEffect(() => {
