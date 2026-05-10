@@ -476,12 +476,12 @@ export default function SprintStampGalleryScreen() {
                             : (isSpecial || isExpectedSpecialEmpty) && !isCompleted
                             ? "?????"
                             : isSpecial
-                            ? `No.${cell.index} ${getPandaName(cell.index, isSpecial, currentLevel)}`
-                            : `No.${cell.index} ${getPandaName(cell.index, isSpecial, currentLevel).replace(/パンダ$/, "")}`}
+                            ? `${cell.index} ${getPandaName(cell.index, isSpecial, currentLevel)}`
+                            : `${cell.index} ${getPandaName(cell.index, isSpecial, currentLevel).replace(/パンダ$/, "")}`}
                         </ThemedText>
                         {!isTutorial && isCompleted && cell.completedDate ? (
                           <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
-                            {` ${formatDate(cell.completedDate)}`}
+                            {formatDate(cell.completedDate)}
                           </ThemedText>
                         ) : null}
                       </View>
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
     opacity: 0.85,
   },
   stampMeta: {
-    flexDirection: "row",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
   },
