@@ -340,10 +340,11 @@ interface CellProps {
   testNumber?: number;
   isLocked?: boolean;
   isPremiumLocked?: boolean;
+  isStudyLocked?: boolean;
   currentLevel: number;
 }
 
-function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme, testNumber, isLocked, isPremiumLocked, currentLevel }: CellProps) {
+function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, completedDate, direction, onPress, theme, testNumber, isLocked, isPremiumLocked, isStudyLocked, currentLevel }: CellProps) {
   const isFlag = index === 0;
   const lvTheme = getLevelTheme(currentLevel);
 
@@ -395,8 +396,8 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       borderColor = "#C4B5FD";
       textColor = "#7C3AED";
     }
-  } else if (isPremiumLocked) {
-    // Study cell locked: premium subscription required → grey tint
+  } else if (isPremiumLocked || isStudyLocked) {
+    // Study cell locked: premium or pending-test → grey tint
     bgColor = theme.backgroundSecondary;
     borderColor = theme.border;
     textColor = theme.textSecondary;
@@ -448,8 +449,8 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
         </View>
       );
     }
-    // Study cell premium locked: lock icon in grey, no animation
-    if (isPremiumLocked) {
+    // Study cell locked (premium or pending test): lock icon in grey, no animation
+    if (isPremiumLocked || isStudyLocked) {
       return <Feather name="lock" size={CELL_SIZE * 0.30} color={theme.textSecondary + "70"} />;
     }
     if (sessionType === "test") {
@@ -483,7 +484,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
       style={[
         styles.cell,
         { backgroundColor: bgColor, borderColor, width: CELL_SIZE, height: CELL_SIZE },
-        (isLocked || isPremiumLocked) ? { opacity: 0.65 } : null,
+        (isLocked || isPremiumLocked || isStudyLocked) ? { opacity: 0.65 } : null,
       ]}
     >
       {renderIcon()}
@@ -1029,6 +1030,20 @@ export default function SprintScreen() {
       }
       navigation.navigate("SprintTest");
     } else {
+      // Lock cells beyond the first uncleared test (unless already completed previously)
+      if (
+        firstUnclearedTestCell !== null &&
+        index > firstUnclearedTestCell &&
+        !(sprintData.completedDates ?? {})[index]
+      ) {
+        const blockingTestNum = getTestNumber(firstUnclearedTestCell, wPD);
+        Alert.alert(
+          "ロック中",
+          `テスト${blockingTestNum}に合格すると、次の50語のマスが解放されます。`,
+          [{ text: t("ok") }]
+        );
+        return;
+      }
       // Premium check for study cells: words 51+ require premium (except HSK1)
       const studyOffset = getStudyWordOffset(index, wPD);
       if (studyOffset * wPD >= 50 && currentLevel !== 1 && !isPremium) {
@@ -1065,6 +1080,19 @@ export default function SprintScreen() {
   const streakCount = sprintData?.streakCount ?? 0;
   const specialStamps = sprintData?.specialStamps ?? [];
   const completedDates = sprintData?.completedDates ?? {};
+
+  // Smallest test cell that is neither passed (specialStamps) nor skipped (completedDates).
+  // Study cells beyond this boundary are locked (unless already completed by an existing user).
+  const firstUnclearedTestCell = useMemo<number | null>(() => {
+    if (!isSetup) return null;
+    const wPD = sprintData?.wordsPerDay ?? 10;
+    for (let i = 1; i < totalCells; i++) {
+      if (getSessionTypeFn(i, wPD) === "test") {
+        if (!specialStamps.includes(i) && !completedDates[i]) return i;
+      }
+    }
+    return null;
+  }, [isSetup, totalCells, sprintData?.wordsPerDay, specialStamps, completedDates]);
 
   const cellPositions = useMemo(() => buildCellPositions(totalCells), [totalCells]);
   const numGridRows = useMemo(
@@ -1209,6 +1237,13 @@ export default function SprintScreen() {
                     currentLevel !== 1 &&
                     !isPremium &&
                     (getStudyWordOffset(cellIndex, wPD) * wPD >= 50);
+                  // Lock study cells that lie beyond the first uncleared test.
+                  // Already-completed cells (existing users who progressed past the gate
+                  // before this rule existed) stay marked as completed and are not relocked.
+                  const studyIsTestLocked = cellSessionType === "study" &&
+                    firstUnclearedTestCell !== null &&
+                    cellIndex > firstUnclearedTestCell &&
+                    !completedDates[cellIndex];
                   return (
                     <Cell
                       key={colIdx}
@@ -1224,6 +1259,7 @@ export default function SprintScreen() {
                       testNumber={cellTestNum}
                       isLocked={testIsLocked}
                       isPremiumLocked={studyIsPremiumLocked}
+                      isStudyLocked={studyIsTestLocked}
                       currentLevel={currentLevel}
                     />
                   );
