@@ -27,7 +27,7 @@ import { HSK_QUOTES } from "@/data/hskQuotes";
 import { getTutorialStampEarned } from "@/lib/storage";
 import { useFocusEffect } from "@react-navigation/native";
 
-import { TUTORIAL_STAMP, PANDA_STAMPS, PANDA_SPECIALS, getPandaImage, resolveStampValue } from "@/data/pandaStamps";
+import { TUTORIAL_STAMP, PANDA_STAMPS, PANDA_SPECIALS, getPandaImage } from "@/data/pandaStamps";
 import { getPandaName, getPandaStampName, getSpecialPandaNameByIndex } from "@/data/pandaStampNames";
 
 const NUM_COLS = 4;
@@ -476,8 +476,8 @@ export default function SprintStampGalleryScreen() {
                             : (isSpecial || isExpectedSpecialEmpty) && !isCompleted
                             ? "?????"
                             : isSpecial
-                            ? `No.${resolveStampValue(cell.index, true, currentLevel) + 1} ${getPandaName(cell.index, isSpecial, currentLevel)}`
-                            : `No.${resolveStampValue(cell.index, false, currentLevel)} ${getPandaName(cell.index, isSpecial, currentLevel).replace(/パンダ$/, "")}`}
+                            ? `No.${cell.index} ${getPandaName(cell.index, isSpecial, currentLevel)}`
+                            : `No.${cell.index} ${getPandaName(cell.index, isSpecial, currentLevel).replace(/パンダ$/, "")}`}
                         </ThemedText>
                         {!isTutorial && isCompleted && cell.completedDate ? (
                           <ThemedText style={[styles.stampDate, { color: theme.textSecondary }]}>
