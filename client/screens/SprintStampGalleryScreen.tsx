@@ -97,6 +97,16 @@ export default function SprintStampGalleryScreen() {
     isTutorial?: boolean;
   };
 
+  const firstUnclearedTestCell = useMemo<number | null>(() => {
+    if (!isSetup) return null;
+    for (let i = 1; i < totalCells; i++) {
+      if (getSessionType(i, wordsPerDay) === "test") {
+        if (!specialStamps.includes(i) && !completedDates[i]) return i;
+      }
+    }
+    return null;
+  }, [isSetup, totalCells, wordsPerDay, specialStamps, completedDates]);
+
   const cells = useMemo<Cell[]>(() => {
     const result: Cell[] = [];
     // First cell (top-left) is reserved for the onboarding tutorial stamp.
@@ -277,6 +287,12 @@ export default function SprintStampGalleryScreen() {
                   const isSpecial = cell.isSpecial;
                   const isTutorial = !!cell.isTutorial;
                   const isExpectedSpecialEmpty = !isCompleted && !isTutorial && isTest;
+                  const isStudyLocked =
+                    !isTutorial &&
+                    cell.sessionType === "study" &&
+                    firstUnclearedTestCell !== null &&
+                    cell.index > firstUnclearedTestCell &&
+                    !isCompleted;
 
                   const borderColor = isTutorial
                     ? Colors.light.secondary
@@ -473,7 +489,7 @@ export default function SprintStampGalleryScreen() {
                         >
                           {isTutorial
                             ? t("tutorial_stamp_label")
-                            : (isSpecial || isExpectedSpecialEmpty) && !isCompleted
+                            : ((isSpecial || isExpectedSpecialEmpty) && !isCompleted) || isStudyLocked
                             ? "?????"
                             : isSpecial
                             ? `${cell.index} ${getPandaName(cell.index, isSpecial, currentLevel)}`
