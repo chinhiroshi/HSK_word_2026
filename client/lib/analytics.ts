@@ -33,6 +33,27 @@ const DISTINCT_ID_KEY = "@chinese_master_analytics_distinct_id_v1";
 const CONSENT_KEY = "@chinese_master_analytics_consent_v1";
 const PENDING_QUEUE_LIMIT = 50;
 
+// Feature flag — flip to `true` when the AnalyticsConsentDialog is brought
+// back for EU/EEA/UK users. While `false`, EU users in the `unknown` consent
+// state get their events dropped immediately (current behaviour, since the
+// dialog is intentionally not shown — see replit.md). While `true`, EU
+// users' events are buffered up to PENDING_QUEUE_LIMIT until they tap grant
+// (flushed) or deny (discarded) on the consent dialog.
+//
+// Keep this in sync with whether <AnalyticsConsentDialog/> is actually
+// surfaced in App.tsx for EU users. Enabling the buffer without showing the
+// dialog will silently overflow the queue for these users.
+export const EU_CONSENT_BUFFERING_ENABLED = false;
+
+// Diagnostic counter: number of buffered events lost to FIFO overflow since
+// process start. Surfaced via getPendingQueueOverflowCount() for the
+// ProfileScreen / debug UIs once the consent dialog is reintroduced.
+let pendingQueueOverflowCount = 0;
+
+export function getPendingQueueOverflowCount(): number {
+  return pendingQueueOverflowCount;
+}
+
 const POSTHOG_API_KEY: string =
   Constants.expoConfig?.extra?.posthogApiKey ||
   process.env.EXPO_PUBLIC_POSTHOG_API_KEY ||
@@ -132,7 +153,16 @@ export async function getAnalyticsConsent(): Promise<ConsentState> {
 function enqueue(item: QueuedEvent): void {
   pendingQueue.push(item);
   if (pendingQueue.length > PENDING_QUEUE_LIMIT) {
-    pendingQueue.splice(0, pendingQueue.length - PENDING_QUEUE_LIMIT);
+    const overflow = pendingQueue.length - PENDING_QUEUE_LIMIT;
+    pendingQueue.splice(0, overflow);
+    pendingQueueOverflowCount += overflow;
+    // Always log overflow (not just __DEV__) so we can see in production
+    // logs when the buffer cap is being hit — important when the EU
+    // consent dialog is re-enabled and we need to tune PENDING_QUEUE_LIMIT.
+    console.warn(
+      `[analytics] pending queue overflow: dropped ${overflow} oldest event(s) ` +
+        `(total dropped this session: ${pendingQueueOverflowCount})`,
+    );
   }
 }
 
@@ -249,24 +279,45 @@ export async function initAnalytics(): Promise<void> {
       }
       // Note: identify() intentionally NOT called for opted-out users.
     } else if (initialConsent === "unknown" && isExplicitConsentRegion()) {
-      // GDPR/UK PECR regions: require explicit, prior opt-in. App.tsx does
-      // surface AnalyticsConsentDialog after onboarding for these users,
-      // but a user can complete onboarding and start a sprint before
-      // tapping "agree" — that easily blows past PENDING_QUEUE_LIMIT (50)
-      // so the very events we care about (sprint_test_completed) silently
-      // fall off the front of the queue. We deliberately choose **drop
-      // over buffer** here: events emitted before the user grants consent
-      // are lost, which is honest about our measurement scope. We do NOT
-      // persist "denied" — the dialog can still flip the in-memory state
-      // to "granted" via setAnalyticsConsent(), at which point future
-      // events flow normally.
-      consent = "denied";
-      consentLoaded = true;
-      clearQueue();
-      try {
-        await c.optOut();
-      } catch (err) {
-        console.warn("[analytics] EU optOut failed:", err);
+      // GDPR/UK PECR regions: require explicit, prior opt-in. Behaviour
+      // depends on whether the consent dialog is currently being shown
+      // (see EU_CONSENT_BUFFERING_ENABLED above):
+      //
+      //   * Buffering OFF (current default — dialog is not surfaced):
+      //     immediately treat as denied so capture()/captureScreen() drop
+      //     events instead of silently overflowing a queue that will never
+      //     be flushed. We do NOT persist "denied" — the dialog can still
+      //     flip the in-memory state to "granted" via setAnalyticsConsent()
+      //     at which point future events flow normally.
+      //
+      //   * Buffering ON (dialog is surfaced again): keep consent as
+      //     "unknown" with consentLoaded=true so that capture() /
+      //     captureScreen() route events into pendingQueue. When the user
+      //     taps grant, setAnalyticsConsent("granted") flushes the queue;
+      //     on deny it discards the queue. Overflow beyond
+      //     PENDING_QUEUE_LIMIT (50) is logged via enqueue() and counted
+      //     in getPendingQueueOverflowCount() for diagnostics.
+      if (EU_CONSENT_BUFFERING_ENABLED) {
+        consent = "unknown";
+        consentLoaded = true;
+        // SDK stays opted-out until the user taps grant; events live only
+        // in our in-process pendingQueue so nothing leaves the device
+        // before consent. identify() is intentionally NOT called here.
+        try {
+          await c.optOut();
+        } catch (err) {
+          console.warn("[analytics] EU optOut (buffering) failed:", err);
+        }
+        devLog("EU/EEA/UK user — buffering events until consent decided");
+      } else {
+        consent = "denied";
+        consentLoaded = true;
+        clearQueue();
+        try {
+          await c.optOut();
+        } catch (err) {
+          console.warn("[analytics] EU optOut failed:", err);
+        }
       }
     } else {
       // Opt-out model: treat both "granted" and "unknown" (never decided) as
@@ -346,8 +397,13 @@ export function capture(
   // Until persisted consent has been read, buffer events. Once loaded:
   //   - granted → send
   //   - denied  → drop (caller is opted out)
-  //   - unknown → buffer (only happens before consentLoaded; the unknown
-  //     state is resolved one way or the other by initAnalytics())
+  //   - unknown → buffer. Normally only happens transiently before
+  //     consentLoaded (initAnalytics resolves it), BUT when
+  //     EU_CONSENT_BUFFERING_ENABLED is true the EU/EEA/UK branch leaves
+  //     consent="unknown" with consentLoaded=true on purpose, so events
+  //     buffer indefinitely until the user taps grant/deny on the
+  //     AnalyticsConsentDialog. Overflow past PENDING_QUEUE_LIMIT is
+  //     handled (and counted) by enqueue().
   if (!consentLoaded || consent === "unknown") {
     devLog("queue (consent pending):", event);
     enqueue({ kind: "event", name: event, properties: props });
