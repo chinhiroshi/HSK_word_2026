@@ -50,7 +50,7 @@ export default function SprintSetupScreen() {
   const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const { theme } = useTheme();
   const { t } = useI18n();
-  const { setupSprint } = useSprint();
+  const { setupSprint, sprintData } = useSprint();
 
   const WORD_OPTIONS = [
     { label: `10${t("words_unit")}`, words: 10, description: t("words_10_desc") },
@@ -75,6 +75,13 @@ export default function SprintSetupScreen() {
     return d;
   });
   const [showAndroidPicker, setShowAndroidPicker] = useState(false);
+  const [pendingResetMode, setPendingResetMode] = useState<null | "keep" | "reset">(null);
+
+  const hasExistingProgress = !!(
+    sprintData?.hasSetup &&
+    (Object.keys(sprintData.completedDates ?? {}).length > 0 ||
+      (sprintData.specialStamps ?? []).length > 0)
+  );
 
   useEffect(() => {
     initializeData().then(() =>
@@ -141,8 +148,7 @@ export default function SprintSetupScreen() {
     }
   };
 
-  const handleStart = async () => {
-    if (!canStart) return;
+  const performStart = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
     try {
@@ -159,8 +165,7 @@ export default function SprintSetupScreen() {
     }
   };
 
-  const handleStartWithReset = async () => {
-    if (!canStart) return;
+  const performStartWithReset = async () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setLoading(true);
     try {
@@ -172,6 +177,40 @@ export default function SprintSetupScreen() {
     }
     setLoading(false);
     navigation.goBack();
+  };
+
+  const handleStart = () => {
+    if (!canStart) return;
+    if (hasExistingProgress) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setPendingResetMode("keep");
+      return;
+    }
+    void performStart();
+  };
+
+  const handleStartWithReset = () => {
+    if (!canStart) return;
+    if (hasExistingProgress) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setPendingResetMode("reset");
+      return;
+    }
+    void performStartWithReset();
+  };
+
+  const handleConfirmReset = () => {
+    const mode = pendingResetMode;
+    setPendingResetMode(null);
+    if (mode === "keep") {
+      void performStart();
+    } else if (mode === "reset") {
+      void performStartWithReset();
+    }
+  };
+
+  const handleCancelReset = () => {
+    setPendingResetMode(null);
   };
 
   const notifTimeLabel = `${padTwo(notifHour)}:${padTwo(notifMinute)}`;
@@ -455,6 +494,55 @@ export default function SprintSetupScreen() {
           }}
         />
       ) : null}
+
+      {/* Reset Warning Modal */}
+      <Modal
+        transparent
+        animationType="fade"
+        visible={pendingResetMode !== null}
+        onRequestClose={handleCancelReset}
+      >
+        <View style={styles.warningOverlay}>
+          <View style={[styles.warningSheet, { backgroundColor: theme.backgroundDefault }]}>
+            <View style={[styles.warningIconWrap, { backgroundColor: Colors.light.alert + "1A" }]}>
+              <Feather name="alert-triangle" size={28} color={Colors.light.alert} />
+            </View>
+            <ThemedText style={[styles.warningTitle, { color: theme.text }]}>
+              スタンプ帳がリセットされます
+            </ThemedText>
+            <ThemedText style={[styles.warningBody, { color: theme.textSecondary }]}>
+              スプリントを再設定すると、これまでに集めたスタンプとクリア記録がすべて消えます。本当に再設定しますか？
+            </ThemedText>
+            <View style={styles.warningButtons}>
+              <Pressable
+                testID="button-reset-warning-cancel"
+                onPress={handleCancelReset}
+                style={({ pressed }) => [
+                  styles.warningButton,
+                  styles.warningCancelButton,
+                  { borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
+                ]}
+              >
+                <ThemedText style={[styles.warningButtonText, { color: theme.text }]}>
+                  キャンセル
+                </ThemedText>
+              </Pressable>
+              <Pressable
+                testID="button-reset-warning-confirm"
+                onPress={handleConfirmReset}
+                style={({ pressed }) => [
+                  styles.warningButton,
+                  { backgroundColor: Colors.light.alert, opacity: pressed ? 0.85 : 1 },
+                ]}
+              >
+                <ThemedText style={[styles.warningButtonText, { color: "#FFFFFF" }]}>
+                  リセットして再設定
+                </ThemedText>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ThemedView>
   );
 }
@@ -651,4 +739,61 @@ const styles = StyleSheet.create({
   iosPickerTitle: { fontSize: 15, fontFamily: "Nunito_600SemiBold" },
   iosPickerDone: { fontSize: 16, fontFamily: "Nunito_700Bold" },
   picker: { height: 200 },
+  warningOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  warningSheet: {
+    width: "100%",
+    maxWidth: 360,
+    borderRadius: BorderRadius.lg,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.lg,
+    alignItems: "center",
+  },
+  warningIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  warningTitle: {
+    fontSize: 17,
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+    marginBottom: Spacing.sm,
+  },
+  warningBody: {
+    fontSize: 14,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+    lineHeight: 21,
+    marginBottom: Spacing.lg,
+  },
+  warningButtons: {
+    flexDirection: "row",
+    width: "100%",
+    gap: Spacing.sm,
+  },
+  warningButton: {
+    flex: 1,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  warningCancelButton: {
+    borderWidth: 1,
+    backgroundColor: "transparent",
+  },
+  warningButtonText: {
+    fontSize: 14,
+    fontFamily: "Nunito_700Bold",
+  },
 });
