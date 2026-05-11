@@ -121,7 +121,7 @@ const LEVEL_EMOJIS: Record<number, EmojiSpec[]> = {
     { emoji: "🌴", anim: "wobble" }, { emoji: "🌛", anim: "twinkle" },
     { emoji: "🏰", anim: "pulse" }, { emoji: "🧞‍♀️", anim: "float" },
     { emoji: "🧝‍♀️", anim: "twinkle" }, { emoji: "🦂", anim: "hop" },
-    { emoji: "🦎", anim: "wobble" }, { emoji: "🦕", anim: "hop" },
+    { emoji: "🦎", anim: "wobble" },
   ],
   5: [
     { emoji: "🐬", anim: "float" }, { emoji: "🐠", anim: "float" },
