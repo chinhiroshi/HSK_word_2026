@@ -320,7 +320,7 @@ export default function SprintTestScreen() {
     incrementCellTestAttempts,
   } = useSprint();
 
-  type Phase = "pre-review" | "test" | "post-review" | "result";
+  type Phase = "pre-review-confirm" | "pre-review" | "test" | "post-review" | "result";
   const [phase, setPhase] = useState<Phase>("test");
   const [cardWords, setCardWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -401,7 +401,7 @@ export default function SprintTestScreen() {
         const prev = allWords.filter((w) => idSet.has(w.id));
         if (prev.length > 0) {
           setPreReviewWords(prev);
-          setPhase("pre-review");
+          setPhase("pre-review-confirm");
           setLoading(false);
           return;
         }
@@ -524,6 +524,50 @@ export default function SprintTestScreen() {
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
         <View style={styles.centered}>
           <ThemedText style={{ color: theme.textSecondary }}>{t("preparing_test")}</ThemedText>
+        </View>
+      </ThemedView>
+    );
+  }
+
+  if (phase === "pre-review-confirm") {
+    return (
+      <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
+        <View style={styles.centered}>
+          <View style={[styles.infoBadge, { backgroundColor: Colors.light.alert + "20", marginBottom: Spacing.lg }]}>
+            <Feather name="rotate-ccw" size={13} color={Colors.light.alert} />
+            <ThemedText style={[styles.infoBadgeText, { color: Colors.light.alert }]}>
+              {t("pre_review_title")}
+            </ThemedText>
+          </View>
+          <ThemedText style={styles.emptyTitle}>{t("pre_review_confirm_title")}</ThemedText>
+          <ThemedText style={[styles.reviewSubtitle, { color: theme.textSecondary, textAlign: "center", marginBottom: Spacing.xl }]}>
+            {t("pre_review_confirm_body_prefix")}{" "}{preReviewWords.length}{" "}{t("pre_review_confirm_body_suffix")}
+          </ThemedText>
+          <Button
+            testID="button-confirm-pre-review"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setPhase("pre-review");
+            }}
+            style={styles.actionButton}
+          >
+            {t("pre_review_confirm_yes")}
+          </Button>
+          <Pressable
+            testID="button-skip-pre-review"
+            onPress={async () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              const cellIdx = sprintData?.currentPosition ?? testCellIndexRef.current;
+              await incrementCellTestAttempts(cellIdx).catch(() => {});
+              setPhase("test");
+            }}
+            style={styles.skipButton}
+            hitSlop={8}
+          >
+            <ThemedText style={[styles.skipButtonText, { color: theme.textSecondary }]}>
+              {t("pre_review_confirm_skip")}
+            </ThemedText>
+          </Pressable>
         </View>
       </ThemedView>
     );
@@ -832,6 +876,8 @@ const styles = StyleSheet.create({
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
   actionButton: { width: "100%", marginTop: Spacing.xl },
+  skipButton: { marginTop: Spacing.lg, paddingVertical: Spacing.sm, alignItems: "center" },
+  skipButtonText: { fontSize: 14, fontFamily: "Nunito_600SemiBold" },
   resultContainer: { flex: 1, justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing["3xl"] },
   resultScrollContent: { flexGrow: 1, paddingHorizontal: Spacing["3xl"], paddingBottom: Spacing["3xl"] },
   resultInner: { alignItems: "center", width: "100%" },
