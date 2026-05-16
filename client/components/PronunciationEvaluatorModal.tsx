@@ -291,7 +291,7 @@ export function PronunciationEvaluatorModal({
                 <ThemedText style={[styles.noticeText, { color: theme.text }]}>
                   {t("mic_permission_denied")}
                 </ThemedText>
-                {Platform.OS !== "web" && !canAskAgain ? (
+                {Platform.OS !== "web" ? (
                   <Pressable
                     onPress={openSettings}
                     style={[styles.primaryBtn, { backgroundColor: Colors.light.primary }]}
