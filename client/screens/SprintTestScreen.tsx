@@ -309,6 +309,8 @@ export default function SprintTestScreen() {
     currentLevel,
     getCellTestUnmemorized,
     saveCellTestUnmemorized,
+    getCellTestAttempts,
+    incrementCellTestAttempts,
   } = useSprint();
 
   type Phase = "pre-review" | "test" | "post-review" | "result";
@@ -354,33 +356,51 @@ export default function SprintTestScreen() {
     setTimeout(() => setConfettiVisible(false), 3500);
   };
 
-  const load = useCallback(async () => {
-    await initializeData();
-    const allWords = await getWords();
-    const testWords = getTestWords(allWords);
-    setCardWords(shuffleArray(testWords));
-    // Show pre-review only when we have a saved unmemorized list from the
-    // previous attempt and those words still exist in the current data set.
-    const cellIdx = sprintData?.currentPosition ?? testCellIndexRef.current;
-    const prevUnmemIds = getCellTestUnmemorized(cellIdx);
-    if (prevUnmemIds.length > 0) {
-      const idSet = new Set(prevUnmemIds);
-      const prev = allWords.filter((w) => idSet.has(w.id));
-      if (prev.length > 0) {
-        setPreReviewWords(prev);
-        setPhase("pre-review");
-      } else {
-        setPhase("test");
-      }
-    } else {
-      setPhase("test");
-    }
-    setLoading(false);
-  }, [getTestWords, getCellTestUnmemorized, sprintData?.currentPosition]);
+  // Stable refs to context callbacks so load() does not re-trigger when
+  // sprintData updates recreate them. We only want load() to run once per
+  // screen mount.
+  const getTestWordsRef = useRef(getTestWords);
+  const getCellTestUnmemorizedRef = useRef(getCellTestUnmemorized);
+  const getCellTestAttemptsRef = useRef(getCellTestAttempts);
+  const incrementCellTestAttemptsRef = useRef(incrementCellTestAttempts);
+  useEffect(() => { getTestWordsRef.current = getTestWords; }, [getTestWords]);
+  useEffect(() => { getCellTestUnmemorizedRef.current = getCellTestUnmemorized; }, [getCellTestUnmemorized]);
+  useEffect(() => { getCellTestAttemptsRef.current = getCellTestAttempts; }, [getCellTestAttempts]);
+  useEffect(() => { incrementCellTestAttemptsRef.current = incrementCellTestAttempts; }, [incrementCellTestAttempts]);
+
+  // One-time guard: ensures load() (and the attempt increment inside it) runs
+  // exactly once per screen visit even if React re-invokes the effect.
+  const loadStartedRef = useRef(false);
 
   useEffect(() => {
-    load();
-  }, [load]);
+    if (loadStartedRef.current) return;
+    loadStartedRef.current = true;
+    (async () => {
+      await initializeData();
+      const allWords = await getWords();
+      const testWords = getTestWordsRef.current(allWords);
+      setCardWords(shuffleArray(testWords));
+      const cellIdx = testCellIndexRef.current;
+      const attempts = getCellTestAttemptsRef.current(cellIdx);
+      const prevUnmemIds = getCellTestUnmemorizedRef.current(cellIdx);
+      if (attempts >= 1 && prevUnmemIds.length > 0) {
+        const idSet = new Set(prevUnmemIds);
+        const prev = allWords.filter((w) => idSet.has(w.id));
+        if (prev.length > 0) {
+          setPreReviewWords(prev);
+          setPhase("pre-review");
+          setLoading(false);
+          return;
+        }
+      }
+      // Going straight into the test counts as starting a new attempt.
+      if (testWords.length > 0) {
+        await incrementCellTestAttemptsRef.current(cellIdx).catch(() => {});
+      }
+      setPhase("test");
+      setLoading(false);
+    })();
+  }, []);
 
   const currentWord = cardWords[currentIndex] ?? null;
   const progress = cardWords.length > 0 ? ((currentIndex + 1) / cardWords.length) * 100 : 0;
@@ -445,12 +465,19 @@ export default function SprintTestScreen() {
         { important: true },
       );
       // Persist this attempt's unmemorized list for next-time pre-review and
-      // for the post-review screen we are about to show.
+      // for the post-review screen we are about to show. Awaited so it
+      // commits to AsyncStorage before any subsequent writer (e.g.
+      // completeSession invoked from the result screen) reads/writes the
+      // sprint blob.
       const finalChoices = { ...choices, [currentWord.id]: choice };
       const unmemIds = cardWords
         .filter((w) => finalChoices[w.id] === "unmemorized")
         .map((w) => w.id);
-      saveCellTestUnmemorized(testCellIndexRef.current, unmemIds).catch(() => {});
+      try {
+        await saveCellTestUnmemorized(testCellIndexRef.current, unmemIds);
+      } catch {
+        // Persistence failure is non-fatal; continue with UI flow.
+      }
       if (unmemIds.length > 0) {
         const idSet = new Set(unmemIds);
         setPostReviewWords(cardWords.filter((w) => idSet.has(w.id)));
@@ -512,8 +539,10 @@ export default function SprintTestScreen() {
           <ReviewWordList words={preReviewWords} theme={theme} />
           <Button
             testID="button-start-test-after-review"
-            onPress={() => {
+            onPress={async () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              const cellIdx = sprintData?.currentPosition ?? testCellIndexRef.current;
+              await incrementCellTestAttempts(cellIdx).catch(() => {});
               setPhase("test");
             }}
             style={styles.actionButton}

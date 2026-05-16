@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from "react";
 import { SprintData, SprintSessionType, Word, HskLevel } from "@/types";
 import { getSprintData, saveSprintData, resetSprintData, getSelectedHskLevel } from "@/lib/storage";
 
@@ -87,6 +87,8 @@ interface SprintContextType {
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean; audioCards: boolean };
   getCellTestUnmemorized: (position: number) => string[];
   saveCellTestUnmemorized: (position: number, wordIds: string[]) => Promise<void>;
+  getCellTestAttempts: (position: number) => number;
+  incrementCellTestAttempts: (position: number) => Promise<number>;
   totalCells: number;
 }
 
@@ -108,6 +110,8 @@ const SprintContext = createContext<SprintContextType>({
   getCellPhaseProgress: () => ({ text: false, audio: false, audioCards: false }),
   getCellTestUnmemorized: () => [],
   saveCellTestUnmemorized: async () => {},
+  getCellTestAttempts: () => 0,
+  incrementCellTestAttempts: async () => 0,
   totalCells: DEFAULT_TOTAL_CELLS,
 });
 
@@ -119,6 +123,14 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
   const [sprintData, setSprintData] = useState<SprintData | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentLevel, setCurrentLevel] = useState<HskLevel>(4);
+  // Mirror of the latest sprintData for deterministic reads inside async
+  // writers. State setters can be batched/deferred, so we cannot rely on the
+  // closed-over `sprintData` value when multiple writes happen in the same
+  // tick (e.g. saveCellTestUnmemorized followed shortly by completeSession).
+  const sprintDataRef = useRef<SprintData | null>(null);
+  useEffect(() => {
+    sprintDataRef.current = sprintData;
+  }, [sprintData]);
 
   const loadSprint = useCallback(async () => {
     setLoading(true);
@@ -400,25 +412,48 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
 
   const saveCellTestUnmemorized = useCallback(
     async (position: number, wordIds: string[]): Promise<void> => {
-      // Use functional setState to merge against the latest sprintData and
-      // avoid races with concurrent writers (e.g. completeSession that runs
-      // shortly after this call from the same screen).
-      let nextRef: SprintData | null = null;
-      setSprintData((prev) => {
-        if (!prev) return prev;
-        const next: SprintData = {
-          ...prev,
-          cellTestUnmemorized: {
-            ...(prev.cellTestUnmemorized ?? {}),
-            [position]: wordIds,
-          },
-        };
-        nextRef = next;
-        return next;
-      });
-      if (nextRef) {
-        await saveSprintData(nextRef, currentLevel);
-      }
+      const prev = sprintDataRef.current;
+      if (!prev) return;
+      const next: SprintData = {
+        ...prev,
+        cellTestUnmemorized: {
+          ...(prev.cellTestUnmemorized ?? {}),
+          [position]: wordIds,
+        },
+      };
+      sprintDataRef.current = next;
+      setSprintData(next);
+      await saveSprintData(next, currentLevel);
+    },
+    [currentLevel]
+  );
+
+  const getCellTestAttempts = useCallback(
+    (position: number): number => {
+      const data = sprintDataRef.current ?? sprintData;
+      if (!data) return 0;
+      return (data.cellTestAttempts ?? {})[position] ?? 0;
+    },
+    [sprintData]
+  );
+
+  const incrementCellTestAttempts = useCallback(
+    async (position: number): Promise<number> => {
+      const prev = sprintDataRef.current;
+      if (!prev) return 0;
+      const current = (prev.cellTestAttempts ?? {})[position] ?? 0;
+      const nextCount = current + 1;
+      const next: SprintData = {
+        ...prev,
+        cellTestAttempts: {
+          ...(prev.cellTestAttempts ?? {}),
+          [position]: nextCount,
+        },
+      };
+      sprintDataRef.current = next;
+      setSprintData(next);
+      await saveSprintData(next, currentLevel);
+      return nextCount;
     },
     [currentLevel]
   );
@@ -443,6 +478,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         getCellPhaseProgress,
         getCellTestUnmemorized,
         saveCellTestUnmemorized,
+        getCellTestAttempts,
+        incrementCellTestAttempts,
         totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,
       }}
     >

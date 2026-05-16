@@ -68,4 +68,5 @@ export interface SprintData {
   // of words missed in the previous attempt and a post-test review of words
   // missed in the current attempt. Both are keyed by test cell index.
   cellTestUnmemorized?: Record<number, string[]>;
+  cellTestAttempts?: Record<number, number>;
 }
