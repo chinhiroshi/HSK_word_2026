@@ -48,6 +48,44 @@ function getStudyWordOffsetForCell(position: number, wordsPerDay: number): numbe
   return count;
 }
 
+// Self-heal helper. Walks 1..(totalCells-1) and returns the first cell that is
+// not yet "done". Truth source: completedDates (study + skipped test) plus
+// specialStamps (passed test). When everything is done, returns the input
+// currentPosition unchanged so callers can decide whether to wrap.
+// The marker (`currentPosition`) only moves forward inside completePhase/
+// completeSession when the user completes the cell they are currently on.
+// Leapfrog clears (e.g. clearing a later study cell while still on an
+// earlier one) update completedDates but leave currentPosition stuck. This
+// helper lets us re-derive the correct marker from the durable state.
+function computeFirstIncompletePosition(data: SprintData): number {
+  const total = data.totalCells ?? DEFAULT_TOTAL_CELLS;
+  const completedDates = data.completedDates ?? {};
+  const specialStamps = data.specialStamps ?? [];
+  const wPD = data.wordsPerDay;
+  for (let i = 1; i < total; i++) {
+    const type = getSessionType(i, wPD);
+    if (type === "flag") continue;
+    const done =
+      type === "test"
+        ? specialStamps.includes(i) || completedDates[i] != null
+        : completedDates[i] != null;
+    if (!done) return i;
+  }
+  // All cells complete: keep current marker; completeSession's wrap logic
+  // handles the end-of-loop case.
+  return data.currentPosition;
+}
+
+// Apply self-heal, never moving the marker backwards. Returns the same
+// object reference when no change is needed so callers can cheaply skip
+// AsyncStorage writes.
+function applyCurrentPositionSelfHeal(data: SprintData): SprintData {
+  const target = computeFirstIncompletePosition(data);
+  const next = Math.max(data.currentPosition, target);
+  if (next === data.currentPosition) return data;
+  return { ...data, currentPosition: next };
+}
+
 function canSkipSession(
   words: Word[],
   sprintData: SprintData,
@@ -137,7 +175,19 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     const level = await getSelectedHskLevel();
     setCurrentLevel(level);
     const data = await getSprintData(level);
-    setSprintData(data);
+    // Self-heal: re-derive currentPosition from completedDates/specialStamps
+    // so leapfrog clears (cells cleared while the marker was elsewhere) don't
+    // leave the runner stuck on an already-completed cell. Only persists when
+    // the value actually changed. Skip for un-set-up sprints (null/no setup).
+    if (data && data.hasSetup) {
+      const healed = applyCurrentPositionSelfHeal(data);
+      if (healed !== data) {
+        await saveSprintData(healed, level);
+      }
+      setSprintData(healed);
+    } else {
+      setSprintData(data);
+    }
     setLoading(false);
   }, []);
 
@@ -189,6 +239,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         : sprintData.studiedWordCount;
 
       const dynTotal = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
+      // Best-effort +1 (or wrap). Final truth comes from the self-heal pass
+      // below, which jumps past any already-cleared cells (leapfrog progress).
       const nextPosition = sprintData.currentPosition + 1;
       const newPosition = nextPosition >= dynTotal ? 1 : nextPosition;
       const newSpecialStamps = isSpecial
@@ -210,8 +262,11 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         setupDate: sprintData.setupDate ?? today,
         completedDates: newCompletedDates,
       };
-      await saveSprintData(updated, currentLevel);
-      setSprintData(updated);
+      // Self-heal: if the marker still points at a cell that is now done
+      // (e.g. user previously leapfrog-cleared the next test), skip ahead.
+      const healed = applyCurrentPositionSelfHeal(updated);
+      await saveSprintData(healed, currentLevel);
+      setSprintData(healed);
     },
     [sprintData, currentLevel]
   );
@@ -262,6 +317,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
             ? sprintData.studiedWordCount + sprintData.wordsPerDay
             : sprintData.studiedWordCount;
         const dynTotal2 = sprintData.totalCells ?? DEFAULT_TOTAL_CELLS;
+        // Best-effort marker bump when completing the current cell; the
+        // self-heal pass below is the source of truth and will jump past any
+        // further already-cleared cells (leapfrog progress).
         const newCurrentPosition = isCurrentCell
           ? (sprintData.currentPosition + 1 >= dynTotal2 ? 1 : sprintData.currentPosition + 1)
           : sprintData.currentPosition;
@@ -276,8 +334,9 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
           completedDates: newCompletedDates,
           cellPhaseProgress: newPhaseProgress,
         };
-        await saveSprintData(updated, currentLevel);
-        setSprintData(updated);
+        const healed = applyCurrentPositionSelfHeal(updated);
+        await saveSprintData(healed, currentLevel);
+        setSprintData(healed);
         return true;
       } else {
         const updated: SprintData = {
