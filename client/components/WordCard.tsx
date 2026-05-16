@@ -106,10 +106,10 @@ export function WordCard({
       return;
     }
     markScale.value = withSpring(1.3, springConfig, () => {
-      markScale.value = withSpringffzd(1, springConfig);
+      markScale.value = withSpring(1, springConfig);
     });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onMarkMemorized>のfw?.();
+    onMarkMemorized?.();
   };
 
   const unmemorizedCount = word.textUnmemorizedCount || 0;
