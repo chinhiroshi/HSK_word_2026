@@ -1605,7 +1605,7 @@ export default function SprintStudySessionScreen() {
                 />
               </View>
               <ThemedText style={[styles.bulkOverlayHint, { color: theme.textSecondary }]}>
-                両方押したまま {Math.max(0, (DUAL_PRESS_MS / 1000) - dualPressProgress * (DUAL_PRESS_MS / 1000)).toFixed(1)} 秒
+                押したまま {Math.max(0, (DUAL_PRESS_MS / 1000) - dualPressProgress * (DUAL_PRESS_MS / 1000)).toFixed(1)} 秒
               </ThemedText>
             </View>
           </View>
