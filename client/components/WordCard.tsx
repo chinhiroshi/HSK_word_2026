@@ -301,7 +301,7 @@ export function WordCard({
                 <PronounceButton
                   text={word.longExample || ""}
                   size="small"
-                  wordId={`${word.id}-long`}
+                  wordId={word.id}
                 />
               </View>
             ) : null}

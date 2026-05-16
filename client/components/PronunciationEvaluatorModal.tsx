@@ -418,6 +418,16 @@ export function PronunciationEvaluatorModal({
                     <ThemedText style={styles.primaryBtnText}>{t("try_again")}</ThemedText>
                   </Pressable>
                 ) : null}
+
+                <Pressable
+                  onPress={handleClose}
+                  style={[styles.secondaryBtn, { borderColor: theme.border }]}
+                  testID="button-close-evaluator-text"
+                >
+                  <ThemedText style={[styles.secondaryBtnText, { color: theme.text }]}>
+                    {t("close")}
+                  </ThemedText>
+                </Pressable>
               </View>
             ) : null}
           </ScrollView>
