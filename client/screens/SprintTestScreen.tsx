@@ -374,7 +374,13 @@ export default function SprintTestScreen() {
 
   useEffect(() => {
     if (loadStartedRef.current) return;
+    // Wait for sprint context to finish loading so attempts/unmemorized
+    // history are available; without this guard a fast mount could see an
+    // empty SprintData and skip pre-review erroneously.
+    if (!sprintData) return;
     loadStartedRef.current = true;
+    // Capture the cell index now that sprintData is ready.
+    testCellIndexRef.current = sprintData.currentPosition;
     (async () => {
       await initializeData();
       const allWords = await getWords();
@@ -400,7 +406,7 @@ export default function SprintTestScreen() {
       setPhase("test");
       setLoading(false);
     })();
-  }, []);
+  }, [sprintData]);
 
   const currentWord = cardWords[currentIndex] ?? null;
   const progress = cardWords.length > 0 ? ((currentIndex + 1) / cardWords.length) * 100 : 0;
