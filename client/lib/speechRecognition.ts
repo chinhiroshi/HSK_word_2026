@@ -160,10 +160,21 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
     }
   };
 
+  let stopped = false;
   return {
     stop: () => {
+      if (stopped) return;
+      stopped = true;
       try { ExpoSpeechRecognitionModule.stop(); } catch {}
-      removeAll();
+      // Do NOT remove listeners immediately — wait for the native `end` event
+      // (which itself calls removeAll + onEnd). Fallback after 2s in case the
+      // platform never emits `end` so the modal can still transition state.
+      setTimeout(() => {
+        if (listeners.length > 0) {
+          removeAll();
+          if (opts.onEnd) opts.onEnd();
+        }
+      }, 2000);
     },
   };
 }
