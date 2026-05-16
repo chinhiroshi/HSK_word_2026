@@ -11,7 +11,7 @@ import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
-import { PronounceButton } from "@/components/PronounceButton";
+import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
@@ -172,11 +172,6 @@ export function WordCard({
               ) : null}
             </View>
             <SpeakButton text={speakText} size="small" wordId={word.id} />
-            <PronounceButton
-              text={isLocked ? word.word : `${word.word}。${word.exampleSentence}`}
-              size="small"
-              wordId={word.id}
-            />
           </View>
 
           <View style={styles.markActions}>
@@ -277,10 +272,16 @@ export function WordCard({
             </ThemedText>
           </View>
         ) : (
-          <View style={styles.exampleRow}>
-            <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
-              {word.exampleSentence}
-            </ThemedText>
+          <View style={styles.exampleColumn}>
+            <View style={styles.exampleRow}>
+              <ThemedText style={[styles.exampleSentence, { color: theme.text, flex: 1 }]} numberOfLines={1}>
+                {word.exampleSentence}
+              </ThemedText>
+              <InlinePronunciationEvaluator
+                referenceText={word.exampleSentence}
+                wordId={word.id}
+              />
+            </View>
             {showLongExample && word.longExample ? (
               <View style={styles.longExampleRow}>
                 <ThemedText style={[styles.longExample, { color: theme.textSecondary }]}>
@@ -298,11 +299,6 @@ export function WordCard({
                 >
                   <Feather name="volume-2" size={14} color={theme.primary} />
                 </Pressable>
-                <PronounceButton
-                  text={word.longExample || ""}
-                  size="small"
-                  wordId={word.id}
-                />
               </View>
             ) : null}
           </View>
@@ -411,8 +407,14 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
   },
+  exampleColumn: {
+    flexDirection: "column",
+  },
   exampleRow: {
     paddingLeft: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
   },
   exampleSentence: {
     fontSize: 14,
