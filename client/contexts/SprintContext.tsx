@@ -50,8 +50,11 @@ function getStudyWordOffsetForCell(position: number, wordsPerDay: number): numbe
 
 // Self-heal helper. Walks 1..(totalCells-1) and returns the first cell that is
 // not yet "done". Truth source: completedDates (study + skipped test) plus
-// specialStamps (passed test). When everything is done, returns the input
-// currentPosition unchanged so callers can decide whether to wrap.
+// specialStamps (passed test). When every playable cell is done, returns the
+// last playable cell so even a stale mid-track marker on fully-cleared data
+// gets advanced to a canonical endpoint (combined with the no-backward rule
+// in `applyCurrentPositionSelfHeal`). `completeSession`'s own wrap-to-1
+// logic still runs separately when the user finishes the final cell live.
 // The marker (`currentPosition`) only moves forward inside completePhase/
 // completeSession when the user completes the cell they are currently on.
 // Leapfrog clears (e.g. clearing a later study cell while still on an
