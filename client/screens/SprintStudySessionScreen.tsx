@@ -126,14 +126,21 @@ export default function SprintStudySessionScreen() {
   const [failOverlayVisible, setFailOverlayVisible] = useState(false);
   const failOverlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pendingCleanupWords, setPendingCleanupWords] = useState<Word[] | null>(null);
-  // Hidden bulk-complete: long-press the card counter for 3s to mark the
-  // current card and all remaining cards as memorized and end the session.
-  const BULK_COMPLETE_DELAY_MS = 3000;
+  // Hidden bulk-complete: triple-tap the audio-learning badge within 1.5s to
+  // mark the current card and all remaining cards as memorized and end session.
+  const BADGE_TAP_WINDOW_MS = 1500;
+  const BADGE_TAP_REQUIRED = 3;
+  const badgeTapCountRef = useRef(0);
+  const badgeTapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
     return () => {
       if (failOverlayTimerRef.current) {
         clearTimeout(failOverlayTimerRef.current);
         failOverlayTimerRef.current = null;
+      }
+      if (badgeTapTimerRef.current) {
+        clearTimeout(badgeTapTimerRef.current);
+        badgeTapTimerRef.current = null;
       }
     };
   }, []);
@@ -1366,25 +1373,36 @@ export default function SprintStudySessionScreen() {
         {/* Phase badge + progress */}
         <View style={styles.phaseHeader}>
           <View style={styles.phaseLeft}>
-            <View style={[styles.phaseBadge, { backgroundColor: badgeBg }]}>
+            <Pressable
+              testID="pressable-audio-badge"
+              onPress={() => {
+                if (phase !== "audio-cards") return;
+                badgeTapCountRef.current += 1;
+                if (badgeTapTimerRef.current) {
+                  clearTimeout(badgeTapTimerRef.current);
+                }
+                if (badgeTapCountRef.current >= BADGE_TAP_REQUIRED) {
+                  badgeTapCountRef.current = 0;
+                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                  void executeBulkComplete();
+                } else {
+                  badgeTapTimerRef.current = setTimeout(() => {
+                    badgeTapCountRef.current = 0;
+                    badgeTapTimerRef.current = null;
+                  }, BADGE_TAP_WINDOW_MS);
+                }
+              }}
+              style={[styles.phaseBadge, { backgroundColor: badgeBg }]}
+            >
               <Feather name={badgeIcon} size={13} color={badgeColor} />
               <ThemedText style={[styles.phaseBadgeText, { color: badgeColor }]}>
                 {badgeLabel}
               </ThemedText>
-            </View>
+            </Pressable>
           </View>
-          <Pressable
-            testID="pressable-card-counter"
-            onLongPress={() => {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-              void executeBulkComplete();
-            }}
-            delayLongPress={BULK_COMPLETE_DELAY_MS}
-          >
-            <ThemedText selectable={false} style={[styles.progress, { color: theme.textSecondary }]}>
-              {currentIndex + 1} / {cardWords.length}
-            </ThemedText>
-          </Pressable>
+          <ThemedText style={[styles.progress, { color: theme.textSecondary }]}>
+            {currentIndex + 1} / {cardWords.length}
+          </ThemedText>
         </View>
 
         <View style={styles.progressBarWrapper}>
