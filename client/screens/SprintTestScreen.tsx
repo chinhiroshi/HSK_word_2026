@@ -107,14 +107,10 @@ interface ReviewWordRowProps {
   showMeaning: boolean;
   hideChinese: boolean;
   onToggleMeaning: () => void;
-  onToggleChinese: () => void;
   theme: ReturnType<typeof useTheme>["theme"];
 }
 
 function maskChinese(text: string): string {
-  // Replace Han characters with the same number of full-width question marks.
-  // Non-CJK characters (punctuation, ASCII, spaces) are preserved so the
-  // sentence shape stays recognizable.
   return text.replace(/[\u3400-\u9FFF\uF900-\uFAFF]/g, "？");
 }
 
@@ -123,7 +119,6 @@ function ReviewWordRow({
   showMeaning,
   hideChinese,
   onToggleMeaning,
-  onToggleChinese,
   theme,
 }: ReviewWordRowProps) {
   const { t } = useI18n();
@@ -139,26 +134,43 @@ function ReviewWordRow({
         { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
       ]}
     >
-      <View style={reviewStyles.rowTop}>
-        <View style={reviewStyles.rowMain}>
-          <ThemedText style={reviewStyles.rowWord}>{wordDisplay}</ThemedText>
-          {!hideChinese && word.pinyin ? (
-            <ThemedText style={[reviewStyles.rowPinyin, { color: theme.textSecondary }]}>
-              {word.pinyin}
+      <View style={reviewStyles.rowMain}>
+        <ThemedText style={reviewStyles.rowWord}>{wordDisplay}</ThemedText>
+        {!hideChinese && word.pinyin ? (
+          <ThemedText style={[reviewStyles.rowPinyin, { color: theme.textSecondary }]}>
+            {word.pinyin}
+          </ThemedText>
+        ) : null}
+        {word.exampleSentence ? (
+          <ThemedText
+            style={[reviewStyles.rowSentence, { color: theme.textSecondary }]}
+            numberOfLines={1}
+          >
+            {sentenceDisplay}
+          </ThemedText>
+        ) : null}
+        <View style={reviewStyles.rowActions}>
+          <Pressable
+            testID={`button-toggle-meaning-${word.id}`}
+            onPress={onToggleMeaning}
+            style={[
+              reviewStyles.toggleChip,
+              { borderColor: theme.border, backgroundColor: theme.backgroundSecondary },
+            ]}
+            hitSlop={6}
+          >
+            <Feather name={showMeaning ? "eye-off" : "eye"} size={12} color={theme.textSecondary} />
+            <ThemedText style={[reviewStyles.toggleChipLabel, { color: theme.textSecondary }]}>
+              {showMeaning ? t("review_hide_meaning") : t("review_show_meaning")}
             </ThemedText>
-          ) : null}
+          </Pressable>
+          <SpeakButton
+            text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
+            size="small"
+            wordId={word.id}
+          />
         </View>
-        <SpeakButton
-          text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
-          size="small"
-          wordId={word.id}
-        />
       </View>
-      {word.exampleSentence ? (
-        <ThemedText style={[reviewStyles.rowSentence, { color: theme.text }]}>
-          {sentenceDisplay}
-        </ThemedText>
-      ) : null}
       {showMeaning ? (
         <View
           style={[
@@ -174,40 +186,6 @@ function ReviewWordRow({
           ) : null}
         </View>
       ) : null}
-      <View style={reviewStyles.toggleRow}>
-        <Pressable
-          testID={`button-toggle-meaning-${word.id}`}
-          onPress={onToggleMeaning}
-          style={[
-            reviewStyles.toggleChip,
-            { borderColor: theme.border, backgroundColor: theme.backgroundSecondary },
-          ]}
-          hitSlop={6}
-        >
-          <Feather name={showMeaning ? "eye-off" : "eye"} size={13} color={theme.textSecondary} />
-          <ThemedText style={[reviewStyles.toggleChipLabel, { color: theme.textSecondary }]}>
-            {showMeaning ? t("review_hide_meaning") : t("review_show_meaning")}
-          </ThemedText>
-        </Pressable>
-        <Pressable
-          testID={`button-toggle-chinese-${word.id}`}
-          onPress={onToggleChinese}
-          style={[
-            reviewStyles.toggleChip,
-            { borderColor: theme.border, backgroundColor: theme.backgroundSecondary },
-          ]}
-          hitSlop={6}
-        >
-          <Feather
-            name={hideChinese ? "unlock" : "lock"}
-            size={13}
-            color={theme.textSecondary}
-          />
-          <ThemedText style={[reviewStyles.toggleChipLabel, { color: theme.textSecondary }]}>
-            {hideChinese ? t("review_show_chinese") : t("review_hide_chinese")}
-          </ThemedText>
-        </Pressable>
-      </View>
     </View>
   );
 }
@@ -218,64 +196,93 @@ interface ReviewWordListProps {
 }
 
 function ReviewWordList({ words, theme }: ReviewWordListProps) {
+  const { t } = useI18n();
   const [meaningRevealed, setMeaningRevealed] = useState<Set<string>>(new Set());
-  const [chineseHidden, setChineseHidden] = useState<Set<string>>(new Set());
-
-  const toggleSet = (set: Set<string>, setter: (s: Set<string>) => void, id: string) => {
-    const next = new Set(set);
-    if (next.has(id)) next.delete(id); else next.add(id);
-    setter(next);
-  };
+  const [allChineseHidden, setAllChineseHidden] = useState(false);
 
   return (
-    <View style={reviewStyles.list}>
-      {words.map((w) => (
-        <ReviewWordRow
-          key={w.id}
-          word={w}
-          showMeaning={meaningRevealed.has(w.id)}
-          hideChinese={chineseHidden.has(w.id)}
-          onToggleMeaning={() => toggleSet(meaningRevealed, setMeaningRevealed, w.id)}
-          onToggleChinese={() => toggleSet(chineseHidden, setChineseHidden, w.id)}
-          theme={theme}
-        />
-      ))}
+    <View>
+      <View style={reviewStyles.listHeader}>
+        <Pressable
+          testID="button-toggle-all-chinese"
+          onPress={() => setAllChineseHidden((v) => !v)}
+          style={[
+            reviewStyles.toggleChip,
+            { borderColor: theme.border, backgroundColor: theme.backgroundSecondary },
+          ]}
+          hitSlop={6}
+        >
+          <Feather
+            name={allChineseHidden ? "unlock" : "lock"}
+            size={12}
+            color={theme.textSecondary}
+          />
+          <ThemedText style={[reviewStyles.toggleChipLabel, { color: theme.textSecondary }]}>
+            {allChineseHidden ? t("review_show_chinese") : t("review_hide_chinese")}
+          </ThemedText>
+        </Pressable>
+      </View>
+      <View style={reviewStyles.list}>
+        {words.map((w) => (
+          <ReviewWordRow
+            key={w.id}
+            word={w}
+            showMeaning={meaningRevealed.has(w.id)}
+            hideChinese={allChineseHidden}
+            onToggleMeaning={() => {
+              const next = new Set(meaningRevealed);
+              if (next.has(w.id)) next.delete(w.id); else next.add(w.id);
+              setMeaningRevealed(next);
+            }}
+            theme={theme}
+          />
+        ))}
+      </View>
     </View>
   );
 }
 
 const reviewStyles = StyleSheet.create({
-  list: { gap: Spacing.md },
+  listHeader: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginBottom: Spacing.sm,
+  },
+  list: { gap: Spacing.xs },
   row: {
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    padding: Spacing.md,
-    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    gap: Spacing.xs,
   },
-  rowTop: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
-  rowMain: { flex: 1, flexDirection: "row", alignItems: "baseline", gap: Spacing.sm, flexWrap: "wrap" },
-  rowWord: { fontSize: 22, fontWeight: "700", fontFamily: "Nunito_700Bold" },
-  rowPinyin: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  rowSentence: { fontSize: 14, fontFamily: "Nunito_400Regular", lineHeight: 20 },
+  rowMain: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  rowWord: { fontSize: 17, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  rowPinyin: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  rowSentence: { flex: 1, fontSize: 13, fontFamily: "Nunito_400Regular" },
+  rowActions: { flexDirection: "row", alignItems: "center", gap: Spacing.xs },
   meaningBox: {
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     padding: Spacing.sm,
-    gap: 4,
+    gap: 2,
   },
-  meaningTranslation: { fontSize: 15, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
+  meaningTranslation: { fontSize: 14, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
   meaningExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
-  toggleRow: { flexDirection: "row", gap: Spacing.sm, flexWrap: "wrap" },
   toggleChip: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 3,
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: 3,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
   },
-  toggleChipLabel: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
+  toggleChipLabel: { fontSize: 11, fontFamily: "Nunito_600SemiBold" },
 });
 
 const cardStyles = StyleSheet.create({
