@@ -126,20 +126,14 @@ export default function SprintStudySessionScreen() {
   const [failOverlayVisible, setFailOverlayVisible] = useState(false);
   const failOverlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pendingCleanupWords, setPendingCleanupWords] = useState<Word[] | null>(null);
-  // Hidden bulk-complete: long-press "文字を見る" for 3s to mark the current
-  // card and all remaining cards as memorized and end the audio-cards session.
-  const DUAL_PRESS_MS = 3000;
-  const dualPressTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [dualPressProgress, setDualPressProgress] = useState(0);
+  // Hidden bulk-complete: long-press the card counter for 3s to mark the
+  // current card and all remaining cards as memorized and end the session.
+  const BULK_COMPLETE_DELAY_MS = 3000;
   useEffect(() => {
     return () => {
       if (failOverlayTimerRef.current) {
         clearTimeout(failOverlayTimerRef.current);
         failOverlayTimerRef.current = null;
-      }
-      if (dualPressTickRef.current) {
-        clearInterval(dualPressTickRef.current);
-        dualPressTickRef.current = null;
       }
     };
   }, []);
@@ -493,18 +487,6 @@ export default function SprintStudySessionScreen() {
     }, 1500);
   };
 
-  const cancelDualPress = useCallback(() => {
-    if (dualPressTickRef.current) {
-      clearInterval(dualPressTickRef.current);
-      dualPressTickRef.current = null;
-    }
-    setDualPressProgress(0);
-  }, []);
-
-  const resetDualPressState = useCallback(() => {
-    cancelDualPress();
-  }, [cancelDualPress]);
-
   const executeBulkComplete = useCallback(async () => {
     stopSpeaking().catch(() => {});
     // Mark current and all subsequent cards as memorized.
@@ -548,37 +530,9 @@ export default function SprintStudySessionScreen() {
       },
     ];
     setAudioCardsSummary(buildAudioCardsSummary(true));
-    resetDualPressState();
     setPhase("complete");
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, cardWords, resetDualPressState]);
-
-  // onPressIn on "文字を見る" — start the progress tick so the overlay shows
-  // while the user holds down. The actual completion is handled by onLongPress
-  // (React Native fires onLongPress instead of onPress after delayLongPress ms).
-  const handleRevealPressIn = useCallback(() => {
-    if (phase !== "audio-cards") return;
-    if (pendingChoice !== null) return;
-    if (dualPressTickRef.current) return;
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
-    const startedAt = Date.now();
-    setDualPressProgress(0.01);
-    dualPressTickRef.current = setInterval(() => {
-      const p = Math.min(1, (Date.now() - startedAt) / DUAL_PRESS_MS);
-      setDualPressProgress(p);
-    }, 50);
-  }, [phase, pendingChoice]);
-
-  const handleRevealPressOut = useCallback(() => {
-    cancelDualPress();
-  }, [cancelDualPress]);
-
-  // Auto-reset when the active card changes or phase leaves audio-cards.
-  useEffect(() => {
-    if (phase !== "audio-cards" || pendingChoice !== null) {
-      resetDualPressState();
-    }
-  }, [phase, pendingChoice, currentCardWord?.id, resetDualPressState]);
+  }, [currentIndex, cardWords]);
 
   const handleCardChoice = async (choice: "memorized" | "unmemorized") => {
     if (!currentCardWord) return;
@@ -1419,9 +1373,18 @@ export default function SprintStudySessionScreen() {
               </ThemedText>
             </View>
           </View>
-          <ThemedText style={[styles.progress, { color: theme.textSecondary }]}>
-            {currentIndex + 1} / {cardWords.length}
-          </ThemedText>
+          <Pressable
+            testID="pressable-card-counter"
+            onLongPress={() => {
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+              void executeBulkComplete();
+            }}
+            delayLongPress={BULK_COMPLETE_DELAY_MS}
+          >
+            <ThemedText selectable={false} style={[styles.progress, { color: theme.textSecondary }]}>
+              {currentIndex + 1} / {cardWords.length}
+            </ThemedText>
+          </Pressable>
         </View>
 
         <View style={styles.progressBarWrapper}>
@@ -1530,13 +1493,6 @@ export default function SprintStudySessionScreen() {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setRevealLevel((prev) => (prev < 2 ? ((prev + 1) as RevealLevel) : 2));
               }}
-              onPressIn={handleRevealPressIn}
-              onPressOut={handleRevealPressOut}
-              onLongPress={() => {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-                void executeBulkComplete();
-              }}
-              delayLongPress={DUAL_PRESS_MS}
               style={[styles.earlyUnmemorizedButton, { borderColor: theme.border, backgroundColor: theme.backgroundSecondary }]}
             >
               <Feather name="eye" size={14} color={theme.textSecondary} />
@@ -1576,41 +1532,6 @@ export default function SprintStudySessionScreen() {
           </View>
         )}
       </ScrollView>
-      {dualPressProgress > 0 ? (
-        <View
-          style={StyleSheet.absoluteFill}
-          pointerEvents="none"
-          testID="overlay-bulk-complete"
-        >
-          <View style={styles.bulkOverlayBackdrop}>
-            <View
-              style={[
-                styles.bulkOverlayCard,
-                { backgroundColor: theme.backgroundDefault, borderColor: Colors.light.success },
-              ]}
-            >
-              <Feather name="check-circle" size={36} color={Colors.light.success} />
-              <ThemedText style={[styles.bulkOverlayTitle, { color: theme.text }]}>
-                このカード以降を{"\n"}全部「覚えた」にする
-              </ThemedText>
-              <View style={[styles.bulkOverlayTrack, { backgroundColor: theme.border }]}>
-                <View
-                  style={[
-                    styles.bulkOverlayFill,
-                    {
-                      backgroundColor: Colors.light.success,
-                      width: `${Math.round(dualPressProgress * 100)}%`,
-                    },
-                  ]}
-                />
-              </View>
-              <ThemedText style={[styles.bulkOverlayHint, { color: theme.textSecondary }]}>
-                押したまま {Math.max(0, (DUAL_PRESS_MS / 1000) - dualPressProgress * (DUAL_PRESS_MS / 1000)).toFixed(1)} 秒
-              </ThemedText>
-            </View>
-          </View>
-        </View>
-      ) : null}
       <ConfettiAnimation visible={confettiVisible} />
       {failOverlayVisible ? (
         <Animated.View
@@ -2066,44 +1987,6 @@ const styles = StyleSheet.create({
   longBadgeText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
   failOverlayBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing.xl },
   failOverlayText: { color: "#fff", fontSize: 38, fontFamily: "Nunito_700Bold", textAlign: "center", lineHeight: 46 },
-  bulkOverlayBackdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Spacing.xl,
-  },
-  bulkOverlayCard: {
-    width: "100%",
-    maxWidth: 340,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 2,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.xl,
-    alignItems: "center",
-    gap: Spacing.md,
-  },
-  bulkOverlayTitle: {
-    fontSize: 17,
-    fontFamily: "Nunito_700Bold",
-    textAlign: "center",
-    lineHeight: 24,
-  },
-  bulkOverlayTrack: {
-    width: "100%",
-    height: 8,
-    borderRadius: 4,
-    overflow: "hidden",
-  },
-  bulkOverlayFill: {
-    height: "100%",
-    borderRadius: 4,
-  },
-  bulkOverlayHint: {
-    fontSize: 13,
-    fontFamily: "Nunito_400Regular",
-    textAlign: "center",
-  },
   requeueBannerText: { fontSize: 12, fontFamily: "Nunito_700Bold", flex: 1 },
   choiceButtonsWrapper: { gap: Spacing.sm },
   choiceButtons: { flexDirection: "row", gap: Spacing.md },
