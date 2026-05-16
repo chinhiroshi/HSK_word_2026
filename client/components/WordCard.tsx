@@ -274,7 +274,7 @@ export function WordCard({
         ) : (
           <View style={styles.exampleColumn}>
             <View style={styles.exampleRow}>
-              <ThemedText style={[styles.exampleSentence, { color: theme.text, flex: 1 }]} numberOfLines={1}>
+              <ThemedText style={[styles.exampleSentence, { color: theme.text }]} numberOfLines={1}>
                 {word.exampleSentence}
               </ThemedText>
               <InlinePronunciationEvaluator
@@ -415,6 +415,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
+    flexWrap: "wrap",
   },
   exampleSentence: {
     fontSize: 14,
