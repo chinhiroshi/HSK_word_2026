@@ -105,7 +105,10 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
   const listeners: Array<{ remove: () => void }> = [];
 
   const addListener = (event: string, handler: (...args: any[]) => void) => {
-    if (typeof mod.addSpeechRecognitionListener === "function") {
+    if (typeof ExpoSpeechRecognitionModule.addListener === "function") {
+      const sub = ExpoSpeechRecognitionModule.addListener(event, handler);
+      if (sub && typeof sub.remove === "function") listeners.push(sub);
+    } else if (typeof mod.addSpeechRecognitionListener === "function") {
       const sub = mod.addSpeechRecognitionListener(event, handler);
       if (sub && typeof sub.remove === "function") listeners.push(sub);
     }
