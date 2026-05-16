@@ -126,29 +126,16 @@ export default function SprintStudySessionScreen() {
   const [failOverlayVisible, setFailOverlayVisible] = useState(false);
   const failOverlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pendingCleanupWords, setPendingCleanupWords] = useState<Word[] | null>(null);
-  // Hidden bulk-complete: press both "覚えてない" and "覚えた" together for 3s
-  // to mark the current card and all remaining cards as memorized and end
-  // the audio-cards session immediately.
+  // Hidden bulk-complete: long-press "文字を見る" for 3s to mark the current
+  // card and all remaining cards as memorized and end the audio-cards session.
   const DUAL_PRESS_MS = 3000;
-  const flagPressingRef = useRef(false);
-  const checkPressingRef = useRef(false);
-  const dualPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dualPressTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const dualPressTriggeredRef = useRef(false);
-  // Once a dual-press engagement starts, suppress the next onPress of each
-  // button so that releasing them doesn't accidentally fire handleCardChoice.
-  const suppressFlagOnceRef = useRef(false);
-  const suppressCheckOnceRef = useRef(false);
   const [dualPressProgress, setDualPressProgress] = useState(0);
   useEffect(() => {
     return () => {
       if (failOverlayTimerRef.current) {
         clearTimeout(failOverlayTimerRef.current);
         failOverlayTimerRef.current = null;
-      }
-      if (dualPressTimerRef.current) {
-        clearTimeout(dualPressTimerRef.current);
-        dualPressTimerRef.current = null;
       }
       if (dualPressTickRef.current) {
         clearInterval(dualPressTickRef.current);
@@ -507,10 +494,6 @@ export default function SprintStudySessionScreen() {
   };
 
   const cancelDualPress = useCallback(() => {
-    if (dualPressTimerRef.current) {
-      clearTimeout(dualPressTimerRef.current);
-      dualPressTimerRef.current = null;
-    }
     if (dualPressTickRef.current) {
       clearInterval(dualPressTickRef.current);
       dualPressTickRef.current = null;
@@ -518,17 +501,8 @@ export default function SprintStudySessionScreen() {
     setDualPressProgress(0);
   }, []);
 
-  // Full reset for the hidden dual-press flow. Use whenever we leave the
-  // audio-cards phase, the current card changes, or pendingChoice engages —
-  // otherwise suppress/trigger refs can get stuck true if a finger is still
-  // down when state transitions out from under us.
   const resetDualPressState = useCallback(() => {
     cancelDualPress();
-    flagPressingRef.current = false;
-    checkPressingRef.current = false;
-    dualPressTriggeredRef.current = false;
-    suppressFlagOnceRef.current = false;
-    suppressCheckOnceRef.current = false;
   }, [cancelDualPress]);
 
   const executeBulkComplete = useCallback(async () => {
@@ -579,56 +553,27 @@ export default function SprintStudySessionScreen() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, cardWords, resetDualPressState]);
 
-  const startDualPressIfBoth = useCallback(() => {
-    if (dualPressTimerRef.current) return;
+  // onPressIn on "文字を見る" — start the progress tick so the overlay shows
+  // while the user holds down. The actual completion is handled by onLongPress
+  // (React Native fires onLongPress instead of onPress after delayLongPress ms).
+  const handleRevealPressIn = useCallback(() => {
     if (phase !== "audio-cards") return;
-    if (!currentCardWord) return;
     if (pendingChoice !== null) return;
-    if (!flagPressingRef.current || !checkPressingRef.current) return;
-    // Engaging: suppress the upcoming onPress of both buttons so releasing
-    // them (whether or not the 3s elapses) doesn't fire handleCardChoice.
-    suppressFlagOnceRef.current = true;
-    suppressCheckOnceRef.current = true;
-    dualPressTriggeredRef.current = false;
+    if (dualPressTickRef.current) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     const startedAt = Date.now();
-    setDualPressProgress(0);
+    setDualPressProgress(0.01);
     dualPressTickRef.current = setInterval(() => {
       const p = Math.min(1, (Date.now() - startedAt) / DUAL_PRESS_MS);
       setDualPressProgress(p);
     }, 50);
-    dualPressTimerRef.current = setTimeout(() => {
-      dualPressTriggeredRef.current = true;
-      cancelDualPress();
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-      void executeBulkComplete();
-    }, DUAL_PRESS_MS);
-  }, [phase, currentCardWord, pendingChoice, cancelDualPress, executeBulkComplete]);
+  }, [phase, pendingChoice]);
 
-  const handleFlagPressIn = useCallback(() => {
-    flagPressingRef.current = true;
-    startDualPressIfBoth();
-  }, [startDualPressIfBoth]);
-
-  const handleFlagPressOut = useCallback(() => {
-    flagPressingRef.current = false;
+  const handleRevealPressOut = useCallback(() => {
     cancelDualPress();
   }, [cancelDualPress]);
 
-  const handleCheckPressIn = useCallback(() => {
-    checkPressingRef.current = true;
-    startDualPressIfBoth();
-  }, [startDualPressIfBoth]);
-
-  const handleCheckPressOut = useCallback(() => {
-    checkPressingRef.current = false;
-    cancelDualPress();
-  }, [cancelDualPress]);
-
-  // Auto-reset the hidden dual-press flow when the active card changes,
-  // the phase leaves audio-cards, or the card enters pendingChoice — this
-  // prevents suppress/trigger refs getting stuck true if state transitions
-  // while a finger is still down.
+  // Auto-reset when the active card changes or phase leaves audio-cards.
   useEffect(() => {
     if (phase !== "audio-cards" || pendingChoice !== null) {
       resetDualPressState();
@@ -636,17 +581,6 @@ export default function SprintStudySessionScreen() {
   }, [phase, pendingChoice, currentCardWord?.id, resetDualPressState]);
 
   const handleCardChoice = async (choice: "memorized" | "unmemorized") => {
-    // Swallow the onPress that follows a dual-press engagement so the user
-    // doesn't get a stray memorize/unmemorize record from releasing buttons.
-    if (choice === "unmemorized" && suppressFlagOnceRef.current) {
-      suppressFlagOnceRef.current = false;
-      return;
-    }
-    if (choice === "memorized" && suppressCheckOnceRef.current) {
-      suppressCheckOnceRef.current = false;
-      return;
-    }
-    if (dualPressTriggeredRef.current) return;
     if (!currentCardWord) return;
     if (pendingChoice !== null) return;
     if (cardChoiceInFlightRef.current) return;
@@ -1566,8 +1500,6 @@ export default function SprintStudySessionScreen() {
               <Pressable
                 testID="button-unmemorized-early"
                 onPress={() => handleCardChoice("unmemorized")}
-                onPressIn={handleFlagPressIn}
-                onPressOut={handleFlagPressOut}
                 style={[
                   styles.choiceButton,
                   { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
@@ -1581,8 +1513,6 @@ export default function SprintStudySessionScreen() {
               <Pressable
                 testID="button-memorized"
                 onPress={() => handleCardChoice("memorized")}
-                onPressIn={handleCheckPressIn}
-                onPressOut={handleCheckPressOut}
                 style={[
                   styles.choiceButton,
                   { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
@@ -1600,6 +1530,13 @@ export default function SprintStudySessionScreen() {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setRevealLevel((prev) => (prev < 2 ? ((prev + 1) as RevealLevel) : 2));
               }}
+              onPressIn={handleRevealPressIn}
+              onPressOut={handleRevealPressOut}
+              onLongPress={() => {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+                void executeBulkComplete();
+              }}
+              delayLongPress={DUAL_PRESS_MS}
               style={[styles.earlyUnmemorizedButton, { borderColor: theme.border, backgroundColor: theme.backgroundSecondary }]}
             >
               <Feather name="eye" size={14} color={theme.textSecondary} />
@@ -1613,8 +1550,6 @@ export default function SprintStudySessionScreen() {
             <Pressable
               testID="button-unmemorized"
               onPress={() => handleCardChoice("unmemorized")}
-              onPressIn={handleFlagPressIn}
-              onPressOut={handleFlagPressOut}
               style={[
                 styles.choiceButton,
                 { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
@@ -1628,8 +1563,6 @@ export default function SprintStudySessionScreen() {
             <Pressable
               testID="button-memorized"
               onPress={() => handleCardChoice("memorized")}
-              onPressIn={handleCheckPressIn}
-              onPressOut={handleCheckPressOut}
               style={[
                 styles.choiceButton,
                 { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
