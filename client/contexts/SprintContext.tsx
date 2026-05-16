@@ -62,18 +62,22 @@ function computeFirstIncompletePosition(data: SprintData): number {
   const completedDates = data.completedDates ?? {};
   const specialStamps = data.specialStamps ?? [];
   const wPD = data.wordsPerDay;
+  let lastPlayable = 1;
   for (let i = 1; i < total; i++) {
     const type = getSessionType(i, wPD);
     if (type === "flag") continue;
+    lastPlayable = i;
     const done =
       type === "test"
         ? specialStamps.includes(i) || completedDates[i] != null
         : completedDates[i] != null;
     if (!done) return i;
   }
-  // All cells complete: keep current marker; completeSession's wrap logic
-  // handles the end-of-loop case.
-  return data.currentPosition;
+  // All playable cells complete: anchor the marker to the last playable cell
+  // so a stale mid-track marker on fully-complete data still gets corrected
+  // forward on next load. completeSession's own wrap-to-1 logic still runs
+  // separately when the user finishes the final cell in real time.
+  return lastPlayable;
 }
 
 // Apply self-heal, never moving the marker backwards. Returns the same
