@@ -81,7 +81,7 @@ export function WordCard({
       markScale.value = withSpring(1, springConfig);
     });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onMarkUnmemorized();
+    onMarkUnmemorized?.();
   };
 
   const handleClearMark = (e: GestureResponderEvent) => {
