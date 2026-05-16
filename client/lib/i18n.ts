@@ -462,6 +462,24 @@ const translations = {
     region_taiwan: "台湾（國語）",
     region_alternate: "交互（単語ごとに切替）",
     region_alternate_desc: "同じ単語は常に同じ地域で読み上げます",
+
+    // ── Pronunciation evaluator ──
+    pronunciation_evaluate_button: "発音を評価",
+    mic_permission_denied: "マイクの権限が許可されていません。設定から有効にしてください。",
+    recording_in_progress: "録音中です…話し終えたら停止してください",
+    tap_to_start: "ボタンを押して録音を始めてください",
+    score_char_match: "文字一致",
+    score_order_match: "順序一致",
+    score_total: "総合スコア",
+    score_feedback_good: "とても良い発音です！",
+    score_feedback_mid: "もう少しでバッチリです",
+    score_feedback_poor: "もう一度ゆっくり挑戦してみましょう",
+    recognition_unavailable: "この端末では音声認識を利用できません。本体ビルド（TestFlight/App Store）でお試しください。",
+    open_settings: "設定を開く",
+    stop_recording: "停止",
+    evaluator_reference_label: "お手本",
+    evaluator_heard_label: "聞き取った内容",
+    evaluator_try_again_hint: "もう一度録音できます",
   },
 
   en: {
@@ -925,6 +943,24 @@ const translations = {
     region_taiwan: "Taiwan (Guoyu)",
     region_alternate: "Alternate (per word)",
     region_alternate_desc: "Each word always uses the same region",
+
+    // ── Pronunciation evaluator ──
+    pronunciation_evaluate_button: "Evaluate Pronunciation",
+    mic_permission_denied: "Microphone permission was denied. Please enable it in Settings.",
+    recording_in_progress: "Recording… tap stop when you are done.",
+    tap_to_start: "Tap the button to start recording.",
+    score_char_match: "Char Match",
+    score_order_match: "Order Match",
+    score_total: "Total Score",
+    score_feedback_good: "Great pronunciation!",
+    score_feedback_mid: "Almost there, keep going.",
+    score_feedback_poor: "Try again slowly.",
+    recognition_unavailable: "Speech recognition is not available on this device. Try it in a TestFlight / App Store build.",
+    open_settings: "Open Settings",
+    stop_recording: "Stop",
+    evaluator_reference_label: "Reference",
+    evaluator_heard_label: "What we heard",
+    evaluator_try_again_hint: "You can record again.",
   },
 } as const;
 

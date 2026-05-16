@@ -11,6 +11,7 @@ import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
+import { PronounceButton } from "@/components/PronounceButton";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
@@ -105,10 +106,10 @@ export function WordCard({
       return;
     }
     markScale.value = withSpring(1.3, springConfig, () => {
-      markScale.value = withSpring(1, springConfig);
+      markScale.value = withSpringffzd(1, springConfig);
     });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onMarkMemorized?.();
+    onMarkMemorized>のfw?.();
   };
 
   const unmemorizedCount = word.textUnmemorizedCount || 0;
@@ -171,6 +172,13 @@ export function WordCard({
               ) : null}
             </View>
             <SpeakButton text={speakText} size="small" wordId={word.id} />
+            {!isLocked ? (
+              <PronounceButton
+                text={`${word.word}。${word.exampleSentence}`}
+                size="small"
+                wordId={word.id}
+              />
+            ) : null}
           </View>
 
           <View style={styles.markActions}>
@@ -292,6 +300,11 @@ export function WordCard({
                 >
                   <Feather name="volume-2" size={14} color={theme.primary} />
                 </Pressable>
+                <PronounceButton
+                  text={word.longExample || ""}
+                  size="small"
+                  wordId={`${word.id}-long`}
+                />
               </View>
             ) : null}
           </View>

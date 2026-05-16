@@ -70,7 +70,14 @@
         }
       ],
       "expo-web-browser",
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "発音評価のためマイクを使用します",
+          "speechRecognitionPermission": "発音評価のため音声認識を使用します"
+        }
+      ]
     ],
     "experiments": {
       "reactCompiler": true
