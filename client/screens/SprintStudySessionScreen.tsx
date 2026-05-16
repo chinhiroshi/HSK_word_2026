@@ -126,11 +126,33 @@ export default function SprintStudySessionScreen() {
   const [failOverlayVisible, setFailOverlayVisible] = useState(false);
   const failOverlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [pendingCleanupWords, setPendingCleanupWords] = useState<Word[] | null>(null);
+  // Hidden bulk-complete: press both "覚えてない" and "覚えた" together for 3s
+  // to mark the current card and all remaining cards as memorized and end
+  // the audio-cards session immediately.
+  const DUAL_PRESS_MS = 3000;
+  const flagPressingRef = useRef(false);
+  const checkPressingRef = useRef(false);
+  const dualPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dualPressTickRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const dualPressTriggeredRef = useRef(false);
+  // Once a dual-press engagement starts, suppress the next onPress of each
+  // button so that releasing them doesn't accidentally fire handleCardChoice.
+  const suppressFlagOnceRef = useRef(false);
+  const suppressCheckOnceRef = useRef(false);
+  const [dualPressProgress, setDualPressProgress] = useState(0);
   useEffect(() => {
     return () => {
       if (failOverlayTimerRef.current) {
         clearTimeout(failOverlayTimerRef.current);
         failOverlayTimerRef.current = null;
+      }
+      if (dualPressTimerRef.current) {
+        clearTimeout(dualPressTimerRef.current);
+        dualPressTimerRef.current = null;
+      }
+      if (dualPressTickRef.current) {
+        clearInterval(dualPressTickRef.current);
+        dualPressTickRef.current = null;
       }
     };
   }, []);
@@ -484,7 +506,147 @@ export default function SprintStudySessionScreen() {
     }, 1500);
   };
 
+  const cancelDualPress = useCallback(() => {
+    if (dualPressTimerRef.current) {
+      clearTimeout(dualPressTimerRef.current);
+      dualPressTimerRef.current = null;
+    }
+    if (dualPressTickRef.current) {
+      clearInterval(dualPressTickRef.current);
+      dualPressTickRef.current = null;
+    }
+    setDualPressProgress(0);
+  }, []);
+
+  // Full reset for the hidden dual-press flow. Use whenever we leave the
+  // audio-cards phase, the current card changes, or pendingChoice engages —
+  // otherwise suppress/trigger refs can get stuck true if a finger is still
+  // down when state transitions out from under us.
+  const resetDualPressState = useCallback(() => {
+    cancelDualPress();
+    flagPressingRef.current = false;
+    checkPressingRef.current = false;
+    dualPressTriggeredRef.current = false;
+    suppressFlagOnceRef.current = false;
+    suppressCheckOnceRef.current = false;
+  }, [cancelDualPress]);
+
+  const executeBulkComplete = useCallback(async () => {
+    stopSpeaking().catch(() => {});
+    // Mark current and all subsequent cards as memorized.
+    const startIdx = currentIndex;
+    const remaining = cardWords.slice(startIdx);
+    if (remaining.length === 0) {
+      setAudioCardsSummary(buildAudioCardsSummary(true));
+      setPhase("complete");
+      return;
+    }
+    const nextAudio = { ...audioChoicesRef.current };
+    const nextRound = { ...roundChoicesRef.current };
+    const toPersist: string[] = [];
+    for (const w of remaining) {
+      if (nextAudio[w.id] !== "memorized") {
+        toPersist.push(w.id);
+      }
+      nextAudio[w.id] = "memorized";
+      nextRound[w.id] = "memorized";
+    }
+    audioChoicesRef.current = nextAudio;
+    roundChoicesRef.current = nextRound;
+    setAudioChoices(nextAudio);
+    await Promise.all(
+      toPersist.map((id) =>
+        markAsMemorized(id, "audio").catch((e) => {
+          console.warn("[SprintStudySession] bulk-complete persist failed", e);
+        })
+      )
+    );
+    // Record a synthetic final round so the summary card reflects this run.
+    const uniqueIds = Array.from(new Set(cardWords.map((w) => w.id)));
+    const memorized = uniqueIds.filter((id) => nextAudio[id] === "memorized").length;
+    roundResultsRef.current = [
+      ...roundResultsRef.current,
+      {
+        round: roundRef.current,
+        memorized,
+        total: uniqueIds.length,
+        isFinalCleanup: finalCleanupRef.current,
+      },
+    ];
+    setAudioCardsSummary(buildAudioCardsSummary(true));
+    resetDualPressState();
+    setPhase("complete");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIndex, cardWords, resetDualPressState]);
+
+  const startDualPressIfBoth = useCallback(() => {
+    if (dualPressTimerRef.current) return;
+    if (phase !== "audio-cards") return;
+    if (!currentCardWord) return;
+    if (pendingChoice !== null) return;
+    if (!flagPressingRef.current || !checkPressingRef.current) return;
+    // Engaging: suppress the upcoming onPress of both buttons so releasing
+    // them (whether or not the 3s elapses) doesn't fire handleCardChoice.
+    suppressFlagOnceRef.current = true;
+    suppressCheckOnceRef.current = true;
+    dualPressTriggeredRef.current = false;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
+    const startedAt = Date.now();
+    setDualPressProgress(0);
+    dualPressTickRef.current = setInterval(() => {
+      const p = Math.min(1, (Date.now() - startedAt) / DUAL_PRESS_MS);
+      setDualPressProgress(p);
+    }, 50);
+    dualPressTimerRef.current = setTimeout(() => {
+      dualPressTriggeredRef.current = true;
+      cancelDualPress();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      void executeBulkComplete();
+    }, DUAL_PRESS_MS);
+  }, [phase, currentCardWord, pendingChoice, cancelDualPress, executeBulkComplete]);
+
+  const handleFlagPressIn = useCallback(() => {
+    flagPressingRef.current = true;
+    startDualPressIfBoth();
+  }, [startDualPressIfBoth]);
+
+  const handleFlagPressOut = useCallback(() => {
+    flagPressingRef.current = false;
+    cancelDualPress();
+  }, [cancelDualPress]);
+
+  const handleCheckPressIn = useCallback(() => {
+    checkPressingRef.current = true;
+    startDualPressIfBoth();
+  }, [startDualPressIfBoth]);
+
+  const handleCheckPressOut = useCallback(() => {
+    checkPressingRef.current = false;
+    cancelDualPress();
+  }, [cancelDualPress]);
+
+  // Auto-reset the hidden dual-press flow when the active card changes,
+  // the phase leaves audio-cards, or the card enters pendingChoice — this
+  // prevents suppress/trigger refs getting stuck true if state transitions
+  // while a finger is still down.
+  useEffect(() => {
+    if (phase !== "audio-cards" || pendingChoice !== null) {
+      resetDualPressState();
+    }
+  }, [phase, pendingChoice, currentCardWord?.id, resetDualPressState]);
+
   const handleCardChoice = async (choice: "memorized" | "unmemorized") => {
+    // Swallow the onPress that follows a dual-press engagement so the user
+    // doesn't get a stray memorize/unmemorize record from releasing buttons.
+    if (choice === "unmemorized" && suppressFlagOnceRef.current) {
+      suppressFlagOnceRef.current = false;
+      return;
+    }
+    if (choice === "memorized" && suppressCheckOnceRef.current) {
+      suppressCheckOnceRef.current = false;
+      return;
+    }
+    if (dualPressTriggeredRef.current) return;
     if (!currentCardWord) return;
     if (pendingChoice !== null) return;
     if (cardChoiceInFlightRef.current) return;
@@ -1404,6 +1566,8 @@ export default function SprintStudySessionScreen() {
               <Pressable
                 testID="button-unmemorized-early"
                 onPress={() => handleCardChoice("unmemorized")}
+                onPressIn={handleFlagPressIn}
+                onPressOut={handleFlagPressOut}
                 style={[
                   styles.choiceButton,
                   { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
@@ -1417,6 +1581,8 @@ export default function SprintStudySessionScreen() {
               <Pressable
                 testID="button-memorized"
                 onPress={() => handleCardChoice("memorized")}
+                onPressIn={handleCheckPressIn}
+                onPressOut={handleCheckPressOut}
                 style={[
                   styles.choiceButton,
                   { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
@@ -1447,6 +1613,8 @@ export default function SprintStudySessionScreen() {
             <Pressable
               testID="button-unmemorized"
               onPress={() => handleCardChoice("unmemorized")}
+              onPressIn={handleFlagPressIn}
+              onPressOut={handleFlagPressOut}
               style={[
                 styles.choiceButton,
                 { backgroundColor: Colors.light.alert + "15", borderColor: Colors.light.alert },
@@ -1460,6 +1628,8 @@ export default function SprintStudySessionScreen() {
             <Pressable
               testID="button-memorized"
               onPress={() => handleCardChoice("memorized")}
+              onPressIn={handleCheckPressIn}
+              onPressOut={handleCheckPressOut}
               style={[
                 styles.choiceButton,
                 { backgroundColor: Colors.light.success + "15", borderColor: Colors.light.success },
@@ -1473,6 +1643,41 @@ export default function SprintStudySessionScreen() {
           </View>
         )}
       </ScrollView>
+      {dualPressProgress > 0 ? (
+        <View
+          style={StyleSheet.absoluteFill}
+          pointerEvents="none"
+          testID="overlay-bulk-complete"
+        >
+          <View style={styles.bulkOverlayBackdrop}>
+            <View
+              style={[
+                styles.bulkOverlayCard,
+                { backgroundColor: theme.backgroundDefault, borderColor: Colors.light.success },
+              ]}
+            >
+              <Feather name="check-circle" size={36} color={Colors.light.success} />
+              <ThemedText style={[styles.bulkOverlayTitle, { color: theme.text }]}>
+                このカード以降を{"\n"}全部「覚えた」にする
+              </ThemedText>
+              <View style={[styles.bulkOverlayTrack, { backgroundColor: theme.border }]}>
+                <View
+                  style={[
+                    styles.bulkOverlayFill,
+                    {
+                      backgroundColor: Colors.light.success,
+                      width: `${Math.round(dualPressProgress * 100)}%`,
+                    },
+                  ]}
+                />
+              </View>
+              <ThemedText style={[styles.bulkOverlayHint, { color: theme.textSecondary }]}>
+                両方押したまま {Math.max(0, (DUAL_PRESS_MS / 1000) - dualPressProgress * (DUAL_PRESS_MS / 1000)).toFixed(1)} 秒
+              </ThemedText>
+            </View>
+          </View>
+        </View>
+      ) : null}
       <ConfettiAnimation visible={confettiVisible} />
       {failOverlayVisible ? (
         <Animated.View
@@ -1928,6 +2133,44 @@ const styles = StyleSheet.create({
   longBadgeText: { fontSize: 11, fontFamily: "Nunito_700Bold" },
   failOverlayBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.6)", justifyContent: "center", alignItems: "center", paddingHorizontal: Spacing.xl },
   failOverlayText: { color: "#fff", fontSize: 38, fontFamily: "Nunito_700Bold", textAlign: "center", lineHeight: 46 },
+  bulkOverlayBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.45)",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: Spacing.xl,
+  },
+  bulkOverlayCard: {
+    width: "100%",
+    maxWidth: 340,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 2,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.xl,
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  bulkOverlayTitle: {
+    fontSize: 17,
+    fontFamily: "Nunito_700Bold",
+    textAlign: "center",
+    lineHeight: 24,
+  },
+  bulkOverlayTrack: {
+    width: "100%",
+    height: 8,
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  bulkOverlayFill: {
+    height: "100%",
+    borderRadius: 4,
+  },
+  bulkOverlayHint: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    textAlign: "center",
+  },
   requeueBannerText: { fontSize: 12, fontFamily: "Nunito_700Bold", flex: 1 },
   choiceButtonsWrapper: { gap: Spacing.sm },
   choiceButtons: { flexDirection: "row", gap: Spacing.md },
