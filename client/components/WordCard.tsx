@@ -172,13 +172,11 @@ export function WordCard({
               ) : null}
             </View>
             <SpeakButton text={speakText} size="small" wordId={word.id} />
-            {!isLocked ? (
-              <PronounceButton
-                text={`${word.word}。${word.exampleSentence}`}
-                size="small"
-                wordId={word.id}
-              />
-            ) : null}
+            <PronounceButton
+              text={isLocked ? word.word : `${word.word}。${word.exampleSentence}`}
+              size="small"
+              wordId={word.id}
+            />
           </View>
 
           <View style={styles.markActions}>
