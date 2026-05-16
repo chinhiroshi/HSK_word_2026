@@ -22,6 +22,7 @@ import { ThemedView } from "@/components/ThemedView";
 import ConfettiAnimation from "@/components/ConfettiAnimation";
 import { ProgressBar } from "@/components/ProgressBar";
 import { Button } from "@/components/Button";
+import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -101,6 +102,182 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
   );
 }
 
+interface ReviewWordRowProps {
+  word: Word;
+  showMeaning: boolean;
+  hideChinese: boolean;
+  onToggleMeaning: () => void;
+  onToggleChinese: () => void;
+  theme: ReturnType<typeof useTheme>["theme"];
+}
+
+function maskChinese(text: string): string {
+  // Replace Han characters with the same number of full-width question marks.
+  // Non-CJK characters (punctuation, ASCII, spaces) are preserved so the
+  // sentence shape stays recognizable.
+  return text.replace(/[\u3400-\u9FFF\uF900-\uFAFF]/g, "？");
+}
+
+function ReviewWordRow({
+  word,
+  showMeaning,
+  hideChinese,
+  onToggleMeaning,
+  onToggleChinese,
+  theme,
+}: ReviewWordRowProps) {
+  const { t } = useI18n();
+  const wordDisplay = hideChinese ? maskChinese(word.word) : word.word;
+  const sentenceDisplay = hideChinese
+    ? maskChinese(word.exampleSentence)
+    : word.exampleSentence;
+
+  return (
+    <View
+      style={[
+        reviewStyles.row,
+        { backgroundColor: theme.backgroundDefault, borderColor: theme.border },
+      ]}
+    >
+      <View style={reviewStyles.rowTop}>
+        <View style={reviewStyles.rowMain}>
+          <ThemedText style={reviewStyles.rowWord}>{wordDisplay}</ThemedText>
+          {!hideChinese && word.pinyin ? (
+            <ThemedText style={[reviewStyles.rowPinyin, { color: theme.textSecondary }]}>
+              {word.pinyin}
+            </ThemedText>
+          ) : null}
+        </View>
+        <SpeakButton
+          text={word.exampleSentence ? `${word.word}。${word.exampleSentence}` : word.word}
+          size="small"
+          wordId={word.id}
+        />
+      </View>
+      {word.exampleSentence ? (
+        <ThemedText style={[reviewStyles.rowSentence, { color: theme.text }]}>
+          {sentenceDisplay}
+        </ThemedText>
+      ) : null}
+      {showMeaning ? (
+        <View
+          style={[
+            reviewStyles.meaningBox,
+            { backgroundColor: theme.backgroundSecondary, borderColor: theme.border },
+          ]}
+        >
+          <ThemedText style={reviewStyles.meaningTranslation}>{word.translation}</ThemedText>
+          {word.exampleTranslation ? (
+            <ThemedText style={[reviewStyles.meaningExample, { color: theme.textSecondary }]}>
+              {word.exampleTranslation}
+            </ThemedText>
+          ) : null}
+        </View>
+      ) : null}
+      <View style={reviewStyles.toggleRow}>
+        <Pressable
+          testID={`button-toggle-meaning-${word.id}`}
+          onPress={onToggleMeaning}
+          style={[
+            reviewStyles.toggleChip,
+            { borderColor: theme.border, backgroundColor: theme.backgroundSecondary },
+          ]}
+          hitSlop={6}
+        >
+          <Feather name={showMeaning ? "eye-off" : "eye"} size={13} color={theme.textSecondary} />
+          <ThemedText style={[reviewStyles.toggleChipLabel, { color: theme.textSecondary }]}>
+            {showMeaning ? t("review_hide_meaning") : t("review_show_meaning")}
+          </ThemedText>
+        </Pressable>
+        <Pressable
+          testID={`button-toggle-chinese-${word.id}`}
+          onPress={onToggleChinese}
+          style={[
+            reviewStyles.toggleChip,
+            { borderColor: theme.border, backgroundColor: theme.backgroundSecondary },
+          ]}
+          hitSlop={6}
+        >
+          <Feather
+            name={hideChinese ? "unlock" : "lock"}
+            size={13}
+            color={theme.textSecondary}
+          />
+          <ThemedText style={[reviewStyles.toggleChipLabel, { color: theme.textSecondary }]}>
+            {hideChinese ? t("review_show_chinese") : t("review_hide_chinese")}
+          </ThemedText>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+interface ReviewWordListProps {
+  words: Word[];
+  theme: ReturnType<typeof useTheme>["theme"];
+}
+
+function ReviewWordList({ words, theme }: ReviewWordListProps) {
+  const [meaningRevealed, setMeaningRevealed] = useState<Set<string>>(new Set());
+  const [chineseHidden, setChineseHidden] = useState<Set<string>>(new Set());
+
+  const toggleSet = (set: Set<string>, setter: (s: Set<string>) => void, id: string) => {
+    const next = new Set(set);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    setter(next);
+  };
+
+  return (
+    <View style={reviewStyles.list}>
+      {words.map((w) => (
+        <ReviewWordRow
+          key={w.id}
+          word={w}
+          showMeaning={meaningRevealed.has(w.id)}
+          hideChinese={chineseHidden.has(w.id)}
+          onToggleMeaning={() => toggleSet(meaningRevealed, setMeaningRevealed, w.id)}
+          onToggleChinese={() => toggleSet(chineseHidden, setChineseHidden, w.id)}
+          theme={theme}
+        />
+      ))}
+    </View>
+  );
+}
+
+const reviewStyles = StyleSheet.create({
+  list: { gap: Spacing.md },
+  row: {
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    padding: Spacing.md,
+    gap: Spacing.sm,
+  },
+  rowTop: { flexDirection: "row", alignItems: "center", gap: Spacing.sm },
+  rowMain: { flex: 1, flexDirection: "row", alignItems: "baseline", gap: Spacing.sm, flexWrap: "wrap" },
+  rowWord: { fontSize: 22, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  rowPinyin: { fontSize: 13, fontFamily: "Nunito_400Regular" },
+  rowSentence: { fontSize: 14, fontFamily: "Nunito_400Regular", lineHeight: 20 },
+  meaningBox: {
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+    padding: Spacing.sm,
+    gap: 4,
+  },
+  meaningTranslation: { fontSize: 15, fontWeight: "600", fontFamily: "Nunito_600SemiBold" },
+  meaningExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  toggleRow: { flexDirection: "row", gap: Spacing.sm, flexWrap: "wrap" },
+  toggleChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+  },
+  toggleChipLabel: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
+});
+
 const cardStyles = StyleSheet.create({
   root: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.xl, gap: Spacing.xl },
   topRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
@@ -125,17 +302,28 @@ export default function SprintTestScreen() {
   const insets = useSafeAreaInsets();
   const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
   const { theme } = useTheme();
-  const { completeSession, getTestWords, sprintData, currentLevel } = useSprint();
+  const {
+    completeSession,
+    getTestWords,
+    sprintData,
+    currentLevel,
+    getCellTestUnmemorized,
+    saveCellTestUnmemorized,
+  } = useSprint();
 
+  type Phase = "pre-review" | "test" | "post-review" | "result";
+  const [phase, setPhase] = useState<Phase>("test");
   const [cardWords, setCardWords] = useState<Word[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [revealLevel, setRevealLevel] = useState<RevealLevel>(0);
   const [choices, setChoices] = useState<Record<string, "memorized" | "unmemorized">>({});
   const [loading, setLoading] = useState(true);
   const [completing, setCompleting] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
   const [stampVisible, setStampVisible] = useState(false);
   const [confettiVisible, setConfettiVisible] = useState(false);
+  const [preReviewWords, setPreReviewWords] = useState<Word[]>([]);
+  const [postReviewWords, setPostReviewWords] = useState<Word[]>([]);
+  const isCompleted = phase === "result";
 
   // Capture cell index before completeSession advances position
   const testCellIndexRef = useRef<number>(sprintData?.currentPosition ?? 1);
@@ -171,8 +359,24 @@ export default function SprintTestScreen() {
     const allWords = await getWords();
     const testWords = getTestWords(allWords);
     setCardWords(shuffleArray(testWords));
+    // Show pre-review only when we have a saved unmemorized list from the
+    // previous attempt and those words still exist in the current data set.
+    const cellIdx = sprintData?.currentPosition ?? testCellIndexRef.current;
+    const prevUnmemIds = getCellTestUnmemorized(cellIdx);
+    if (prevUnmemIds.length > 0) {
+      const idSet = new Set(prevUnmemIds);
+      const prev = allWords.filter((w) => idSet.has(w.id));
+      if (prev.length > 0) {
+        setPreReviewWords(prev);
+        setPhase("pre-review");
+      } else {
+        setPhase("test");
+      }
+    } else {
+      setPhase("test");
+    }
     setLoading(false);
-  }, [getTestWords]);
+  }, [getTestWords, getCellTestUnmemorized, sprintData?.currentPosition]);
 
   useEffect(() => {
     load();
@@ -184,14 +388,14 @@ export default function SprintTestScreen() {
   // Auto-play audio when card changes
   const lastSpokenIndex = useRef(-1);
   useEffect(() => {
-    if (loading || !currentWord || isCompleted) return;
+    if (loading || !currentWord || phase !== "test") return;
     if (lastSpokenIndex.current === currentIndex) return;
     lastSpokenIndex.current = currentIndex;
     const text = currentWord.exampleSentence
       ? `${currentWord.word}。${currentWord.exampleSentence}`
       : currentWord.word;
     speakChinese(text, { wordId: currentWord.id });
-  }, [currentIndex, loading, currentWord, isCompleted]);
+  }, [currentIndex, loading, currentWord, phase]);
 
   // Reset reveal when card changes
   useEffect(() => {
@@ -240,7 +444,21 @@ export default function SprintTestScreen() {
         },
         { important: true },
       );
-      setIsCompleted(true);
+      // Persist this attempt's unmemorized list for next-time pre-review and
+      // for the post-review screen we are about to show.
+      const finalChoices = { ...choices, [currentWord.id]: choice };
+      const unmemIds = cardWords
+        .filter((w) => finalChoices[w.id] === "unmemorized")
+        .map((w) => w.id);
+      saveCellTestUnmemorized(testCellIndexRef.current, unmemIds).catch(() => {});
+      if (unmemIds.length > 0) {
+        const idSet = new Set(unmemIds);
+        setPostReviewWords(cardWords.filter((w) => idSet.has(w.id)));
+        stopSpeaking().catch(() => {});
+        setPhase("post-review");
+      } else {
+        setPhase("result");
+      }
     }
   };
 
@@ -271,6 +489,42 @@ export default function SprintTestScreen() {
     );
   }
 
+  if (phase === "pre-review") {
+    return (
+      <ThemedView style={styles.container}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.content,
+            { paddingTop: safeHeaderPadding + Spacing.xl, paddingBottom: insets.bottom + Spacing["3xl"] },
+          ]}
+        >
+          <View style={styles.reviewHeader}>
+            <View style={[styles.infoBadge, { backgroundColor: Colors.light.alert + "20" }]}>
+              <Feather name="rotate-ccw" size={13} color={Colors.light.alert} />
+              <ThemedText style={[styles.infoBadgeText, { color: Colors.light.alert }]}>
+                {t("pre_review_title")}
+              </ThemedText>
+            </View>
+            <ThemedText style={[styles.reviewSubtitle, { color: theme.textSecondary }]}>
+              {t("pre_review_subtitle")}
+            </ThemedText>
+          </View>
+          <ReviewWordList words={preReviewWords} theme={theme} />
+          <Button
+            testID="button-start-test-after-review"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setPhase("test");
+            }}
+            style={styles.actionButton}
+          >
+            {t("start_test_after_review")}
+          </Button>
+        </ScrollView>
+      </ThemedView>
+    );
+  }
+
   if (cardWords.length === 0) {
     return (
       <ThemedView style={[styles.container, { paddingTop: safeHeaderPadding + Spacing.xl }]}>
@@ -284,6 +538,42 @@ export default function SprintTestScreen() {
             {t("clear_and_continue")}
           </Button>
         </View>
+      </ThemedView>
+    );
+  }
+
+  if (phase === "post-review") {
+    return (
+      <ThemedView style={styles.container}>
+        <ScrollView
+          contentContainerStyle={[
+            styles.content,
+            { paddingTop: safeHeaderPadding + Spacing.xl, paddingBottom: insets.bottom + Spacing["3xl"] },
+          ]}
+        >
+          <View style={styles.reviewHeader}>
+            <View style={[styles.infoBadge, { backgroundColor: Colors.light.alert + "20" }]}>
+              <Feather name="bookmark" size={13} color={Colors.light.alert} />
+              <ThemedText style={[styles.infoBadgeText, { color: Colors.light.alert }]}>
+                {t("post_review_title")}
+              </ThemedText>
+            </View>
+            <ThemedText style={[styles.reviewSubtitle, { color: theme.textSecondary }]}>
+              {t("post_review_subtitle")}
+            </ThemedText>
+          </View>
+          <ReviewWordList words={postReviewWords} theme={theme} />
+          <Button
+            testID="button-continue-to-result"
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setPhase("result");
+            }}
+            style={styles.actionButton}
+          >
+            {t("continue_to_result")}
+          </Button>
+        </ScrollView>
       </ThemedView>
     );
   }
@@ -495,6 +785,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm, paddingVertical: Spacing.md, borderRadius: BorderRadius.full, borderWidth: 1,
   },
   earlyUnmemorizedLabel: { fontSize: 14, fontFamily: "Nunito_400Regular" },
+  reviewHeader: { gap: Spacing.sm, marginBottom: Spacing.lg },
+  reviewSubtitle: { fontSize: 14, fontFamily: "Nunito_400Regular", lineHeight: 20 },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center", marginBottom: Spacing.xl },
   actionButton: { width: "100%", marginTop: Spacing.xl },

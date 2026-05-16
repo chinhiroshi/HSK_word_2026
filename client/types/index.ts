@@ -64,4 +64,8 @@ export interface SprintData {
   completedDates: Record<number, string>;
   cellPhaseProgress?: Record<number, { text: boolean; audio: boolean; audioCards: boolean }>;
   totalCells?: number;
+  // Per-cell test history. Used by SprintTestScreen to show a pre-test review
+  // of words missed in the previous attempt and a post-test review of words
+  // missed in the current attempt. Both are keyed by test cell index.
+  cellTestUnmemorized?: Record<number, string[]>;
 }

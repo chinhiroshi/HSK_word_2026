@@ -209,6 +209,16 @@ const translations = {
     replay: "再生",
     choice_not_memorized: "覚えてない",
     choice_memorized: "覚えた",
+    pre_review_title: "前回の苦手単語を復習",
+    pre_review_subtitle: "前回テストで覚えていなかった単語をもう一度確認しましょう。",
+    post_review_title: "今回の苦手単語をもう一度",
+    post_review_subtitle: "今回覚えられなかった単語を最後に見直しましょう。",
+    start_test_after_review: "テストを始める",
+    continue_to_result: "結果を見る",
+    review_hide_chinese: "漢字を隠す",
+    review_show_chinese: "漢字を見せる",
+    review_show_meaning: "意味を見る",
+    review_hide_meaning: "意味を隠す",
 
     // ── Sprint Stamp Gallery Screen ──
     stamp_gallery_header: "スタンプ帳",
@@ -657,6 +667,16 @@ const translations = {
     replay: "Play",
     choice_not_memorized: "Not Yet",
     choice_memorized: "Memorized",
+    pre_review_title: "Review Last Time's Misses",
+    pre_review_subtitle: "Take another look at the words you missed in your previous test.",
+    post_review_title: "Review What You Missed",
+    post_review_subtitle: "Take one last look at the words you missed this time.",
+    start_test_after_review: "Start Test",
+    continue_to_result: "See Result",
+    review_hide_chinese: "Hide Characters",
+    review_show_chinese: "Show Characters",
+    review_show_meaning: "Show Meaning",
+    review_hide_meaning: "Hide Meaning",
 
     // ── Sprint Stamp Gallery Screen ──
     stamp_gallery_header: "Stamp Book",

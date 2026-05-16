@@ -85,6 +85,8 @@ interface SprintContextType {
   getTestWords: (words: Word[]) => Word[];
   getTodayStudyWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean; audioCards: boolean };
+  getCellTestUnmemorized: (position: number) => string[];
+  saveCellTestUnmemorized: (position: number, wordIds: string[]) => Promise<void>;
   totalCells: number;
 }
 
@@ -104,6 +106,8 @@ const SprintContext = createContext<SprintContextType>({
   getTestWords: () => [],
   getTodayStudyWords: () => [],
   getCellPhaseProgress: () => ({ text: false, audio: false, audioCards: false }),
+  getCellTestUnmemorized: () => [],
+  saveCellTestUnmemorized: async () => {},
   totalCells: DEFAULT_TOTAL_CELLS,
 });
 
@@ -386,6 +390,39 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
+  const getCellTestUnmemorized = useCallback(
+    (position: number): string[] => {
+      if (!sprintData) return [];
+      return (sprintData.cellTestUnmemorized ?? {})[position] ?? [];
+    },
+    [sprintData]
+  );
+
+  const saveCellTestUnmemorized = useCallback(
+    async (position: number, wordIds: string[]): Promise<void> => {
+      // Use functional setState to merge against the latest sprintData and
+      // avoid races with concurrent writers (e.g. completeSession that runs
+      // shortly after this call from the same screen).
+      let nextRef: SprintData | null = null;
+      setSprintData((prev) => {
+        if (!prev) return prev;
+        const next: SprintData = {
+          ...prev,
+          cellTestUnmemorized: {
+            ...(prev.cellTestUnmemorized ?? {}),
+            [position]: wordIds,
+          },
+        };
+        nextRef = next;
+        return next;
+      });
+      if (nextRef) {
+        await saveSprintData(nextRef, currentLevel);
+      }
+    },
+    [currentLevel]
+  );
+
   return (
     <SprintContext.Provider
       value={{
@@ -404,6 +441,8 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
         getTestWords,
         getTodayStudyWords,
         getCellPhaseProgress,
+        getCellTestUnmemorized,
+        saveCellTestUnmemorized,
         totalCells: sprintData?.totalCells ?? DEFAULT_TOTAL_CELLS,
       }}
     >
