@@ -324,7 +324,6 @@ export default function SprintAudioPlaybackScreen() {
               <InlinePronunciationEvaluator
                 referenceText={word.exampleSentence || word.word}
                 wordId={word.id}
-                showReferenceWhenActive
               />
             </View>
           ))}

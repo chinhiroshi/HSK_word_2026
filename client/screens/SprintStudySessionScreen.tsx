@@ -1117,7 +1117,6 @@ export default function SprintStudySessionScreen() {
                     <InlinePronunciationEvaluator
                       referenceText={item.exampleSentence || item.word}
                       wordId={item.id}
-                      showReferenceWhenActive
                     />
                   </View>
                   {isWordRevealed ? (
