@@ -24,76 +24,6 @@ import { useI18n } from "@/contexts/LanguageContext";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintAudioPlayback">;
 
-interface SprintAudioWordRowProps {
-  word: Word;
-  index: number;
-  isHighlighted: boolean;
-  theme: any;
-}
-
-function SprintAudioWordRow({ word, index, isHighlighted, theme }: SprintAudioWordRowProps) {
-  const [isRevealed, setIsRevealed] = useState(false);
-
-  const handleToggleReveal = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setIsRevealed((prev) => !prev);
-  };
-
-  return (
-    <View
-      style={[
-        styles.wordRow,
-        { borderColor: theme.border },
-        isHighlighted ? { backgroundColor: theme.primary + "12" } : {},
-      ]}
-    >
-      <View style={styles.wordRowTopLine}>
-        <ThemedText style={[styles.wordRowNum, { color: theme.textSecondary }]}>{index + 1}</ThemedText>
-        <SpeakButton text={word.exampleSentence || word.word} size="small" wordId={word.id} />
-        <InlinePronunciationEvaluator
-          referenceText={word.exampleSentence || word.word}
-          wordId={word.id}
-          onResult={() => {
-            if (!isRevealed) setIsRevealed(true);
-          }}
-        />
-        <Pressable
-          onPress={handleToggleReveal}
-          style={[
-            styles.wordRowEye,
-            { backgroundColor: isRevealed ? `${theme.primary}20` : theme.backgroundSecondary },
-          ]}
-          hitSlop={8}
-          testID={`button-reveal-${word.id}`}
-        >
-          <Feather
-            name={isRevealed ? "eye" : "eye-off"}
-            size={16}
-            color={isRevealed ? theme.primary : theme.textSecondary}
-          />
-        </Pressable>
-      </View>
-
-      {isRevealed ? (
-        <View style={styles.wordRowRevealed}>
-          <View style={styles.wordRowRevealedHead}>
-            <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
-            <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
-          </View>
-          <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]}>
-            {word.translation}
-          </ThemedText>
-          {word.exampleSentence ? (
-            <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]}>
-              {word.exampleSentence}
-            </ThemedText>
-          ) : null}
-        </View>
-      ) : null}
-    </View>
-  );
-}
-
 export default function SprintAudioPlaybackScreen() {
   const route = useRoute<RouteProps>();
   const headerHeight = useHeaderHeight();
@@ -372,13 +302,31 @@ export default function SprintAudioPlaybackScreen() {
             再生リスト ({words.length}語)
           </ThemedText>
           {words.map((word, index) => (
-            <SprintAudioWordRow
+            <View
               key={word.id}
-              word={word}
-              index={index}
-              isHighlighted={isPlaying && index === currentWordIndex}
-              theme={theme}
-            />
+              style={[
+                styles.wordRow,
+                { borderColor: theme.border },
+                isPlaying && index === currentWordIndex
+                  ? { backgroundColor: theme.primary + "12" }
+                  : {},
+              ]}
+            >
+              <ThemedText style={[styles.wordRowNum, { color: theme.textSecondary }]}>{index + 1}</ThemedText>
+              <View style={styles.wordRowInfo}>
+                <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
+                <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
+                <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]} numberOfLines={1}>
+                  {word.translation}
+                </ThemedText>
+              </View>
+              <SpeakButton text={word.exampleSentence || word.word} size="small" wordId={word.id} />
+              <InlinePronunciationEvaluator
+                referenceText={word.exampleSentence || word.word}
+                wordId={word.id}
+                showReferenceWhenActive
+              />
+            </View>
           ))}
         </View>
       </ScrollView>
@@ -420,41 +368,17 @@ const styles = StyleSheet.create({
   wordListCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.lg, gap: Spacing.sm },
   wordListTitle: { fontSize: 13, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.xs },
   wordRow: {
-    flexDirection: "column",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.sm,
-    borderBottomWidth: 1,
-    borderRadius: BorderRadius.sm,
+    flexDirection: "row", alignItems: "center", gap: Spacing.md,
+    paddingVertical: Spacing.sm, borderBottomWidth: 1, borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.xs,
   },
-  wordRowTopLine: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
   wordRowNum: { fontSize: 12, fontFamily: "Nunito_400Regular", width: 20, textAlign: "right" },
-  wordRowEye: {
-    width: 28,
-    height: 28,
-    borderRadius: BorderRadius.full,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  wordRowRevealed: {
-    paddingLeft: 28,
-    gap: 2,
-  },
-  wordRowRevealedHead: {
-    flexDirection: "row",
-    alignItems: "baseline",
-    flexWrap: "wrap",
-    columnGap: Spacing.sm,
-    rowGap: 2,
-  },
-  wordRowChinese: { fontSize: 18, fontFamily: "Nunito_700Bold" },
-  wordRowPinyin: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  wordRowTrans: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  wordRowExample: { fontSize: 13, fontFamily: "Nunito_400Regular" },
+  wordRowInfo: { flex: 1, gap: 2 },
+  wordRowHeadLine: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, flexWrap: "wrap" },
+  wordRowChinese: { fontSize: 15, fontFamily: "Nunito_700Bold" },
+  wordRowPinyin: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  wordRowTrans: { fontSize: 13, fontFamily: "Nunito_400Regular", maxWidth: 120 },
+  wordRowControls: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: Spacing.sm },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
 });

@@ -10,7 +10,7 @@ import * as Haptics from "expo-haptics";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
-import { useInlinePronunciation } from "@/components/InlinePronunciationEvaluator";
+import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -89,14 +89,6 @@ function AudioWordCard({
     onToggleReveal();
   };
 
-  const { mic: pronunciationMic, result: pronunciationResult } = useInlinePronunciation({
-    referenceText: word.exampleSentence || word.word,
-    wordId: word.id,
-    onResult: () => {
-      if (!isRevealed) onToggleReveal();
-    },
-  });
-
   return (
     <View
       style={[
@@ -119,7 +111,13 @@ function AudioWordCard({
 
           <View style={styles.speakContainer}>
             <SpeakButton text={speakText} size="medium" wordId={word.id} />
-            {pronunciationMic}
+            <InlinePronunciationEvaluator
+              referenceText={word.exampleSentence || word.word}
+              wordId={word.id}
+              onResult={() => {
+                if (!isRevealed) onToggleReveal();
+              }}
+            />
           </View>
 
           <Pressable
@@ -216,10 +214,6 @@ function AudioWordCard({
             </Pressable>
           </View>
         </View>
-
-        {pronunciationResult ? (
-          <View style={styles.pronunciationResultWrap}>{pronunciationResult}</View>
-        ) : null}
 
         {isRevealed ? (
           isLocked ? (
@@ -681,12 +675,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
-  },
-  pronunciationResultWrap: {
-    marginTop: Spacing.xs,
-    marginLeft: 40 + 44 + Spacing.sm,
-    maxWidth: "55%",
-    alignSelf: "flex-start",
   },
   revealedContent: {
     marginTop: Spacing.md,
