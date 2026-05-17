@@ -615,9 +615,10 @@ const styles = StyleSheet.create({
   },
   speakContainer: {
     flex: 1,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    gap: Spacing.xs,
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
   },
   revealButton: {
     width: 28,

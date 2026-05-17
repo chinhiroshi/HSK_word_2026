@@ -1107,7 +1107,7 @@ export default function SprintStudySessionScreen() {
                       {globalIdx}
                     </ThemedText>
                   </View>
-                  <View style={{ alignItems: "center", gap: 6 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
                     <Pressable
                       onPress={() => speakChinese(speakText, { wordId: item.id })}
                       style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
