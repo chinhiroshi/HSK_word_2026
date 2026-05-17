@@ -114,7 +114,9 @@ function AudioWordCard({
             <InlinePronunciationEvaluator
               referenceText={word.exampleSentence || word.word}
               wordId={word.id}
-              showReferenceWhenActive
+              onResultReady={() => {
+                if (!isRevealed && !isLocked) onToggleReveal();
+              }}
             />
           </View>
 
