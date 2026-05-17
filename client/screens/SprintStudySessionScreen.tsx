@@ -1101,27 +1101,89 @@ export default function SprintStudySessionScreen() {
                 ? (lang === "en" && item.longExampleEnglish ? item.longExampleEnglish : item.longExampleTranslation)
                 : (lang === "en" && item.exampleEnglish ? item.exampleEnglish : item.exampleTranslation);
               return (
-                <View style={[styles.wordRow, { borderBottomColor: theme.border, backgroundColor: isUnmemorized ? Colors.light.alert + "14" : theme.backgroundDefault }]}>
-                  <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
-                    <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
-                      {globalIdx}
-                    </ThemedText>
-                  </View>
-                  <View style={{ flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
-                    <Pressable
-                      onPress={() => speakChinese(speakText, { wordId: item.id })}
-                      style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
-                    >
-                      <Feather name="volume-2" size={20} color="#fff" />
-                    </Pressable>
-                    <InlinePronunciationEvaluator
-                      referenceText={item.exampleSentence || item.word}
-                      wordId={item.id}
-                      showReferenceWhenActive
-                    />
+                <View style={[styles.wordRow, styles.audioRowCol, { borderBottomColor: theme.border, backgroundColor: isUnmemorized ? Colors.light.alert + "14" : theme.backgroundDefault }]}>
+                  <View style={styles.audioRowTop}>
+                    <View style={[styles.wordNumCircleSmall, { backgroundColor: theme.backgroundSecondary }]}>
+                      <ThemedText style={[styles.wordNumCircleTextSmall, { color: theme.textSecondary }]}>
+                        {globalIdx}
+                      </ThemedText>
+                    </View>
+                    <View style={styles.audioSpeakArea}>
+                      <Pressable
+                        onPress={() => speakChinese(speakText, { wordId: item.id })}
+                        style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
+                      >
+                        <Feather name="volume-2" size={20} color="#fff" />
+                      </Pressable>
+                      <InlinePronunciationEvaluator
+                        referenceText={item.exampleSentence || item.word}
+                        wordId={item.id}
+                        onResult={() => {
+                          if (revealLevel === 0) {
+                            setRevealedIds((prev) => {
+                              if (prev.has(item.id)) return prev;
+                              const next = new Set(prev);
+                              next.add(item.id);
+                              return next;
+                            });
+                          }
+                        }}
+                      />
+                    </View>
+                    <View style={styles.rowActions}>
+                      <Pressable
+                        onPress={() => {
+                          // 0 → 1: add to revealedIds
+                          // 1 → 2: add to audioMeaningRevealedIds
+                          // 2 → 0: remove from both
+                          if (revealLevel === 0) {
+                            setRevealedIds((prev) => {
+                              const next = new Set(prev);
+                              next.add(item.id);
+                              return next;
+                            });
+                          } else if (revealLevel === 1) {
+                            setAudioMeaningRevealedIds((prev) => {
+                              const next = new Set(prev);
+                              next.add(item.id);
+                              return next;
+                            });
+                          } else {
+                            setRevealedIds((prev) => {
+                              const next = new Set(prev);
+                              next.delete(item.id);
+                              return next;
+                            });
+                            setAudioMeaningRevealedIds((prev) => {
+                              const next = new Set(prev);
+                              next.delete(item.id);
+                              return next;
+                            });
+                          }
+                        }}
+                        style={styles.actionIconBtn}
+                      >
+                        <Feather name={isWordRevealed ? "eye" : "eye-off"} size={18} color={isWordRevealed ? theme.primary : theme.textSecondary} />
+                        {revealLevel === 1 ? (
+                          <View style={[styles.eyeMoreDot, { backgroundColor: Colors.light.secondary, borderColor: theme.backgroundDefault }]} />
+                        ) : null}
+                      </Pressable>
+                      <Pressable
+                        onPress={() => handleChoiceList(item.id, "unmemorized")}
+                        style={[styles.actionIconBtn, isUnmemorized && styles.flagBtnActive]}
+                      >
+                        <Feather name="flag" size={18} color={isUnmemorized ? "#fff" : theme.textSecondary} />
+                      </Pressable>
+                      <Pressable
+                        onPress={() => handleChoiceList(item.id, "memorized")}
+                        style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
+                      >
+                        <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
+                      </Pressable>
+                    </View>
                   </View>
                   {isWordRevealed ? (
-                    <View style={styles.wordInfoCol}>
+                    <View style={styles.audioRevealedBlock}>
                       <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
                       <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
                       {exampleForRow ? (
@@ -1142,60 +1204,7 @@ export default function SprintStudySessionScreen() {
                         </View>
                       ) : null}
                     </View>
-                  ) : (
-                    <View style={styles.wordInfoCol} />
-                  )}
-                  <View style={styles.rowActions}>
-                    <Pressable
-                      onPress={() => {
-                        // 0 → 1: add to revealedIds
-                        // 1 → 2: add to audioMeaningRevealedIds
-                        // 2 → 0: remove from both
-                        if (revealLevel === 0) {
-                          setRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.add(item.id);
-                            return next;
-                          });
-                        } else if (revealLevel === 1) {
-                          setAudioMeaningRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.add(item.id);
-                            return next;
-                          });
-                        } else {
-                          setRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.delete(item.id);
-                            return next;
-                          });
-                          setAudioMeaningRevealedIds((prev) => {
-                            const next = new Set(prev);
-                            next.delete(item.id);
-                            return next;
-                          });
-                        }
-                      }}
-                      style={styles.actionIconBtn}
-                    >
-                      <Feather name={isWordRevealed ? "eye" : "eye-off"} size={18} color={isWordRevealed ? theme.primary : theme.textSecondary} />
-                      {revealLevel === 1 ? (
-                        <View style={[styles.eyeMoreDot, { backgroundColor: Colors.light.secondary, borderColor: theme.backgroundDefault }]} />
-                      ) : null}
-                    </Pressable>
-                    <Pressable
-                      onPress={() => handleChoiceList(item.id, "unmemorized")}
-                      style={[styles.actionIconBtn, isUnmemorized && styles.flagBtnActive]}
-                    >
-                      <Feather name="flag" size={18} color={isUnmemorized ? "#fff" : theme.textSecondary} />
-                    </Pressable>
-                    <Pressable
-                      onPress={() => handleChoiceList(item.id, "memorized")}
-                      style={[styles.actionIconBtn, isMemorized && styles.checkBtnActive]}
-                    >
-                      <Feather name="check" size={18} color={isMemorized ? "#fff" : theme.textSecondary} />
-                    </Pressable>
-                  </View>
+                  ) : null}
                 </View>
               );
             }
@@ -1849,6 +1858,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
     gap: Spacing.sm,
+  },
+  audioRowCol: {
+    flexDirection: "column",
+    alignItems: "stretch",
+    gap: Spacing.sm,
+  },
+  audioRowTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  audioSpeakArea: {
+    flex: 1,
+    minWidth: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  audioRevealedBlock: {
+    paddingLeft: 26 + Spacing.sm,
+    gap: 2,
   },
   wordNumCircleSmall: {
     width: 26,
