@@ -111,13 +111,12 @@ function AudioWordCard({
 
           <View style={styles.speakContainer}>
             <SpeakButton text={speakText} size="medium" wordId={word.id} />
+            <InlinePronunciationEvaluator
+              referenceText={word.exampleSentence || word.word}
+              wordId={word.id}
+              showReferenceWhenActive
+            />
           </View>
-
-          <InlinePronunciationEvaluator
-            referenceText={word.exampleSentence || word.word}
-            wordId={word.id}
-            showReferenceWhenActive
-          />
 
           <Pressable
             onPress={handleToggleReveal}
@@ -616,6 +615,9 @@ const styles = StyleSheet.create({
   },
   speakContainer: {
     flex: 1,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: Spacing.xs,
   },
   revealButton: {
     width: 28,
