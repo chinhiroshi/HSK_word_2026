@@ -1107,12 +1107,19 @@ export default function SprintStudySessionScreen() {
                       {globalIdx}
                     </ThemedText>
                   </View>
-                  <Pressable
-                    onPress={() => speakChinese(speakText, { wordId: item.id })}
-                    style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
-                  >
-                    <Feather name="volume-2" size={20} color="#fff" />
-                  </Pressable>
+                  <View style={{ alignItems: "center", gap: 6 }}>
+                    <Pressable
+                      onPress={() => speakChinese(speakText, { wordId: item.id })}
+                      style={[styles.speakCircle, { backgroundColor: Colors.light.secondary }]}
+                    >
+                      <Feather name="volume-2" size={20} color="#fff" />
+                    </Pressable>
+                    <InlinePronunciationEvaluator
+                      referenceText={item.exampleSentence || item.word}
+                      wordId={item.id}
+                      showReferenceWhenActive
+                    />
+                  </View>
                   {isWordRevealed ? (
                     <View style={styles.wordInfoCol}>
                       <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
