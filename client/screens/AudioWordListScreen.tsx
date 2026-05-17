@@ -111,6 +111,11 @@ function AudioWordCard({
 
           <View style={styles.speakContainer}>
             <SpeakButton text={speakText} size="medium" wordId={word.id} />
+            <InlinePronunciationEvaluator
+              referenceText={word.exampleSentence}
+              wordId={word.id}
+              showReferenceWhenActive
+            />
           </View>
 
           <Pressable
@@ -225,15 +230,9 @@ function AudioWordCard({
               <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
                 {word.pinyin || getPinyin(word.word)}
               </ThemedText>
-              <View style={styles.exampleRow}>
-                <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
-                  {word.exampleSentence}
-                </ThemedText>
-                <InlinePronunciationEvaluator
-                  referenceText={word.exampleSentence}
-                  wordId={word.id}
-                />
-              </View>
+              <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
+                {word.exampleSentence}
+              </ThemedText>
             </View>
           )
         ) : null}
@@ -616,6 +615,10 @@ const styles = StyleSheet.create({
   },
   speakContainer: {
     flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    flexWrap: "wrap",
   },
   revealButton: {
     width: 28,

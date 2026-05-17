@@ -35,6 +35,7 @@ import {
   resolveRecognitionLanguage,
   startRecognition,
 } from "@/lib/speechRecognition";
+import { speakChinese, stopSpeaking } from "@/lib/speech";
 
 type Phase =
   | "idle"
@@ -48,9 +49,16 @@ type Phase =
 interface Props {
   referenceText: string;
   wordId?: string;
+  playReferenceFirst?: boolean;
+  showReferenceWhenActive?: boolean;
 }
 
-export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
+export function InlinePronunciationEvaluator({
+  referenceText,
+  wordId,
+  playReferenceFirst = true,
+  showReferenceWhenActive = false,
+}: Props) {
   const { theme } = useTheme();
   const { t } = useI18n();
   const [phase, setPhase] = useState<Phase>("idle");
@@ -118,6 +126,11 @@ export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
         return;
       }
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      if (playReferenceFirst) {
+        try {
+          await speakChinese(referenceText, { wordId });
+        } catch {}
+      }
       const lang = resolveRecognitionLanguage({ wordId, text: referenceText });
       let lastTranscript = "";
       const handle = await startRecognition({
@@ -170,6 +183,9 @@ export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
 
   const stopRecording = async (e?: GestureResponderEvent) => {
     e?.stopPropagation();
+    try {
+      await stopSpeaking();
+    } catch {}
     try {
       await handleRef.current?.stop();
     } catch {}
@@ -240,6 +256,15 @@ export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
           color={phase === "recording" ? "#FFFFFF" : micColor}
         />
       </Pressable>
+
+      {showReferenceWhenActive && phase !== "idle" ? (
+        <ThemedText
+          style={[styles.referenceText, { color: theme.text }]}
+          numberOfLines={1}
+        >
+          {referenceText}
+        </ThemedText>
+      ) : null}
 
       {phase === "recording" ? (
         <View style={styles.pulseWrap}>
@@ -316,6 +341,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     maxWidth: 140,
+  },
+  referenceText: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
+    maxWidth: 200,
   },
   scoreText: {
     fontSize: 16,

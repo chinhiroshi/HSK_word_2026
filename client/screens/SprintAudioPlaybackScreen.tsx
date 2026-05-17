@@ -11,6 +11,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ProgressBar } from "@/components/ProgressBar";
 import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
+import { SpeakButton } from "@/components/SpeakButton";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -321,13 +322,12 @@ export default function SprintAudioPlaybackScreen() {
                   </ThemedText>
                 </View>
                 {word.exampleSentence ? (
-                  <View style={styles.wordRowExampleLine}>
-                    <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={1}>
-                      {word.exampleSentence}
-                    </ThemedText>
+                  <View style={styles.wordRowControls}>
+                    <SpeakButton text={word.exampleSentence} size="small" wordId={word.id} />
                     <InlinePronunciationEvaluator
                       referenceText={word.exampleSentence}
                       wordId={word.id}
+                      showReferenceWhenActive
                     />
                   </View>
                 ) : null}
@@ -384,8 +384,7 @@ const styles = StyleSheet.create({
   wordRowChinese: { fontSize: 15, fontFamily: "Nunito_700Bold" },
   wordRowPinyin: { fontSize: 12, fontFamily: "Nunito_400Regular" },
   wordRowTrans: { fontSize: 13, fontFamily: "Nunito_400Regular", maxWidth: 120 },
-  wordRowExampleLine: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: Spacing.sm },
-  wordRowExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  wordRowControls: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: Spacing.sm, marginTop: 4 },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
 });
