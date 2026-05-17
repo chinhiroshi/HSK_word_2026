@@ -52,11 +52,6 @@ function AudioWordCard({
 }: AudioWordCardProps) {
   const { theme } = useTheme();
   const { t } = useI18n();
-  const [exampleRevealed, setExampleRevealed] = useState(false);
-
-  useEffect(() => {
-    if (!isRevealed) setExampleRevealed(false);
-  }, [isRevealed]);
 
   const unmemorizedCount = word.audioUnmemorizedCount || 0;
   const isCurrentlyMemorized = word.audioMemorized;
@@ -227,22 +222,18 @@ function AudioWordCard({
           ) : (
             <View style={styles.revealedContent}>
               <ThemedText style={styles.word}>{word.word}</ThemedText>
-              <View style={styles.pinyinRow}>
-                <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
-                  {word.pinyin || getPinyin(word.word)}
+              <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
+                {word.pinyin || getPinyin(word.word)}
+              </ThemedText>
+              <View style={styles.exampleRow}>
+                <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
+                  {word.exampleSentence}
                 </ThemedText>
                 <InlinePronunciationEvaluator
                   referenceText={word.exampleSentence}
                   wordId={word.id}
-                  speakBeforeRecord
-                  onActivate={() => setExampleRevealed(true)}
                 />
               </View>
-              {exampleRevealed ? (
-                <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
-                  {word.exampleSentence}
-                </ThemedText>
-              ) : null}
             </View>
           )
         ) : null}
@@ -694,12 +685,11 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito_400Regular",
     marginBottom: Spacing.xs,
   },
-  pinyinRow: {
+  exampleRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
     flexWrap: "wrap",
-    marginBottom: Spacing.xs,
+    gap: Spacing.sm,
   },
   exampleSentence: {
     fontSize: 14,

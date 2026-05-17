@@ -23,50 +23,6 @@ import { useI18n } from "@/contexts/LanguageContext";
 
 type RouteProps = RouteProp<SprintStackParamList, "SprintAudioPlayback">;
 
-interface SprintAudioWordRowProps {
-  word: Word;
-  index: number;
-  isActive: boolean;
-  theme: any;
-}
-
-function SprintAudioWordRow({ word, index, isActive, theme }: SprintAudioWordRowProps) {
-  const [exampleRevealed, setExampleRevealed] = useState(false);
-  return (
-    <View
-      style={[
-        styles.wordRow,
-        { borderColor: theme.border },
-        isActive ? { backgroundColor: theme.primary + "12" } : {},
-      ]}
-    >
-      <ThemedText style={[styles.wordRowNum, { color: theme.textSecondary }]}>{index + 1}</ThemedText>
-      <View style={styles.wordRowInfo}>
-        <View style={styles.wordRowHeadLine}>
-          <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
-          <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
-          {word.exampleSentence ? (
-            <InlinePronunciationEvaluator
-              referenceText={word.exampleSentence}
-              wordId={word.id}
-              speakBeforeRecord
-              onActivate={() => setExampleRevealed(true)}
-            />
-          ) : null}
-          <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]} numberOfLines={1}>
-            {word.translation}
-          </ThemedText>
-        </View>
-        {word.exampleSentence && exampleRevealed ? (
-          <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={2}>
-            {word.exampleSentence}
-          </ThemedText>
-        ) : null}
-      </View>
-    </View>
-  );
-}
-
 export default function SprintAudioPlaybackScreen() {
   const route = useRoute<RouteProps>();
   const headerHeight = useHeaderHeight();
@@ -345,13 +301,38 @@ export default function SprintAudioPlaybackScreen() {
             再生リスト ({words.length}語)
           </ThemedText>
           {words.map((word, index) => (
-            <SprintAudioWordRow
+            <View
               key={word.id}
-              word={word}
-              index={index}
-              isActive={isPlaying && index === currentWordIndex}
-              theme={theme}
-            />
+              style={[
+                styles.wordRow,
+                { borderColor: theme.border },
+                isPlaying && index === currentWordIndex
+                  ? { backgroundColor: theme.primary + "12" }
+                  : {},
+              ]}
+            >
+              <ThemedText style={[styles.wordRowNum, { color: theme.textSecondary }]}>{index + 1}</ThemedText>
+              <View style={styles.wordRowInfo}>
+                <View style={styles.wordRowHeadLine}>
+                  <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
+                  <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
+                  <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]} numberOfLines={1}>
+                    {word.translation}
+                  </ThemedText>
+                </View>
+                {word.exampleSentence ? (
+                  <View style={styles.wordRowExampleLine}>
+                    <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={1}>
+                      {word.exampleSentence}
+                    </ThemedText>
+                    <InlinePronunciationEvaluator
+                      referenceText={word.exampleSentence}
+                      wordId={word.id}
+                    />
+                  </View>
+                ) : null}
+              </View>
+            </View>
           ))}
         </View>
       </ScrollView>
