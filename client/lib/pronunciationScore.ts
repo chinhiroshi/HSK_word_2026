@@ -80,7 +80,7 @@ export function computeScore(reference: string, hypothesis: string): Pronunciati
   const lengthMatch = Math.max(0, Math.round(lengthRatio * 100));
 
   const total = Math.round(
-    charMatch * 0.65 + lengthMatch * 0.25 + orderMatch * 0.1,
+    charMatch * 0.5 + lengthMatch * 0.15 + orderMatch * 0.35,
   );
 
   return { charMatch, orderMatch, lengthMatch, total };
