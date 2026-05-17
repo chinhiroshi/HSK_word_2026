@@ -125,12 +125,6 @@ export function InlinePronunciationEvaluator({
       setTranscript("");
       setScore(null);
       setPhase("checking");
-      const next = await ensureReady();
-      if (!mountedRef.current) return;
-      if (next !== "ready") {
-        setPhase(next);
-        return;
-      }
       onActivate?.();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (speakBeforeRecord && referenceText) {
@@ -139,6 +133,12 @@ export function InlinePronunciationEvaluator({
           await speakChinese(referenceText, { wordId });
         } catch {}
         if (!mountedRef.current) return;
+      }
+      const next = await ensureReady();
+      if (!mountedRef.current) return;
+      if (next !== "ready") {
+        setPhase(next);
+        return;
       }
       const lang = resolveRecognitionLanguage({ wordId, text: referenceText });
       let lastTranscript = "";
