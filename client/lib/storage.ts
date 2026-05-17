@@ -277,6 +277,24 @@ export async function setChineseRegionPreference(region: ChineseRegion): Promise
   } catch {}
 }
 
+export type PronunciationReveal = "before" | "after";
+
+const PRONUNCIATION_REVEAL_KEY = "@chinese_master_pron_reveal_v1";
+
+export async function getPronunciationRevealPreference(): Promise<PronunciationReveal> {
+  try {
+    const v = await AsyncStorage.getItem(PRONUNCIATION_REVEAL_KEY);
+    if (v === "before" || v === "after") return v;
+  } catch {}
+  return "after";
+}
+
+export async function setPronunciationRevealPreference(v: PronunciationReveal): Promise<void> {
+  try {
+    await AsyncStorage.setItem(PRONUNCIATION_REVEAL_KEY, v);
+  } catch {}
+}
+
 const SILENT_AUDIO_KEY = "@chinese_master_silent_audio";
 
 export async function getSilentModeAudio(): Promise<boolean> {

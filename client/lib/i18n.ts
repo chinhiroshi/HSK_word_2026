@@ -456,6 +456,10 @@ const translations = {
     analytics_review_consent: "同意内容を確認する",
 
     // ── Pronunciation region ──
+    pronunciation_reveal_title: "発音評価時の文字表示",
+    pronunciation_reveal_desc: "音声学習・音声リストで例文を発音する前後どちらに文字を表示するか選択します",
+    pronunciation_reveal_before: "発音前に表示",
+    pronunciation_reveal_after: "発音後に表示",
     pronunciation_region: "発音の地域",
     pronunciation_region_desc: "音声読み上げで使う中国語の地域を選びます",
     region_mainland: "大陸（普通話）",
@@ -937,6 +941,10 @@ const translations = {
     analytics_review_consent: "Review consent",
 
     // ── Pronunciation region ──
+    pronunciation_reveal_title: "Text reveal during pronunciation",
+    pronunciation_reveal_desc: "Choose when example text appears in audio study and audio list pronunciation checks",
+    pronunciation_reveal_before: "Show before",
+    pronunciation_reveal_after: "Show after",
     pronunciation_region: "Pronunciation Region",
     pronunciation_region_desc: "Choose which Chinese accent is used for audio",
     region_mainland: "Mainland (Mandarin)",

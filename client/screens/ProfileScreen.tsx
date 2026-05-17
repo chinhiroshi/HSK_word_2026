@@ -54,8 +54,8 @@ import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
-import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio, getChineseRegionPreference, setChineseRegionPreference, type ChineseRegion } from "@/lib/storage";
-import { setChineseRegionCache } from "@/lib/speech";
+import { getWords, resetProgress, initializeData, getSelectedHskLevel, setSelectedHskLevel, getSilentModeAudio, setSilentModeAudio, getChineseRegionPreference, setChineseRegionPreference, getPronunciationRevealPreference, setPronunciationRevealPreference, type ChineseRegion, type PronunciationReveal } from "@/lib/storage";
+import { setChineseRegionCache, setPronunciationRevealCache } from "@/lib/speech";
 import { getAnalyticsConsent, setAnalyticsConsent, isAnalyticsAvailable } from "@/lib/analytics";
 import { AnalyticsConsentDialog } from "@/components/AnalyticsConsentDialog";
 import { speakChinese } from "@/lib/speech";
@@ -260,6 +260,7 @@ export default function ProfileScreen() {
   const [quoteModalVisible, setQuoteModalVisible] = useState(false);
   const [silentModeAudio, setSilentModeAudioState] = useState(false);
   const [chineseRegion, setChineseRegionState] = useState<ChineseRegion>("CN");
+  const [pronReveal, setPronRevealState] = useState<PronunciationReveal>("after");
   const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
   const [checkingUpdate, setCheckingUpdate] = useState(false);
   const [upToDate, setUpToDate] = useState(false);
@@ -333,6 +334,9 @@ export default function ProfileScreen() {
     const region = await getChineseRegionPreference();
     setChineseRegionState(region);
     setChineseRegionCache(region);
+    const reveal = await getPronunciationRevealPreference();
+    setPronRevealState(reveal);
+    setPronunciationRevealCache(reveal);
     const consent = await getAnalyticsConsent();
     // Opt-out model: anything other than explicit "denied" is treated as ON.
     setAnalyticsEnabled(consent !== "denied");
@@ -351,6 +355,14 @@ export default function ProfileScreen() {
     setChineseRegionCache(region);
     await setChineseRegionPreference(region);
     speakChinese("你好").catch(() => {});
+  };
+
+  const handlePronRevealChange = async (v: PronunciationReveal) => {
+    if (v === pronReveal) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setPronRevealState(v);
+    setPronunciationRevealCache(v);
+    await setPronunciationRevealPreference(v);
   };
 
   const handleAnalyticsToggle = async (value: boolean) => {
@@ -883,6 +895,52 @@ export default function ProfileScreen() {
           </View>
         </View>
       ) : null}
+
+      {/* 発音評価時の文字表示 */}
+      <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border, marginBottom: Spacing.lg }]}>
+        <View style={styles.notifContent}>
+          <View style={[styles.notifIcon, { backgroundColor: theme.primary + "15" }]}>
+            <Feather name="eye" size={20} color={theme.primary} />
+          </View>
+          <View style={styles.notifTextContainer}>
+            <ThemedText style={styles.notifTitle}>{t("pronunciation_reveal_title")}</ThemedText>
+            <ThemedText style={[styles.notifDesc, { color: theme.textSecondary }]}>
+              {t("pronunciation_reveal_desc")}
+            </ThemedText>
+          </View>
+        </View>
+        <View style={pronStyles.row}>
+          {([
+            { value: "after" as PronunciationReveal, label: t("pronunciation_reveal_after"), testID: "segment-pron-reveal-after" },
+            { value: "before" as PronunciationReveal, label: t("pronunciation_reveal_before"), testID: "segment-pron-reveal-before" },
+          ]).map((opt) => {
+            const active = pronReveal === opt.value;
+            return (
+              <Pressable
+                key={opt.value}
+                testID={opt.testID}
+                onPress={() => handlePronRevealChange(opt.value)}
+                style={[
+                  pronStyles.pill,
+                  {
+                    borderColor: active ? theme.primary : theme.border,
+                    backgroundColor: active ? theme.primary + "15" : "transparent",
+                  },
+                ]}
+              >
+                <ThemedText
+                  style={[
+                    pronStyles.pillText,
+                    { color: active ? theme.primary : theme.textSecondary },
+                  ]}
+                >
+                  {opt.label}
+                </ThemedText>
+              </Pressable>
+            );
+          })}
+        </View>
+      </View>
 
       {/* 発音地域設定 */}
       <View style={[styles.notifCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border, marginBottom: Spacing.lg }]}>

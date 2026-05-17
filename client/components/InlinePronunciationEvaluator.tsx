@@ -35,7 +35,13 @@ import {
   resolveRecognitionLanguage,
   startRecognition,
 } from "@/lib/speechRecognition";
-import { speakChinese, stopSpeaking } from "@/lib/speech";
+import {
+  speakChinese,
+  stopSpeaking,
+  getCurrentPronunciationReveal,
+  subscribePronunciationReveal,
+} from "@/lib/speech";
+import type { PronunciationReveal } from "@/lib/storage";
 
 type Phase =
   | "idle"
@@ -64,8 +70,11 @@ export function InlinePronunciationEvaluator({
   const [phase, setPhase] = useState<Phase>("idle");
   const [transcript, setTranscript] = useState("");
   const [score, setScore] = useState<PronunciationScore | null>(null);
+  const [revealPref, setRevealPref] = useState<PronunciationReveal>(getCurrentPronunciationReveal);
   const handleRef = useRef<RecognitionHandle | null>(null);
   const startingRef = useRef(false);
+
+  useEffect(() => subscribePronunciationReveal(setRevealPref), []);
 
   const pulse = useSharedValue(1);
   const pulseStyle = useAnimatedStyle(() => ({
@@ -257,10 +266,13 @@ export function InlinePronunciationEvaluator({
         />
       </Pressable>
 
-      {showReferenceWhenActive && phase !== "idle" ? (
+      {showReferenceWhenActive && (
+        (revealPref === "before" && (phase === "checking" || phase === "ready" || phase === "recording" || phase === "result")) ||
+        (revealPref === "after" && phase === "result")
+      ) ? (
         <ThemedText
           style={[styles.referenceText, { color: theme.text }]}
-          numberOfLines={1}
+          numberOfLines={2}
         >
           {referenceText}
         </ThemedText>

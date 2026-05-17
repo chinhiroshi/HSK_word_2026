@@ -16,6 +16,7 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
+import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
@@ -253,7 +254,14 @@ export default function WordDetailScreen() {
                   <Feather name="lock" size={16} color={theme.textSecondary} />
                 </Pressable>
               ) : (
-                <SpeakButton text={word.longExample} size="medium" wordId={word.id} />
+                <View style={styles.exampleControls}>
+                  <SpeakButton text={word.longExample} size="medium" wordId={word.id} />
+                  <InlinePronunciationEvaluator
+                    referenceText={word.longExample}
+                    wordId={word.id}
+                    showReferenceWhenActive
+                  />
+                </View>
               )}
             </View>
             {isLocked ? (
@@ -405,6 +413,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: Spacing.md,
+    flexWrap: "wrap",
+    gap: Spacing.sm,
+  },
+  exampleControls: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
   },
   exampleSentence: {
     fontSize: 22,

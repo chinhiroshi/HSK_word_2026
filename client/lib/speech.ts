@@ -4,7 +4,9 @@ import { setAudioModeAsync } from "expo-audio";
 import {
   getSilentModeAudio,
   getChineseRegionPreference,
+  getPronunciationRevealPreference,
   type ChineseRegion,
+  type PronunciationReveal,
 } from "./storage";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -55,6 +57,38 @@ export function setChineseRegionCache(region: ChineseRegion): void {
 
 export function getCurrentChineseRegion(): ChineseRegion {
   return cachedRegion;
+}
+
+let cachedReveal: PronunciationReveal = "after";
+const revealListeners = new Set<(v: PronunciationReveal) => void>();
+
+async function loadReveal(): Promise<void> {
+  try {
+    cachedReveal = await getPronunciationRevealPreference();
+  } catch {
+    cachedReveal = "after";
+  }
+  revealListeners.forEach((l) => l(cachedReveal));
+}
+
+loadReveal();
+
+export function setPronunciationRevealCache(v: PronunciationReveal): void {
+  cachedReveal = v;
+  revealListeners.forEach((l) => l(v));
+}
+
+export function getCurrentPronunciationReveal(): PronunciationReveal {
+  return cachedReveal;
+}
+
+export function subscribePronunciationReveal(
+  listener: (v: PronunciationReveal) => void,
+): () => void {
+  revealListeners.add(listener);
+  return () => {
+    revealListeners.delete(listener);
+  };
 }
 
 function hashString(s: string): number {

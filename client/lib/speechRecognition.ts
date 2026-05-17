@@ -14,8 +14,8 @@ export type RecognitionHandle = {
   stop: () => Promise<void> | void;
 };
 
-export function resolveRecognitionLanguage(opts?: { wordId?: string; text?: string }): RecognitionLang {
-  return resolveChineseLanguage(opts);
+export function resolveRecognitionLanguage(_opts?: { wordId?: string; text?: string }): RecognitionLang {
+  return "zh-CN";
 }
 
 export type RecognitionUnavailableReason =
