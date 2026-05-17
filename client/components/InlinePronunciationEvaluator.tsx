@@ -322,6 +322,8 @@ const styles = StyleSheet.create({
   wrap: {
     flexDirection: "row",
     alignItems: "center",
+    flexWrap: "wrap",
+    flexShrink: 1,
     gap: 6,
   },
   micButton: {
@@ -352,12 +354,14 @@ const styles = StyleSheet.create({
   transcriptText: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
-    maxWidth: 140,
+    flexShrink: 1,
+    flexBasis: "100%",
   },
   referenceText: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
-    maxWidth: 200,
+    flexShrink: 1,
+    flexBasis: "100%",
   },
   scoreText: {
     fontSize: 16,
