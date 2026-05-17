@@ -4,8 +4,10 @@ import {
   Linking,
   Platform,
   Pressable,
+  StyleProp,
   StyleSheet,
   View,
+  ViewStyle,
 } from "react-native";
 import Animated, {
   cancelAnimation,
@@ -20,7 +22,6 @@ import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
-import { useI18n } from "@/contexts/LanguageContext";
 import { Colors } from "@/constants/theme";
 import {
   computeScore,
@@ -52,7 +53,7 @@ type Phase =
   | "recording"
   | "result";
 
-interface Props {
+interface Options {
   referenceText: string;
   wordId?: string;
   playReferenceFirst?: boolean;
@@ -60,15 +61,23 @@ interface Props {
   onResult?: (score: PronunciationScore) => void;
 }
 
-export function InlinePronunciationEvaluator({
+export interface InlinePronunciationApi {
+  phase: Phase;
+  transcript: string;
+  score: PronunciationScore | null;
+  mic: React.ReactElement;
+  reference: React.ReactElement | null;
+  result: React.ReactElement | null;
+}
+
+export function useInlinePronunciation({
   referenceText,
   wordId,
   playReferenceFirst = true,
   showReferenceWhenActive = false,
   onResult,
-}: Props) {
+}: Options): InlinePronunciationApi {
   const { theme } = useTheme();
-  const { t } = useI18n();
   const [phase, setPhase] = useState<Phase>("idle");
   const [transcript, setTranscript] = useState("");
   const [score, setScore] = useState<PronunciationScore | null>(null);
@@ -246,8 +255,8 @@ export function InlinePronunciationEvaluator({
       ? Colors.light.alert
       : Colors.light.secondary;
 
-  return (
-    <View style={styles.wrap}>
+  const mic = (
+    <View style={styles.micWrap}>
       <Pressable
         onPress={handlePress}
         hitSlop={8}
@@ -269,20 +278,6 @@ export function InlinePronunciationEvaluator({
           color={phase === "recording" ? "#FFFFFF" : micColor}
         />
       </Pressable>
-
-      {showReferenceWhenActive && (
-        (revealPref === "before" && (phase === "checking" || phase === "ready" || phase === "recording" || phase === "result")) ||
-        (revealPref === "after" && phase === "result")
-      ) ? (
-        <ThemedText
-          style={[styles.referenceText, { color: theme.text }]}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-        >
-          {`原文: ${referenceText}`}
-        </ThemedText>
-      ) : null}
-
       {phase === "recording" ? (
         <View style={styles.pulseWrap}>
           <Animated.View
@@ -300,29 +295,62 @@ export function InlinePronunciationEvaluator({
           />
         </View>
       ) : null}
+    </View>
+  );
 
-      {(transcript && (phase === "recording" || phase === "result")) ||
-      (score && phase === "result") ? (
-        <View style={styles.resultRow}>
-          {transcript && (phase === "recording" || phase === "result") ? (
-            <ThemedText
-              style={[styles.transcriptText, { color: theme.text }]}
-              testID={`text-transcript-${wordId ?? "anon"}`}
-            >
-              {transcript}
-            </ThemedText>
-          ) : null}
+  const showReference =
+    showReferenceWhenActive &&
+    ((revealPref === "before" &&
+      (phase === "checking" || phase === "ready" || phase === "recording" || phase === "result")) ||
+      (revealPref === "after" && phase === "result"));
 
-          {score && phase === "result" ? (
-            <ThemedText
-              style={[styles.scoreText, { color: scoreColor(score.total) }]}
-              testID={`text-score-total-${wordId ?? "anon"}`}
-            >
-              {score.total}
-            </ThemedText>
-          ) : null}
-        </View>
+  const reference = showReference ? (
+    <ThemedText
+      style={[styles.referenceText, { color: theme.text }]}
+      numberOfLines={1}
+      ellipsizeMode="tail"
+    >
+      {`原文: ${referenceText}`}
+    </ThemedText>
+  ) : null;
+
+  const hasTranscript = transcript && (phase === "recording" || phase === "result");
+  const hasScore = score && phase === "result";
+  const result = hasTranscript || hasScore ? (
+    <View style={styles.resultRow}>
+      {hasTranscript ? (
+        <ThemedText
+          style={[styles.transcriptText, { color: theme.text }]}
+          testID={`text-transcript-${wordId ?? "anon"}`}
+        >
+          {transcript}
+        </ThemedText>
       ) : null}
+      {hasScore ? (
+        <ThemedText
+          style={[styles.scoreText, { color: scoreColor(score!.total) }]}
+          testID={`text-score-total-${wordId ?? "anon"}`}
+        >
+          {score!.total}
+        </ThemedText>
+      ) : null}
+    </View>
+  ) : null;
+
+  return { phase, transcript, score, mic, reference, result };
+}
+
+interface Props extends Options {
+  style?: StyleProp<ViewStyle>;
+}
+
+export function InlinePronunciationEvaluator(props: Props) {
+  const { mic, reference, result } = useInlinePronunciation(props);
+  return (
+    <View style={[styles.wrap, props.style]}>
+      {mic}
+      {reference}
+      {result}
     </View>
   );
 }
@@ -334,6 +362,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexWrap: "wrap",
     flexShrink: 1,
+    gap: 6,
+  },
+  micWrap: {
+    flexDirection: "row",
+    alignItems: "center",
     gap: 6,
   },
   micButton: {
