@@ -274,7 +274,7 @@ export function InlinePronunciationEvaluator({
           style={[styles.referenceText, { color: theme.text }]}
           numberOfLines={2}
         >
-          {referenceText}
+          {`原文: ${referenceText}`}
         </ThemedText>
       ) : null}
 
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
   },
   referenceText: {
     fontSize: 13,
-    fontFamily: "Nunito_600SemiBold",
+    fontFamily: "Nunito_400Regular",
     maxWidth: 200,
   },
   scoreText: {
