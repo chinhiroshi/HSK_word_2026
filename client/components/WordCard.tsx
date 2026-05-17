@@ -279,6 +279,7 @@ export function WordCard({
               </ThemedText>
               <InlinePronunciationEvaluator
                 referenceText={word.exampleSentence}
+                targetWord={word.word}
                 wordId={word.id}
               />
             </View>

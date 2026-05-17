@@ -258,6 +258,7 @@ export default function WordDetailScreen() {
                   <SpeakButton text={word.longExample} size="medium" wordId={word.id} />
                   <InlinePronunciationEvaluator
                     referenceText={word.longExample}
+                    targetWord={word.word}
                     wordId={word.id}
                     showReferenceWhenActive
                   />

@@ -2,6 +2,7 @@ export type PronunciationScore = {
   charMatch: number;
   orderMatch: number;
   lengthMatch: number;
+  targetMatch: number;
   total: number;
 };
 
@@ -42,16 +43,20 @@ export function levenshtein(a: string[], b: string[]): number {
   return prev[n];
 }
 
-export function computeScore(reference: string, hypothesis: string): PronunciationScore {
+export function computeScore(
+  reference: string,
+  hypothesis: string,
+  targetWord?: string,
+): PronunciationScore {
   const ref = toChars(normalize(reference));
   const hyp = toChars(normalize(hypothesis));
 
   if (ref.length === 0) {
-    return { charMatch: 0, orderMatch: 0, lengthMatch: 0, total: 0 };
+    return { charMatch: 0, orderMatch: 0, lengthMatch: 0, targetMatch: 0, total: 0 };
   }
 
   if (hyp.length === 0) {
-    return { charMatch: 0, orderMatch: 0, lengthMatch: 0, total: 0 };
+    return { charMatch: 0, orderMatch: 0, lengthMatch: 0, targetMatch: 0, total: 0 };
   }
 
   // Char match: how many ref chars are present in hyp (multiset intersection / ref length)
@@ -79,11 +84,41 @@ export function computeScore(reference: string, hypothesis: string): Pronunciati
   const lengthRatio = maxLen === 0 ? 0 : 1 - Math.abs(ref.length - hyp.length) / maxLen;
   const lengthMatch = Math.max(0, Math.round(lengthRatio * 100));
 
+  // Target match: how well the target vocab word is pronounced inside hypothesis.
+  // - If targetWord is empty/missing, fall back to charMatch (no separate signal).
+  // - If normalized target appears as a substring in hypothesis, full credit.
+  // - Otherwise score by per-character multiset coverage of the target word.
+  const target = toChars(normalize(targetWord ?? ""));
+  let targetMatch: number;
+  if (target.length === 0) {
+    targetMatch = charMatch;
+  } else {
+    const hypStr = hyp.join("");
+    const targetStr = target.join("");
+    if (hypStr.includes(targetStr)) {
+      targetMatch = 100;
+    } else {
+      const tHypCount = new Map<string, number>();
+      for (const c of hyp) {
+        tHypCount.set(c, (tHypCount.get(c) ?? 0) + 1);
+      }
+      let tMatched = 0;
+      for (const c of target) {
+        const cnt = tHypCount.get(c) ?? 0;
+        if (cnt > 0) {
+          tMatched += 1;
+          tHypCount.set(c, cnt - 1);
+        }
+      }
+      targetMatch = Math.round((tMatched / target.length) * 100);
+    }
+  }
+
   const total = Math.round(
-    charMatch * 0.5 + lengthMatch * 0.15 + orderMatch * 0.35,
+    charMatch * 0.4 + targetMatch * 0.25 + orderMatch * 0.25 + lengthMatch * 0.1,
   );
 
-  return { charMatch, orderMatch, lengthMatch, total };
+  return { charMatch, orderMatch, lengthMatch, targetMatch, total };
 }
 
 export type FeedbackLevel = "good" | "mid" | "poor";

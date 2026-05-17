@@ -113,6 +113,7 @@ function AudioWordCard({
             <SpeakButton text={speakText} size="medium" wordId={word.id} />
             <InlinePronunciationEvaluator
               referenceText={word.exampleSentence || word.word}
+              targetWord={word.word}
               wordId={word.id}
               onResult={() => {
                 if (!isRevealed) onToggleReveal();

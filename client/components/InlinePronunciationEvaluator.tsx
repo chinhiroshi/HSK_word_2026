@@ -54,6 +54,7 @@ type Phase =
 
 interface Props {
   referenceText: string;
+  targetWord?: string;
   wordId?: string;
   playReferenceFirst?: boolean;
   showReferenceWhenActive?: boolean;
@@ -62,6 +63,7 @@ interface Props {
 
 export function InlinePronunciationEvaluator({
   referenceText,
+  targetWord,
   wordId,
   playReferenceFirst = true,
   showReferenceWhenActive = false,
@@ -150,7 +152,7 @@ export function InlinePronunciationEvaluator({
           lastTranscript = text;
           setTranscript(text);
           if (isFinal) {
-            const s = computeScore(referenceText, text);
+            const s = computeScore(referenceText, text, targetWord);
             setScore(s);
             setPhase("result");
             onResult?.(s);
@@ -170,7 +172,7 @@ export function InlinePronunciationEvaluator({
           setPhase((prev) => {
             if (prev !== "recording") return prev;
             if (lastTranscript) {
-              const s = computeScore(referenceText, lastTranscript);
+              const s = computeScore(referenceText, lastTranscript, targetWord);
               setScore(s);
               onResult?.(s);
               return "result";

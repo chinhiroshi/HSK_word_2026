@@ -1117,6 +1117,7 @@ export default function SprintStudySessionScreen() {
                       </Pressable>
                       <InlinePronunciationEvaluator
                         referenceText={item.exampleSentence || item.word}
+                        targetWord={item.word}
                         wordId={item.id}
                         onResult={() => {
                           if (revealLevel === 0) {
@@ -1239,6 +1240,7 @@ export default function SprintStudySessionScreen() {
                         </ThemedText>
                         <InlinePronunciationEvaluator
                           referenceText={item.exampleSentence}
+                          targetWord={item.word}
                           wordId={item.id}
                         />
                       </View>

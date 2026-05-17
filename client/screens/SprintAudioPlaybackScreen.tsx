@@ -323,6 +323,7 @@ export default function SprintAudioPlaybackScreen() {
               <SpeakButton text={word.exampleSentence || word.word} size="small" wordId={word.id} />
               <InlinePronunciationEvaluator
                 referenceText={word.exampleSentence || word.word}
+                targetWord={word.word}
                 wordId={word.id}
                 showReferenceWhenActive
               />
