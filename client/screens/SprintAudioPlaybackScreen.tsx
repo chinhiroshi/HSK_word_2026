@@ -320,16 +320,12 @@ export default function SprintAudioPlaybackScreen() {
                   {word.translation}
                 </ThemedText>
               </View>
-              {word.exampleSentence ? (
-                <View style={styles.wordRowControls}>
-                  <SpeakButton text={word.exampleSentence} size="small" wordId={word.id} />
-                  <InlinePronunciationEvaluator
-                    referenceText={word.exampleSentence}
-                    wordId={word.id}
-                    showReferenceWhenActive
-                  />
-                </View>
-              ) : null}
+              <SpeakButton text={word.exampleSentence || word.word} size="small" wordId={word.id} />
+              <InlinePronunciationEvaluator
+                referenceText={word.exampleSentence || word.word}
+                wordId={word.id}
+                showReferenceWhenActive
+              />
             </View>
           ))}
         </View>
