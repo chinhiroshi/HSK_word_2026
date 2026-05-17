@@ -230,13 +230,13 @@ function AudioWordCard({
             <View style={styles.revealedContent}>
               <View style={styles.revealedWordRow}>
                 <ThemedText style={styles.word}>{word.word}</ThemedText>
+                <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
+                  {word.pinyin || getPinyin(word.word)}
+                </ThemedText>
                 <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
                   {word.exampleSentence}
                 </ThemedText>
               </View>
-              <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
-                {word.pinyin || getPinyin(word.word)}
-              </ThemedText>
             </View>
           )
         ) : null}
@@ -689,15 +689,13 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   word: {
-    fontSize: 22,
+    fontSize: 16,
     fontWeight: "700",
     fontFamily: "Nunito_700Bold",
-    marginBottom: 2,
   },
   revealedPinyin: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
-    marginBottom: Spacing.xs,
   },
   exampleRow: {
     flexDirection: "row",
