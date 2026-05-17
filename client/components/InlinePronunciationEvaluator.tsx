@@ -272,7 +272,8 @@ export function InlinePronunciationEvaluator({
       ) ? (
         <ThemedText
           style={[styles.referenceText, { color: theme.text }]}
-          numberOfLines={2}
+          numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {`原文: ${referenceText}`}
         </ThemedText>
@@ -320,6 +321,7 @@ export function InlinePronunciationEvaluator({
 
 const styles = StyleSheet.create({
   wrap: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
@@ -355,13 +357,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     flexShrink: 1,
+    flexGrow: 1,
     flexBasis: "100%",
   },
   referenceText: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     flexShrink: 1,
-    flexBasis: "100%",
+    flex: 1,
+    minWidth: 0,
   },
   scoreText: {
     fontSize: 16,
