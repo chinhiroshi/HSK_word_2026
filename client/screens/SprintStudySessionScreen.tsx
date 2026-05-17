@@ -1117,29 +1117,19 @@ export default function SprintStudySessionScreen() {
                     <InlinePronunciationEvaluator
                       referenceText={item.exampleSentence || item.word}
                       wordId={item.id}
-                      onScoreReady={() => {
-                        setRevealedIds((prev) => {
-                          if (prev.has(item.id)) return prev;
-                          const next = new Set(prev);
-                          next.add(item.id);
-                          return next;
-                        });
-                      }}
                     />
                   </View>
                   {isWordRevealed ? (
-                    <View style={styles.wordInfoRow}>
-                      <View style={styles.wordInfoWordBlock}>
-                        <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
-                        <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
-                      </View>
+                    <View style={styles.wordInfoCol}>
+                      <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
+                      <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
                       {exampleForRow ? (
-                        <ThemedText style={[styles.wordRowExample, styles.wordInfoExampleInline, { color: theme.textSecondary }]} numberOfLines={useLongForRow ? 3 : 2}>
+                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={useLongForRow ? 3 : 2}>
                           {exampleForRow}
                         </ThemedText>
                       ) : null}
                       {isMeaningRevealed ? (
-                        <View style={[styles.audioMeaningBlock, styles.audioMeaningBlockFull, { borderTopColor: theme.border + "60" }]}>
+                        <View style={[styles.audioMeaningBlock, { borderTopColor: theme.border + "60" }]}>
                           <ThemedText style={[styles.audioMeaningText, { color: theme.text }]}>
                             {meaningText}
                           </ThemedText>
@@ -1879,25 +1869,6 @@ const styles = StyleSheet.create({
   wordInfoCol: {
     flex: 1,
     gap: 2,
-  },
-  wordInfoRow: {
-    flex: 1,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "flex-start",
-    gap: Spacing.sm,
-  },
-  wordInfoWordBlock: {
-    flexShrink: 0,
-  },
-  wordInfoExampleInline: {
-    flex: 1,
-    flexShrink: 1,
-    minWidth: 120,
-    alignSelf: "center",
-  },
-  audioMeaningBlockFull: {
-    flexBasis: "100%",
   },
   wordRowHeaderLine: {
     flexDirection: "row",

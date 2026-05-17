@@ -29,7 +29,6 @@ interface AudioWordCardProps {
   word: Word;
   index: number;
   isRevealed: boolean;
-  onAutoReveal: () => void;
   isLocked: boolean;
   onToggleReveal: () => void;
   onMarkUnmemorized: () => void;
@@ -43,7 +42,6 @@ function AudioWordCard({
   word, 
   index, 
   isRevealed,
-  onAutoReveal,
   isLocked,
   onToggleReveal,
   onMarkUnmemorized, 
@@ -116,8 +114,8 @@ function AudioWordCard({
             <InlinePronunciationEvaluator
               referenceText={word.exampleSentence || word.word}
               wordId={word.id}
-              onScoreReady={() => {
-                onAutoReveal();
+              onResultReady={() => {
+                if (!isRevealed && !isLocked) onToggleReveal();
               }}
             />
           </View>
@@ -385,14 +383,6 @@ export default function AudioWordListScreen() {
         word={item}
         index={originalIndex}
         isRevealed={isRevealed}
-        onAutoReveal={() => {
-          setRevealedIds((prev) => {
-            if (prev.has(item.id)) return prev;
-            const next = new Set(prev);
-            next.add(item.id);
-            return next;
-          });
-        }}
         isLocked={locked}
         onToggleReveal={() => handleToggleReveal(item.id)}
         onMarkUnmemorized={() => handleMarkUnmemorized(item.id)}
