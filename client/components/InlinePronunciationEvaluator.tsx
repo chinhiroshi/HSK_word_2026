@@ -20,6 +20,7 @@ import * as Haptics from "expo-haptics";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
+import { useI18n } from "@/contexts/LanguageContext";
 import { Colors } from "@/constants/theme";
 import {
   computeScore,
@@ -34,10 +35,7 @@ import {
   resolveRecognitionLanguage,
   startRecognition,
 } from "@/lib/speechRecognition";
-import {
-  speakChinese,
-  stopSpeaking,
-} from "@/lib/speech";
+import { speakChinese, stopSpeaking } from "@/lib/speech";
 
 type Phase =
   | "idle"
@@ -52,33 +50,20 @@ interface Props {
   referenceText: string;
   wordId?: string;
   playReferenceFirst?: boolean;
-  onResultReady?: () => void;
 }
 
 export function InlinePronunciationEvaluator({
   referenceText,
   wordId,
   playReferenceFirst = true,
-  onResultReady,
 }: Props) {
   const { theme } = useTheme();
+  const { t } = useI18n();
   const [phase, setPhase] = useState<Phase>("idle");
   const [transcript, setTranscript] = useState("");
   const [score, setScore] = useState<PronunciationScore | null>(null);
   const handleRef = useRef<RecognitionHandle | null>(null);
   const startingRef = useRef(false);
-  const onResultReadyRef = useRef(onResultReady);
-  const resultNotifiedRef = useRef(false);
-
-  const notifyResultOnce = () => {
-    if (resultNotifiedRef.current) return;
-    resultNotifiedRef.current = true;
-    try { onResultReadyRef.current?.(); } catch {}
-  };
-
-  useEffect(() => {
-    onResultReadyRef.current = onResultReady;
-  }, [onResultReady]);
 
   const pulse = useSharedValue(1);
   const pulseStyle = useAnimatedStyle(() => ({
@@ -132,7 +117,6 @@ export function InlinePronunciationEvaluator({
       handleRef.current = null;
       setTranscript("");
       setScore(null);
-      resultNotifiedRef.current = false;
       setPhase("checking");
       const next = await ensureReady();
       if (next !== "ready") {
@@ -156,7 +140,6 @@ export function InlinePronunciationEvaluator({
             const s = computeScore(referenceText, text);
             setScore(s);
             setPhase("result");
-            notifyResultOnce();
           }
         },
         onError: (err) => {
@@ -175,7 +158,6 @@ export function InlinePronunciationEvaluator({
             if (lastTranscript) {
               const s = computeScore(referenceText, lastTranscript);
               setScore(s);
-              notifyResultOnce();
               return "result";
             }
             return "idle";
@@ -291,26 +273,23 @@ export function InlinePronunciationEvaluator({
         </View>
       ) : null}
 
-      {(transcript && (phase === "recording" || phase === "result")) ||
-      (score && phase === "result") ? (
-        <View style={styles.resultRow}>
-          {transcript ? (
-            <ThemedText
-              style={[styles.transcriptText, { color: theme.text }]}
-              testID={`text-transcript-${wordId ?? "anon"}`}
-            >
-              {transcript}
-            </ThemedText>
-          ) : null}
-          {score && phase === "result" ? (
-            <ThemedText
-              style={[styles.scoreText, { color: scoreColor(score.total) }]}
-              testID={`text-score-total-${wordId ?? "anon"}`}
-            >
-              {score.total}
-            </ThemedText>
-          ) : null}
-        </View>
+      {transcript && (phase === "recording" || phase === "result") ? (
+        <ThemedText
+          style={[styles.transcriptText, { color: theme.text }]}
+          numberOfLines={1}
+          testID={`text-transcript-${wordId ?? "anon"}`}
+        >
+          {transcript}
+        </ThemedText>
+      ) : null}
+
+      {score && phase === "result" ? (
+        <ThemedText
+          style={[styles.scoreText, { color: scoreColor(score.total) }]}
+          testID={`text-score-total-${wordId ?? "anon"}`}
+        >
+          {score.total}
+        </ThemedText>
       ) : null}
     </View>
   );
@@ -350,17 +329,12 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
-  resultRow: {
-    flexBasis: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 6,
-  },
   transcriptText: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     flexShrink: 1,
+    flexGrow: 1,
+    flexBasis: "100%",
   },
   scoreText: {
     fontSize: 16,
