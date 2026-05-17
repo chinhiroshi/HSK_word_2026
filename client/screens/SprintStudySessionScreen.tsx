@@ -1118,14 +1118,12 @@ export default function SprintStudySessionScreen() {
                       referenceText={item.exampleSentence || item.word}
                       wordId={item.id}
                       onScoreReady={() => {
-                        if (!isWordRevealed) {
-                          setRevealedIds((prev) => {
-                            if (prev.has(item.id)) return prev;
-                            const next = new Set(prev);
-                            next.add(item.id);
-                            return next;
-                          });
-                        }
+                        setRevealedIds((prev) => {
+                          if (prev.has(item.id)) return prev;
+                          const next = new Set(prev);
+                          next.add(item.id);
+                          return next;
+                        });
                       }}
                     />
                   </View>
