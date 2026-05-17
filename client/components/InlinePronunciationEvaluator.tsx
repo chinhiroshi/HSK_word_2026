@@ -57,6 +57,7 @@ interface Props {
   wordId?: string;
   playReferenceFirst?: boolean;
   showReferenceWhenActive?: boolean;
+  onResult?: (score: PronunciationScore) => void;
 }
 
 export function InlinePronunciationEvaluator({
@@ -64,6 +65,7 @@ export function InlinePronunciationEvaluator({
   wordId,
   playReferenceFirst = true,
   showReferenceWhenActive = false,
+  onResult,
 }: Props) {
   const { theme } = useTheme();
   const { t } = useI18n();
@@ -151,6 +153,7 @@ export function InlinePronunciationEvaluator({
             const s = computeScore(referenceText, text);
             setScore(s);
             setPhase("result");
+            onResult?.(s);
           }
         },
         onError: (err) => {
@@ -169,6 +172,7 @@ export function InlinePronunciationEvaluator({
             if (lastTranscript) {
               const s = computeScore(referenceText, lastTranscript);
               setScore(s);
+              onResult?.(s);
               return "result";
             }
             return "idle";
@@ -297,23 +301,27 @@ export function InlinePronunciationEvaluator({
         </View>
       ) : null}
 
-      {transcript && (phase === "recording" || phase === "result") ? (
-        <ThemedText
-          style={[styles.transcriptText, { color: theme.text }]}
-          numberOfLines={1}
-          testID={`text-transcript-${wordId ?? "anon"}`}
-        >
-          {transcript}
-        </ThemedText>
-      ) : null}
+      {(transcript && (phase === "recording" || phase === "result")) ||
+      (score && phase === "result") ? (
+        <View style={styles.resultRow}>
+          {transcript && (phase === "recording" || phase === "result") ? (
+            <ThemedText
+              style={[styles.transcriptText, { color: theme.text }]}
+              testID={`text-transcript-${wordId ?? "anon"}`}
+            >
+              {transcript}
+            </ThemedText>
+          ) : null}
 
-      {score && phase === "result" ? (
-        <ThemedText
-          style={[styles.scoreText, { color: scoreColor(score.total) }]}
-          testID={`text-score-total-${wordId ?? "anon"}`}
-        >
-          {score.total}
-        </ThemedText>
+          {score && phase === "result" ? (
+            <ThemedText
+              style={[styles.scoreText, { color: scoreColor(score.total) }]}
+              testID={`text-score-total-${wordId ?? "anon"}`}
+            >
+              {score.total}
+            </ThemedText>
+          ) : null}
+        </View>
       ) : null}
     </View>
   );
@@ -353,12 +361,18 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
+  resultRow: {
+    flexBasis: "100%",
+    flexDirection: "row",
+    alignItems: "baseline",
+    flexWrap: "wrap",
+    columnGap: 8,
+    rowGap: 2,
+  },
   transcriptText: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     flexShrink: 1,
-    flexGrow: 1,
-    flexBasis: "100%",
   },
   referenceText: {
     fontSize: 13,

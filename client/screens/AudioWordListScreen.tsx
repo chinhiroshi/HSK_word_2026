@@ -114,7 +114,9 @@ function AudioWordCard({
             <InlinePronunciationEvaluator
               referenceText={word.exampleSentence || word.word}
               wordId={word.id}
-              showReferenceWhenActive
+              onResult={() => {
+                if (!isRevealed) onToggleReveal();
+              }}
             />
           </View>
 
@@ -226,12 +228,14 @@ function AudioWordCard({
             </Pressable>
           ) : (
             <View style={styles.revealedContent}>
-              <ThemedText style={styles.word}>{word.word}</ThemedText>
+              <View style={styles.revealedWordRow}>
+                <ThemedText style={styles.word}>{word.word}</ThemedText>
+                <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
+                  {word.exampleSentence}
+                </ThemedText>
+              </View>
               <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
                 {word.pinyin || getPinyin(word.word)}
-              </ThemedText>
-              <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
-                {word.exampleSentence}
               </ThemedText>
             </View>
           )
@@ -675,6 +679,14 @@ const styles = StyleSheet.create({
   revealedContent: {
     marginTop: Spacing.md,
     paddingLeft: 40,
+  },
+  revealedWordRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    flexWrap: "wrap",
+    columnGap: Spacing.sm,
+    rowGap: 2,
+    marginBottom: 2,
   },
   word: {
     fontSize: 22,
