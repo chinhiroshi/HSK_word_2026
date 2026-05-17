@@ -259,6 +259,7 @@ export default function WordDetailScreen() {
                   <InlinePronunciationEvaluator
                     referenceText={word.longExample}
                     wordId={word.id}
+                    showReferenceWhenActive
                   />
                 </View>
               )}
