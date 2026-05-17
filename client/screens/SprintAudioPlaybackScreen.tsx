@@ -314,24 +314,22 @@ export default function SprintAudioPlaybackScreen() {
             >
               <ThemedText style={[styles.wordRowNum, { color: theme.textSecondary }]}>{index + 1}</ThemedText>
               <View style={styles.wordRowInfo}>
-                <View style={styles.wordRowHeadLine}>
-                  <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
-                  <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
-                  <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]} numberOfLines={1}>
-                    {word.translation}
-                  </ThemedText>
-                </View>
-                {word.exampleSentence ? (
-                  <View style={styles.wordRowControls}>
-                    <SpeakButton text={word.exampleSentence} size="small" wordId={word.id} />
-                    <InlinePronunciationEvaluator
-                      referenceText={word.exampleSentence}
-                      wordId={word.id}
-                      showReferenceWhenActive
-                    />
-                  </View>
-                ) : null}
+                <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
+                <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
+                <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]} numberOfLines={1}>
+                  {word.translation}
+                </ThemedText>
               </View>
+              {word.exampleSentence ? (
+                <View style={styles.wordRowControls}>
+                  <SpeakButton text={word.exampleSentence} size="small" wordId={word.id} />
+                  <InlinePronunciationEvaluator
+                    referenceText={word.exampleSentence}
+                    wordId={word.id}
+                    showReferenceWhenActive
+                  />
+                </View>
+              ) : null}
             </View>
           ))}
         </View>
@@ -384,7 +382,7 @@ const styles = StyleSheet.create({
   wordRowChinese: { fontSize: 15, fontFamily: "Nunito_700Bold" },
   wordRowPinyin: { fontSize: 12, fontFamily: "Nunito_400Regular" },
   wordRowTrans: { fontSize: 13, fontFamily: "Nunito_400Regular", maxWidth: 120 },
-  wordRowControls: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: Spacing.sm, marginTop: 4 },
+  wordRowControls: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: Spacing.sm },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
 });
