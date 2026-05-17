@@ -57,6 +57,7 @@ interface Props {
   wordId?: string;
   playReferenceFirst?: boolean;
   showReferenceWhenActive?: boolean;
+  onScoreReady?: (score: PronunciationScore) => void;
 }
 
 export function InlinePronunciationEvaluator({
@@ -64,6 +65,7 @@ export function InlinePronunciationEvaluator({
   wordId,
   playReferenceFirst = true,
   showReferenceWhenActive = false,
+  onScoreReady,
 }: Props) {
   const { theme } = useTheme();
   const { t } = useI18n();
@@ -75,6 +77,13 @@ export function InlinePronunciationEvaluator({
   const startingRef = useRef(false);
 
   useEffect(() => subscribePronunciationReveal(setRevealPref), []);
+
+  useEffect(() => {
+    if (phase === "result" && score) {
+      onScoreReady?.(score);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, score]);
 
   const pulse = useSharedValue(1);
   const pulseStyle = useAnimatedStyle(() => ({
@@ -299,8 +308,13 @@ export function InlinePronunciationEvaluator({
 
       {transcript && (phase === "recording" || phase === "result") ? (
         <ThemedText
-          style={[styles.transcriptText, { color: theme.text }]}
+          style={[
+            styles.transcriptText,
+            showReferenceWhenActive ? styles.transcriptTextNewline : styles.transcriptTextInline,
+            { color: theme.text },
+          ]}
           numberOfLines={1}
+          ellipsizeMode="tail"
           testID={`text-transcript-${wordId ?? "anon"}`}
         >
           {transcript}
@@ -356,6 +370,13 @@ const styles = StyleSheet.create({
   transcriptText: {
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
+  },
+  transcriptTextInline: {
+    flex: 1,
+    minWidth: 0,
+    flexShrink: 1,
+  },
+  transcriptTextNewline: {
     flexShrink: 1,
     flexGrow: 1,
     flexBasis: "100%",
