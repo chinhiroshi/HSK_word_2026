@@ -30,6 +30,7 @@ import { ThemedView } from "@/components/ThemedView";
 import ConfettiAnimation from "@/components/ConfettiAnimation";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SpeakButton } from "@/components/SpeakButton";
+import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
@@ -1214,9 +1215,15 @@ export default function SprintStudySessionScreen() {
                       <SpeakButton text={speakText} size="small" wordId={item.id} />
                     </View>
                     {item.exampleSentence ? (
-                      <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={2}>
-                        {item.exampleSentence}
-                      </ThemedText>
+                      <View style={styles.wordRowExampleLine}>
+                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={2}>
+                          {item.exampleSentence}
+                        </ThemedText>
+                        <InlinePronunciationEvaluator
+                          referenceText={item.exampleSentence}
+                          wordId={item.id}
+                        />
+                      </View>
                     ) : null}
                   </View>
                   <View style={styles.rowActions}>
@@ -1866,6 +1873,7 @@ const styles = StyleSheet.create({
   wordRowText: { fontSize: 20, fontWeight: "700", fontFamily: "Nunito_700Bold" },
   wordRowPinyin: { fontSize: 13, fontFamily: "Nunito_400Regular" },
   wordRowExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
+  wordRowExampleLine: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: Spacing.sm, marginTop: 2 },
   rowActions: {
     flexDirection: "row",
     alignItems: "center",

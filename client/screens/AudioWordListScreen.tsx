@@ -10,6 +10,7 @@ import * as Haptics from "expo-haptics";
 import { SkeletonLoader } from "@/components/SkeletonLoader";
 import { ThemedText } from "@/components/ThemedText";
 import { SpeakButton } from "@/components/SpeakButton";
+import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -224,9 +225,15 @@ function AudioWordCard({
               <ThemedText style={[styles.revealedPinyin, { color: theme.primary }]}>
                 {word.pinyin || getPinyin(word.word)}
               </ThemedText>
-              <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
-                {word.exampleSentence}
-              </ThemedText>
+              <View style={styles.exampleRow}>
+                <ThemedText style={[styles.exampleSentence, { color: theme.textSecondary }]}>
+                  {word.exampleSentence}
+                </ThemedText>
+                <InlinePronunciationEvaluator
+                  referenceText={word.exampleSentence}
+                  wordId={word.id}
+                />
+              </View>
             </View>
           )
         ) : null}
@@ -677,6 +684,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Nunito_400Regular",
     marginBottom: Spacing.xs,
+  },
+  exampleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: Spacing.sm,
   },
   exampleSentence: {
     fontSize: 14,

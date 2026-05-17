@@ -10,6 +10,7 @@ import * as Haptics from "expo-haptics";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { ProgressBar } from "@/components/ProgressBar";
+import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -312,12 +313,25 @@ export default function SprintAudioPlaybackScreen() {
             >
               <ThemedText style={[styles.wordRowNum, { color: theme.textSecondary }]}>{index + 1}</ThemedText>
               <View style={styles.wordRowInfo}>
-                <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
-                <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
+                <View style={styles.wordRowHeadLine}>
+                  <ThemedText style={styles.wordRowChinese}>{word.word}</ThemedText>
+                  <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
+                  <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]} numberOfLines={1}>
+                    {word.translation}
+                  </ThemedText>
+                </View>
+                {word.exampleSentence ? (
+                  <View style={styles.wordRowExampleLine}>
+                    <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={1}>
+                      {word.exampleSentence}
+                    </ThemedText>
+                    <InlinePronunciationEvaluator
+                      referenceText={word.exampleSentence}
+                      wordId={word.id}
+                    />
+                  </View>
+                ) : null}
               </View>
-              <ThemedText style={[styles.wordRowTrans, { color: theme.textSecondary }]} numberOfLines={1}>
-                {word.translation}
-              </ThemedText>
             </View>
           ))}
         </View>
@@ -365,10 +379,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xs,
   },
   wordRowNum: { fontSize: 12, fontFamily: "Nunito_400Regular", width: 20, textAlign: "right" },
-  wordRowInfo: { flex: 1, gap: 1 },
+  wordRowInfo: { flex: 1, gap: 2 },
+  wordRowHeadLine: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, flexWrap: "wrap" },
   wordRowChinese: { fontSize: 15, fontFamily: "Nunito_700Bold" },
   wordRowPinyin: { fontSize: 12, fontFamily: "Nunito_400Regular" },
-  wordRowTrans: { fontSize: 13, fontFamily: "Nunito_400Regular", maxWidth: 100 },
+  wordRowTrans: { fontSize: 13, fontFamily: "Nunito_400Regular", maxWidth: 120 },
+  wordRowExampleLine: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: Spacing.sm },
+  wordRowExample: { fontSize: 12, fontFamily: "Nunito_400Regular" },
   emptyTitle: { fontSize: 20, fontWeight: "600", fontFamily: "Nunito_600SemiBold", marginTop: Spacing.lg, marginBottom: Spacing.sm, textAlign: "center" },
   emptyText: { fontSize: 14, fontFamily: "Nunito_400Regular", textAlign: "center" },
 });
