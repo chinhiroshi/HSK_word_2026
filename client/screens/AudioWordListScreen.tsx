@@ -114,6 +114,7 @@ function AudioWordCard({
             <InlinePronunciationEvaluator
               referenceText={word.exampleSentence || word.word}
               wordId={word.id}
+              showReferenceWhenActive
             />
           </View>
 

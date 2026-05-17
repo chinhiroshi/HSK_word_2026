@@ -35,7 +35,13 @@ import {
   resolveRecognitionLanguage,
   startRecognition,
 } from "@/lib/speechRecognition";
-import { speakChinese, stopSpeaking } from "@/lib/speech";
+import {
+  speakChinese,
+  stopSpeaking,
+  getCurrentPronunciationReveal,
+  subscribePronunciationReveal,
+} from "@/lib/speech";
+import type { PronunciationReveal } from "@/lib/storage";
 
 type Phase =
   | "idle"
@@ -50,20 +56,25 @@ interface Props {
   referenceText: string;
   wordId?: string;
   playReferenceFirst?: boolean;
+  showReferenceWhenActive?: boolean;
 }
 
 export function InlinePronunciationEvaluator({
   referenceText,
   wordId,
   playReferenceFirst = true,
+  showReferenceWhenActive = false,
 }: Props) {
   const { theme } = useTheme();
   const { t } = useI18n();
   const [phase, setPhase] = useState<Phase>("idle");
   const [transcript, setTranscript] = useState("");
   const [score, setScore] = useState<PronunciationScore | null>(null);
+  const [revealPref, setRevealPref] = useState<PronunciationReveal>(getCurrentPronunciationReveal);
   const handleRef = useRef<RecognitionHandle | null>(null);
   const startingRef = useRef(false);
+
+  useEffect(() => subscribePronunciationReveal(setRevealPref), []);
 
   const pulse = useSharedValue(1);
   const pulseStyle = useAnimatedStyle(() => ({
@@ -255,6 +266,19 @@ export function InlinePronunciationEvaluator({
         />
       </Pressable>
 
+      {showReferenceWhenActive && (
+        (revealPref === "before" && (phase === "checking" || phase === "ready" || phase === "recording" || phase === "result")) ||
+        (revealPref === "after" && phase === "result")
+      ) ? (
+        <ThemedText
+          style={[styles.referenceText, { color: theme.text }]}
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {`原文: ${referenceText}`}
+        </ThemedText>
+      ) : null}
+
       {phase === "recording" ? (
         <View style={styles.pulseWrap}>
           <Animated.View
@@ -335,6 +359,13 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexGrow: 1,
     flexBasis: "100%",
+  },
+  referenceText: {
+    fontSize: 13,
+    fontFamily: "Nunito_400Regular",
+    flexShrink: 1,
+    flex: 1,
+    minWidth: 0,
   },
   scoreText: {
     fontSize: 16,
