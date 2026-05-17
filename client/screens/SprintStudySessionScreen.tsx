@@ -1184,13 +1184,15 @@ export default function SprintStudySessionScreen() {
                   </View>
                   {isWordRevealed ? (
                     <View style={styles.audioRevealedBlock}>
-                      <ThemedText style={styles.wordRowText}>{item.word}</ThemedText>
-                      <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
-                      {exampleForRow ? (
-                        <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={useLongForRow ? 3 : 2}>
-                          {exampleForRow}
-                        </ThemedText>
-                      ) : null}
+                      <View style={styles.audioRevealedInline}>
+                        <ThemedText style={styles.audioRevealedWord}>{item.word}</ThemedText>
+                        <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
+                        {exampleForRow ? (
+                          <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={useLongForRow ? 3 : 2}>
+                            {exampleForRow}
+                          </ThemedText>
+                        ) : null}
+                      </View>
                       {isMeaningRevealed ? (
                         <View style={[styles.audioMeaningBlock, { borderTopColor: theme.border + "60" }]}>
                           <ThemedText style={[styles.audioMeaningText, { color: theme.text }]}>
@@ -1879,7 +1881,19 @@ const styles = StyleSheet.create({
   },
   audioRevealedBlock: {
     paddingLeft: 26 + Spacing.sm,
-    gap: 2,
+    gap: 4,
+  },
+  audioRevealedInline: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    flexWrap: "wrap",
+    columnGap: Spacing.sm,
+    rowGap: 2,
+  },
+  audioRevealedWord: {
+    fontSize: 16,
+    fontWeight: "700",
+    fontFamily: "Nunito_700Bold",
   },
   wordNumCircleSmall: {
     width: 26,
