@@ -35,6 +35,7 @@ import {
   resolveRecognitionLanguage,
   startRecognition,
 } from "@/lib/speechRecognition";
+import { speakChinese, stopSpeaking } from "@/lib/speech";
 
 type Phase =
   | "idle"
@@ -48,9 +49,16 @@ type Phase =
 interface Props {
   referenceText: string;
   wordId?: string;
+  speakBeforeRecord?: boolean;
+  onActivate?: () => void;
 }
 
-export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
+export function InlinePronunciationEvaluator({
+  referenceText,
+  wordId,
+  speakBeforeRecord = false,
+  onActivate,
+}: Props) {
   const { theme } = useTheme();
   const { t } = useI18n();
   const [phase, setPhase] = useState<Phase>("idle");
@@ -58,6 +66,7 @@ export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
   const [score, setScore] = useState<PronunciationScore | null>(null);
   const handleRef = useRef<RecognitionHandle | null>(null);
   const startingRef = useRef(false);
+  const mountedRef = useRef(true);
 
   const pulse = useSharedValue(1);
   const pulseStyle = useAnimatedStyle(() => ({
@@ -84,10 +93,14 @@ export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
 
   useEffect(() => {
     return () => {
+      mountedRef.current = false;
       try {
         handleRef.current?.stop();
       } catch {}
       handleRef.current = null;
+      try {
+        stopSpeaking();
+      } catch {}
       cancelAnimation(pulse);
     };
   }, [pulse]);
@@ -113,11 +126,20 @@ export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
       setScore(null);
       setPhase("checking");
       const next = await ensureReady();
+      if (!mountedRef.current) return;
       if (next !== "ready") {
         setPhase(next);
         return;
       }
+      onActivate?.();
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      if (speakBeforeRecord && referenceText) {
+        try {
+          await stopSpeaking();
+          await speakChinese(referenceText, { wordId });
+        } catch {}
+        if (!mountedRef.current) return;
+      }
       const lang = resolveRecognitionLanguage({ wordId, text: referenceText });
       let lastTranscript = "";
       const handle = await startRecognition({
@@ -153,6 +175,10 @@ export function InlinePronunciationEvaluator({ referenceText, wordId }: Props) {
           });
         },
       });
+      if (!mountedRef.current) {
+        try { await handle.stop(); } catch {}
+        return;
+      }
       handleRef.current = handle;
       setPhase("recording");
     } catch (err) {
