@@ -1,6 +1,7 @@
 export type PronunciationScore = {
   charMatch: number;
   orderMatch: number;
+  lengthMatch: number;
   total: number;
 };
 
@@ -46,11 +47,11 @@ export function computeScore(reference: string, hypothesis: string): Pronunciati
   const hyp = toChars(normalize(hypothesis));
 
   if (ref.length === 0) {
-    return { charMatch: 0, orderMatch: 0, total: 0 };
+    return { charMatch: 0, orderMatch: 0, lengthMatch: 0, total: 0 };
   }
 
   if (hyp.length === 0) {
-    return { charMatch: 0, orderMatch: 0, total: 0 };
+    return { charMatch: 0, orderMatch: 0, lengthMatch: 0, total: 0 };
   }
 
   // Char match: how many ref chars are present in hyp (multiset intersection / ref length)
@@ -74,9 +75,13 @@ export function computeScore(reference: string, hypothesis: string): Pronunciati
   const orderRatio = maxLen === 0 ? 0 : 1 - dist / maxLen;
   const orderMatch = Math.max(0, Math.round(orderRatio * 100));
 
-  const total = Math.round(orderMatch * 0.75 + charMatch * 0.25);
+  const shorter = Math.min(ref.length, hyp.length);
+  const longer = Math.max(ref.length, hyp.length);
+  const lengthMatch = longer === 0 ? 0 : Math.round((shorter / longer) * 100);
 
-  return { charMatch, orderMatch, total };
+  const total = Math.round(orderMatch * 0.65 + charMatch * 0.2 + lengthMatch * 0.15);
+
+  return { charMatch, orderMatch, lengthMatch, total };
 }
 
 export type FeedbackLevel = "good" | "mid" | "poor";
