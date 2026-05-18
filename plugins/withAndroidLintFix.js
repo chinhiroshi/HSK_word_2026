@@ -5,10 +5,12 @@ module.exports = function withAndroidLintFix(config) {
     let src = cfg.modResults.contents;
     if (!src.includes("// withAndroidLintFix")) {
       const lintBlock = `
-    // withAndroidLintFix
+    // withAndroidLintFix: scoped suppression of iOS-only locale keys
+    // (locales/*.json contains CFBundleDisplayName for iOS InfoPlist which
+    // Expo prebuild also emits into Android values-*/strings.xml, tripping
+    // ExtraTranslation/MissingTranslation lint). All other release lint
+    // checks remain enabled (abortOnError stays at the AGP default = true).
     lint {
-        abortOnError false
-        checkReleaseBuilds false
         disable 'ExtraTranslation', 'MissingTranslation'
     }
 `;
