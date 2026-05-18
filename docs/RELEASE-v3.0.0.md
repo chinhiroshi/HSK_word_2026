@@ -6,6 +6,15 @@
 `runtimeVersion: { policy: "appVersion" }` のため、`app.json` の `version` が 3.0.0 になっている
 今ビルドすれば自動的に新ランタイムになります。
 
+## キュー投入済みビルド（2026-05-18）
+
+- **Android (versionCode 3, app-bundle)** — https://expo.dev/accounts/chinhiroshi/projects/hskhsk/builds/17a30566-a6ae-4d87-8fc1-be2d1ebadd3c
+- **iOS (buildNumber 9, store distribution)** — https://expo.dev/accounts/chinhiroshi/projects/hskhsk/builds/815bb2ed-d489-4d50-a0ab-8339ab607be7
+
+両方とも `--profile production --non-interactive --no-wait` でEAS側にキュー投入済み。
+リモートのAndroid Keystore (`pO51w-7r92`) と iOS Distribution Certificate / Provisioning Profile
+(`U293UYKRGC`, Team `7983WL2YNG`) を再利用。完了まで通常15〜30分。
+
 ---
 
 ## 0. 事前チェック（確認済み）
