@@ -30,6 +30,7 @@ import { ThemedView } from "@/components/ThemedView";
 import ConfettiAnimation from "@/components/ConfettiAnimation";
 import { ProgressBar } from "@/components/ProgressBar";
 import { SpeakButton } from "@/components/SpeakButton";
+import { ReadAloudTip } from "@/components/ReadAloudTip";
 import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
@@ -1078,6 +1079,11 @@ export default function SprintStudySessionScreen() {
         <FlatList
           data={filteredWords}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.md }}>
+              <ReadAloudTip variant={isAudioListPhase ? "audio" : "text"} />
+            </View>
+          }
           contentContainerStyle={{ paddingBottom: listBarHeight + tabBarHeight + Spacing.md }}
           renderItem={({ item }) => {
             const globalIdx = words.indexOf(item) + 1;
@@ -1435,6 +1441,8 @@ export default function SprintStudySessionScreen() {
         <View style={styles.progressBarWrapper}>
           <ProgressBar progress={cardProgress} height={6} />
         </View>
+
+        <ReadAloudTip variant={isAudioPhase ? "audio" : "text"} />
 
         {requeueNotice ? (
           (() => {

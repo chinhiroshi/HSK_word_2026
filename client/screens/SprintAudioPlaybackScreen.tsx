@@ -12,6 +12,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ProgressBar } from "@/components/ProgressBar";
 import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
 import { SpeakButton } from "@/components/SpeakButton";
+import { ReadAloudTip } from "@/components/ReadAloudTip";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
@@ -206,6 +207,7 @@ export default function SprintAudioPlaybackScreen() {
           { paddingTop: safeHeaderPadding + Spacing.lg, paddingBottom: insets.bottom + Spacing["3xl"] },
         ]}
       >
+        <ReadAloudTip variant="audio" />
         <View style={[styles.playerCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
           <View style={styles.cardHeader}>
             <View style={[styles.badge, { backgroundColor: Colors.light.secondary + "20" }]}>
