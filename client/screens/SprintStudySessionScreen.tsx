@@ -1090,8 +1090,9 @@ export default function SprintStudySessionScreen() {
             const choice = isAudioListPhase ? audioChoices[item.id] : textChoices[item.id];
             const isMemorized = choice === "memorized";
             const isUnmemorized = choice === "unmemorized";
-            const useLongForRow = isAudioListPhase && longExampleWordIds.has(item.id) && !!item.longExample && item.longExample.trim().length > 0;
-            const exampleForRow = useLongForRow ? item.longExample! : item.exampleSentence;
+            // 音声リストの行表示は常に短文の例文を使う（長文は音声カード側のみ）
+            const useLongForRow = false;
+            const exampleForRow = item.exampleSentence;
             const speakText = exampleForRow
               ? `${item.word}。${exampleForRow}`
               : item.word;
