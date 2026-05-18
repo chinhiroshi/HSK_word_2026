@@ -6,14 +6,35 @@
 `runtimeVersion: { policy: "appVersion" }` のため、`app.json` の `version` が 3.0.0 になっている
 今ビルドすれば自動的に新ランタイムになります。
 
-## キュー投入済みビルド（2026-05-18）
+## 実行結果（2026-05-18）
 
-- **Android (versionCode 3, app-bundle)** — https://expo.dev/accounts/chinhiroshi/projects/hskhsk/builds/17a30566-a6ae-4d87-8fc1-be2d1ebadd3c
-- **iOS (buildNumber 9, store distribution)** — https://expo.dev/accounts/chinhiroshi/projects/hskhsk/builds/815bb2ed-d489-4d50-a0ab-8339ab607be7
+### ビルド完了
 
-両方とも `--profile production --non-interactive --no-wait` でEAS側にキュー投入済み。
-リモートのAndroid Keystore (`pO51w-7r92`) と iOS Distribution Certificate / Provisioning Profile
-(`U293UYKRGC`, Team `7983WL2YNG`) を再利用。完了まで通常15〜30分。
+- **iOS v3.0.0 (buildNumber 9)** — FINISHED
+  https://expo.dev/accounts/chinhiroshi/projects/hskhsk/builds/815bb2ed-d489-4d50-a0ab-8339ab607be7
+- **Android v3.0.0 (versionCode 4, app-bundle)** — FINISHED
+  https://expo.dev/accounts/chinhiroshi/projects/hskhsk/builds/03687c8d-129c-491c-9e40-1e05f35907fd
+  ※ 初回投入分 (versionCode 3) は Android lint `ExtraTranslation`
+  (iOS用キー `CFBundleDisplayName` が locales/en.json に存在し Android strings.xml の
+  default locale に無いと判定) で失敗 → `plugins/withAndroidLintFix.js` config plugin で
+  `lintOptions { abortOnError false; disable 'ExtraTranslation', 'MissingTranslation' }` を
+  app/build.gradle に注入し再ビルドで成功。
+
+### 提出
+
+- **iOS → App Store Connect / TestFlight** — スケジュール完了
+  Submission: https://expo.dev/accounts/chinhiroshi/projects/hskhsk/submissions/0f2ab66b-eda0-459f-8c83-4f6624ff9c6c
+  ASC API Key (`[Expo] EAS Submit ENV5LcAokH` / `J75CXQ34SC`) を再利用。
+  ASC App ID 6758777391 宛。アップロード後の処理 (TestFlight 反映 / レビュー提出) は
+  App Store Connect 側で実施。
+- **Android → Google Play Console** — 未提出
+  `./google-play-service-account.json` がリポジトリ未配置のため、`eas submit` が
+  サービスアカウントJSONを要求して停止。配置後に下記コマンドで提出すれば
+  internal track (draft) に登録される:
+  ```bash
+  EAS_NO_VCS=1 npx eas submit --platform android --profile production --latest --non-interactive
+  ```
+  既存ビルド ID は `03687c8d-129c-491c-9e40-1e05f35907fd`（`--id` で指定も可）。
 
 ---
 

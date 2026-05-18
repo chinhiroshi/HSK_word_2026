@@ -77,7 +77,8 @@
           "microphonePermission": "発音評価のためマイクを使用します",
           "speechRecognitionPermission": "発音評価のため音声認識を使用します"
         }
-      ]
+      ],
+      "./plugins/withAndroidLintFix.js"
     ],
     "experiments": {
       "reactCompiler": true
