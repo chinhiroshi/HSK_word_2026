@@ -403,63 +403,6 @@ export default function SprintStampGalleryScreen() {
                             />
                           </View>
                         )
-                      ) : isSpecial && isCompleted ? (
-                        <LinearGradient
-                          colors={["#FFD86B", "#FF7A45", "#E63946", "#FFD86B"]}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 1 }}
-                          style={{
-                            width: STAMP_SIZE,
-                            height: STAMP_SIZE,
-                            borderRadius: STAMP_SIZE / 2,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            shadowColor: "#E63946",
-                            shadowOffset: { width: 0, height: 2 },
-                            shadowOpacity: 0.3,
-                            shadowRadius: 5,
-                            elevation: 3,
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: STAMP_SIZE - 8,
-                              height: STAMP_SIZE - 8,
-                              borderRadius: (STAMP_SIZE - 8) / 2,
-                              backgroundColor: theme.backgroundDefault,
-                              justifyContent: "center",
-                              alignItems: "center",
-                              overflow: "hidden",
-                            }}
-                          >
-                            <Image
-                              source={getPandaImage(cell.index, isSpecial, currentLevel)}
-                              style={{
-                                width: STAMP_SIZE - 12,
-                                height: STAMP_SIZE - 12,
-                                borderRadius: (STAMP_SIZE - 12) / 2,
-                              }}
-                              resizeMode="cover"
-                            />
-                          </View>
-                          <View
-                            style={{
-                              position: "absolute",
-                              top: -2,
-                              right: -2,
-                              backgroundColor: "#E63946",
-                              borderRadius: 11,
-                              width: 22,
-                              height: 22,
-                              justifyContent: "center",
-                              alignItems: "center",
-                              borderWidth: 1.5,
-                              borderColor: "#fff",
-                            }}
-                          >
-                            <Feather name="star" size={12} color="#FFD86B" />
-                          </View>
-                        </LinearGradient>
                       ) : (
                         <View
                           style={[
@@ -518,7 +461,6 @@ export default function SprintStampGalleryScreen() {
                                     fontSize: STAMP_SIZE * 0.16,
                                   },
                                 ]}
-                                allowFontScaling={false}
                               >
                                 No.{cell.index}
                               </ThemedText>
@@ -526,7 +468,6 @@ export default function SprintStampGalleryScreen() {
                           ) : (
                             <ThemedText
                               style={[styles.stampNumber, { color: theme.border, fontSize: STAMP_SIZE * 0.26 }]}
-                              allowFontScaling={false}
                             >
                               {cell.index}
                             </ThemedText>

@@ -5,7 +5,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import Animated, {
   FadeIn,
@@ -79,7 +78,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
       </View>
       {revealLevel >= 1 ? (
         <Animated.View entering={FadeIn.duration(200)}>
-          <ThemedText style={[cardStyles.chinese, { color: theme.text }]} maxFontSizeMultiplier={1.2}>{word.word}</ThemedText>
+          <ThemedText style={[cardStyles.chinese, { color: theme.text }]}>{word.word}</ThemedText>
           <ThemedText style={[cardStyles.pinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
         </Animated.View>
       ) : (
@@ -293,7 +292,7 @@ const cardStyles = StyleSheet.create({
   badgeText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
   badgePlaceholder: { width: 1, height: 20 },
   counter: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  chinese: { fontSize: 44, fontWeight: "400", lineHeight: 60, includeFontPadding: false, textAlignVertical: "center" },
+  chinese: { fontSize: 44, fontWeight: "400" },
   pinyin: { fontSize: 17, fontFamily: "Nunito_400Regular", marginTop: Spacing.xs },
   hiddenPlaceholder: { alignItems: "center", paddingVertical: Spacing["2xl"], gap: Spacing.sm },
   hiddenHint: { fontSize: 14, fontFamily: "Nunito_400Regular" },
@@ -675,30 +674,9 @@ export default function SprintTestScreen() {
       <ThemedView style={styles.container}>
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
-            <LinearGradient
-              colors={["#FFD86B", "#FF7A45", "#E63946", "#FFD86B"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={{
-                width: 180,
-                height: 180,
-                borderRadius: 90,
-                justifyContent: "center",
-                alignItems: "center",
-                shadowColor: "#E63946",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.45,
-                shadowRadius: 12,
-                elevation: 8,
-              }}
-            >
-              <View style={{ width: 164, height: 164, borderRadius: 82, backgroundColor: "#fff", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
-                <Image source={getSpecialPandaImage(testCellIndexRef.current, currentLevel)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
-              </View>
-              <View style={{ position: "absolute", top: -4, right: -4, backgroundColor: "#E63946", borderRadius: 18, width: 36, height: 36, justifyContent: "center", alignItems: "center", borderWidth: 2, borderColor: "#fff" }}>
-                <Feather name="star" size={20} color="#FFD86B" />
-              </View>
-            </LinearGradient>
+            <View style={[styles.stampCircle, { backgroundColor: Colors.light.alert, borderWidth: 4, borderColor: "#fff" }]}>
+              <Image source={getSpecialPandaImage(testCellIndexRef.current, currentLevel)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
+            </View>
             <ThemedText style={styles.stampLabel}>{t("special_stamp_acquired")}</ThemedText>
           </Animated.View>
         ) : null}
@@ -708,8 +686,8 @@ export default function SprintTestScreen() {
         >
           <Animated.View entering={FadeIn} style={styles.resultInner}>
             <View style={[styles.scoreCircle, { borderColor: cleared ? Colors.light.success : Colors.light.alert }]}>
-              <ThemedText style={styles.scorePercentage} maxFontSizeMultiplier={1.1} allowFontScaling={false}>{percentage}%</ThemedText>
-              <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]} maxFontSizeMultiplier={1.2}>{t("memorized_rate")}</ThemedText>
+              <ThemedText style={styles.scorePercentage}>{percentage}%</ThemedText>
+              <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]}>{t("memorized_rate")}</ThemedText>
             </View>
             {cleared ? (
               <View style={[styles.specialStampBadge, { backgroundColor: Colors.light.success + "20" }]}>
@@ -907,8 +885,8 @@ const styles = StyleSheet.create({
     width: 140, height: 140, borderRadius: 70, borderWidth: 6,
     justifyContent: "center", alignItems: "center", marginBottom: Spacing.xl,
   },
-  scorePercentage: { fontSize: 38, fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 48, includeFontPadding: false, textAlign: "center", textAlignVertical: "center" },
-  scoreLabel: { fontSize: 14, fontFamily: "Nunito_400Regular", lineHeight: 18, includeFontPadding: false, textAlign: "center" },
+  scorePercentage: { fontSize: 38, fontWeight: "700", fontFamily: "Nunito_700Bold" },
+  scoreLabel: { fontSize: 14, fontFamily: "Nunito_400Regular" },
   specialStampBadge: {
     flexDirection: "row", alignItems: "center", gap: Spacing.sm,
     paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm,
