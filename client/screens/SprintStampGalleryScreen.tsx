@@ -417,7 +417,7 @@ export default function SprintStampGalleryScreen() {
                                 ? theme.specialEmptyBorder
                                 : theme.border,
                               borderWidth: isCompleted
-                                ? 2.5
+                                ? (isSpecial ? 5 : 2.5)
                                 : isExpectedSpecialEmpty
                                 ? 2
                                 : 1.5,
