@@ -78,7 +78,7 @@ function AudioCard({ word, revealLevel, theme, wordIndex, totalWords }: AudioCar
       </View>
       {revealLevel >= 1 ? (
         <Animated.View entering={FadeIn.duration(200)}>
-          <ThemedText style={[cardStyles.chinese, { color: theme.text }]}>{word.word}</ThemedText>
+          <ThemedText style={[cardStyles.chinese, { color: theme.text }]} maxFontSizeMultiplier={1.2}>{word.word}</ThemedText>
           <ThemedText style={[cardStyles.pinyin, { color: theme.primary }]}>{word.pinyin}</ThemedText>
         </Animated.View>
       ) : (
@@ -292,7 +292,7 @@ const cardStyles = StyleSheet.create({
   badgeText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
   badgePlaceholder: { width: 1, height: 20 },
   counter: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  chinese: { fontSize: 44, fontWeight: "400" },
+  chinese: { fontSize: 44, fontWeight: "400", lineHeight: 60, includeFontPadding: false, textAlignVertical: "center" },
   pinyin: { fontSize: 17, fontFamily: "Nunito_400Regular", marginTop: Spacing.xs },
   hiddenPlaceholder: { alignItems: "center", paddingVertical: Spacing["2xl"], gap: Spacing.sm },
   hiddenHint: { fontSize: 14, fontFamily: "Nunito_400Regular" },
@@ -686,8 +686,8 @@ export default function SprintTestScreen() {
         >
           <Animated.View entering={FadeIn} style={styles.resultInner}>
             <View style={[styles.scoreCircle, { borderColor: cleared ? Colors.light.success : Colors.light.alert }]}>
-              <ThemedText style={styles.scorePercentage}>{percentage}%</ThemedText>
-              <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]}>{t("memorized_rate")}</ThemedText>
+              <ThemedText style={styles.scorePercentage} maxFontSizeMultiplier={1.1} allowFontScaling={false}>{percentage}%</ThemedText>
+              <ThemedText style={[styles.scoreLabel, { color: theme.textSecondary }]} maxFontSizeMultiplier={1.2}>{t("memorized_rate")}</ThemedText>
             </View>
             {cleared ? (
               <View style={[styles.specialStampBadge, { backgroundColor: Colors.light.success + "20" }]}>
@@ -885,8 +885,8 @@ const styles = StyleSheet.create({
     width: 140, height: 140, borderRadius: 70, borderWidth: 6,
     justifyContent: "center", alignItems: "center", marginBottom: Spacing.xl,
   },
-  scorePercentage: { fontSize: 38, fontWeight: "700", fontFamily: "Nunito_700Bold" },
-  scoreLabel: { fontSize: 14, fontFamily: "Nunito_400Regular" },
+  scorePercentage: { fontSize: 38, fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 48, includeFontPadding: false, textAlign: "center", textAlignVertical: "center" },
+  scoreLabel: { fontSize: 14, fontFamily: "Nunito_400Regular", lineHeight: 18, includeFontPadding: false, textAlign: "center" },
   specialStampBadge: {
     flexDirection: "row", alignItems: "center", gap: Spacing.sm,
     paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm,
