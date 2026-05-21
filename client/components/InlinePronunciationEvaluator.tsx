@@ -13,6 +13,8 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
+  withSequence,
+  withSpring,
   withTiming,
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
@@ -86,6 +88,18 @@ export function InlinePronunciationEvaluator({
     transform: [{ scale: pulse.value }],
     opacity: 2 - pulse.value,
   }));
+
+  const pressBounce = useSharedValue(1);
+  const pressBounceStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: pressBounce.value }],
+  }));
+
+  const triggerPressBounce = () => {
+    pressBounce.value = withSequence(
+      withTiming(0.82, { duration: 80, easing: Easing.out(Easing.quad) }),
+      withSpring(1, { damping: 6, stiffness: 220, mass: 0.4 }),
+    );
+  };
 
   useEffect(() => {
     if (phase === "recording") {
@@ -219,9 +233,12 @@ export function InlinePronunciationEvaluator({
   };
 
   const handlePress = (e: GestureResponderEvent) => {
-    // TTSプレビュー再生中は再押下を無視（音を止めない）
+    // どの状態でも「押した」フィードバックを返す
+    triggerPressBounce();
+    // TTSプレビュー再生中は再押下を無視（音を止めない）が、押された手応えは返す
     if (previewSpeakingRef.current || startingRef.current) {
       e.stopPropagation();
+      Haptics.selectionAsync().catch(() => {});
       return;
     }
     if (phase === "recording") {
@@ -258,27 +275,29 @@ export function InlinePronunciationEvaluator({
 
   return (
     <View style={styles.wrap}>
-      <Pressable
-        onPress={handlePress}
-        hitSlop={8}
-        testID={`button-pronounce-${wordId ?? "anon"}`}
-        style={[
-          styles.micButton,
-          {
-            backgroundColor:
-              phase === "recording"
-                ? Colors.light.secondary
-                : `${micColor}20`,
-            borderColor: micColor,
-          },
-        ]}
-      >
-        <Feather
-          name={micIconName}
-          size={14}
-          color={phase === "recording" ? "#FFFFFF" : micColor}
-        />
-      </Pressable>
+      <Animated.View style={pressBounceStyle}>
+        <Pressable
+          onPress={handlePress}
+          hitSlop={8}
+          testID={`button-pronounce-${wordId ?? "anon"}`}
+          style={[
+            styles.micButton,
+            {
+              backgroundColor:
+                phase === "recording"
+                  ? Colors.light.secondary
+                  : `${micColor}20`,
+              borderColor: micColor,
+            },
+          ]}
+        >
+          <Feather
+            name={micIconName}
+            size={14}
+            color={phase === "recording" ? "#FFFFFF" : micColor}
+          />
+        </Pressable>
+      </Animated.View>
 
       {showReferenceWhenActive && (
         (revealPref === "before" && (phase === "checking" || phase === "ready" || phase === "recording" || phase === "result")) ||
