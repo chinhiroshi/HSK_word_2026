@@ -5,6 +5,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import Animated, {
   FadeIn,
@@ -674,9 +675,30 @@ export default function SprintTestScreen() {
       <ThemedView style={styles.container}>
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
-            <View style={[styles.stampCircle, { backgroundColor: Colors.light.alert, borderWidth: 4, borderColor: "#fff" }]}>
-              <Image source={getSpecialPandaImage(testCellIndexRef.current, currentLevel)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
-            </View>
+            <LinearGradient
+              colors={["#FFD86B", "#FF7A45", "#E63946", "#FFD86B"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                width: 180,
+                height: 180,
+                borderRadius: 90,
+                justifyContent: "center",
+                alignItems: "center",
+                shadowColor: "#E63946",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.45,
+                shadowRadius: 12,
+                elevation: 8,
+              }}
+            >
+              <View style={{ width: 164, height: 164, borderRadius: 82, backgroundColor: "#fff", justifyContent: "center", alignItems: "center", overflow: "hidden" }}>
+                <Image source={getSpecialPandaImage(testCellIndexRef.current, currentLevel)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
+              </View>
+              <View style={{ position: "absolute", top: -4, right: -4, backgroundColor: "#E63946", borderRadius: 18, width: 36, height: 36, justifyContent: "center", alignItems: "center", borderWidth: 2, borderColor: "#fff" }}>
+                <Feather name="star" size={20} color="#FFD86B" />
+              </View>
+            </LinearGradient>
             <ThemedText style={styles.stampLabel}>{t("special_stamp_acquired")}</ThemedText>
           </Animated.View>
         ) : null}
