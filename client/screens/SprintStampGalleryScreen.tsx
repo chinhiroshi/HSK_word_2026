@@ -518,6 +518,7 @@ export default function SprintStampGalleryScreen() {
                                     fontSize: STAMP_SIZE * 0.16,
                                   },
                                 ]}
+                                allowFontScaling={false}
                               >
                                 No.{cell.index}
                               </ThemedText>
@@ -525,6 +526,7 @@ export default function SprintStampGalleryScreen() {
                           ) : (
                             <ThemedText
                               style={[styles.stampNumber, { color: theme.border, fontSize: STAMP_SIZE * 0.26 }]}
+                              allowFontScaling={false}
                             >
                               {cell.index}
                             </ThemedText>

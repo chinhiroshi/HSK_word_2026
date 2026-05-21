@@ -446,7 +446,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
           </AnimatedSprintIcon>
           {testNumber != null ? (
             <View style={[styles.testNumBadge, { backgroundColor: "#7C3AED22" }]}>
-              <ThemedText style={[styles.testNumText, { color: "#7C3AED" }]}>{testNumber}</ThemedText>
+              <ThemedText style={[styles.testNumText, { color: "#7C3AED" }]} allowFontScaling={false}>{testNumber}</ThemedText>
             </View>
           ) : null}
         </View>
@@ -467,7 +467,7 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
           {animatedMonster}
           {testNumber != null ? (
             <View style={[styles.testNumBadge, (isCompleted || isCurrent) ? { backgroundColor: "rgba(255,255,255,0.3)" } : { backgroundColor: "#7C3AED22" }]}>
-              <ThemedText style={[styles.testNumText, { color: (isCompleted || isCurrent) ? "#fff" : "#7C3AED" }]}>
+              <ThemedText style={[styles.testNumText, { color: (isCompleted || isCurrent) ? "#fff" : "#7C3AED" }]} allowFontScaling={false}>
                 {testNumber}
               </ThemedText>
             </View>
@@ -492,18 +492,18 @@ function Cell({ index, sessionType, isCurrent, isCompleted, isSpecialStamp, comp
     >
       {renderIcon()}
       {index > 0 && sessionType !== "test" ? (
-        <ThemedText style={[styles.cellNumber, { color: textColor, fontSize: CELL_SIZE * 0.16 }]}>
+        <ThemedText style={[styles.cellNumber, { color: textColor, fontSize: CELL_SIZE * 0.16 }]} allowFontScaling={false}>
           {index}
         </ThemedText>
       ) : null}
       {isCompleted && completedDate ? (
         <View style={{ alignItems: "center" }}>
           {sessionType === "test" ? (
-            <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.13, fontWeight: "600" }]}>
+            <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.13, fontWeight: "600" }]} allowFontScaling={false}>
               クリア
             </ThemedText>
           ) : null}
-          <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.13 }]}>
+          <ThemedText style={[styles.cellDate, { color: textColor, fontSize: CELL_SIZE * 0.13 }]} allowFontScaling={false}>
             {formatShortDate(completedDate)}
           </ThemedText>
         </View>
