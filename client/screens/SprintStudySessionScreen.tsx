@@ -1123,7 +1123,7 @@ export default function SprintStudySessionScreen() {
                         <Feather name="volume-2" size={20} color="#fff" />
                       </Pressable>
                       <InlinePronunciationEvaluator
-                        referenceText={item.exampleSentence || item.word}
+                        referenceText={exampleForRow || item.word}
                         targetWord={item.word}
                         wordId={item.id}
                         onResult={() => {
