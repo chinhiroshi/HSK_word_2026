@@ -1196,7 +1196,7 @@ export default function SprintStudySessionScreen() {
                         <ThemedText style={styles.audioRevealedWord}>{item.word}</ThemedText>
                         <ThemedText style={[styles.wordRowPinyin, { color: theme.primary }]}>{item.pinyin}</ThemedText>
                         {exampleForRow ? (
-                          <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]}>
+                          <ThemedText style={[styles.wordRowExample, { color: theme.textSecondary }]} numberOfLines={useLongForRow ? 3 : 2}>
                             {exampleForRow}
                           </ThemedText>
                         ) : null}
@@ -1207,7 +1207,7 @@ export default function SprintStudySessionScreen() {
                             {meaningText}
                           </ThemedText>
                           {exampleMeaning ? (
-                            <ThemedText style={[styles.audioMeaningExample, { color: theme.textSecondary }]}>
+                            <ThemedText style={[styles.audioMeaningExample, { color: theme.textSecondary }]} numberOfLines={2}>
                               {exampleMeaning}
                             </ThemedText>
                           ) : null}
