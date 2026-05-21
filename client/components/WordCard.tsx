@@ -345,9 +345,12 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   wordWithPinyin: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "baseline",
+    flexWrap: "wrap",
     gap: Spacing.sm,
+    rowGap: 2,
   },
   word: {
     fontSize: 20,
