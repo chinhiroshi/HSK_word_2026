@@ -535,6 +535,29 @@ export default function SprintStampGalleryScreen() {
           <Pressable style={[styles.modalCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
             {selectedQuote ? (
               <>
+                {selectedStamp ? (
+                  <View style={styles.modalStampWrapper}>
+                    <View
+                      style={[
+                        styles.modalStampFrame,
+                        {
+                          borderColor: selectedStamp.isSpecial ? Colors.light.alert : theme.primary,
+                          borderWidth: selectedStamp.isSpecial ? 6 : 3,
+                          backgroundColor: theme.backgroundDefault,
+                        },
+                      ]}
+                    >
+                      <Image
+                        source={selectedStamp.image}
+                        style={styles.modalStampImage}
+                        resizeMode="cover"
+                      />
+                    </View>
+                    <ThemedText style={[styles.modalStampLabel, { color: theme.textSecondary }]}>
+                      {selectedStamp.label}
+                    </ThemedText>
+                  </View>
+                ) : null}
                 <View style={styles.modalHeader}>
                   <ThemedText style={styles.modalFlag}>{selectedQuote.flag}</ThemedText>
                   <ThemedText style={[styles.modalSource, { color: theme.textSecondary }]}>{selectedQuote.source}</ThemedText>
@@ -841,6 +864,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: Spacing.xl,
     gap: Spacing.md,
+  },
+  modalStampWrapper: {
+    alignItems: "center",
+    gap: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
+  modalStampFrame: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  modalStampImage: {
+    width: "100%",
+    height: "100%",
+  },
+  modalStampLabel: {
+    fontSize: 13,
+    fontFamily: "Nunito_600SemiBold",
   },
   modalHeader: {
     flexDirection: "row",
