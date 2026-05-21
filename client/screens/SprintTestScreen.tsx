@@ -884,9 +884,10 @@ const styles = StyleSheet.create({
   scoreCircle: {
     width: 140, height: 140, borderRadius: 70, borderWidth: 6,
     justifyContent: "center", alignItems: "center", marginBottom: Spacing.xl,
+    overflow: "visible",
   },
-  scorePercentage: { fontSize: 38, fontWeight: "700", fontFamily: "Nunito_700Bold" },
-  scoreLabel: { fontSize: 14, fontFamily: "Nunito_400Regular" },
+  scorePercentage: { fontSize: 34, lineHeight: 44, fontWeight: "700", fontFamily: "Nunito_700Bold", textAlign: "center", includeFontPadding: false },
+  scoreLabel: { fontSize: 14, lineHeight: 18, fontFamily: "Nunito_400Regular", textAlign: "center", includeFontPadding: false },
   specialStampBadge: {
     flexDirection: "row", alignItems: "center", gap: Spacing.sm,
     paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm,
