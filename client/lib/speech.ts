@@ -18,6 +18,7 @@ async function applyAudioMode(): Promise<void> {
     await setAudioModeAsync({
       playsInSilentMode: playsInSilent,
       interruptionMode: "mixWithOthers",
+      allowsRecording: false,
     });
   } catch (e) {
     console.warn("setAudioMode failed:", e);
