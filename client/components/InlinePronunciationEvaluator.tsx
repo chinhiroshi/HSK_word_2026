@@ -77,6 +77,7 @@ export function InlinePronunciationEvaluator({
   const [revealPref, setRevealPref] = useState<PronunciationReveal>(getCurrentPronunciationReveal);
   const handleRef = useRef<RecognitionHandle | null>(null);
   const startingRef = useRef(false);
+  const previewSpeakingRef = useRef(false);
 
   useEffect(() => subscribePronunciationReveal(setRevealPref), []);
 
@@ -140,9 +141,11 @@ export function InlinePronunciationEvaluator({
       }
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (playReferenceFirst) {
+        previewSpeakingRef.current = true;
         try {
           await speakChinese(referenceText, { wordId });
         } catch {}
+        previewSpeakingRef.current = false;
       }
       const lang = resolveRecognitionLanguage({ wordId, text: referenceText });
       let lastTranscript = "";
@@ -216,6 +219,11 @@ export function InlinePronunciationEvaluator({
   };
 
   const handlePress = (e: GestureResponderEvent) => {
+    // TTSプレビュー再生中は再押下を無視（音を止めない）
+    if (previewSpeakingRef.current || startingRef.current) {
+      e.stopPropagation();
+      return;
+    }
     if (phase === "recording") {
       stopRecording(e);
     } else if (phase === "permission_denied") {
