@@ -292,7 +292,7 @@ const cardStyles = StyleSheet.create({
   badgeText: { fontSize: 12, fontFamily: "Nunito_600SemiBold" },
   badgePlaceholder: { width: 1, height: 20 },
   counter: { fontSize: 13, fontFamily: "Nunito_400Regular" },
-  chinese: { fontSize: 44, fontWeight: "400" },
+  chinese: { fontSize: 44, lineHeight: 62, fontWeight: "400", includeFontPadding: false, textAlignVertical: "center", paddingVertical: 4 },
   pinyin: { fontSize: 17, fontFamily: "Nunito_400Regular", marginTop: Spacing.xs },
   hiddenPlaceholder: { alignItems: "center", paddingVertical: Spacing["2xl"], gap: Spacing.sm },
   hiddenHint: { fontSize: 14, fontFamily: "Nunito_400Regular" },
