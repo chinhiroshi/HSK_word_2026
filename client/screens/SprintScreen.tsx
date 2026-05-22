@@ -1016,7 +1016,20 @@ export default function SprintScreen() {
 
       // Test is truly "cleared" only if it's in specialStamps (passed ≥85%)
       if (sStamps.includes(index)) {
-        Alert.alert(t("test_cleared").replace("{n}", String(testNum)), formatShortDate(cDates[index] ?? ""), [{ text: t("ok") }]);
+        Alert.alert(
+          t("test_cleared").replace("{n}", String(testNum)),
+          formatShortDate(cDates[index] ?? ""),
+          [
+            {
+              text: "再挑戦する",
+              onPress: () => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("SprintTest", { cellIndex: index, retake: true });
+              },
+            },
+            { text: t("ok"), style: "cancel" },
+          ]
+        );
         return;
       }
       if (index !== currentPosition) {

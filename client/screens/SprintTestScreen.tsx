@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { View, StyleSheet, Pressable, ScrollView, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -37,6 +37,7 @@ import { useI18n } from "@/contexts/LanguageContext";
 import { SprintStackParamList } from "@/navigation/SprintStackNavigator";
 
 type NavigationProp = NativeStackNavigationProp<SprintStackParamList>;
+type RouteProps = RouteProp<SprintStackParamList, "SprintTest">;
 type RevealLevel = 0 | 1 | 2;
 
 const PASS_PERCENTAGE = 85;
@@ -306,6 +307,9 @@ const cardStyles = StyleSheet.create({
 export default function SprintTestScreen() {
   const { t } = useI18n();
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RouteProps>();
+  const retakeCellIndex = route.params?.cellIndex;
+  const isRetake = route.params?.retake === true;
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
@@ -394,8 +398,10 @@ export default function SprintTestScreen() {
     // empty SprintData and skip pre-review erroneously.
     if (!sprintData) return;
     loadStartedRef.current = true;
-    // Capture the cell index now that sprintData is ready.
-    testCellIndexRef.current = sprintData.currentPosition;
+    // Capture the cell index now that sprintData is ready. When the user is
+    // re-attempting a previously cleared test, the cell index comes from the
+    // navigation params; otherwise we fall back to the current position.
+    testCellIndexRef.current = typeof retakeCellIndex === "number" ? retakeCellIndex : sprintData.currentPosition;
     (async () => {
       await initializeData();
       const allWords = await getWords();
@@ -404,7 +410,8 @@ export default function SprintTestScreen() {
       const cellIdx = testCellIndexRef.current;
       const attempts = getCellTestAttemptsRef.current(cellIdx);
       const prevUnmemIds = getCellTestUnmemorizedRef.current(cellIdx);
-      if (attempts >= 1 && prevUnmemIds.length > 0) {
+      // 再挑戦時は pre-review もスキップしてクリーンに再挑戦できるようにする。
+      if (!isRetake && attempts >= 1 && prevUnmemIds.length > 0) {
         const idSet = new Set(prevUnmemIds);
         const prev = allWords.filter((w) => idSet.has(w.id));
         if (prev.length > 0) {
@@ -415,7 +422,8 @@ export default function SprintTestScreen() {
         }
       }
       // Going straight into the test counts as starting a new attempt.
-      if (testWords.length > 0) {
+      // 再挑戦時はカウントしない（既存の attempts/unmemorized 統計を保護）。
+      if (!isRetake && testWords.length > 0) {
         await incrementCellTestAttemptsRef.current(cellIdx).catch(() => {});
       }
       setPhase("test");
@@ -511,6 +519,16 @@ export default function SprintTestScreen() {
   };
 
   const handleFinish = async (cleared: boolean, fromTest: boolean = true) => {
+    // 再挑戦の場合は進捗を更新せず、スタンプも再付与しない。
+    // 単に SprintHome に戻すだけ（合格時のお祝いスタンプ演出のみ表示）。
+    if (isRetake) {
+      if (cleared) {
+        triggerStamp(() => navigation.navigate("SprintHome"));
+      } else {
+        navigation.navigate("SprintHome");
+      }
+      return;
+    }
     if (cleared) {
       setCompleting(true);
       await completeSession(true);
