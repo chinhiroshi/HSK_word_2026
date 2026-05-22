@@ -1,5 +1,19 @@
 import { Platform } from "react-native";
+import { setAudioModeAsync } from "expo-audio";
 import { resolveChineseLanguage } from "@/lib/speech";
+import { getSilentModeAudio } from "@/lib/storage";
+
+async function restorePlaybackAudioMode(): Promise<void> {
+  if (Platform.OS !== "ios") return;
+  try {
+    const playsInSilent = await getSilentModeAudio();
+    await setAudioModeAsync({
+      playsInSilentMode: playsInSilent,
+      interruptionMode: "mixWithOthers",
+      allowsRecording: false,
+    });
+  } catch {}
+}
 
 export type RecognitionLang = "zh-CN" | "zh-TW";
 
@@ -128,6 +142,7 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
   addListener("error", (e: any) => {
     const code = e?.error || e?.code || "unknown";
     const message = e?.message || String(code);
+    restorePlaybackAudioMode();
     opts.onError({ code: String(code), message: String(message) });
   });
 
@@ -135,6 +150,7 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
     listeners.forEach((l) => {
       try { l.remove(); } catch {}
     });
+    restorePlaybackAudioMode();
     if (opts.onEnd) opts.onEnd();
   });
 
@@ -172,6 +188,7 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
       setTimeout(() => {
         if (listeners.length > 0) {
           removeAll();
+          restorePlaybackAudioMode();
           if (opts.onEnd) opts.onEnd();
         }
       }, 2000);

@@ -19,6 +19,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { setAudioModeAsync } from "expo-audio";
+import { getSilentModeAudio } from "@/lib/storage";
 
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/useTheme";
@@ -155,6 +157,20 @@ export function InlinePronunciationEvaluator({
       }
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       if (playReferenceFirst) {
+        // 直前のマイク使用で AVAudioSession が playAndRecord のまま残っている可能性が
+        // あるため、TTSプレビュー前に明示的に playback カテゴリへ戻す。
+        if (Platform.OS === "ios") {
+          try {
+            const playsInSilent = await getSilentModeAudio();
+            await setAudioModeAsync({
+              playsInSilentMode: playsInSilent,
+              interruptionMode: "mixWithOthers",
+              allowsRecording: false,
+            });
+            // 反映を確実にするため少し待つ
+            await new Promise((r) => setTimeout(r, 120));
+          } catch {}
+        }
         previewSpeakingRef.current = true;
         try {
           await speakChinese(referenceText, { wordId });
