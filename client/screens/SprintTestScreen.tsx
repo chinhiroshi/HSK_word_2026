@@ -310,6 +310,7 @@ export default function SprintTestScreen() {
   const route = useRoute<RouteProps>();
   const retakeCellIndex = route.params?.cellIndex;
   const isRetake = route.params?.retake === true;
+  const forceReview = route.params?.forceReview === true;
   const headerHeight = useHeaderHeight();
   const insets = useSafeAreaInsets();
   const safeHeaderPadding = Math.max(headerHeight, insets.top + 44);
@@ -419,8 +420,9 @@ export default function SprintTestScreen() {
       const cellIdx = testCellIndexRef.current;
       const attempts = getCellTestAttemptsRef.current(cellIdx);
       const prevUnmemIds = getCellTestUnmemorizedRef.current(cellIdx);
-      // 再挑戦時は pre-review もスキップしてクリーンに再挑戦できるようにする。
-      if (!isRetake && attempts >= 1 && prevUnmemIds.length > 0) {
+      // 再挑戦時は pre-review をスキップしてクリーンに再挑戦できるようにする。
+      // forceReview (「復習を見る」から遷移) 時は逆に復習を強制表示する。
+      if ((forceReview || !isRetake) && attempts >= 1 && prevUnmemIds.length > 0) {
         const idSet = new Set(prevUnmemIds);
         const prev = allWords.filter((w) => idSet.has(w.id));
         if (prev.length > 0) {

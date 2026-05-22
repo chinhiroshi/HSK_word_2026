@@ -1108,7 +1108,7 @@ export default function ProfileScreen() {
           <Pressable
             testID="button-toggle-ota-unlock"
             style={styles.versionTextWrap}
-            delayLongPress={5000}
+            delayLongPress={3000}
             onLongPress={() => {
               Haptics.notificationAsync(
                 otaUnlocked

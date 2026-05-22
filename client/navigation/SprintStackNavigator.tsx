@@ -15,7 +15,7 @@ export type SprintStackParamList = {
   SprintHome: undefined;
   SprintSetup: { isChange?: boolean; fromOnboarding?: boolean } | undefined;
   SprintStudySession: { mode: "study" | "text-only" | "audio-only" | "audio-cards-only"; cellIndex: number };
-  SprintTest: { cellIndex?: number; retake?: boolean } | undefined;
+  SprintTest: { cellIndex?: number; retake?: boolean; forceReview?: boolean } | undefined;
   SprintAudioPlayback: { cellIndex: number };
   SprintStampGallery: undefined;
   TutorialSprint: undefined;

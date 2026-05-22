@@ -957,7 +957,7 @@ export default function SprintScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const { theme } = useTheme();
   const { t } = useI18n();
-  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel } = useSprint();
+  const { sprintData, loading, loadSprint, totalCells, getSessionType, canSkipCurrentSession, skipSession, getCellPhaseProgress, currentLevel, getCellTestUnmemorized } = useSprint();
   const { isPremium } = useSubscription();
 
   const [words, setWords] = useState<Word[]>([]);
@@ -1016,19 +1016,30 @@ export default function SprintScreen() {
 
       // Test is truly "cleared" only if it's in specialStamps (passed ≥85%)
       if (sStamps.includes(index)) {
+        const hasReview = getCellTestUnmemorized(index).length > 0;
+        const buttons: any[] = [
+          {
+            text: "再挑戦する",
+            onPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("SprintTest", { cellIndex: index, retake: true });
+            },
+          },
+        ];
+        if (hasReview) {
+          buttons.push({
+            text: "復習を見る",
+            onPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("SprintTest", { cellIndex: index, retake: true, forceReview: true });
+            },
+          });
+        }
+        buttons.push({ text: t("ok"), style: "cancel" });
         Alert.alert(
           t("test_cleared").replace("{n}", String(testNum)),
           formatShortDate(cDates[index] ?? ""),
-          [
-            {
-              text: "再挑戦する",
-              onPress: () => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                navigation.navigate("SprintTest", { cellIndex: index, retake: true });
-              },
-            },
-            { text: t("ok"), style: "cancel" },
-          ]
+          buttons
         );
         return;
       }
