@@ -1,2 +1,2 @@
 export const OTA_MESSAGE: string | undefined =
-  "OTA詳細をバージョン長押し5秒の隠し機能に変更";
+  "fix(ota): bake publish message into bundle so history shows correct text per update";
