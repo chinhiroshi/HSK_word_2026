@@ -360,7 +360,16 @@ export default function SprintTestScreen() {
       withTiming(1.25, { duration: 280 }),
       withTiming(1.0, { duration: 140 })
     );
-    stampOpacity.value = withTiming(1, { duration: 200 });
+    stampOpacity.value = withSequence(
+      withTiming(1, { duration: 200 }),
+      withTiming(1, { duration: 1500 }),
+      withTiming(0, { duration: 300 }, (finished) => {
+        if (finished) {
+          runOnJS(setStampVisible)(false);
+          if (onDone) runOnJS(onDone)();
+        }
+      })
+    );
     setTimeout(() => setConfettiVisible(false), 3500);
   };
 
