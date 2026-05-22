@@ -16,6 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { getSpecialPandaImage } from "@/data/pandaStamps";
+import { getPandaName } from "@/data/pandaStampNames";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -344,7 +345,9 @@ export default function SprintTestScreen() {
     opacity: stampOpacity.value,
   }));
 
+  const stampDoneRef = useRef<(() => void) | null>(null);
   const triggerStamp = (onDone: () => void) => {
+    stampDoneRef.current = onDone;
     setStampVisible(true);
     setConfettiVisible(true);
     stampScale.value = 0;
@@ -353,14 +356,19 @@ export default function SprintTestScreen() {
       withTiming(1.25, { duration: 280 }),
       withTiming(1.0, { duration: 140 })
     );
-    stampOpacity.value = withSequence(
-      withTiming(1, { duration: 200 }),
-      withTiming(1, { duration: 1100 }),
-      withTiming(0, { duration: 300 }, (finished) => {
-        if (finished) runOnJS(onDone)();
-      })
-    );
+    stampOpacity.value = withTiming(1, { duration: 200 });
     setTimeout(() => setConfettiVisible(false), 3500);
+  };
+
+  const handleCloseStamp = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const done = stampDoneRef.current;
+    stampOpacity.value = withTiming(0, { duration: 240 }, (finished) => {
+      if (finished) {
+        runOnJS(setStampVisible)(false);
+        if (done) runOnJS(done)();
+      }
+    });
   };
 
   // Stable refs to context callbacks so load() does not re-trigger when
@@ -674,10 +682,21 @@ export default function SprintTestScreen() {
       <ThemedView style={styles.container}>
         {stampVisible ? (
           <Animated.View style={[styles.stampOverlay, stampStyle]}>
+            <Pressable
+              testID="button-close-stamp-modal"
+              onPress={handleCloseStamp}
+              hitSlop={12}
+              style={styles.stampCloseButton}
+            >
+              <Feather name="x" size={26} color="#fff" />
+            </Pressable>
+            <ThemedText style={styles.stampLabel}>{t("special_stamp_acquired")}</ThemedText>
             <View style={[styles.stampCircle, { backgroundColor: Colors.light.alert, borderWidth: 4, borderColor: "#fff" }]}>
               <Image source={getSpecialPandaImage(testCellIndexRef.current, currentLevel)} style={{ width: 148, height: 148, borderRadius: 74 }} resizeMode="cover" />
             </View>
-            <ThemedText style={styles.stampLabel}>{t("special_stamp_acquired")}</ThemedText>
+            <ThemedText style={styles.stampName} numberOfLines={2}>
+              {getPandaName(testCellIndexRef.current, true, currentLevel)}
+            </ThemedText>
           </Animated.View>
         ) : null}
         <ScrollView
@@ -903,6 +922,11 @@ const styles = StyleSheet.create({
   },
   stampCircle: { width: 160, height: 160, borderRadius: 80, justifyContent: "center", alignItems: "center" },
   stampLabel: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", color: "#fff" },
+  stampName: { fontSize: 30, fontWeight: "700", fontFamily: "Nunito_700Bold", color: "#fff", textAlign: "center", paddingHorizontal: Spacing.xl, marginTop: Spacing.xs },
+  stampCloseButton: {
+    position: "absolute", top: 60, right: 24, width: 44, height: 44, borderRadius: 22,
+    backgroundColor: "rgba(255,255,255,0.18)", justifyContent: "center", alignItems: "center",
+  },
   quoteCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.lg, marginTop: Spacing.sm, marginBottom: Spacing.md, width: "100%", alignItems: "center", gap: Spacing.xs },
   quoteFlag: { fontSize: 28 },
   quoteText: { fontSize: 15, fontFamily: "Nunito_700Bold", textAlign: "center" },
