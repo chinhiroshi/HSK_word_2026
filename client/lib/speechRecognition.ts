@@ -6,6 +6,19 @@ import { getSilentModeAudio } from "@/lib/storage";
 async function restorePlaybackAudioMode(): Promise<void> {
   if (Platform.OS !== "ios") return;
   try {
+    const mod = await loadNativeModule();
+    const ExpoSpeechRecognitionModule = mod?.ExpoSpeechRecognitionModule;
+    if (ExpoSpeechRecognitionModule && typeof ExpoSpeechRecognitionModule.setCategoryIOS === "function") {
+      try {
+        ExpoSpeechRecognitionModule.setCategoryIOS({
+          category: "playback",
+          mode: "default",
+          categoryOptions: [],
+        });
+      } catch {}
+    }
+  } catch {}
+  try {
     const playsInSilent = await getSilentModeAudio();
     await setAudioModeAsync({
       playsInSilentMode: playsInSilent,
