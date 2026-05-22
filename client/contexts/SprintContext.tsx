@@ -127,7 +127,7 @@ interface SprintContextType {
   getSessionType: (position: number) => SprintSessionType;
   canSkipCurrentSession: (words: Word[]) => boolean;
   getStudyWords: (words: Word[], cellIndex?: number) => Word[];
-  getTestWords: (words: Word[]) => Word[];
+  getTestWords: (words: Word[], cellIndex?: number) => Word[];
   getTodayStudyWords: (words: Word[]) => Word[];
   getCellPhaseProgress: (position: number) => { text: boolean; audio: boolean; audioCards: boolean };
   getCellTestUnmemorized: (position: number) => string[];
@@ -396,17 +396,29 @@ export function SprintProvider({ children }: { children: React.ReactNode }) {
     [sprintData]
   );
 
-  // テストセルの直前50語を取得し、苦手単語を優先して返す
+  // テストセルの直前50語を取得し、苦手単語を優先して返す。
+  // cellIndex が渡された場合は、そのテストセルに対応する固定範囲を返す
+  // （テストをスキップして先に進んだ過去のユーザーでも、テストごとに正しい
+  // 範囲が出るようにするため）。未指定時は従来通り studiedWordCount を使う。
   const getTestWords = useCallback(
-    (words: Word[]): Word[] => {
+    (words: Word[], cellIndex?: number): Word[] => {
       if (!sprintData || words.length === 0) return [];
       const totalWords = words.length;
-      const studied = sprintData.studiedWordCount;
+      const wPD = sprintData.wordsPerDay;
       const count = Math.min(50, totalWords);
-      // studiedWordCount は次の学習開始位置を指すため、直前 count 語 = [studied-count, studied) の範囲
+      let endOffset: number;
+      if (typeof cellIndex === "number" && cellIndex > 0) {
+        // このテストセル直前までに学習対象となった単語数
+        const studyCellsBefore = getStudyWordOffsetForCell(cellIndex, wPD);
+        endOffset = studyCellsBefore * wPD;
+      } else {
+        endOffset = sprintData.studiedWordCount;
+      }
+      if (endOffset <= 0) return [];
+      // [endOffset-count, endOffset) の範囲を取得
       const recent: Word[] = [];
       for (let i = count - 1; i >= 0; i--) {
-        const idx = ((studied - 1 - i) % totalWords + totalWords) % totalWords;
+        const idx = ((endOffset - 1 - i) % totalWords + totalWords) % totalWords;
         recent.push(words[idx]);
       }
       if (recent.length === 0) return [];

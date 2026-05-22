@@ -391,7 +391,7 @@ export default function SprintTestScreen() {
     (async () => {
       await initializeData();
       const allWords = await getWords();
-      const testWords = getTestWordsRef.current(allWords);
+      const testWords = getTestWordsRef.current(allWords, testCellIndexRef.current);
       setCardWords(shuffleArray(testWords));
       const cellIdx = testCellIndexRef.current;
       const attempts = getCellTestAttemptsRef.current(cellIdx);
