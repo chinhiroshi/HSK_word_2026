@@ -31,6 +31,8 @@ import {
   feedbackLevelFromScore,
   PronunciationScore,
 } from "@/lib/pronunciationScore";
+import { recordMicAttempt, MicSource } from "@/lib/micScoreLog";
+import type { HskLevel } from "@/types";
 import {
   isRecognitionAvailable,
   RecognitionHandle,
@@ -63,6 +65,9 @@ interface Props {
   playReferenceFirst?: boolean;
   showReferenceWhenActive?: boolean;
   onResult?: (score: PronunciationScore) => void;
+  source?: MicSource;
+  hskLevel?: HskLevel;
+  sprintCellIndex?: number;
 }
 
 export function InlinePronunciationEvaluator({
@@ -72,6 +77,9 @@ export function InlinePronunciationEvaluator({
   playReferenceFirst = true,
   showReferenceWhenActive = false,
   onResult,
+  source,
+  hskLevel,
+  sprintCellIndex,
 }: Props) {
   const { theme } = useTheme();
   const { t } = useI18n();
@@ -82,6 +90,7 @@ export function InlinePronunciationEvaluator({
   const handleRef = useRef<RecognitionHandle | null>(null);
   const startingRef = useRef(false);
   const previewSpeakingRef = useRef(false);
+  const recordedRef = useRef(false);
 
   useEffect(() => subscribePronunciationReveal(setRevealPref), []);
 
@@ -149,6 +158,7 @@ export function InlinePronunciationEvaluator({
       handleRef.current = null;
       setTranscript("");
       setScore(null);
+      recordedRef.current = false;
       setPhase("checking");
       const next = await ensureReady();
       if (next !== "ready") {
@@ -188,6 +198,16 @@ export function InlinePronunciationEvaluator({
             const s = computeScore(referenceText, text, targetWord);
             setScore(s);
             setPhase("result");
+            if (source && !recordedRef.current) {
+              recordedRef.current = true;
+              recordMicAttempt({
+                score: s.total,
+                wordId,
+                hskLevel,
+                source,
+                sprintCellIndex,
+              });
+            }
             onResult?.(s);
           }
         },
@@ -207,6 +227,16 @@ export function InlinePronunciationEvaluator({
             if (lastTranscript) {
               const s = computeScore(referenceText, lastTranscript, targetWord);
               setScore(s);
+              if (source && !recordedRef.current) {
+                recordedRef.current = true;
+                recordMicAttempt({
+                  score: s.total,
+                  wordId,
+                  hskLevel,
+                  source,
+                  sprintCellIndex,
+                });
+              }
               onResult?.(s);
               return "result";
             }

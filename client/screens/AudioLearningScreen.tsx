@@ -14,6 +14,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
+import { getMicStatsForWordIds, subscribeMicStats, MicStats } from "@/lib/micScoreLog";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useI18n } from "@/contexts/LanguageContext";
@@ -28,6 +29,7 @@ interface GroupInfo {
   memorizedCount: number;
   notMemorizedCount: number;
   totalCount: number;
+  micStats: MicStats;
 }
 
 interface GroupCardProps {
@@ -107,6 +109,14 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
             {group.notMemorizedCount}
           </ThemedText>
         </View>
+        {group.micStats.count > 0 ? (
+          <View style={styles.statItem} testID={`audio-mic-stats-${group.startIndex}`}>
+            <Feather name="mic" size={14} color={Colors.light.secondary} />
+            <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
+              {group.micStats.count}回 平均{group.micStats.avg}
+            </ThemedText>
+          </View>
+        ) : null}
       </View>
     </Pressable>
   );
@@ -125,6 +135,9 @@ export default function AudioLearningScreen() {
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [micVersion, setMicVersion] = useState(0);
+
+  useEffect(() => subscribeMicStats(() => setMicVersion((v) => v + 1)), []);
 
   const loadWords = useCallback(async () => {
     await initializeData();
@@ -166,17 +179,21 @@ export default function AudioLearningScreen() {
         (w) => !w.audioMemorized && (w.audioUnmemorizedCount || 0) > 0
       ).length;
       
+      const micStats = getMicStatsForWordIds(groupWords.map((w) => w.id));
+
       result.push({
         startIndex,
         endIndex,
         memorizedCount,
         notMemorizedCount,
         totalCount: groupWords.length,
+        micStats,
       });
     }
     
     return result;
-  }, [words]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [words, micVersion]);
 
   const totalStats = useMemo(() => {
     const memorized = words.filter(

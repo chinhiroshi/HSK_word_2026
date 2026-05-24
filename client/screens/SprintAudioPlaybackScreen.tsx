@@ -15,7 +15,7 @@ import { SpeakButton } from "@/components/SpeakButton";
 import { ReadAloudTip } from "@/components/ReadAloudTip";
 import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
-import { Word } from "@/types";
+import { Word, HskLevel } from "@/types";
 import { getWords, initializeData, markAsUnmemorized, getSelectedHskLevel } from "@/lib/storage";
 import { capture as captureAnalytics } from "@/lib/analytics";
 import { speakWithLanguage, stopSpeaking } from "@/lib/speech";
@@ -36,6 +36,7 @@ export default function SprintAudioPlaybackScreen() {
 
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hskLevel, setHskLevel] = useState<HskLevel | undefined>(undefined);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [currentPhase, setCurrentPhase] = useState("");
@@ -63,6 +64,10 @@ export default function SprintAudioPlaybackScreen() {
     const all = await getWords();
     const todayWords = getTodayStudyWords(all);
     applyPlaybackFilter(todayWords);
+    try {
+      const lvl = await getSelectedHskLevel();
+      setHskLevel(lvl);
+    } catch {}
     setLoading(false);
   }, [getTodayStudyWords]);
 
@@ -328,6 +333,9 @@ export default function SprintAudioPlaybackScreen() {
                 targetWord={word.word}
                 wordId={word.id}
                 showReferenceWhenActive
+                source="sprint-audio"
+                hskLevel={hskLevel}
+                sprintCellIndex={route.params?.cellIndex}
               />
             </View>
           ))}

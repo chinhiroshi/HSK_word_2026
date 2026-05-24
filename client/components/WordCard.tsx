@@ -281,6 +281,8 @@ export function WordCard({
                 referenceText={word.exampleSentence}
                 targetWord={word.word}
                 wordId={word.id}
+                source="study"
+                hskLevel={word.hskLevel}
               />
             </View>
             {showLongExample && word.longExample ? (

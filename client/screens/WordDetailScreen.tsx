@@ -261,6 +261,8 @@ export default function WordDetailScreen() {
                     targetWord={word.word}
                     wordId={word.id}
                     showReferenceWhenActive
+                    source="word-detail"
+                    hskLevel={word.hskLevel}
                   />
                 </View>
               )}

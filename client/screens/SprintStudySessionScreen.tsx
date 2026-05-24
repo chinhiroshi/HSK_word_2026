@@ -32,11 +32,12 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { SpeakButton } from "@/components/SpeakButton";
 import { ReadAloudTip } from "@/components/ReadAloudTip";
 import { InlinePronunciationEvaluator } from "@/components/InlinePronunciationEvaluator";
+import { getSprintCellMicStats } from "@/lib/micScoreLog";
 import { Button } from "@/components/Button";
 import { useTheme } from "@/hooks/useTheme";
 import { useI18n } from "@/contexts/LanguageContext";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
-import { Word } from "@/types";
+import { Word, HskLevel } from "@/types";
 import {
   getAudioRepeatPreference,
   getWords,
@@ -830,6 +831,24 @@ export default function SprintStudySessionScreen() {
               </View>
             );
           })()}
+          {(() => {
+            const stats = getSprintCellMicStats(currentLevel as HskLevel, studiedCellIndex);
+            if (stats.count === 0) return null;
+            return (
+              <View
+                testID="sprint-mic-stats-complete"
+                style={[
+                  styles.micStatsRow,
+                  { backgroundColor: Colors.light.secondary + "15", borderColor: Colors.light.secondary + "40" },
+                ]}
+              >
+                <Feather name="mic" size={14} color={Colors.light.secondary} />
+                <ThemedText style={[styles.micStatsText, { color: Colors.light.secondary }]}>
+                  マイク {stats.count}回 / 平均 {stats.avg}
+                </ThemedText>
+              </View>
+            );
+          })()}
           {sessionMode === "audio-cards-only" && audioCardsSummary ? (
             <View
               testID="audio-cards-summary-card"
@@ -1126,6 +1145,9 @@ export default function SprintStudySessionScreen() {
                         referenceText={exampleForRow || item.word}
                         targetWord={item.word}
                         wordId={item.id}
+                        source="sprint-study"
+                        hskLevel={currentLevel as HskLevel}
+                        sprintCellIndex={cellIndex ?? sprintData?.currentPosition}
                         onResult={() => {
                           if (revealLevel === 0) {
                             setRevealedIds((prev) => {
@@ -1249,6 +1271,9 @@ export default function SprintStudySessionScreen() {
                           referenceText={item.exampleSentence}
                           targetWord={item.word}
                           wordId={item.id}
+                          source="sprint-study"
+                          hskLevel={currentLevel as HskLevel}
+                          sprintCellIndex={cellIndex ?? sprintData?.currentPosition}
                         />
                       </View>
                     ) : null}
@@ -2143,6 +2168,8 @@ const styles = StyleSheet.create({
   completeTitle: { fontSize: 26, fontWeight: "700", fontFamily: "Nunito_700Bold", marginBottom: Spacing.sm, textAlign: "center" },
   completeSub: { fontSize: 15, fontFamily: "Nunito_400Regular", marginBottom: Spacing.xl, textAlign: "center" },
   resultStats: { flexDirection: "row", alignItems: "center", marginTop: Spacing.md, marginBottom: Spacing["2xl"], width: "100%", justifyContent: "center", gap: Spacing.xl },
+  micStatsRow: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full, borderWidth: 1, marginBottom: Spacing.lg, alignSelf: "center" },
+  micStatsText: { fontSize: 13, fontFamily: "Nunito_600SemiBold" },
   resultStat: { alignItems: "center", flex: 1, paddingTop: Spacing.xs },
   resultValue: { fontSize: 36, fontWeight: "700", fontFamily: "Nunito_700Bold", lineHeight: 44 },
   resultLabel: { fontSize: 13, fontFamily: "Nunito_400Regular", marginTop: Spacing.xs },

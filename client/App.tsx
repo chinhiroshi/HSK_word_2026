@@ -38,6 +38,7 @@ import {
   isExplicitConsentRegion,
 } from "@/lib/analytics";
 import { loadStampSnapshot, migrateStampSnapshotsIfNeeded } from "@/data/pandaStamps";
+import { loadMicScoreLog } from "@/lib/micScoreLog";
 
 const ONBOARDING_KEY = "@chinese_master_onboarding_complete";
 const TUTORIAL_DONE_KEY = "@chinese_master_tutorial_sprint_done";
@@ -92,6 +93,7 @@ export default function App() {
       try {
         await loadStampSnapshot();
         await migrateStampSnapshotsIfNeeded();
+        await loadMicScoreLog();
       } catch {}
     })();
   }, []);

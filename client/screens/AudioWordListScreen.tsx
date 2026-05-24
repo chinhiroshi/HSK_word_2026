@@ -115,6 +115,8 @@ function AudioWordCard({
               referenceText={word.exampleSentence || word.word}
               targetWord={word.word}
               wordId={word.id}
+              source="audio-list"
+              hskLevel={word.hskLevel}
               onResult={() => {
                 if (!isRevealed) onToggleReveal();
               }}

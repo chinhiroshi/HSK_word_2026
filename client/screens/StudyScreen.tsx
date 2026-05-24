@@ -14,6 +14,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word } from "@/types";
 import { getWords, initializeData } from "@/lib/storage";
+import { getMicStatsForWordIds, subscribeMicStats, MicStats } from "@/lib/micScoreLog";
 import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useI18n } from "@/contexts/LanguageContext";
@@ -29,6 +30,7 @@ interface WordGroup {
   words: Word[];
   memorizedCount: number;
   notMemorizedCount: number;
+  micStats: MicStats;
 }
 
 export default function StudyScreen() {
@@ -44,6 +46,9 @@ export default function StudyScreen() {
   const [words, setWords] = useState<Word[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [micVersion, setMicVersion] = useState(0);
+
+  useEffect(() => subscribeMicStats(() => setMicVersion((v) => v + 1)), []);
 
   const loadWords = useCallback(async () => {
     await initializeData();
@@ -89,6 +94,7 @@ export default function StudyScreen() {
       const notMemorizedCount = groupWords.filter(
         (w) => !w.textMemorized && (w.textUnmemorizedCount || 0) > 0
       ).length;
+      const micStats = getMicStatsForWordIds(groupWords.map((w) => w.id));
 
       result.push({
         id: `group-${i}`,
@@ -97,10 +103,12 @@ export default function StudyScreen() {
         words: groupWords,
         memorizedCount,
         notMemorizedCount,
+        micStats,
       });
     }
     return result;
-  }, [words]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [words, micVersion]);
 
   const currentHskLevel = words.length > 0 ? words[0].hskLevel : undefined;
 
@@ -164,6 +172,17 @@ export default function StudyScreen() {
               {item.notMemorizedCount}
             </ThemedText>
           </View>
+          {item.micStats.count > 0 ? (
+            <View
+              testID={`mic-stats-${item.startIndex}`}
+              style={[styles.statBadge, { backgroundColor: `${Colors.light.secondary}20` }]}
+            >
+              <Feather name="mic" size={14} color={Colors.light.secondary} />
+              <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
+                {item.micStats.count}回 平均{item.micStats.avg}
+              </ThemedText>
+            </View>
+          ) : null}
         </View>
       </Pressable>
     );
