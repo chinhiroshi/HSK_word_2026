@@ -17,6 +17,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { Spacing, BorderRadius, Colors } from "@/constants/theme";
 import { Word, HskLevel } from "@/types";
 import { getWords, initializeData, markAsUnmemorized, getSelectedHskLevel } from "@/lib/storage";
+import { getSprintCellMicStats, subscribeMicStats } from "@/lib/micScoreLog";
 import { capture as captureAnalytics } from "@/lib/analytics";
 import { speakWithLanguage, stopSpeaking } from "@/lib/speech";
 import { useSprint } from "@/contexts/SprintContext";
@@ -42,6 +43,9 @@ export default function SprintAudioPlaybackScreen() {
   const [currentPhase, setCurrentPhase] = useState("");
   const [playbackRate] = useState(1.0);
   const [isStruggleMode, setIsStruggleMode] = useState(false);
+  const [micVersion, setMicVersion] = useState(0);
+
+  useEffect(() => subscribeMicStats(() => setMicVersion((v) => v + 1)), []);
 
   const isCancelledRef = useRef(false);
 
@@ -304,6 +308,31 @@ export default function SprintAudioPlaybackScreen() {
           </View>
         </View>
 
+        {(() => {
+          const cell = route.params?.cellIndex;
+          if (typeof cell !== "number" || !hskLevel) return null;
+          const stats = getSprintCellMicStats(hskLevel, cell);
+          if (stats.count === 0) return null;
+          void micVersion;
+          return (
+            <View
+              testID="sprint-audio-mic-stats"
+              style={[
+                styles.micStatsRow,
+                {
+                  backgroundColor: Colors.light.secondary + "15",
+                  borderColor: Colors.light.secondary + "40",
+                },
+              ]}
+            >
+              <Feather name="mic" size={14} color={Colors.light.secondary} />
+              <ThemedText style={[styles.micStatsText, { color: Colors.light.secondary }]}>
+                マイク {stats.count}回 / 平均 {stats.avg}
+              </ThemedText>
+            </View>
+          );
+        })()}
+
         <View style={[styles.wordListCard, { backgroundColor: theme.backgroundDefault, borderColor: theme.border }]}>
           <ThemedText style={[styles.wordListTitle, { color: theme.textSecondary }]}>
             再生リスト ({words.length}語)
@@ -376,6 +405,8 @@ const styles = StyleSheet.create({
   },
   playButton: {},
   controlButtonText: { fontSize: 15, fontFamily: "Nunito_700Bold", color: "#fff" },
+  micStatsRow: { flexDirection: "row", alignItems: "center", gap: Spacing.sm, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full, borderWidth: 1, alignSelf: "center" },
+  micStatsText: { fontSize: 13, fontFamily: "Nunito_600SemiBold" },
   wordListCard: { borderRadius: BorderRadius.lg, borderWidth: 1, padding: Spacing.lg, gap: Spacing.sm },
   wordListTitle: { fontSize: 13, fontFamily: "Nunito_600SemiBold", marginBottom: Spacing.xs },
   wordRow: {

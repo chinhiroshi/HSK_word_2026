@@ -4,6 +4,8 @@ import type { HskLevel } from "@/types";
 
 const STORAGE_KEY_WORD = "@chinese_master_mic_word_v1";
 const STORAGE_KEY_SPRINT = "@chinese_master_mic_sprint_cell_v1";
+const STORAGE_KEY_ATTEMPTS = "@chinese_master_mic_attempts_v1";
+const MAX_ATTEMPTS_RETAINED = 500;
 
 export type MicSource =
   | "study"
@@ -26,8 +28,18 @@ export interface MicStats {
 type WordStore = Record<string, CountSum>;
 type SprintStore = Record<string, CountSum>;
 
+export interface MicAttempt {
+  ts: number;
+  score: number;
+  source: MicSource;
+  wordId?: string;
+  hskLevel?: HskLevel;
+  sprintCellIndex?: number;
+}
+
 let wordCache: WordStore = {};
 let sprintCache: SprintStore = {};
+let attemptsCache: MicAttempt[] = [];
 let loadedPromise: Promise<void> | null = null;
 let writeChain: Promise<void> = Promise.resolve();
 
@@ -53,16 +65,20 @@ export async function loadMicScoreLog(): Promise<void> {
   if (loadedPromise) return loadedPromise;
   loadedPromise = (async () => {
     try {
-      const [wRaw, sRaw] = await Promise.all([
+      const [wRaw, sRaw, aRaw] = await Promise.all([
         AsyncStorage.getItem(STORAGE_KEY_WORD),
         AsyncStorage.getItem(STORAGE_KEY_SPRINT),
+        AsyncStorage.getItem(STORAGE_KEY_ATTEMPTS),
       ]);
       if (wRaw) {
         const parsed = JSON.parse(wRaw);
         if (parsed && typeof parsed === "object") {
-          // Merge so any increments that happened during load are preserved.
+          // Sum persisted with any in-flight increments that happened during load.
           for (const [k, v] of Object.entries(parsed as WordStore)) {
-            if (!wordCache[k]) wordCache[k] = v;
+            const cur = wordCache[k];
+            wordCache[k] = cur
+              ? { count: cur.count + v.count, sumScore: cur.sumScore + v.sumScore }
+              : v;
           }
         }
       }
@@ -70,8 +86,20 @@ export async function loadMicScoreLog(): Promise<void> {
         const parsed = JSON.parse(sRaw);
         if (parsed && typeof parsed === "object") {
           for (const [k, v] of Object.entries(parsed as SprintStore)) {
-            if (!sprintCache[k]) sprintCache[k] = v;
+            const cur = sprintCache[k];
+            sprintCache[k] = cur
+              ? { count: cur.count + v.count, sumScore: cur.sumScore + v.sumScore }
+              : v;
           }
+        }
+      }
+      if (aRaw) {
+        const parsed = JSON.parse(aRaw);
+        if (Array.isArray(parsed)) {
+          // Prepend persisted history before any in-flight attempts.
+          attemptsCache = [...(parsed as MicAttempt[]), ...attemptsCache].slice(
+            -MAX_ATTEMPTS_RETAINED,
+          );
         }
       }
     } catch {}
@@ -94,6 +122,11 @@ function persistSprint() {
     AsyncStorage.setItem(STORAGE_KEY_SPRINT, JSON.stringify(sprintCache)).catch(() => {}),
   );
 }
+function persistAttempts() {
+  writeChain = writeChain.then(() =>
+    AsyncStorage.setItem(STORAGE_KEY_ATTEMPTS, JSON.stringify(attemptsCache)).catch(() => {}),
+  );
+}
 
 interface RecordOpts {
   score: number;
@@ -104,7 +137,7 @@ interface RecordOpts {
 }
 
 export function recordMicAttempt(opts: RecordOpts): void {
-  const { score, wordId, hskLevel, sprintCellIndex } = opts;
+  const { score, wordId, hskLevel, sprintCellIndex, source } = opts;
   const clamped = Math.max(0, Math.min(100, Math.round(score)));
 
   if (wordId) {
@@ -120,7 +153,24 @@ export function recordMicAttempt(opts: RecordOpts): void {
     persistSprint();
   }
 
+  attemptsCache.push({
+    ts: Date.now(),
+    score: clamped,
+    source,
+    wordId,
+    hskLevel,
+    sprintCellIndex,
+  });
+  if (attemptsCache.length > MAX_ATTEMPTS_RETAINED) {
+    attemptsCache = attemptsCache.slice(-MAX_ATTEMPTS_RETAINED);
+  }
+  persistAttempts();
+
   notify();
+}
+
+export function getMicAttempts(): MicAttempt[] {
+  return attemptsCache.slice();
 }
 
 export function getMicStatsForWordIds(wordIds: string[]): MicStats {
