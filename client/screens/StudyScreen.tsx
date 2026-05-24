@@ -172,17 +172,15 @@ export default function StudyScreen() {
               {item.notMemorizedCount}
             </ThemedText>
           </View>
-          {item.micStats.count > 0 ? (
-            <View
-              testID={`mic-stats-${item.startIndex}`}
-              style={[styles.statBadge, { backgroundColor: `${Colors.light.secondary}20` }]}
-            >
-              <Feather name="mic" size={14} color={Colors.light.secondary} />
-              <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-                {item.micStats.count}回 平均{item.micStats.avg}
-              </ThemedText>
-            </View>
-          ) : null}
+          <View
+            testID={`mic-stats-${item.startIndex}`}
+            style={[styles.statBadge, { backgroundColor: `${Colors.light.secondary}20` }]}
+          >
+            <Feather name="mic" size={14} color={Colors.light.secondary} />
+            <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
+              {item.micStats.count}回 平均{item.micStats.count > 0 ? item.micStats.avg : "無し"}
+            </ThemedText>
+          </View>
         </View>
       </Pressable>
     );
