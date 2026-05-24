@@ -112,7 +112,7 @@ function GroupCard({ group, groupIndex, locked, onPress }: GroupCardProps) {
         <View style={styles.statItem} testID={`audio-mic-stats-${group.startIndex}`}>
           <Feather name="mic" size={14} color={Colors.light.secondary} />
           <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-            {group.micStats.count}回 平均{group.micStats.count > 0 ? group.micStats.avg : "無し"}
+            {group.micStats.count}回 平均{group.micStats.count > 0 ? `${group.micStats.avg}点` : "無し"}
           </ThemedText>
         </View>
       </View>

@@ -178,7 +178,7 @@ export default function StudyScreen() {
           >
             <Feather name="mic" size={14} color={Colors.light.secondary} />
             <ThemedText style={[styles.statText, { color: Colors.light.secondary }]}>
-              {item.micStats.count}回 平均{item.micStats.count > 0 ? item.micStats.avg : "無し"}
+              {item.micStats.count}回 平均{item.micStats.count > 0 ? `${item.micStats.avg}点` : "無し"}
             </ThemedText>
           </View>
         </View>
