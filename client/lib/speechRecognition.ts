@@ -130,6 +130,7 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
   }
 
   const listeners: Array<{ remove: () => void }> = [];
+  let stopped = false;
 
   const addListener = (event: string, handler: (...args: any[]) => void) => {
     if (typeof ExpoSpeechRecognitionModule.addListener === "function") {
@@ -160,9 +161,11 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
   });
 
   addListener("end", () => {
-    listeners.forEach((l) => {
-      try { l.remove(); } catch {}
-    });
+    while (listeners.length > 0) {
+      const l = listeners.pop();
+      try { l?.remove(); } catch {}
+    }
+    stopped = true;
     restorePlaybackAudioMode();
     if (opts.onEnd) opts.onEnd();
   });
@@ -189,7 +192,6 @@ async function startNativeRecognition(opts: StartRecognitionOptions): Promise<Re
     }
   };
 
-  let stopped = false;
   return {
     stop: () => {
       if (stopped) return;

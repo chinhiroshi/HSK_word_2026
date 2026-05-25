@@ -222,6 +222,7 @@ export function InlinePronunciationEvaluator({
           }
         },
         onEnd: () => {
+          handleRef.current = null;
           setPhase((prev) => {
             if (prev !== "recording") return prev;
             if (lastTranscript) {
